@@ -16,7 +16,7 @@ header span{color:var(--mute);font-size:12px}#ep{margin-left:auto;color:var(--g2
 .stage{display:flex;justify-content:center;padding:6px 0 8px;background:radial-gradient(60% 80% at 50% 40%,#1d1910,transparent)}
 canvas{height:46vh;aspect-ratio:9/16;max-width:92%;border:1px solid #3a3322;border-radius:6px;box-shadow:0 0 60px #c9a45c22,0 20px 50px #000}
 .bar{display:flex;gap:8px;padding:0 16px;align-items:center}.bar #clock{margin-left:auto;color:var(--mute);font-variant-numeric:tabular-nums}
-#st{margin:8px 16px;padding:8px 12px;border-left:2px solid var(--gold);background:var(--pn);color:var(--g2);font-size:13px}
+#st{position:sticky;top:4px;z-index:20;margin:8px 16px;padding:8px 12px;border-left:2px solid var(--gold);background:var(--pn);color:var(--g2);font-size:13px}
 .pn{display:none;padding:4px 16px}.pn.on{display:block}
 h2{font:800 17px var(--serif);color:var(--gold);margin:18px 0 8px}
 label{display:block;color:var(--mute);font-size:13px;margin:12px 0 4px}
@@ -37,7 +37,7 @@ nav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:re
 nav button{margin:0;border:0;border-radius:0;background:none;color:var(--mute);min-height:58px;font-size:12px;padding:6px 2px}#info,#vs,#vf,#vi{white-space:pre-line}nav button.on{color:var(--gold);box-shadow:inset 0 2px 0 var(--gold)}
 @media (prefers-reduced-motion:reduce){button:active{transform:none}}
 </style></head><body>
-<header><span class="logo">BECOME.</span><span>STUDIO v2.2</span><span id="ep">EP.001</span></header>
+<header><span class="logo">BECOME.</span><span>STUDIO v2.3</span><span id="ep">EP.001</span></header>
 <div class="stage"><canvas id="cv" width="540" height="960"></canvas></div>
 <div class="bar"><button class="pri" id="bPlay">▶ プレビュー</button><button id="bStop">■ 停止</button><span id="clock">0:00</span></div>
 <p id="st" role="status">準備完了。まず台本タブで台本を作成してください。</p>
@@ -112,6 +112,7 @@ Kokoro-82M：モデルの重みはApache-2.0。モデルカードに商用デプ
 <label>画質モード</label><select id="res"><option value="720">軽量 720×1280・24fps（Android推奨）</option><option value="1080">高画質 1080×1920・30fps（重い）</option></select>
 <p><button class="pri" id="bExp">動画を書き出す</button></p>
 <progress id="pg" max="1" value="0"></progress>
+<div id="xbox" style="margin:8px 0;padding:10px 12px;border:1px solid var(--ln);border-left:3px solid var(--gold);border-radius:10px;background:var(--pn)"><div id="xs" role="status" aria-live="polite">待機中。「動画を書き出す」を押すと、5秒テスト（720p）→本番の順に自動で進みます。</div><div id="xp" class="note">進捗 0% / 残り --</div></div>
 <p class="note">書き出しは実時間で進みます。完了まで画面を点灯させ、このタブを開いたままにしてください。</p>
 <a class="dl" id="dl" hidden>完成動画を保存</a>
 <video id="rv" controls playsinline hidden></video>
@@ -145,10 +146,10 @@ Android ChromeのMediaRecorderはMP4またはWebMを出力します。このア�
 'use strict';
 const $=i=>document.getElementById(i),cv=$('cv'),g=cv.getContext('2d');
 const FONT='"Shippori Mincho B1","Noto Serif JP","Noto Serif CJK JP","Hiragino Mincho ProN",serif';
-const S={part:null,keep:false,busy:false,fin:null,tag:'',act:null,cand:null,tts:null,photos:[],ep:1,ac:null,raf:0,mr:null,wl:null,url:null,blob:null,name:'',mode:'',last:-1,mic:null};
+const S={ph:[0,1],after:0,pend:0,xbusy:false,t3ok:null,part:null,keep:false,busy:false,fin:null,tag:'',act:null,cand:null,tts:null,photos:[],ep:1,ac:null,raf:0,mr:null,wl:null,url:null,blob:null,name:'',mode:'',last:-1,mic:null};
 const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch{return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}};
 const rnd=a=>a[Math.floor(Math.random()*a.length)],shuf=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(p=>p[1]);
-const say=m=>$('st').textContent=m,fmt=s=>Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');
+const say=m=>{$('st').textContent=m;const x=$('xs');if(x&&!S.xbusy)x.textContent=m},fmt=s=>Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const pad3=n=>String(n).padStart(3,'0');
 
@@ -274,26 +275,26 @@ async function run(mode,M0,tag){
  if(rec&&!M.A)return refuse('ナレーション音声がありません。BGMのみの動画は書き出しません。声タブで音声を生成または取り込み、「動画に適用」を押してください');
  if(rec){const bad=chkM(M);if(bad)return refuse('書き出しを中止しました。'+bad)}
  if(rec&&M.miss)return refuse(`音声が未生成の行が${M.miss}行あります。全行を生成または取り込みしてから書き出してください`);
- try{await document.fonts.load(`800 48px "Shippori Mincho B1"`,$('script').value)}catch{}
- cv.width=rec?+$('res').value:540;cv.height=Math.round(cv.width*16/9);
+ try{await Promise.race([document.fonts.load(`800 48px "Shippori Mincho B1"`,$('script').value),new Promise(r=>setTimeout(r,3000))])}catch{}
+ const rs=tag==='test'?'720':$('res').value;cv.width=rec?+rs:540;cv.height=Math.round(cv.width*16/9);
  try{
   const ctx=new AC();await ctx.resume();LOG((rec?'書き出し':'再生')+' AudioContext='+ctx.state+' sr='+ctx.sampleRate);if(ctx.state!=='running')throw new Error('AudioContextが起動しません（state='+ctx.state+'）');S.ac=ctx;S.mode=mode;S.last=-1;S.partial=false;S.lastM=M;
   const dest=rec?ctx.createMediaStreamDestination():ctx.destination,t0=ctx.currentTime+OFF;S.an=build(ctx,dest,t0,M);S.pk=0;S.live=0;S.fr=0;S.fb=new Float32Array(S.an.fftSize);
   if(rec){if(!cv.captureStream||!window.MediaRecorder)throw Error('このブラウザは動画録画に非対応です。Android Chromeで開いてください');
-   const stream=cv.captureStream(+$('res').value===1080?30:24);dest.stream.getAudioTracks().forEach(x=>stream.addTrack(x));
+   const stream=cv.captureStream(+rs===1080?30:24);dest.stream.getAudioTracks().forEach(x=>stream.addTrack(x));
    LOG('録画ストリーム 映像'+stream.getVideoTracks().length+' 音声'+stream.getAudioTracks().length);if(!stream.getAudioTracks().length)throw new Error('音声トラックを録画ストリームに追加できませんでした（MediaStream）。この端末・ブラウザでは音声付き録画ができません');
-   const mime=['video/mp4;codecs=avc1.42001f,mp4a.40.2','video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'].find(x=>MediaRecorder.isTypeSupported(x)),ch=[];
-   const mr=new MediaRecorder(stream,{...(mime?{mimeType:mime}:{}),videoBitsPerSecond:+$('res').value===1080?6e6:3e6,audioBitsPerSecond:128000});
-   mr.ondataavailable=e=>e.data.size&&ch.push(e.data);mr.onstop=()=>{const ty=mr.mimeType;cleanup();finish(ch,ty)};mr.onerror=e=>{say('録画エラー: '+(e.error&&e.error.message||'不明'));cleanup();S.fin&&S.fin({ok:false,msg:'録画エラー'})};S.mr=mr;mr.start(1000);
+   const mime=['video/mp4;codecs=avc1.42001f,mp4a.40.2','video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'].find(x=>MediaRecorder.isTypeSupported(x)),ch=[];LOG('録画形式: '+(mime||'ブラウザ既定')+' / '+rs+'p');
+   const mr=new MediaRecorder(stream,{...(mime?{mimeType:mime}:{}),videoBitsPerSecond:+rs===1080?6e6:3e6,audioBitsPerSecond:128000});
+   mr.ondataavailable=e=>e.data.size&&ch.push(e.data);mr.onstop=()=>{const ty=mr.mimeType;cleanup();finish(ch,ty)};mr.onerror=e=>{say('録画エラー: '+(e.error&&e.error.message||'不明'));cleanup();S.fin&&S.fin({ok:false,msg:'録画エラー',err:e.error})};S.mr=mr;mr.start(1000);
    $('bExp').disabled=true;$('bPlay').disabled=true;say('書き出し中。画面を消さずにお待ちください。')}
   else say('プレビュー再生中');
   try{S.wl=await navigator.wakeLock.request('screen')}catch{}
-  const loop=()=>{const t=ctx.currentTime-t0,i=draw(Math.max(0,t),D,sc);$('clock').textContent=fmt(Math.max(0,t))+' / '+fmt(D);$('pg').value=Math.min(1,Math.max(0,t/D));
+  const loop=()=>{const t=ctx.currentTime-t0,i=draw(Math.max(0,t),D,sc);$('clock').textContent=fmt(Math.max(0,t))+' / '+fmt(D);{const f=Math.min(1,Math.max(0,t/D));prog(S.ph[0]+(S.ph[1]-S.ph[0])*f,(D-Math.max(0,t))+(S.after||0)+(S.pend||0))}
    if(S.an&&t>0){S.an.getFloatTimeDomainData(S.fb);let p=0;for(let k=0;k<S.fb.length;k++){const v=Math.abs(S.fb[k]);if(v>p)p=v}if(p>S.pk)S.pk=p;if(p>.01)S.live++;S.fr++}
    if(mode==='prev'&&$('tts').checked&&!M.A&&i!==S.last&&'speechSynthesis'in window){S.last=i;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(sc[i].s);u.lang='ja-JP';u.pitch=.6;u.rate=.9;const vo=speechSynthesis.getVoices().find(v=>v.lang==='ja-JP'&&/male|男|keita|ichiro/i.test(v.name))||speechSynthesis.getVoices().find(v=>v.lang==='ja-JP');if(vo)u.voice=vo;speechSynthesis.speak(u)}
    if(t>=D){if(rec&&S.mr.state==='recording')S.mr.stop();else{cleanup();say('プレビュー終了')}return}S.raf=requestAnimationFrame(loop)};
   loop();
- }catch(e){cleanup();say('エラー: '+e.message);S.fin&&S.fin({ok:false,msg:e.message})}}
+ }catch(e){cleanup();say('エラー: '+jp(e));S.fin&&S.fin({ok:false,msg:e.message,err:e})}}
 function envOf(x,sr,t0,t1,hop=.05){const o=[],h=Math.floor(sr*hop);for(let a=Math.floor(t0*sr);a>=0&&a+h<=Math.floor(t1*sr)&&a+h<=x.length;a+=h){let q=0;for(let j=a;j<a+h;j++)q+=x[j]*x[j];o.push(Math.sqrt(q/h))}return o}
 function pcorr(a,b){const n=Math.min(a.length,b.length);if(n<8)return 0;let ma=0,mb=0;for(let i=0;i<n;i++){ma+=a[i];mb+=b[i]}ma/=n;mb/=n;let sab=0,saa=0,sbb=0;for(let i=0;i<n;i++){const x=a[i]-ma,y=b[i]-mb;sab+=x*y;saa+=x*x;sbb+=y*y}const d=Math.sqrt(saa*sbb);return d>1e-12?sab/d:0}
 function chkM(M){if(!M.A)return'ナレーション音声がありません';const L=lines(),list=M.A.mode==='single'?[[M.A.buf,L.join('')]]:M.A.bufs.map((b,i)=>[b,L[i]||'あ']);for(let i=0;i<list.length;i++){const[b,t]=list[i];if(!b)return`${i+1}行目の音声がありません`;const v=vcheck(b,t);if(!v.ok)return`${M.A.mode==='single'?'取り込み音声':(i+1)+'行目の音声'}が不正です：${v.why}`}if(+$('nv').value<10)return'ナレーション音量が10%未満です。音量を上げてください';return null}
@@ -315,8 +316,8 @@ function finish(ch,mime){if(!ch.length){say('動画を生成できませんで�
  verify(S.blob,S.lastM).then(r=>{if(r.ok){$('dl').textContent='完成動画を保存（'+S.name+'）';$('dl').hidden=false;$('share').hidden=!(navigator.canShare&&navigator.share);say(part?'途中停止した動画ですがナレーションは検出されました。再書き出しを推奨します':'完成。ナレーションを検出しました。再生して確認してから保存してください')}
   else if(r.unverified){$('dl').textContent='保存（音声は未検査・自己責任で確認）';$('dl').hidden=false;say('⚠ 音声の自動検査ができませんでした。再生して声が入っているか確認してください')}
   else say('✖ 不合格：動画にナレーションが入っていません。保存はできません。下の検査結果とログを確認してください');S.fin&&S.fin(r)})}
-$('bPlay').onclick=()=>run('prev');$('bStop').onclick=()=>{stopAll();say('停止しました')};$('bExp').onclick=()=>run('rec');
-$('share').onclick=async()=>{try{const f=new File([S.blob],S.name,{type:S.blob.type});if(navigator.canShare({files:[f]}))await navigator.share({files:[f],title:'BECOME.'});else say('この端末では共有できません。保存リンクを使ってください')}catch(e){say('共有を中止しました')}};
+$('bPlay').onclick=()=>run('prev');$('bStop').onclick=()=>{stopAll();say('停止しました')};$('bExp').onclick=()=>exportFlow();
+$('share').onclick=async()=>{try{if(!S.blob)return xmsg('共有する動画がありません',1);const f=new File([S.blob],S.name,{type:S.blob.type});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'BECOME.'});xmsg('共有画面を開きました。TikTokを選んでください')}else xmsg('⚠ この端末・ブラウザは動画ファイルの共有に対応していません。「完成動画を保存」で端末に保存し、TikTokアプリの＋ボタンからアップロードで選んでください',1)}catch(e){xmsg(e&&e.name==='AbortError'?'共有をキャンセルしました':'⚠ 共有できませんでした（'+(e&&e.message)+'）。「完成動画を保存」で保存し、TikTokアプリの＋ボタンからアップロードで選んでください',1)}};
 
 /* ---------- 取り込み ---------- */
 async function dec(ab){const c=new(window.AudioContext||window.webkitAudioContext)();try{return await c.decodeAudioData(ab)}finally{c.close()}}
@@ -424,7 +425,7 @@ function t2(){const cl=S.tclip;if(!cl)return{ok:false,msg:'✖ 字幕同期：�
  cv.width=270;cv.height=480;draw(M.sc[0].t0+1.2,M.D,M.sc);const px=g.getImageData(0,0,270,480).data;let lit=0;for(let i=0;i<px.length;i+=388)if(px[i]+px[i+1]+px[i+2]>300)lit++;cv.width=540;cv.height=960;{const m=model();draw(0,m.D,m.sc)}
  const ok=!er.length&&lit>0;return{ok,msg:`${ok?'✔':'✖'} 字幕同期：合計 ${M.D.toFixed(2)}秒（実音声の長さから計算）、字幕の描画${lit>0?'を確認':'を検出できず'}${er.length?'、'+er.join('、'):''}。聴感上のずれは別途確認してください`}}
 async function t3(){const cl=S.tclip;if(!cl)return{ok:false,msg:'✖ 動画書き出し：テスト音声がありません。先に「1 音声生成」を成功させてください（BGMのみの動画は作りません）'};const M=model({mode:'clips',bufs:[cl]},[TL]);let r;try{r=await recWait(M,'test')}catch(e){r={ok:false,msg:'タイムアウト'}}
- return{ok:!!(r&&r.ok),msg:`${r&&r.ok?'✔':'✖'} 動画書き出し：${M.D.toFixed(1)}秒、${S.blob?(S.blob.size/1024).toFixed(0):0}KB。`+(r?r.msg.replace(/\n/g,' '):'')+(r&&r.ok?' 次に「書き出し動画を再生」で実際に声が聞こえるか確認してください':'')}}
+ if(r&&r.ok)S.t3ok=S.vt;return{ok:!!(r&&r.ok),msg:`${r&&r.ok?'✔':'✖'} 動画書き出し：${M.D.toFixed(1)}秒、${S.blob?(S.blob.size/1024).toFixed(0):0}KB。`+(r?(r.err?jp(r.err):r.msg).replace(/\n/g,' '):'')+(r&&r.ok?' 次に「書き出し動画を再生」で実際に声が聞こえるか確認してください':'')}}
 $('tl').onclick=()=>{if(!S.tclip)return say('テスト音声がありません。先に「1 音声生成」を成功させてください');listen(model({mode:'clips',bufs:[S.tclip]},[TL]),'テスト音声「'+TL+'」')};
 $('tp').onclick=()=>{const v=$('rv');if(!S.blob||v.hidden)return say('再生する書き出し動画がありません。先に「3 動画書き出し」を成功させてください');stopAll();v.muted=false;v.volume=1;v.scrollIntoView({block:'center'});v.currentTime=0;v.play().then(()=>say('書き出し動画を再生中（動画プレーヤーの音量も確認してください）')).catch(e=>say('再生できません。動画プレーヤーの再生ボタンを直接押してください: '+e.message))};
 $('lgc').onclick=()=>copy(LG.join('\n')||'ログなし','実行ログをコピーしました');
@@ -440,7 +441,36 @@ async function cinfo(){const o=[];try{if(navigator.storage&&navigator.storage.es
 $('diag').onclick=diag;$('cbtn').onclick=cinfo;
 const PR={cinema:[92,18,1,65],trailer:[86,24,1,75],std:[100,8,0,50]};
 $('pre').onchange=()=>{const p=PR[$('pre').value];$('spd').value=p[0];$('rvl').value=p[1];$('deep').checked=!!p[2];$('gap').value=p[3];['spd','rvl','gap'].forEach(i=>$(i).oninput())};
-if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
+if('serviceWorker'in navigator&&location.protocol==='https:'){const had=!!navigator.serviceWorker.controller;let rl=0;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!had||rl||S.xbusy||S.mr&&S.mr.state==='recording')return;rl=1;location.reload()});navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{})}
+
+/* ---------- v2.3: 書き出しフロー ---------- */
+function xmsg(m,bad){$('st').textContent=m;const x=$('xs');if(x){x.textContent=m;x.style.color=bad?'#ff9a8a':''}LOG(m)}
+function prog(p,rem){$('pg').value=Math.min(1,Math.max(0,p));const x=$('xp');if(x)x.textContent=`進捗 ${Math.round(Math.min(1,Math.max(0,p))*100)}% / 残り約 ${fmt(Math.max(0,rem))}`}
+const JE=m=>Object.assign(new Error(m),{jp:1});
+function jp(e){const m=String(e&&e.message||e),n=e&&e.name;if(e&&e.jp)return m;
+ if(n==='NotAllowedError')return'ブラウザに許可されませんでした（'+m+'）。画面を一度タップしてからやり直してください';
+ if(n==='NotSupportedError')return'この端末は、この形式の録画に対応していません（'+m+'）。画質を「軽量 720p」にして再実行してください';
+ if(n==='QuotaExceededError'||/quota/i.test(m))return'端末の保存容量が足りません。不要なファイルを削除してください';
+ if(n==='TimeoutError'||/timeout/i.test(m))return'時間切れです。処理が長引いています。もう一度お試しください';
+ if(e instanceof RangeError||/memory/i.test(m))return'メモリ不足です。他のアプリを閉じて、画質を720pにしてやり直してください';
+ return'予期しないエラー：'+m}
+async function exportFlow(){if(S.xbusy)return xmsg('処理中です。完了までお待ちください');S.xbusy=true;const b=$('bExp');b.disabled=true;b.textContent='処理中…';stopAll();S.ph=[0,1];S.after=0;S.pend=0;prog(0,0);xmsg('処理中：ボタンを受け付けました。準備しています…');
+ try{await new Promise(r=>setTimeout(r,60));
+  if(!S.act&&S.cand){S.act=S.cand;upd();xmsg('生成済みのナレーションを自動で適用しました')}
+  let M=model();if(!M.A)throw JE('ナレーション音声がありません。声タブで「音声を生成」するか、音声ファイルを取り込んでください。BGMのみの動画は作りません');
+  const bad=chkM(M);if(bad)throw JE(bad);
+  const pre=S.act.src==='kokoro'&&S.t3ok!==$('vo').value;
+  if(pre){S.ph=[0,.15];S.after=3;S.pend=M.D;xmsg('手順1/2：5秒テスト（720p・ナレーション付き）を作っています…');if(!S.tclip)await ensureVoice();const t=await t3();if(!t.ok)throw JE('5秒テストが失敗したため、本番の書き出しを中止しました。'+t.msg);S.t3ok=$('vo').value;S.pend=0;xmsg('✔ 5秒テスト成功。続けて本番の動画を書き出します…')}
+  else if(S.act.src!=='kokoro')xmsg('取り込み音声のため5秒テストは省略します。書き出し後に音声を自動検査します');
+  S.ph=pre?[.15,1]:[0,1];S.after=4;M=model();xmsg(`${pre?'手順2/2：':''}本番の動画を書き出しています（実時間で約${fmt(M.D)}かかります。画面を消さないでください）`);
+  const r=await recWait(M);
+  if(r&&r.ok){prog(1,0);xmsg('✔ 完成しました。下のプレビューで声と字幕を確認し、「完成動画を保存」を押してください');$('rv').scrollIntoView({block:'center'})}
+  else if(r&&r.unverified){prog(1,0);xmsg('⚠ 音声の自動検査ができませんでした。下の動画を再生して、声が入っているか耳で確認してください',1)}
+  else if(r&&r.err)throw r.err;else throw JE((r&&r.msg?r.msg.split('\n').filter(Boolean).slice(-1)[0]:'書き出しに失敗しました'))
+ }catch(e){LOG('書き出し失敗: '+String(e&&e.stack||e).slice(0,300));xmsg('✖ '+jp(e),1)}
+ finally{S.xbusy=false;S.ph=[0,1];S.after=0;S.pend=0;b.disabled=false;b.textContent='動画を書き出す'}}
+addEventListener('error',e=>{LOG('JSエラー: '+e.message);xmsg('✖ 予期しないエラー：'+e.message,1)});
+addEventListener('unhandledrejection',e=>{const m=String(e.reason&&e.reason.message||e.reason);LOG('未処理エラー: '+m);xmsg('✖ 予期しないエラー：'+m,1)});
 /* ---------- タブ・初期化 ---------- */
 function tab(n){document.querySelectorAll('.pn').forEach((p,i)=>p.classList.toggle('on',i===n));document.querySelectorAll('#nav button').forEach((b,i)=>b.classList.toggle('on',i===n));window.scrollTo(0,0)}
 $('nav').onclick=e=>{const b=e.target.closest('button');if(b)tab(+b.dataset.t)};

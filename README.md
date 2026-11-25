@@ -1,4 +1,4 @@
-# BECOME. STUDIO v2.2
+# BECOME. STUDIO v2.3
 index.html, sw.js, manifest.webmanifest, icon.svg, icon-192.png, icon-512.png を同じ階層に置くだけで動く静的サイトです。ビルド不要、サーバー不要、費用0円。
 
 ## GitHub Pages（スマホのみ）
