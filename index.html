@@ -1,0 +1,449 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>BECOME. STUDIO</title>
+<meta name="theme-color" content="#07080a"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07080a;--pn:#111317;--ln:#2a2d33;--gold:#c9a45c;--g2:#e8cf9a;--ink:#f4efe6;--mute:#9a968c;--serif:"Shippori Mincho B1","Noto Serif JP","Hiragino Mincho ProN",serif;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{background:var(--bg);scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 "Noto Sans JP",system-ui,sans-serif;padding-bottom:84px}
+header{display:flex;align-items:baseline;gap:10px;padding:14px 18px 4px}
+.logo{font:800 22px var(--serif);letter-spacing:.32em;color:var(--gold)}
+header span{color:var(--mute);font-size:12px}#ep{margin-left:auto;color:var(--g2)}
+.stage{display:flex;justify-content:center;padding:6px 0 8px;background:radial-gradient(60% 80% at 50% 40%,#1d1910,transparent)}
+canvas{height:46vh;aspect-ratio:9/16;max-width:92%;border:1px solid #3a3322;border-radius:6px;box-shadow:0 0 60px #c9a45c22,0 20px 50px #000}
+.bar{display:flex;gap:8px;padding:0 16px;align-items:center}.bar #clock{margin-left:auto;color:var(--mute);font-variant-numeric:tabular-nums}
+#st{margin:8px 16px;padding:8px 12px;border-left:2px solid var(--gold);background:var(--pn);color:var(--g2);font-size:13px}
+.pn{display:none;padding:4px 16px}.pn.on{display:block}
+h2{font:800 17px var(--serif);color:var(--gold);margin:18px 0 8px}
+label{display:block;color:var(--mute);font-size:13px;margin:12px 0 4px}
+input,textarea,select,button{font:inherit;color:var(--ink);background:var(--pn);border:1px solid var(--ln);border-radius:10px;padding:12px;min-height:48px}
+input[type=text],textarea,select{width:100%}textarea{min-height:200px;line-height:1.7}
+input[type=checkbox]{width:22px;height:22px;min-height:0;accent-color:var(--gold);vertical-align:-5px;margin-right:8px}
+input[type=range]{width:100%;padding:0;accent-color:var(--gold)}
+.ck{display:flex;align-items:center;color:var(--ink);font-size:14px;margin:6px 0}
+button{cursor:pointer;margin:4px 4px 4px 0}button:active{transform:scale(.97)}button:disabled{opacity:.4}
+button.pri{background:linear-gradient(180deg,#e8cf9a,#b8913f);color:#15110a;font-weight:700;border:0}
+progress{width:100%;accent-color:var(--gold)}
+details{border:1px solid var(--ln);border-radius:10px;padding:8px 12px;margin:10px 0;background:var(--pn);font-size:13px;color:#cfcabd}summary{cursor:pointer;color:var(--g2);min-height:32px}
+video{width:100%;max-height:50vh;background:#000;border-radius:8px}
+ul{list-style:none;padding:0}li{border:1px solid var(--ln);border-radius:10px;padding:10px 12px;margin:8px 0;background:var(--pn)}li small{display:block;color:var(--mute)}
+a.dl{display:block;text-align:center;padding:14px;border-radius:10px;background:var(--gold);color:#15110a;font-weight:700;text-decoration:none;margin:8px 0}
+.note{color:var(--mute);font-size:12px}
+nav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(6,1fr);background:#0b0c0fee;border-top:1px solid #3a3322;padding-bottom:env(safe-area-inset-bottom,0px);backdrop-filter:blur(8px)}
+nav button{margin:0;border:0;border-radius:0;background:none;color:var(--mute);min-height:58px;font-size:12px;padding:6px 2px}#info,#vs,#vf,#vi{white-space:pre-line}nav button.on{color:var(--gold);box-shadow:inset 0 2px 0 var(--gold)}
+@media (prefers-reduced-motion:reduce){button:active{transform:none}}
+</style></head><body>
+<header><span class="logo">BECOME.</span><span>STUDIO v2.2</span><span id="ep">EP.001</span></header>
+<div class="stage"><canvas id="cv" width="540" height="960"></canvas></div>
+<div class="bar"><button class="pri" id="bPlay">▶ プレビュー</button><button id="bStop">■ 停止</button><span id="clock">0:00</span></div>
+<p id="st" role="status">準備完了。まず台本タブで台本を作成してください。</p>
+
+<main>
+<section class="pn on" id="p0">
+<h2>台本</h2>
+<label>テーマ</label><input type="text" id="th" value="人生を変えたい君へ。">
+<h2>ワンタップ自動生成</h2>
+<div class="ck"><input type="checkbox" id="autos" checked><span>テーマから台本を新規生成する（オフなら下の台本を使う）</span></div>
+<button class="pri" id="auto" style="width:100%">ワンタップで動画を作る</button>
+<ul id="as"><li id="as0">○ 台本</li><li id="as1">○ AIナレーション</li><li id="as2">○ 字幕同期</li><li id="as3">○ 映像・BGM・書き出し</li></ul>
+<p><button id="retry" hidden>続きから再試行</button></p>
+<button class="pri" id="gen">台本を自動生成</button><button id="cpPrompt">外部AI用の依頼文をコピー</button>
+<p class="note">自動生成は端末内のテンプレート組み立てです（AIモデルではありません・無料・通信なし）。ChatGPT、Gemini、Claudeの無料版で作った台本は、下欄に貼り付けて使えます。</p>
+<label>台本（1行 = 1シーン）</label>
+<textarea id="script"></textarea>
+<button id="split">シーン自動分割</button><button id="cpScript">台本コピー</button>
+<p class="note" id="info"></p>
+</section>
+
+<section class="pn" id="pv">
+<h2>AI NARRATION</h2>
+<label>音声エンジン</label>
+<select id="eng"><option value="kokoro">Kokoro 日本語（端末内AI・実験的）</option><option value="import">外部TTSの音声を取り込む（確実）</option></select>
+<label>音声モデル（Kokoroの日本語音声）</label>
+<select id="vo"><option value="jm_kumo">jm_kumo / 日本語・男性</option><option value="jf_alpha">jf_alpha / 日本語・女性</option><option value="jf_gongitsune">jf_gongitsune / 日本語・女性</option><option value="jf_nezumi">jf_nezumi / 日本語・女性</option><option value="jf_tebukuro">jf_tebukuro / 日本語・女性</option></select>
+<label>仕上がり</label><select id="pre"><option value="cinema">映画ナレーション（初期・0.92倍）</option><option value="trailer">予告編風（より低く重厚・0.86倍）</option><option value="std">標準（1.0倍）</option></select>
+<label>読み上げ速度 <b id="spv">0.92</b>倍（再生速度で調整。声はやや低くなります）</label><input type="range" id="spd" min="70" max="120" value="92">
+<label>ナレーション音量 <b id="nvv">100</b>%</label><input type="range" id="nv" min="0" max="150" value="100">
+<label>文と文の間 <b id="gpv">0.6</b>秒</label><input type="range" id="gap" min="20" max="120" value="60">
+<div class="ck"><input type="checkbox" id="deep" checked><span>低音強調（重厚感）</span></div>
+<div class="ck"><input type="checkbox" id="rev" checked><span>映画風の残響（軽いリバーブ）</span></div>
+<label>残響量 <b id="rvv">18</b>%</label><input type="range" id="rvl" min="0" max="40" value="18">
+<div class="ck"><input type="checkbox" id="tts"><span>映像プレビュー時のみ端末の読み上げ音声を使う（書き出しには入りません）</span></div>
+<p><button class="pri" id="genv">音声を生成</button><button id="pvv">音声試聴</button><button id="apply">動画に適用</button><button id="wav">WAV保存</button></p>
+<progress id="pgv" max="1" value="0"></progress>
+<p><button id="diag">接続診断</button><button id="cbtn">キャッシュ状態</button></p>
+<p class="note" id="dg"></p><p><button id="lgc">実行ログをコピー</button></p><pre id="lg" class="note" style="white-space:pre-wrap;word-break:break-all;font-size:11px;margin:4px 0"></pre><p class="note" id="cinfo"></p>
+<p class="note" id="vs">未生成。Kokoroはこの公開ページでは通信制限で動かない可能性が高く、その場合は下の取り込みを使います。</p>
+<h2>外部音声の取り込み</h2>
+<label>1行1ファイル（ファイル名順に台本の行へ割り当て）</label><input type="file" id="audm" accept="audio/*" multiple>
+<label>全文1ファイル（無音を検出してシーンを自動同期）</label><input type="file" id="aud" accept="audio/*">
+<button id="mic">● マイクで録音</button><button id="clr">音声を外す</button>
+<p class="note" id="an">音声なし</p>
+<p class="note" id="vi"></p>
+<details id="fb"><summary>外部TTSでWAV・MP3を作る手順</summary>
+1. Chromeで <a href="https://nerosui.github.io/kokoro-js-jp/" target="_blank" rel="noopener" style="color:var(--g2)">kokoro-js-jpのデモ</a>（READMEに記載。保存ボタンの有無は未確認）を開く。<br>2. 日本語音声 jm_kumo（男性）で台本を1行ずつ生成し、音声を保存する。保存できない場合は他の無料TTSでも可。<br>3. 上の「1行1ファイル」で、ファイル名を 01、02、03 の順にして選ぶ。または全文を1ファイルで生成し「全文1ファイル」で選ぶ（行の間にはっきり無音を入れること）。<br>4. 「動画に適用」を確認し、プレビューで同期を確認する。</details>
+<details id="lc"><summary>ライセンスとクレジット（2026年11月25日確認分）</summary>
+Kokoro-82M：モデルの重みはApache-2.0。モデルカードに商用デプロイ歓迎との記載あり（出典：huggingface.co/hexgrad/Kokoro-82M）。生成音声へのクレジット表記義務は、確認した範囲では記載なし（確認できません）。任意の表記例：Voice: Kokoro-82M (Apache-2.0)。<br>モデルカードには学習データのCC BY音源のクレジット欄がありますが、内容は未確認です。<br>kokoro-js-jp：Apache-2.0。日本語辞書とHTSボイスの条件が書かれたTHIRD_PARTY_NOTICES.mdは取得制限で読めておらず、確認できません。収益化前に必ずご自身で確認してください。<br>HeadTTS：MIT。ただし英語のみ対応で、日本語には使えません。<br>法的助言ではありません。</details>
+</section>
+
+<section class="pn" id="p1">
+<h2>映像</h2>
+<label>動画時間（ナレーション取込時は音声の長さが優先）</label>
+<select id="dur"><option value="45">45秒</option><option value="60">60秒</option><option value="75" selected>75秒</option><option value="90">90秒</option><option value="120">120秒</option></select>
+<label>背景アニメーション</label>
+<select id="bgs"><option value="auto">自動（3シーンごとに切替）</option><option value="mountain">山と太陽</option><option value="rays">光の筋</option><option value="city">夜の街</option><option value="stars">星空</option><option value="rain">雨と光</option></select>
+<label>背景写真（任意・複数可。無ければ生成アニメ）</label><input type="file" id="imgs" accept="image/*" multiple>
+<h2>BGM・効果音</h2>
+<div class="ck"><input type="checkbox" id="bgm" checked><span>オリジナル合成BGM（重低音パッドと鼓動）</span></div>
+<div class="ck"><input type="checkbox" id="sfx" checked><span>効果音（場面転換のヒット音とウーシュ）</span></div>
+<label>BGM音量 <b id="vlv">12</b>%（ナレーション中は自動で約35%に低下）</label><input type="range" id="vol" min="0" max="100" value="12">
+</section>
+
+<section class="pn" id="p2">
+<h2>書き出し</h2>
+<h2>動作テスト（約4〜5秒）</h2>
+<p><button id="t1">1 音声生成</button><button id="t2">2 字幕同期</button><button id="t3">3 動画書き出し</button><button class="pri" id="tall">全部テスト</button></p>
+<p class="note" id="tr">未実行</p>
+<p><button id="tl">▶ 生成音声を試聴</button><button id="tp">▶ 書き出し動画を再生</button></p>
+<label>画質モード</label><select id="res"><option value="720">軽量 720×1280・24fps（Android推奨）</option><option value="1080">高画質 1080×1920・30fps（重い）</option></select>
+<p><button class="pri" id="bExp">動画を書き出す</button></p>
+<progress id="pg" max="1" value="0"></progress>
+<p class="note">書き出しは実時間で進みます。完了まで画面を点灯させ、このタブを開いたままにしてください。</p>
+<a class="dl" id="dl" hidden>完成動画を保存</a>
+<video id="rv" controls playsinline hidden></video>
+<button id="share" hidden>共有（TikTok等へ）</button><button id="srt">字幕SRTを保存</button>
+<p id="fmt" class="note"></p><p id="vf" class="note"></p>
+<details><summary>WebM形式だった場合（MP4へ変換）</summary>
+Android ChromeのMediaRecorderはMP4またはWebMを出力します。このアプリは対応形式を自動選択します。WebMの場合の手順（変換の成否は端末により異なり、未検証です）：<br>1. 保存したWebMをCapCutで取り込めるか試す。<br>2. 取り込めない場合は、無料の変換サイト（CloudConvert等）でMP4に変換する。<br>3. 変換後、TikTokアプリで投稿する。</details>
+<details><summary>端末の読み上げ音声を使いたい場合（CapCut連携）</summary>
+ブラウザは端末の読み上げ音声を動画に録音できません。次のどちらかで補完してください：<br>方法A：映像タブのマイク録音で自分の声を入れる、または他アプリで作った音声ファイルを取り込む。<br>方法B：音声なし（BGMのみ）で書き出し、SRTを保存し、CapCutで動画を取り込んでテキスト読み上げ機能で男性ボイスを追加する。メニュー名はCapCutの版で異なり、字幕ファイルの取り込み可否は未検証です。</details>
+</section>
+
+<section class="pn" id="p3">
+<h2>TikTok投稿文</h2>
+<button class="pri" id="gp">投稿文とハッシュタグを生成</button>
+<label>投稿文</label><textarea id="cap" style="min-height:170px"></textarea>
+<label>ハッシュタグ</label><textarea id="tags" style="min-height:90px"></textarea>
+<button id="cc">投稿文コピー</button><button id="ct">タグコピー</button><button id="ca">全部コピー</button>
+</section>
+
+<section class="pn" id="p4">
+<h2>履歴と次回への再利用</h2>
+<button class="pri" id="save">現在の台本を保存</button>
+<p class="note">保存先はこの端末のブラウザ内です。ブラウザのデータを消去すると失われます。</p>
+<ul id="hl"></ul>
+</section>
+</main>
+
+<nav id="nav"><button data-t="0" class="on">台本</button><button data-t="1">声</button><button data-t="2">映像</button><button data-t="3">書出</button><button data-t="4">投稿</button><button data-t="5">履歴</button></nav>
+
+<script>
+'use strict';
+const $=i=>document.getElementById(i),cv=$('cv'),g=cv.getContext('2d');
+const FONT='"Shippori Mincho B1","Noto Serif JP","Noto Serif CJK JP","Hiragino Mincho ProN",serif';
+const S={part:null,keep:false,busy:false,fin:null,tag:'',act:null,cand:null,tts:null,photos:[],ep:1,ac:null,raf:0,mr:null,wl:null,url:null,blob:null,name:'',mode:'',last:-1,mic:null};
+const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch{return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}};
+const rnd=a=>a[Math.floor(Math.random()*a.length)],shuf=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(p=>p[1]);
+const say=m=>$('st').textContent=m,fmt=s=>Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pad3=n=>String(n).padStart(3,'0');
+
+/* ---------- 台本 ---------- */
+const P={
+hook:['このままの人生で、本当に満足か？','変わりたい。そう思うのに、なぜ動けない？','1年後も同じ場所にいる自分を、想像できるか？'],
+pain:['毎朝同じ時間に起き、同じ道を歩き、同じ夜を迎える。','いつかやる。そう言って、何年が過ぎた？','スマホを眺めている間に、時間だけが減っていく。','他人の成功を眺めて、自分を小さく見積もっていないか。','忙しいを理由に、本当にやりたいことから逃げていないか。'],
+truth:['人生は、待っているだけでは変わらない。','才能の差より、続けた日数の差が現実を作る。','変化は静かに始まる。誰にも気づかれない場所で。'],
+act:['すべてを変える必要はない。','毎日30分、未来の自分のために使え。','本を1ページ読む。','小さな挑戦を、ひとつだけ始める。','昨日の自分を、1ミリだけ超えろ。','スマホを置いて、まず5分だけ動け。'],
+proof:['自信があるから行動するんじゃない。','行動するから、自信が生まれるんだ。','誰にも評価されなくていい。','前に進んだ事実だけが、お前を裏切らない。'],
+close:['理想を語るな。理想になれ。','今日が、その1日目だ。','変わるのは、今だ。']};
+const DEF=['このままの人生で、本当に満足か？','毎朝起きて、仕事に行って、家に帰る。','スマホを眺めて眠り、また同じ朝を迎える。','いつか成功したい。いつか自由になりたい。','でも、そのいつかのために、今日何をした？','人生は待っているだけでは変わらない。','すべてを一度に変える必要はない。','毎日30分、未来の自分のために使ってみろ。','本を読む。新しいことを学ぶ。','小さな挑戦を、ひとつだけ始める。','誰にも評価されなくていい。','昨日の自分より少しでも前に進めばいい。','自信があるから行動するんじゃない。','行動するから、自信が生まれるんだ。','理想を語るな。理想になれ。'];
+function gen(){const t=$('th').value.trim()||'人生を変えたい君へ。';
+ const L=[rnd(P.hook),...shuf(P.pain).slice(0,3),rnd(P.truth),t,...shuf(P.act).slice(0,4),...shuf(P.proof).slice(0,2),rnd(P.close)];
+ $('script').value=L.join('\n');upd();say('台本を生成しました。気に入るまで何度でも再生成できます。')}
+const lines=()=>$('script').value.split('\n').map(s=>s.trim()).filter(Boolean);
+const rate=()=>(+$('spd').value||92)/100;
+function dtct(buf,n){const ch=buf.getChannelData(0),sr=buf.sampleRate,fr=Math.floor(sr*.01),nf=Math.floor(ch.length/fr),e=new Float32Array(nf);let mx=0;
+ for(let f=0;f<nf;f++){let q=0;for(let i=f*fr;i<(f+1)*fr;i++)q+=ch[i]*ch[i];e[f]=Math.sqrt(q/fr);if(e[f]>mx)mx=e[f]}
+ if(n<2)return{cuts:[0,buf.duration],found:0};
+ const th=mx*.06;let f0=0,f1=nf-1;while(f0<nf&&e[f0]<th)f0++;while(f1>0&&e[f1]<th)f1--;
+ const runs=[];let st=-1;for(let f=f0;f<=f1+1;f++){const z=f<=f1&&e[f]<th;if(z&&st<0)st=f;if(!z&&st>=0){if(f-st>=15)runs.push({a:st,b:f,l:f-st});st=-1}}
+ if(runs.length<n-1)return{cuts:null,found:runs.length};
+ const pick=runs.sort((x,y)=>y.l-x.l).slice(0,n-1).sort((x,y)=>x.a-y.a);
+ return{cuts:[0,...pick.map(r=>(r.a+r.b)/2*fr/sr),buf.duration],found:runs.length}}
+function propCuts(L,dur){const w=L.map(x=>Math.max(x.length,8)+6),sum=w.reduce((a,b)=>a+b,0);let t=0;const c=[0];w.forEach(x=>{t+=dur*x/sum;c.push(t)});return c}
+function gapF(x,i,n){let q=+$('gap').value/100;if(x.length<=10)q+=.25;if(/[！？!?]$/.test(x))q+=.15;if(i===n-2)q+=.3;return q}
+function model(A=S.act,L=lines()){
+ const rt=rate(),LEAD=.3,n=L.length;let sc=[],D;
+ if(!n)return{sc:[],D:+$('dur').value,A:null};
+ if(A&&A.mode==='single'){
+  if(!A.cache||A.cache.n!==n){const r=dtct(A.buf,n);A.cache={n,cuts:r.cuts,found:r.found}}
+  const cuts=A.cache.cuts||propCuts(L,A.buf.duration);D=LEAD+A.buf.duration/rt+1;
+  sc=L.map((s,i)=>{const a=i?LEAD+cuts[i]/rt:0,b=i<n-1?LEAD+cuts[i+1]/rt:D;return{s,i,t0:a,d:b-a,au:i?null:{buf:A.buf,start:LEAD}}});
+  return{sc,D,A,note:A.cache.cuts?'字幕の切替は音声の無音区間から自動検出（'+A.cache.found+'箇所検出）':'無音の区切りが足りません（'+A.cache.found+'箇所）。文字数比例で配分しています。行の間に無音を入れて再生成してください'}}
+ if(A&&A.mode==='clips'){let t=0,miss=0;sc=L.map((s,i)=>{const b=A.bufs[i];if(!b)miss++;const dur=b?b.duration/rt:Math.max(1.2,s.length*.15/rt),d=.15+dur+(i<n-1?gapF(s,i,n):1);const o={s,i,t0:t,d,au:b?{buf:b,start:t+.15}:null};t+=d;return o});return{sc,D:t,A,miss}}
+ D=+$('dur').value;const w=L.map(x=>Math.max(x.length,8)+6),sum=w.reduce((a,b)=>a+b,0);let t=0;sc=L.map((s,i)=>{const d=D*w[i]/sum,o={s,i,t0:t,d};t+=d;return o});return{sc,D,A:null}}
+function upd(){const M=model(),n=lines().length,D=M.D,tg=+$('dur').value;let m=n?`${n}シーン / 合計 ${fmt(D)}${M.A?'（ナレーション同期）':'（音声なし・文字数比例）'}`:'台本が空です';
+ if(M.A&&D>tg+.5){const cut=Math.ceil((D-tg)/(D/n));m+=`\n⚠ 目標${tg}秒を${(D-tg).toFixed(1)}秒超過。音声は切断しません。対策：台本を約${cut}行減らす、読み上げ速度を上げる、間を短くする、または動画時間を${Math.ceil(D/15)*15}秒以上に変更`}
+ if(M.miss)m+=`\n⚠ 音声が未生成の行が${M.miss}行あります（推定時間で表示）`;
+ if(M.A&&M.A.mode==='clips'&&M.A.bufs.length!==n)m+=`\n⚠ 音声${M.A.bufs.length}件と台本${n}行が不一致です`;
+ if(M.note)m+='\n'+M.note;
+ $('info').textContent=m;$('vi').textContent=M.A?m:'';store.set('bs_cur',{th:$('th').value,script:$('script').value,ep:S.ep});$('ep').textContent='EP.'+pad3(S.ep)}
+$('split').onclick=()=>{const out=[];$('script').value.split('\n').forEach(l=>l.split(/(?<=[。！？!?])/).forEach(p=>{p=p.trim();if(!p)return;if(p.length>26){let cur='';p.split(/(?<=、)/).forEach(x=>{if((cur+x).length>26&&cur){out.push(cur);cur=''}cur+=x});if(cur)out.push(cur)}else out.push(p)}));$('script').value=out.join('\n');upd();say('シーンを分割しました')};
+async function copy(txt,msg){try{await navigator.clipboard.writeText(txt);say(msg||'コピーしました')}catch{say('コピーできません。テキストを長押しして手動でコピーしてください')}}
+$('cpScript').onclick=()=>copy($('script').value,'台本をコピーしました');
+$('cpPrompt').onclick=()=>copy(`あなたは自己啓発ショート動画の脚本家です。テーマ「${$('th').value}」で、約${model().D.toFixed(0)}秒（15〜18行）のナレーション台本を書いてください。条件：1行=1シーン、1行は最大24文字、冒頭は問いかけ、最後は短い名言で締める、顔出しなし、番号や記号を付けない、台本のみ出力。`,'依頼文をコピーしました。外部AIに貼り付け、出てきた台本を下欄へ貼ってください');
+$('gen').onclick=gen;$('script').oninput=upd;$('th').oninput=upd;$('dur').onchange=upd;$('deep').onchange=upd;
+
+/* ---------- 映像 ---------- */
+const rng=n=>{const x=Math.sin(n*127.1+311.7)*43758.5453;return x-Math.floor(x)};
+const ST=['mountain','rays','city','stars','rain'];
+function bg(sty,t,u,k){
+ const gr=g.createLinearGradient(0,0,0,1280);gr.addColorStop(0,'#161a23');gr.addColorStop(.6,'#0b0d12');gr.addColorStop(1,'#020203');g.fillStyle=gr;g.fillRect(0,0,720,1280);
+ if(sty==='mountain'){const sx=360+Math.sin(k*2.1)*130,r=g.createRadialGradient(sx,470,10,sx,470,420);r.addColorStop(0,'#c9a45c88');r.addColorStop(1,'#0000');g.fillStyle=r;g.fillRect(0,0,720,1000);g.fillStyle='#d9b878';g.beginPath();g.arc(sx,470,70+u*12,0,7);g.fill();
+  for(let l=0;l<3;l++){g.fillStyle=['#1d2229','#12161c','#08090c'][l];g.beginPath();g.moveTo(0,1280);for(let x=0;x<=750;x+=30)g.lineTo(x,760+l*120-rng(x/30+l*17+k*5)*150+Math.sin(x*.012+t*.15*(l+1))*22);g.lineTo(750,1280);g.fill()}
+  g.fillStyle='#020203';g.beginPath();g.arc(360,880,19,0,7);g.fill();g.beginPath();g.moveTo(336,905);g.lineTo(384,905);g.lineTo(396,1010);g.lineTo(374,1010);g.lineTo(372,1100);g.lineTo(350,1100);g.lineTo(346,1010);g.lineTo(324,1010);g.fill()}
+ else if(sty==='rays'){const r=g.createRadialGradient(360,-60,10,360,-60,1000);r.addColorStop(0,'#e8cf9a66');r.addColorStop(1,'#0000');g.fillStyle=r;g.fillRect(0,0,720,1280);
+  for(let j=0;j<9;j++){const a=Math.PI/2+(j-4)*.17+Math.sin(t*.25+j)*.04;g.fillStyle='rgba(232,207,154,.07)';g.beginPath();g.moveTo(360,-60);g.lineTo(360+Math.cos(a-.035)*1600,-60+Math.sin(a-.035)*1600);g.lineTo(360+Math.cos(a+.035)*1600,-60+Math.sin(a+.035)*1600);g.fill()}
+  g.fillStyle='#020203';g.fillRect(0,1060,720,220)}
+ else if(sty==='city'){g.fillStyle='#d9b87844';g.beginPath();g.arc(520,330,60,0,7);g.fill();
+  for(let x=0,b=0;x<720;x+=48,b++){const h=220+rng(b+k)*480;g.fillStyle='#0a0c10';g.fillRect(x,1280-h,46,h);for(let y=1280-h+16;y<1260;y+=26)for(let w=6;w<40;w+=14)if(rng(b*31+y+w+Math.floor(t*.5))>.72){g.fillStyle='rgba(232,207,154,.55)';g.fillRect(x+w,y,6,10)}}}
+ else if(sty==='stars'){for(let j=0;j<150;j++){const a=.3+.7*Math.abs(Math.sin(t*(.4+rng(j)*1.2)+j));g.fillStyle=`rgba(244,239,230,${a*.8})`;g.fillRect((rng(j+3)*720+t*2)%720,rng(j+99)*1000,rng(j)>.9?3:1.6,rng(j)>.9?3:1.6)}
+  const r=g.createLinearGradient(0,800,0,1280);r.addColorStop(0,'#0000');r.addColorStop(1,'#c9a45c55');g.fillStyle=r;g.fillRect(0,800,720,480);
+  g.strokeStyle=`rgba(232,207,154,${.9*(1-u)})`;g.lineWidth=3;g.beginPath();g.moveTo(80+u*500,100+u*350);g.lineTo(80+u*500-90,100+u*350-60);g.stroke()}
+ else{for(let j=0;j<8;j++){const r=g.createRadialGradient(rng(j+k)*720,300+rng(j+9)*700,0,rng(j+k)*720,300+rng(j+9)*700,90);r.addColorStop(0,'#c9a45c33');r.addColorStop(1,'#0000');g.fillStyle=r;g.fillRect(0,0,720,1280)}
+  g.strokeStyle='rgba(200,210,225,.22)';g.lineWidth=2;g.beginPath();for(let j=0;j<90;j++){const x=rng(j)*760,y=((rng(j+50)*1400+t*900*(.6+rng(j+7)))%1400)-60;g.moveTo(x,y);g.lineTo(x-12,y+60)}g.stroke()}}
+function wrap(s,max){const o=[];let l='';for(const ch of s){if(g.measureText(l+ch).width>max&&l){o.push(l);l=''}l+=ch}if(l)o.push(l);return o}
+function draw(t,D,sc){
+ const W=cv.width;g.save();g.setTransform(W/720,0,0,W/720,0,0);
+ const c=sc.find(x=>t<x.t0+x.d)||sc[sc.length-1]||{s:'',t0:0,d:D,i:0},k=c.i,lt=t-c.t0,u=Math.min(1,Math.max(0,lt/c.d));
+ const sel=$('bgs').value,sty=sel==='auto'?ST[Math.floor(k/3)%5]:sel;
+ g.save();g.translate(360,640);g.scale(1+u*.05,1+u*.05);g.translate(-360,-640);
+ if(S.photos.length){const im=S.photos[k%S.photos.length],z=Math.max(720/im.width,1280/im.height)*(1.04+u*.1);g.drawImage(im,(720-im.width*z)/2,(1280-im.height*z)/2,im.width*z,im.height*z);g.fillStyle='#000a';g.fillRect(0,0,720,1280)}else bg(sty,t,u,k);
+ g.restore();
+ for(let j=0;j<70;j++){g.fillStyle='rgba(232,207,154,.18)';g.fillRect((rng(j+9)*720+t*(j%3+1)*6)%720,(rng(j+110)*1280-t*10*(j%4+1)+1280*9)%1280,2,2)}
+ const v=g.createRadialGradient(360,620,160,360,620,760);v.addColorStop(0,'#0000');v.addColorStop(1,'#000d');g.fillStyle=v;g.fillRect(0,0,720,1280);
+ g.fillStyle=`rgba(201,164,92,${.05+.04*Math.sin(t*1.7)})`;g.fillRect(0,0,720,1280);
+ for(let j=0;j<40;j++){g.fillStyle='rgba(255,255,255,.05)';g.fillRect(Math.random()*720,Math.random()*1280,2,2)}
+ const bar=g.createLinearGradient(0,0,0,150);bar.addColorStop(0,'#000');bar.addColorStop(1,'#0000');g.fillStyle=bar;g.fillRect(0,0,720,150);g.save();g.translate(0,1280);g.scale(1,-1);g.fillRect(0,0,720,150);g.restore();
+ g.textAlign='center';g.textBaseline='middle';g.fillStyle='#c9a45c';g.font=`800 24px ${FONT}`;g.fillText('B E C O M E .',360,86);
+ const op=g.createRadialGradient(360,620,10,360,620,360);op.addColorStop(0,'#0007');op.addColorStop(1,'#0000');g.fillStyle=op;g.fillRect(0,380,720,480);
+ const fs=c.s.length>18?46:54;g.font=`800 ${fs}px ${FONT}`;g.textAlign='left';
+ const ls=wrap(c.s,590),fo=Math.max(0,Math.min(1,(c.d-lt)/.35)),last=k===sc.length-1;
+ ls.forEach((ln,j)=>{let x=(720-g.measureText(ln).width)/2;const y=620+(j-(ls.length-1)/2)*fs*1.55;[...ln].forEach((ch,q)=>{const a=Math.max(0,Math.min(1,(lt-(q+j*8)*.035)/.4))*fo;g.globalAlpha=a;g.fillStyle=last?'#e8cf9a':'#f4efe6';g.fillText(ch,x,y+(1-a)*20);x+=g.measureText(ch).width});g.globalAlpha=1});
+ if(lt<.25){g.fillStyle=`rgba(232,207,154,${.2*(1-lt/.25)})`;g.fillRect(0,0,720,1280)}
+ g.fillStyle='#3a3322';g.fillRect(90,1196,540,3);g.fillStyle='#c9a45c';g.fillRect(90,1196,540*Math.min(1,t/D),3);
+ g.restore();return k}
+
+/* ---------- 音 ---------- */
+const CH=[[55,82.41,110,130.81],[43.65,65.41,87.31,110],[65.41,98,130.81,164.81],[49,73.42,98,123.47]];
+function hit(ctx,out,at,a){const o=ctx.createOscillator(),n=ctx.createGain();o.frequency.setValueAtTime(95,at);o.frequency.exponentialRampToValueAtTime(34,at+.7);n.gain.setValueAtTime(.0001,at);n.gain.exponentialRampToValueAtTime(.9*a,at+.02);n.gain.exponentialRampToValueAtTime(.0001,at+1);o.connect(n);n.connect(out);o.start(at);o.stop(at+1.1)}
+function whoosh(ctx,out,at,a,nb){const s=ctx.createBufferSource();s.buffer=nb;const f=ctx.createBiquadFilter();f.type='bandpass';f.Q.value=1.2;f.frequency.setValueAtTime(250,at);f.frequency.exponentialRampToValueAtTime(3200,at+.4);const n=ctx.createGain();n.gain.setValueAtTime(.0001,at);n.gain.linearRampToValueAtTime(.22*a,at+.3);n.gain.linearRampToValueAtTime(.0001,at+.45);s.connect(f);f.connect(n);n.connect(out);s.start(at);s.stop(at+.5)}
+function ir(ctx){const n=Math.floor(ctx.sampleRate*1.6),b=ctx.createBuffer(2,n,ctx.sampleRate);for(let c=0;c<2;c++){const d=b.getChannelData(c);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/n,3)}return b}
+function peakOf(b){let p=0;for(let c=0;c<b.numberOfChannels;c++){const d=b.getChannelData(c);for(let i=0;i<d.length;i++){const v=Math.abs(d[i]);if(v>p)p=v}}return p}
+function master(ctx,dest,t0,D){const m=ctx.createGain();m.gain.value=.9;const cp=ctx.createDynamicsCompressor(),li=ctx.createDynamicsCompressor();li.threshold.value=-3;li.knee.value=0;li.ratio.value=20;li.attack.value=.003;li.release.value=.1;
+ const f=ctx.createGain();f.gain.setValueAtTime(0,t0);f.gain.linearRampToValueAtTime(1,t0+1);f.gain.setValueAtTime(1,t0+Math.max(1,D-1.5));f.gain.linearRampToValueAtTime(0,t0+D);
+ m.connect(cp);cp.connect(li);li.connect(f);f.connect(dest);const an=ctx.createAnalyser();an.fftSize=2048;f.connect(an);return{m,an}}
+function narr(ctx,out,t0,M){if(!M.A)return null;const rt=rate(),deep=$('deep').checked,bus=ctx.createGain();bus.gain.value=S.refNV!=null?S.refNV:+$('nv').value/100;
+ const lo=ctx.createBiquadFilter();lo.type='lowshelf';lo.frequency.value=200;lo.gain.value=deep?5:0;const bp=ctx.createBiquadFilter();bp.type='peaking';bp.frequency.value=110;bp.Q.value=.8;bp.gain.value=deep?2.5:0;bus.connect(lo);lo.connect(bp);bp.connect(out);
+ if($('rev').checked){const cvl=ctx.createConvolver();cvl.buffer=ir(ctx);const rg=ctx.createGain();rg.gain.value=+$('rvl').value/100;bp.connect(rg);rg.connect(cvl);cvl.connect(out)}
+ let a=1e9,b=0;M.sc.forEach(c=>{if(!c.au)return;const s=ctx.createBufferSource();s.buffer=c.au.buf;s.playbackRate.value=rt;const n=ctx.createGain(),p=peakOf(c.au.buf);n.gain.value=p>0?Math.min(4,.89/p):1;s.connect(n);n.connect(bus);s.start(t0+c.au.start);a=Math.min(a,c.au.start);b=Math.max(b,c.au.start+c.au.buf.duration/rt)});
+ return a<1e9?[a,b]:null}
+function build(ctx,dest,t0,M){const sc=M.sc,D=M.D,{m,an}=master(ctx,dest,t0,D);
+ const base=(+$('vol').value)/100,bb=ctx.createGain();bb.gain.setValueAtTime(base,t0);bb.connect(m);
+ const span=narr(ctx,m,t0,M);S.span=span;
+ if(span&&$('bgm').checked){bb.gain.setTargetAtTime(base*.35,t0+Math.max(0,span[0]-.25),.2);bb.gain.setTargetAtTime(base,t0+span[1]+.25,.5)}
+ if($('bgm').checked&&base>0){const g0=ctx.createGain();g0.gain.setValueAtTime(0,t0);g0.gain.linearRampToValueAtTime(.5,t0+3);g0.gain.setValueAtTime(.5,t0+Math.max(3,D-3));g0.gain.linearRampToValueAtTime(0,t0+D);const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=650;g0.connect(lp);lp.connect(bb);
+  for(let v=0;v<4;v++){const o=ctx.createOscillator();o.type='triangle';o.detune.value=(v-1.5)*5;o.frequency.setValueAtTime(CH[0][v],t0);for(let n=0;n*7.5<D;n++)o.frequency.setTargetAtTime(CH[n%4][v],t0+n*7.5,.5);o.connect(g0);o.start(t0);o.stop(t0+D+.5)}
+  for(let tt=t0+D*.15;tt<t0+D-4;tt+=1.6)hit(ctx,bb,tt,.8)}
+ if($('sfx').checked){const sx=ctx.createGain();sx.gain.value=span?.3:.5;sx.connect(m);const nb=ctx.createBuffer(1,ctx.sampleRate,ctx.sampleRate),d=nb.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+  sc.forEach((c,i)=>{const e=i===0||i===sc.length-1;hit(ctx,sx,t0+c.t0,e?1:.5);if(i>0)whoosh(ctx,sx,Math.max(t0,t0+c.t0-.35),e?1:.5,nb)})}
+ return an}
+
+/* ---------- 再生・録画 ---------- */
+function cleanup(){cancelAnimationFrame(S.raf);clearTimeout(S.tm);S.an=null;if(S.ac){S.ac.close().catch(()=>{});S.ac=null}if(S.wl){S.wl.release().catch(()=>{});S.wl=null}if('speechSynthesis'in window)speechSynthesis.cancel();S.mode='';$('bExp').disabled=false;$('bPlay').disabled=false}
+function stopAll(){cancelAnimationFrame(S.raf);clearTimeout(S.tm);if(S.mr&&S.mr.state==='recording'){S.partial=true;S.mr.stop()}else cleanup()}
+const OFF=.4;
+async function run(mode,M0,tag){
+ stopAll();const M=M0||model(),sc=M.sc;S.tag=tag||'';if(!sc.length)return say('台本を入力してください');
+ const rec=mode==='rec',D=M.D;
+ const refuse=m=>{LOG('書き出し拒否: '+m);say(m);S.fin&&S.fin({ok:false,msg:m})};
+ if(rec&&!M.A)return refuse('ナレーション音声がありません。BGMのみの動画は書き出しません。声タブで音声を生成または取り込み、「動画に適用」を押してください');
+ if(rec){const bad=chkM(M);if(bad)return refuse('書き出しを中止しました。'+bad)}
+ if(rec&&M.miss)return refuse(`音声が未生成の行が${M.miss}行あります。全行を生成または取り込みしてから書き出してください`);
+ try{await document.fonts.load(`800 48px "Shippori Mincho B1"`,$('script').value)}catch{}
+ cv.width=rec?+$('res').value:540;cv.height=Math.round(cv.width*16/9);
+ try{
+  const ctx=new AC();await ctx.resume();LOG((rec?'書き出し':'再生')+' AudioContext='+ctx.state+' sr='+ctx.sampleRate);if(ctx.state!=='running')throw new Error('AudioContextが起動しません（state='+ctx.state+'）');S.ac=ctx;S.mode=mode;S.last=-1;S.partial=false;S.lastM=M;
+  const dest=rec?ctx.createMediaStreamDestination():ctx.destination,t0=ctx.currentTime+OFF;S.an=build(ctx,dest,t0,M);S.pk=0;S.live=0;S.fr=0;S.fb=new Float32Array(S.an.fftSize);
+  if(rec){if(!cv.captureStream||!window.MediaRecorder)throw Error('このブラウザは動画録画に非対応です。Android Chromeで開いてください');
+   const stream=cv.captureStream(+$('res').value===1080?30:24);dest.stream.getAudioTracks().forEach(x=>stream.addTrack(x));
+   LOG('録画ストリーム 映像'+stream.getVideoTracks().length+' 音声'+stream.getAudioTracks().length);if(!stream.getAudioTracks().length)throw new Error('音声トラックを録画ストリームに追加できませんでした（MediaStream）。この端末・ブラウザでは音声付き録画ができません');
+   const mime=['video/mp4;codecs=avc1.42001f,mp4a.40.2','video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'].find(x=>MediaRecorder.isTypeSupported(x)),ch=[];
+   const mr=new MediaRecorder(stream,{...(mime?{mimeType:mime}:{}),videoBitsPerSecond:+$('res').value===1080?6e6:3e6,audioBitsPerSecond:128000});
+   mr.ondataavailable=e=>e.data.size&&ch.push(e.data);mr.onstop=()=>{const ty=mr.mimeType;cleanup();finish(ch,ty)};mr.onerror=e=>{say('録画エラー: '+(e.error&&e.error.message||'不明'));cleanup();S.fin&&S.fin({ok:false,msg:'録画エラー'})};S.mr=mr;mr.start(1000);
+   $('bExp').disabled=true;$('bPlay').disabled=true;say('書き出し中。画面を消さずにお待ちください。')}
+  else say('プレビュー再生中');
+  try{S.wl=await navigator.wakeLock.request('screen')}catch{}
+  const loop=()=>{const t=ctx.currentTime-t0,i=draw(Math.max(0,t),D,sc);$('clock').textContent=fmt(Math.max(0,t))+' / '+fmt(D);$('pg').value=Math.min(1,Math.max(0,t/D));
+   if(S.an&&t>0){S.an.getFloatTimeDomainData(S.fb);let p=0;for(let k=0;k<S.fb.length;k++){const v=Math.abs(S.fb[k]);if(v>p)p=v}if(p>S.pk)S.pk=p;if(p>.01)S.live++;S.fr++}
+   if(mode==='prev'&&$('tts').checked&&!M.A&&i!==S.last&&'speechSynthesis'in window){S.last=i;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(sc[i].s);u.lang='ja-JP';u.pitch=.6;u.rate=.9;const vo=speechSynthesis.getVoices().find(v=>v.lang==='ja-JP'&&/male|男|keita|ichiro/i.test(v.name))||speechSynthesis.getVoices().find(v=>v.lang==='ja-JP');if(vo)u.voice=vo;speechSynthesis.speak(u)}
+   if(t>=D){if(rec&&S.mr.state==='recording')S.mr.stop();else{cleanup();say('プレビュー終了')}return}S.raf=requestAnimationFrame(loop)};
+  loop();
+ }catch(e){cleanup();say('エラー: '+e.message);S.fin&&S.fin({ok:false,msg:e.message})}}
+function envOf(x,sr,t0,t1,hop=.05){const o=[],h=Math.floor(sr*hop);for(let a=Math.floor(t0*sr);a>=0&&a+h<=Math.floor(t1*sr)&&a+h<=x.length;a+=h){let q=0;for(let j=a;j<a+h;j++)q+=x[j]*x[j];o.push(Math.sqrt(q/h))}return o}
+function pcorr(a,b){const n=Math.min(a.length,b.length);if(n<8)return 0;let ma=0,mb=0;for(let i=0;i<n;i++){ma+=a[i];mb+=b[i]}ma/=n;mb/=n;let sab=0,saa=0,sbb=0;for(let i=0;i<n;i++){const x=a[i]-ma,y=b[i]-mb;sab+=x*y;saa+=x*x;sbb+=y*y}const d=Math.sqrt(saa*sbb);return d>1e-12?sab/d:0}
+function chkM(M){if(!M.A)return'ナレーション音声がありません';const L=lines(),list=M.A.mode==='single'?[[M.A.buf,L.join('')]]:M.A.bufs.map((b,i)=>[b,L[i]||'あ']);for(let i=0;i<list.length;i++){const[b,t]=list[i];if(!b)return`${i+1}行目の音声がありません`;const v=vcheck(b,t);if(!v.ok)return`${M.A.mode==='single'?'取り込み音声':(i+1)+'行目の音声'}が不正です：${v.why}`}if(+$('nv').value<10)return'ナレーション音量が10%未満です。音量を上げてください';return null}
+async function refMix(M,withN){const sr=16000,off=new OfflineAudioContext(1,Math.ceil(sr*M.D),sr);S.refNV=1;try{build(off,off.destination,0,withN?M:{...M,A:null});return(await off.startRendering()).getChannelData(0)}finally{S.refNV=null}}
+function bestC(d,sr,ref,a,b){const r=envOf(ref,16000,a,b);let best=-1;for(let l=-8;l<=8;l++){const c=pcorr(envOf(d,sr,OFF+a+l*.05,OFF+b+l*.05),r);if(c>best)best=c}return best}
+async function verify(blob,M){const el=$('vf'),meter=S.fr?`録画中の出力レベル: 最大 ${db(S.pk)} dB / 発音フレーム率 ${Math.round(100*S.live/S.fr)}%`:'';el.textContent=meter+'\n書き出しファイルの音声を検査中…';
+ try{const c=new AC(),b=await c.decodeAudioData(await blob.arrayBuffer());c.close();const d=b.getChannelData(0),sr=b.sampleRate;let mx=0;for(let i=0;i<d.length;i++){const a=Math.abs(d[i]);if(a>mx)mx=a}
+  let q=0,n=0;if(M&&M.A)M.sc.forEach(c2=>{if(!c2.au)return;const a=Math.floor((OFF+c2.au.start)*sr),e=Math.min(d.length,Math.floor((OFF+c2.au.start+c2.au.buf.duration/rate())*sr));for(let j=a;j<e;j++){q+=d[j]*d[j];n++}});
+  const nr=n?Math.sqrt(q/n):0;let cF=0,cB=0,a0=1e9,b0=0;if(M&&M.A){M.sc.forEach(c2=>{if(c2.au){a0=Math.min(a0,c2.au.start);b0=Math.max(b0,c2.au.start+c2.au.buf.duration/rate())}});const rf=await refMix(M,true),rb=await refMix(M,false);cF=Math.max(0,bestC(d,sr,rf,a0,b0));cB=Math.max(0,bestC(d,sr,rb,a0,b0))}
+  const ok=!!(M&&M.A)&&n>0&&nr>=NMIN&&cF>=.5&&cF-cB>=.1,txt=`${meter}\n検査: 書き出しファイル ${b.duration.toFixed(1)}秒 / 全体最大 ${db(mx)} dB / ナレーション区間RMS ${db(nr)} dB\n照合: 「ナレーション入りの想定音声」との一致 ${cF.toFixed(2)} / 「BGMのみの想定音声」との一致 ${cB.toFixed(2)}（合格: 前者が0.50以上かつ後者より0.10以上高い）`;
+  el.textContent=txt+(ok?'\n判定: 合格。ファイルの音声がナレーション入りの想定と一致しました（端末内の自動計測。最終確認は再生して耳で行ってください）':'\n判定: ✖ 不合格。ファイルの音声がBGMのみの想定に近く、動画にナレーションが入っていません');LOG(txt.replace(/\n/g,' / ')+' 合格='+ok);return{ok,msg:el.textContent}
+ }catch(e){const m='書き出し動画の音声を自動検査できませんでした: '+e.message+'。合格扱いにはしません。再生して耳で確認してください';el.textContent=meter+'\n'+m;LOG(m);return{ok:false,unverified:true,msg:m}}}
+function finish(ch,mime){if(!ch.length){say('動画を生成できませんでした');S.fin&&S.fin({ok:false,msg:'動画を生成できませんでした'});return}
+ const type=(mime||ch[0].type||'video/webm').split(';')[0],ext=type.includes('mp4')?'mp4':'webm';
+ if(S.url)URL.revokeObjectURL(S.url);S.blob=new Blob(ch,{type});S.url=URL.createObjectURL(S.blob);S.name=`${S.tag?'TEST':'BECOME'}-${pad3(S.ep)}.${ext}`;
+ $('dl').href=S.url;$('dl').download=S.name;$('dl').hidden=true;$('rv').src=S.url;$('rv').hidden=false;$('share').hidden=true;
+ $('fmt').textContent=ext==='mp4'?'形式: MP4。そのままTikTokへ投稿できます。':'形式: WebM。この端末はMP4録画に非対応です。上の「WebM形式だった場合」の手順で変換してください。';
+ say('書き出し完了。音声を検査しています…');const part=S.partial;S.partial=false;
+ verify(S.blob,S.lastM).then(r=>{if(r.ok){$('dl').textContent='完成動画を保存（'+S.name+'）';$('dl').hidden=false;$('share').hidden=!(navigator.canShare&&navigator.share);say(part?'途中停止した動画ですがナレーションは検出されました。再書き出しを推奨します':'完成。ナレーションを検出しました。再生して確認してから保存してください')}
+  else if(r.unverified){$('dl').textContent='保存（音声は未検査・自己責任で確認）';$('dl').hidden=false;say('⚠ 音声の自動検査ができませんでした。再生して声が入っているか確認してください')}
+  else say('✖ 不合格：動画にナレーションが入っていません。保存はできません。下の検査結果とログを確認してください');S.fin&&S.fin(r)})}
+$('bPlay').onclick=()=>run('prev');$('bStop').onclick=()=>{stopAll();say('停止しました')};$('bExp').onclick=()=>run('rec');
+$('share').onclick=async()=>{try{const f=new File([S.blob],S.name,{type:S.blob.type});if(navigator.canShare({files:[f]}))await navigator.share({files:[f],title:'BECOME.'});else say('この端末では共有できません。保存リンクを使ってください')}catch(e){say('共有を中止しました')}};
+
+/* ---------- 取り込み ---------- */
+async function dec(ab){const c=new(window.AudioContext||window.webkitAudioContext)();try{return await c.decodeAudioData(ab)}finally{c.close()}}
+async function setAudio(ab,name){try{const b=await dec(ab);S.cand=S.act={mode:'single',buf:b,src:name};$('an').textContent=`${name}（${fmt(b.duration)}）を取り込み、動画に適用しました`;upd();say('取り込み完了。字幕の切替は音声の無音区間から自動同期します')}catch(e){say('音声を読み込めません: '+e.message)}}
+$('aud').onchange=async e=>{const f=e.target.files[0];if(f)await setAudio(await f.arrayBuffer(),f.name)};
+$('audm').onchange=async e=>{const fs=[...e.target.files].sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true}));if(!fs.length)return;try{const bufs=[];for(const f of fs)bufs.push(await dec(await f.arrayBuffer()));S.cand=S.act={mode:'clips',bufs,src:'files'};$('an').textContent=`${fs.length}ファイルを取り込み、行順に適用しました（${fs.map(f=>f.name).slice(0,3).join('、')}…）`;upd();say('取り込み完了。各ファイルの実際の長さから字幕時間を決定しました')}catch(x){say('音声を読み込めません: '+x.message)}};
+$('clr').onclick=()=>{S.cand=S.act=null;$('aud').value='';$('audm').value='';$('an').textContent='音声なし';$('vs').textContent='音声を外しました';upd()};
+$('mic').onclick=async()=>{if(S.mic&&S.mic.state==='recording'){S.mic.stop();return}
+ try{const st=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}}),ch=[],r=new MediaRecorder(st);S.mic=r;r.ondataavailable=e=>ch.push(e.data);
+  r.onstop=async()=>{st.getTracks().forEach(t=>t.stop());$('mic').textContent='● マイクで録音';await setAudio(await new Blob(ch,{type:r.mimeType}).arrayBuffer(),'録音')};r.start();$('mic').textContent='■ 録音を停止';say('録音中。行の間にはっきり間を空けて読み上げてください')}catch(e){say('マイクを使えません: '+e.message)}};
+$('imgs').onchange=async e=>{try{S.photos=await Promise.all([...e.target.files].map(async f=>{const u=URL.createObjectURL(f),im=new Image();try{im.src=u;await im.decode();return im}finally{URL.revokeObjectURL(u)}}));say(S.photos.length+'枚の背景写真を取り込みました')}catch(x){say('画像読み込み失敗: '+x.message)}};
+
+/* ---------- SRT ---------- */
+const stamp=t=>{const m=Math.round(t*1000);return[Math.floor(m/36e5),Math.floor(m/6e4)%60,Math.floor(m/1e3)%60].map(x=>String(x).padStart(2,'0')).join(':')+','+String(m%1000).padStart(3,'0')};
+$('srt').onclick=()=>{const sc=model().sc;if(!sc.length)return;const u=URL.createObjectURL(new Blob([sc.map((c,i)=>`${i+1}\n${stamp(c.t0)} --> ${stamp(c.t0+c.d)}\n${c.s}\n`).join('\n')],{type:'text/plain;charset=utf-8'})),a=document.createElement('a');a.href=u;a.download=`BECOME-${pad3(S.ep)}.srt`;a.click();setTimeout(()=>URL.revokeObjectURL(u),3e4)};
+
+/* ---------- 投稿文 ---------- */
+const KW=[['朝','#朝活'],['習慣|続け','#習慣化'],['本|読','#読書'],['挑戦','#挑戦'],['仕事','#仕事術'],['自由','#自由'],['お金|稼','#お金の話'],['自信','#自信をつける'],['未来','#未来の自分'],['行動','#行動力'],['理想','#理想の自分']];
+$('gp').onclick=()=>{const L=lines();if(!L.length)return say('台本を入力してください');const all=L.join(''),t=$('th').value.trim();
+ $('cap').value=`${L[0]}\n\n${t}\n${L[L.length-1]}\n\n${rnd(['保存して、迷った日に見返して。','今日の一歩を、コメントで宣言して。','同じ気持ちの人に送ってあげて。','フォローして、明日も続きを見に来て。'])}`;
+ const tg=['#自己啓発','#人生を変える','#マインドセット','#モチベーション','#名言'];KW.forEach(([r,h])=>{if(new RegExp(r).test(all))tg.push(h)});tg.push('#fyp');$('tags').value=[...new Set(tg)].slice(0,10).join(' ');say('生成しました。件数や内容は最終的にご自身で調整してください')};
+$('cc').onclick=()=>copy($('cap').value);$('ct').onclick=()=>copy($('tags').value);$('ca').onclick=()=>copy($('cap').value+'\n\n'+$('tags').value,'投稿文とタグをコピーしました');
+
+/* ---------- 履歴・再利用 ---------- */
+function hist(){const h=store.get('bs_hist',[]);$('hl').innerHTML=h.length?h.map((x,i)=>`<li><b>EP.${pad3(x.ep)} ${esc(x.th)}</b><small>${esc(x.d)} / ${x.script.split('\n').filter(Boolean).length}シーン</small><button data-a="load" data-i="${i}">開く</button><button data-a="next" data-i="${i}">次回作に再利用</button><button data-a="del" data-i="${i}">削除</button></li>`).join(''):'<li>まだ保存がありません</li>'}
+$('save').onclick=()=>{const h=store.get('bs_hist',[]);h.unshift({ep:S.ep,th:$('th').value,script:$('script').value,d:new Date().toLocaleString('ja-JP')});store.set('bs_hist',h.slice(0,30));hist();say('保存しました')};
+$('hl').onclick=e=>{const b=e.target.closest('button');if(!b)return;const h=store.get('bs_hist',[]),i=+b.dataset.i,x=h[i];if(!x)return;
+ if(b.dataset.a==='del'){h.splice(i,1);store.set('bs_hist',h);hist()}
+ else{$('th').value=x.th;let L=x.script.split('\n').filter(Boolean);
+  if(b.dataset.a==='next'){S.ep=Math.max(...h.map(v=>v.ep))+1;L[0]=rnd(P.hook.filter(v=>v!==L[0]));L[L.length-1]=rnd(P.close.filter(v=>v!==L[L.length-1]));$('bgs').value=rnd(ST);say(`EP.${pad3(S.ep)}として複製しました。冒頭と結びを差し替え、背景も変更済みです。中盤を書き換えて仕上げてください`)}else{S.ep=x.ep;say('台本を開きました')}
+  $('script').value=L.join('\n');upd();tab(0)}};
+
+/* ---------- AI NARRATION ---------- */
+const tmo=ms=>new Promise((_,r)=>setTimeout(()=>{const e=new Error('timeout');e.name='TimeoutError';r(e)},ms));
+const KJ='https://cdn.jsdelivr.net/npm/kokoro-js-jp@0.2.0/dist/kokoro-jp.web.js';
+function why(e){const m=String(e&&e.message||e),gpu=navigator.gpu?'WebGPUあり':'WebGPUなし（WASM）';
+ if(e&&e.bad)return'音声は生成されましたが、中身が使えません：'+m+'。Kokoroがこの端末で正しく動作していません（モデルのメモリ不足や精度の問題の可能性。未特定）。画面下の実行ログを確認してください。';
+ if(!('DecompressionStream'in window))return'非対応ブラウザ：日本語辞書の展開に必要なDecompressionStreamがありません。最新のChromeで開いてください。';
+ if(e instanceof RangeError||/memory|alloc|OOM/i.test(m))return'メモリ不足：モデルと日本語辞書で約100MB超を使います。他のアプリやタブを閉じて再読込してください。';
+ if(e&&e.name==='TimeoutError')return'読み込みタイムアウト：回線が遅いか、通信が遮断されています。';
+ return`外部通信の制限またはモデル読み込み失敗：Kokoroはjsdelivrとhuggingfaceからモデルと辞書（約24MB）を取得しますが、このArtifactの公開ページは外部通信を制限しているため遮断された可能性が高いです（${gpu}、詳細：${m.slice(0,100)}）。`}
+async function loadK(){if(S.tts)return S.tts;if(!('DecompressionStream'in window))throw new Error('DecompressionStream');
+ $('vs').textContent='Kokoroを読み込み中…（初回はモデルと辞書のダウンロードで数分かかる場合があります）';
+ const mod=await Promise.race([import(KJ),tmo(60000)]);S.tts=await Promise.race([mod.KokoroJP.load(),tmo(600000)]);return S.tts}
+/* ---------- v2.2 audio guard ---------- */
+const AC=window.AudioContext||window.webkitAudioContext,LG=[];
+function LOG(m){LG.push(new Date().toLocaleTimeString('ja-JP')+' '+m);if(LG.length>80)LG.shift();const e=$('lg');if(e)e.textContent=LG.join('\n')}
+const db=x=>(20*Math.log10(x+1e-9)).toFixed(1),NMIN=.02;
+function bstats(b){let nan=0,pk=0,q=0,n=0;for(let c=0;c<b.numberOfChannels;c++){const d=b.getChannelData(c);for(let i=0;i<d.length;i++){const v=d[i];if(v!==v){nan++;continue}const a=Math.abs(v);if(a>pk)pk=a;q+=v*v;n++}}return{dur:b.duration,sr:b.sampleRate,nan,pk,rms:Math.sqrt(q/Math.max(1,n))}}
+const sfmt=t=>`${t.dur.toFixed(2)}秒 ${t.sr}Hz ピーク${db(t.pk)}dB RMS${db(t.rms)}dB NaN${t.nan}`;
+function vcheck(b,text){const t=bstats(b),min=Math.max(.5,text.replace(/[。、！？\s]/g,'').length*.07);let w=null;
+ if(t.nan)w='数値が壊れています（NaN '+t.nan+'個）';else if(t.pk<.02)w='無音です（ピーク'+db(t.pk)+'dB）';else if(t.rms<.003)w='ほぼ無音です（RMS'+db(t.rms)+'dB）';else if(t.dur<min)w=`短すぎます（${t.dur.toFixed(2)}秒、目安${min.toFixed(1)}秒以上）`;return{ok:!w,why:w,s:t}}
+function trimBuf(b){const d=b.getChannelData(0),th=.01;let a=0,e=d.length-1;while(a<e&&Math.abs(d[a])<th)a++;while(e>a&&Math.abs(d[e])<th)e--;a=Math.max(0,a-Math.floor(b.sampleRate*.03));e=Math.min(d.length-1,e+Math.floor(b.sampleRate*.08));const n=e-a+1;if(n<=0||n>=d.length-1)return b;
+ const o=new AudioBuffer({length:n,sampleRate:b.sampleRate,numberOfChannels:1}),x=new Float32Array(d.subarray(a,e+1)),f=Math.floor(b.sampleRate*.01);for(let i=0;i<f&&i<n;i++){x[i]*=i/f;x[n-1-i]*=i/f}o.copyToChannel(x,0);return o}
+async function speakOne(tts,text,voice){const a=await tts.speak(text,voice);LOG('speak完了 型='+(a&&a.constructor&&a.constructor.name)+' キー='+Object.keys(a||{}).join(',').slice(0,80));let b=null,e1='';
+ try{if(a&&a.toBlob){const bl=a.toBlob();LOG('toBlob '+bl.size+'バイト '+bl.type);b=await dec(await bl.arrayBuffer())}}catch(e){e1=e.message;LOG('toBlob変換失敗: '+e.message)}
+ let v=b?vcheck(b,text):null;if(b)LOG('WAV経由: '+sfmt(v.s)+(v.ok?'':' → 不合格: '+v.why));
+ if((!v||!v.ok)&&a&&a.audio&&a.audio.length){try{const sr=a.sampling_rate||24000,ab=new AudioBuffer({length:a.audio.length,sampleRate:sr,numberOfChannels:1});ab.copyToChannel(Float32Array.from(a.audio),0);const v2=vcheck(ab,text);LOG('RawAudio直接: '+sfmt(v2.s)+(v2.ok?'':' → 不合格: '+v2.why));if(v2.ok||!v){b=ab;v=v2}}catch(e){LOG('RawAudio変換失敗: '+e.message)}}
+ if(!b)throw new Error('音声データを取得できません（'+e1+'）');if(!v.ok)throw Object.assign(new Error(v.why),{bad:1});
+ const tr=trimBuf(b);return vcheck(tr,text).ok?tr:b}
+async function ensureVoice(){const vo=$('vo').value;if(S.vt===vo&&S.tclip)return;const tts=await loadK();LOG('テスト文を生成: '+TL);S.tclip=await speakOne(tts,TL,vo);S.vt=vo;LOG('テスト文OK: '+sfmt(bstats(S.tclip)))}
+async function genAll(){const L=lines();if(!L.length)throw new Error('台本が空です');try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch{}
+ $('vs').textContent='まずテスト文で音声を確認しています…';await ensureVoice();const tts=await loadK(),key=L.join('|')+$('vo').value;if(!S.part||S.part.key!==key)S.part={key,bufs:[]};const bufs=S.part.bufs,t1=Date.now();
+ for(let i=0;i<L.length;i++){if(bufs[i])continue;$('vs').textContent=`生成中 ${i+1}/${L.length}行目（${Math.round((Date.now()-t1)/1000)}秒経過。失敗しても続きから再開できます）`;$('pgv').value=i/L.length;
+  let last;for(let k=0;k<2&&!bufs[i];k++){try{bufs[i]=await speakOne(tts,L[i],$('vo').value);LOG(`${i+1}行目OK`)}catch(e){last=e;LOG(`${i+1}行目失敗(${k+1}回目): `+e.message)}}if(!bufs[i])throw last}
+ $('pgv').value=1;S.cand={mode:'clips',bufs:bufs.slice(),src:'kokoro'};$('vs').textContent=`生成完了：${L.length}行。全行の音声データを検査済み（無音・破損なし）。まず「音声試聴」で聞こえるか確認し、「動画に適用」を押してください`}
+$('genv').onclick=async()=>{if($('eng').value==='import'){$('fb').open=true;return say('外部音声の取り込み方式です。下の欄からWAVまたはMP3を選んでください')}
+ stopAll();$('genv').disabled=true;try{await genAll();say('音声を生成しました')}catch(e){LOG('失敗: '+String(e&&e.stack||e).slice(0,400));const r=why(e);if(!e.bad)S.tts=null;$('eng').value='import';$('fb').open=true;$('vs').textContent='生成に失敗しました（生成済みの行は保持。再実行で続きから再開）。\n原因：'+r+'\n代替：下の手順で外部TTSのWAV・MP3を取り込めます';say('Kokoro生成に失敗。原因と代替手段を声タブに表示しました')}finally{$('genv').disabled=false}};
+$('apply').onclick=()=>{if(!S.cand)return say('適用する音声がありません。先に生成または取り込みを行ってください');S.act=S.cand;upd();const M=model();$('vs').textContent=`動画に適用しました。動画時間 ${fmt(M.D)}`;say('適用済み。映像プレビューで同期を確認してください')};
+async function listen(M,label){stopAll();try{const ctx=new AC();await ctx.resume();LOG('試聴 AudioContext='+ctx.state+' sr='+ctx.sampleRate+' 音量'+$('nv').value+'%');if(ctx.state!=='running')throw new Error('AudioContextが起動しません（state='+ctx.state+'）。画面をタップして再実行してください');S.ac=ctx;
+ const t0=ctx.currentTime+.2,{m,an}=master(ctx,ctx.destination,t0,M.D),sp=narr(ctx,m,t0,M);if(!sp)throw new Error('再生できる音声がありません');const fb=new Float32Array(an.fftSize);let pk=0;
+ const poll=()=>{an.getFloatTimeDomainData(fb);let p=0;for(let k=0;k<fb.length;k++){const a=Math.abs(fb[k]);if(a>p)p=a}if(p>pk)pk=p;$('vs').textContent=`試聴中（${label}）出力 ${db(p)} dB / 最大 ${db(pk)} dB / ナレーション音量 ${$('nv').value}%`;S.raf=requestAnimationFrame(poll)};poll();say('試聴中');
+ S.tm=setTimeout(()=>{cancelAnimationFrame(S.raf);const ok=pk>.02;LOG('試聴終了 最大'+db(pk)+'dB');cleanup();$('vs').textContent=ok?`試聴終了。アプリの出力は最大 ${db(pk)} dB でした。それでも聞こえない場合は、端末のメディア音量・マナーモード・Bluetooth接続を確認してください`:`✖ 試聴の出力が無音でした（最大 ${db(pk)} dB）。音声データまたは音量設定に問題があります`;say(ok?'試聴終了':'試聴の出力が無音です')},M.D*1000+400)}catch(e){cleanup();LOG('試聴エラー '+e.message);$('vs').textContent='✖ 試聴エラー: '+e.message;say('試聴エラー')}}
+$('pvv').onclick=async()=>{const A=S.cand||S.act;if(!A)return say('試聴する音声がありません。先に生成または取り込みを行ってください');await listen(model(A),A===S.cand?'生成音声':'適用音声')};
+function wavBlob(b){const n=b.length,ch=b.numberOfChannels,sr=b.sampleRate,v=new DataView(new ArrayBuffer(44+n*ch*2)),w=(o,t)=>[...t].forEach((c,i)=>v.setUint8(o+i,c.charCodeAt(0)));
+ w(0,'RIFF');v.setUint32(4,36+n*ch*2,true);w(8,'WAVEfmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,ch,true);v.setUint32(24,sr,true);v.setUint32(28,sr*ch*2,true);v.setUint16(32,ch*2,true);v.setUint16(34,16,true);w(36,'data');v.setUint32(40,n*ch*2,true);
+ let o=44;const d=[];for(let c=0;c<ch;c++)d.push(b.getChannelData(c));for(let i=0;i<n;i++)for(let c=0;c<ch;c++){const x=Math.max(-1,Math.min(1,d[c][i]));v.setInt16(o,x<0?x*32768:x*32767,true);o+=2}return new Blob([v],{type:'audio/wav'})}
+$('wav').onclick=async()=>{const A=S.cand||S.act;if(!A)return say('保存する音声がありません');try{const M=model(A),sr=44100,off=new OfflineAudioContext(2,Math.ceil(sr*M.D),sr),{m}=master(off,off.destination,0,M.D);narr(off,m,0,M);const r=await off.startRendering(),u=URL.createObjectURL(wavBlob(r)),a=document.createElement('a');a.href=u;a.download=`BECOME-${pad3(S.ep)}-narration.wav`;a.click();setTimeout(()=>URL.revokeObjectURL(u),3e4);say('ナレーションWAV（加工・間を反映）を保存しました')}catch(e){say('WAV生成失敗: '+e.message)}};
+[['spd','spv',v=>(v/100).toFixed(2)],['nv','nvv',v=>v],['gap','gpv',v=>(v/100).toFixed(1)],['vol','vlv',v=>v],['rvl','rvv',v=>v]].forEach(([i,o,f])=>{$(i).oninput=()=>{$(o).textContent=f(+$(i).value);upd()}});
+
+
+/* ---------- v2.1: 自動生成・テスト・診断 ---------- */
+const AS=['台本','AIナレーション','字幕同期','映像・BGM・書き出し'];
+const as=(i,c,t)=>{$('as'+i).textContent=c+' '+AS[i]+(t?'：'+t:'')};
+async function recWait(M,tag){const p=new Promise(r=>S.fin=r);run('rec',M,tag);try{return await Promise.race([p,tmo(M.D*1000+90000)])}finally{S.fin=null}}
+async function auto(silent){if(S.busy)return;S.busy=true;$('auto').disabled=true;$('retry').hidden=true;let cur=0;
+ try{if(!silent&&!S.keep)AS.forEach((_,i)=>as(i,'○'));
+  as(0,'▶');if($('autos').checked&&!S.keep){gen();S.keep=true}if(!lines().length)throw Object.assign(new Error('台本が空です。テーマを入力してください'),{ok:1});as(0,'✔',lines().length+'行');
+  cur=1;as(1,'▶');
+  if($('eng').value==='kokoro'){await genAll();S.act=S.cand;as(1,'✔','生成・適用完了')}
+  else if(S.act)as(1,'✔','取り込み音声を使用')
+  else throw Object.assign(new Error('エンジンが「取り込み」で、適用済みの音声がありません。声タブで音声を取り込むか、下のボタンを使ってください'),{ok:1});
+  cur=2;as(2,'▶');upd();const M=model(),tg=+$('dur').value;if(!M.A)throw Object.assign(new Error('ナレーション音声がありません。BGMのみの動画は作りません'),{ok:1});if(M.A&&M.A.mode==='clips'&&M.miss)throw Object.assign(new Error('未生成の行があります'),{ok:1});as(2,'✔',`合計 ${fmt(M.D)}`+(M.D>tg+.5?`（目標${tg}秒超過。切断せず続行）`:''));
+  cur=3;as(3,'▶','書き出し中。実時間で進みます。画面を消さないでください');const r=await recWait(M);if(!r||!r.ok)throw Object.assign(new Error(r?r.msg:'書き出し失敗'),{ok:1});
+  as(3,'✔','完成');$('gp').onclick();S.keep=false;say('完成しました。書出タブで保存してください');tab(3)
+ }catch(e){as(cur,'✖',e.ok?e.message:why(e));$('retry').hidden=false;say('自動生成が途中で止まりました。原因は台本タブに表示しています')}
+ finally{S.busy=false;$('auto').disabled=false}}
+$('auto').onclick=()=>auto();$('retry').onclick=()=>{$('eng').value='kokoro';auto()};
+const TL='理想を語るな。理想になれ。';
+async function t1(){if($('eng').value!=='kokoro')return{ok:false,msg:'－ 音声生成：エンジンが「取り込み」方式です。取り込んだ音声は「音声試聴」で確認し、書き出し後の自動検査で合否を判定します'};
+ try{const t0=performance.now();S.vt=null;S.tclip=null;await ensureVoice();return{ok:true,msg:`✔ 音声生成「${TL}」：${sfmt(bstats(S.tclip))}（${((performance.now()-t0)/1000).toFixed(1)}秒）。データは無音・破損なし。次に「生成音声を試聴」で実際に聞こえるか確認してください`}}
+ catch(e){LOG('t1失敗: '+String(e&&e.stack||e).slice(0,300));if(!e.bad)S.tts=null;return{ok:false,msg:'✖ 音声生成：'+why(e)}}}
+function t2(){const cl=S.tclip;if(!cl)return{ok:false,msg:'✖ 字幕同期：テスト音声がありません。先に「1 音声生成」を成功させてください'};const M=model({mode:'clips',bufs:[cl]},[TL]),rt=rate(),er=[];let sum=0;
+ M.sc.forEach((c,i)=>{if(Math.abs(c.t0-sum)>1e-6)er.push('開始時刻不整合'+i);sum+=c.d;if(!c.au||c.au.start<c.t0||c.au.start+c.au.buf.duration/rt>c.t0+c.d+1e-6)er.push('音声がシーン外'+i)});if(Math.abs(sum-M.D)>1e-6)er.push('合計不一致');
+ cv.width=270;cv.height=480;draw(M.sc[0].t0+1.2,M.D,M.sc);const px=g.getImageData(0,0,270,480).data;let lit=0;for(let i=0;i<px.length;i+=388)if(px[i]+px[i+1]+px[i+2]>300)lit++;cv.width=540;cv.height=960;{const m=model();draw(0,m.D,m.sc)}
+ const ok=!er.length&&lit>0;return{ok,msg:`${ok?'✔':'✖'} 字幕同期：合計 ${M.D.toFixed(2)}秒（実音声の長さから計算）、字幕の描画${lit>0?'を確認':'を検出できず'}${er.length?'、'+er.join('、'):''}。聴感上のずれは別途確認してください`}}
+async function t3(){const cl=S.tclip;if(!cl)return{ok:false,msg:'✖ 動画書き出し：テスト音声がありません。先に「1 音声生成」を成功させてください（BGMのみの動画は作りません）'};const M=model({mode:'clips',bufs:[cl]},[TL]);let r;try{r=await recWait(M,'test')}catch(e){r={ok:false,msg:'タイムアウト'}}
+ return{ok:!!(r&&r.ok),msg:`${r&&r.ok?'✔':'✖'} 動画書き出し：${M.D.toFixed(1)}秒、${S.blob?(S.blob.size/1024).toFixed(0):0}KB。`+(r?r.msg.replace(/\n/g,' '):'')+(r&&r.ok?' 次に「書き出し動画を再生」で実際に声が聞こえるか確認してください':'')}}
+$('tl').onclick=()=>{if(!S.tclip)return say('テスト音声がありません。先に「1 音声生成」を成功させてください');listen(model({mode:'clips',bufs:[S.tclip]},[TL]),'テスト音声「'+TL+'」')};
+$('tp').onclick=()=>{const v=$('rv');if(!S.blob||v.hidden)return say('再生する書き出し動画がありません。先に「3 動画書き出し」を成功させてください');stopAll();v.muted=false;v.volume=1;v.scrollIntoView({block:'center'});v.currentTime=0;v.play().then(()=>say('書き出し動画を再生中（動画プレーヤーの音量も確認してください）')).catch(e=>say('再生できません。動画プレーヤーの再生ボタンを直接押してください: '+e.message))};
+$('lgc').onclick=()=>copy(LG.join('\n')||'ログなし','実行ログをコピーしました');
+$('t1').onclick=async()=>{$('tr').textContent='実行中…';$('tr').textContent=(await t1()).msg};
+$('t2').onclick=()=>{$('tr').textContent=t2().msg};
+$('t3').onclick=async()=>{$('tr').textContent='実行中（約5秒）…';$('tr').textContent=(await t3()).msg};
+$('tall').onclick=async()=>{const o=[];const sh=()=>{$('tr').textContent=o.join('\n')};o.push('1 実行中…');sh();o[0]=(await t1()).msg;o.push('2 実行中…');sh();o[1]=t2().msg;o.push('3 実行中（約5秒）…');sh();o[2]=(await t3()).msg;sh()};
+async function diag(){const o=[],chk=async(n,u)=>{try{const r=await Promise.race([fetch(u,{method:'HEAD'}),tmo(15000)]);o.push(`${r.ok?'✔':'✖'} ${n}: HTTP ${r.status}`)}catch(e){o.push(`✖ ${n}: ${e.name==='TimeoutError'?'タイムアウト':'通信不可（CSPまたはCORSで遮断の可能性）'}`)}};
+ $('dg').textContent='診断中…';await chk('jsDelivr（Kokoroモジュール）',KJ);await chk('jsDelivr（日本語辞書 約24MB）','https://cdn.jsdelivr.net/npm/kokoro-js-jp@0.2.0/dist/open_jtalk_dic_utf_8-1.11.tar.gz');await chk('Hugging Face（モデル。パスは推定）','https://huggingface.co/onnx-community/Kokoro-82M-v1.0-ONNX/resolve/main/config.json');
+ o.push(`WebGPU: ${navigator.gpu?'あり':'なし'} / DecompressionStream: ${'DecompressionStream'in window?'あり':'なし'} / HTTPS: ${isSecureContext?'はい':'いいえ'}`);
+ o.push(`端末メモリ目安: ${navigator.deviceMemory?navigator.deviceMemory+'GB以上':'不明'}${performance.memory?' / JSヒープ上限 '+Math.round(performance.memory.jsHeapSizeLimit/1048576)+'MB':''}`);$('dg').textContent=o.join('\n')}
+async function cinfo(){const o=[];try{if(navigator.storage&&navigator.storage.estimate){const e=await navigator.storage.estimate();o.push(`ストレージ: 使用 ${(e.usage/1048576).toFixed(0)}MB / 上限 ${(e.quota/1048576).toFixed(0)}MB`)}if(navigator.storage&&navigator.storage.persisted)o.push('永続化: '+((await navigator.storage.persisted())?'許可済み':'未許可'));if(window.caches)for(const k of await caches.keys())o.push(`キャッシュ ${k}: ${(await(await caches.open(k)).keys()).length}件`)}catch(e){o.push('取得失敗: '+e.message)}$('cinfo').textContent=o.join('\n')||'情報なし'}
+$('diag').onclick=diag;$('cbtn').onclick=cinfo;
+const PR={cinema:[92,18,1,65],trailer:[86,24,1,75],std:[100,8,0,50]};
+$('pre').onchange=()=>{const p=PR[$('pre').value];$('spd').value=p[0];$('rvl').value=p[1];$('deep').checked=!!p[2];$('gap').value=p[3];['spd','rvl','gap'].forEach(i=>$(i).oninput())};
+if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
+/* ---------- タブ・初期化 ---------- */
+function tab(n){document.querySelectorAll('.pn').forEach((p,i)=>p.classList.toggle('on',i===n));document.querySelectorAll('#nav button').forEach((b,i)=>b.classList.toggle('on',i===n));window.scrollTo(0,0)}
+$('nav').onclick=e=>{const b=e.target.closest('button');if(b)tab(+b.dataset.t)};
+const cur=store.get('bs_cur',null);if(cur){$('th').value=cur.th;$('script').value=cur.script;S.ep=cur.ep||1}else $('script').value=DEF.join('\n');
+upd();hist();{const M=model();draw(0,M.D,M.sc)}
+</script></body></html>
