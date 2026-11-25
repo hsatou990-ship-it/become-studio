@@ -15,3 +15,7 @@ dash.cloudflare.com、Workers & Pages、Create、Pages、Upload assets で6フ�
 
 ## 初回に必要な通信
 Kokoroのモデルと日本語辞書（約24MB）をjsDelivrとHugging Faceから取得します。Wi-Fi推奨。
+
+
+## v3.0
+1ページ・3ステップ（テーマ入力→動画を作る→保存）。Kokoro日本語男声で全自動。詳細は「詳細設定」に集約。
