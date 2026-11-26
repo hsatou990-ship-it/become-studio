@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none';script-src 'unsafe-inline';style-src 'unsafe-inline';img-src blob: data: https://*.pexels.com https://*.pixabay.com;media-src blob:;connect-src https://api.pexels.com https://pixabay.com https://*.pexels.com https://*.pixabay.com;base-uri 'none';form-action 'none'">
+<title>STOCK SEARCH（実験・本体に影響なし）</title>
+<style>body{font:15px/1.6 system-ui,sans-serif;background:#10131a;color:#e8eaf0;margin:0;padding:14px;max-width:680px;margin:auto}h1{font-size:18px}h2{font-size:15px;margin:18px 0 6px;color:#d4af37}button,input,textarea{font:inherit;padding:10px;border-radius:8px;border:1px solid #39435a;background:#1b2130;color:#e8eaf0;width:100%;margin:4px 0;box-sizing:border-box}textarea{min-height:110px}.note{color:#9aa4b8;font-size:13px}.card{background:#0b0e14;border:1px solid #2a3140;border-radius:10px;padding:10px;margin:8px 0}.card img{width:100%;max-height:220px;object-fit:cover;border-radius:6px}.ng{color:#ff8a80}.ok{color:#6fdc8c}a{color:#8ab4ff}details{margin:6px 0}pre{white-space:pre-wrap;font-size:12px}</style></head><body>
+<h1>STOCK SEARCH（実験）</h1>
+<p class="note">Pexels／Pixabayから台本に合う縦動画の候補を探す実験ページです。BECOME. STUDIO本体とは無関係です。APIキーは画面を閉じると消え、保存・送信・表示されません。Pexels検索結果の提供元：<a href="https://www.pexels.com" target="_blank" rel="noopener noreferrer">Pexels</a>／<a href="https://pixabay.com" target="_blank" rel="noopener noreferrer">Pixabay</a></p>
+<details><summary>APIキーの取得方法（無料・スマホで可）</summary>
+<p><b>Pexels</b>：<a href="https://www.pexels.com/api/" target="_blank" rel="noopener noreferrer">pexels.com/api</a> を開く → 「Get Started」→ アカウント作成またはログイン → 用途を簡単に入力 → 画面に表示される「Your API Key」を長押しでコピー。公式説明では即時発行です。</p>
+<p><b>Pixabay</b>：<a href="https://pixabay.com/api/docs/" target="_blank" rel="noopener noreferrer">pixabay.com/api/docs</a> を開く → ログイン（未登録なら無料登録）→ ページ内の「key (required)」欄に自分のキーが表示されるのでコピー。</p>
+<p class="note">キーは他人に見せず、チャット・URL・スクリーンショットに載せないでください。漏れたら各サイトで再発行します。</p></details>
+<h2>1. キー入力（このページを閉じるまで）</h2>
+<input id="kp" type="password" autocomplete="off" placeholder="Pexels APIキー"><input id="kx" type="password" autocomplete="off" placeholder="Pixabay APIキー">
+<button id="kc">キーを消去</button>
+<h2>2. 台本（1行＝1場面）</h2>
+<textarea id="sc">夜明け前の暗闇で、誰も見ていない努力を続ける
+何度も失敗して、孤独に心が折れそうになる
+それでも一歩だけ前に進むと決めた
+やがて朝日が昇り、景色が変わる</textarea>
+<button id="bq">検索語を作る</button><div id="kw"></div>
+<button id="bs">検索して候補を評価</button>
+<div id="st" class="note"></div><div id="res"></div>
+<h2>3. 採用済み・権利台帳</h2><div id="led" class="note">なし</div><button id="bx">台帳をJSONで保存</button>
+<script>
+const $=i=>document.getElementById(i);
+const KEYS={pexels:'',pixabay:''};
+const TERMS={pexels:{name:'Pexels',license:'Pexels License',url:'https://www.pexels.com/license/',checked:'2026-11-26'},pixabay:{name:'Pixabay',license:'Pixabay Content License',url:'https://pixabay.com/service/license-summary/',checked:'2026-11-26'}};
+// ---- 日本語→英語検索語（辞書方式。翻訳サービスは使わない）
+const DICT=[[/夜明け|朝日|日の出|朝/,'sunrise'],[/夕日|夕暮れ/,'sunset'],[/山|頂上|登/,'mountain climbing'],[/海|波/,'ocean waves'],[/走|ランニング/,'running'],[/筋トレ|トレーニング|鍛/,'gym workout'],[/勉強|読書|学/,'reading book'],[/孤独|一人|誰も/,'lonely silhouette'],[/暗闇|暗い|夜/,'dark night'],[/雨|涙/,'rain window'],[/雲|空/,'sky clouds'],[/街|都市/,'city'],[/道|歩|一歩/,'walking road'],[/階段/,'stairs'],[/時間|時計/,'clock time'],[/森|木/,'forest'],[/光|輝/,'light rays'],[/嵐|失敗|折れ/,'storm'],[/炎|情熱/,'fire'],[/水|川/,'water'],[/扉|ドア|始め|決め/,'door open'],[/景色|変わ|成功|やがて/,'landscape sunrise']];
+const ROLE=['dark moody sky','person alone silhouette','walking forward','sunrise light'];
+function keywords(lines){return lines.map((l,i)=>{const q=[];for(const [re,en] of DICT)if(re.test(l)&&!q.includes(en))q.push(en);if(!q.length)q.push(ROLE[Math.min(i,ROLE.length-1)]);return{line:l,queries:q.slice(0,3)}})}
+// ---- 制限・キャッシュ・履歴（キーは含めない）
+const RATE={pexels:[],pixabay:[]};
+function rateOk(p){const now=Date.now(),a=RATE[p],w=p==='pexels'?3600e3:60e3,lim=p==='pexels'?180:90;while(a.length&&now-a[0]>w)a.shift();if(a.length>=lim)return false;a.push(now);return true}
+function ls(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch{return d}}
+function lw(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}
+function cget(u){const c=ls('ss_cache',{}),e=c[u];return e&&Date.now()-e.t<864e5?e.d:null}
+function cput(u,d){const c=ls('ss_cache',{}),n=Date.now();for(const k in c)if(n-c[k].t>=864e5)delete c[k];c[u]={t:n,d:d};try{localStorage.setItem('ss_cache',JSON.stringify(c))}catch{lw('ss_cache',{})}}
+const used=()=>ls('ss_used',[]);
+function clean(s){let t=String(s);for(const k of Object.values(KEYS))if(k)t=t.split(k).join('***');return t}
+// ---- 検索（正規化して共通形式へ）
+async function jget(url,opt,cacheKey){const c=cget(cacheKey);if(c)return{d:c,cached:true};const r=await fetch(url,opt);if(!r.ok)throw new Error('HTTP '+r.status+(r.status===429?'（利用上限）':r.status===401||r.status===403?'（キー不正）':''));const d=await r.json();cput(cacheKey,d);return{d,cached:false}}
+async function searchPexels(q){if(!KEYS.pexels)return[];if(!rateOk('pexels'))throw new Error('Pexels: 自主上限に到達（200回/時間の手前で停止）');
+ const u='https://api.pexels.com/v1/videos/search?query='+encodeURIComponent(q)+'&orientation=portrait&size=medium&per_page=15';
+ const {d}=await jget(u,{headers:{Authorization:KEYS.pexels}},'pexels|'+q);
+ return(d.videos||[]).map(v=>{const f=(v.video_files||[]).filter(x=>x.file_type==='video/mp4'&&x.width&&x.height).sort((a,b)=>Math.abs(a.height-1920)-Math.abs(b.height-1920))[0];
+  return{provider:'pexels',id:String(v.id),page:v.url,thumb:(v.video_pictures&&v.video_pictures[0]&&v.video_pictures[0].picture)||v.image,w:v.width,h:v.height,dur:v.duration,creator:v.user&&v.user.name,creatorUrl:v.user&&v.user.url,tags:(String(v.url||'').split('/video/')[1]||'').replace(/-\d+\/?$/,'').split('-'),file:f&&f.link,fw:f&&f.width,fh:f&&f.height,q}})}
+async function searchPixabay(q){if(!KEYS.pixabay)return[];if(!rateOk('pixabay'))throw new Error('Pixabay: 自主上限に到達（100回/60秒の手前で停止）');
+ const u='https://pixabay.com/api/videos/?key='+encodeURIComponent(KEYS.pixabay)+'&q='+encodeURIComponent(q)+'&video_type=film&per_page=20&safesearch=true';
+ const {d}=await jget(u,{},'pixabay|'+q);
+ return(d.hits||[]).map(h=>{const vs=h.videos||{},v=vs.medium&&vs.medium.url?vs.medium:vs.small&&vs.small.url?vs.small:vs.tiny;
+  return{provider:'pixabay',id:String(h.id),page:h.pageURL,thumb:v&&v.thumbnail,w:v&&v.width,h:v&&v.height,dur:h.duration,creator:h.user,creatorUrl:'https://pixabay.com/users/'+h.user+'-'+h.user_id+'/',tags:String(h.tags||'').split(',').map(s=>s.trim().toLowerCase()),file:v&&v.url,fw:v&&v.width,fh:v&&v.height,q}})}
+// ---- 評価（メタデータ＝推測。映像解析は取り込み後）
+function scoreMeta(c,need){const toks=c.q.toLowerCase().split(/\s+/),tg=(c.tags||[]).join(' ').toLowerCase();
+ const kw=toks.length?toks.filter(t=>tg.includes(t)).length/toks.length:0;
+ const portrait=c.h>=c.w?1:.35,res=Math.min(1,Math.min(c.fw||c.w,c.fh||c.h)/1080),dur=c.dur>=need?1:Math.max(0,c.dur/need);
+
+ return{kw,portrait,res,dur,score:Math.round(100*(.4*kw+.3*portrait*res+.3*dur))}}
+async function visualEval(blob){const v=document.createElement('video');v.muted=true;v.playsInline=true;v.src=URL.createObjectURL(blob);
+ await new Promise((ok,ng)=>{v.onloadedmetadata=ok;v.onerror=()=>ng(new Error('この端末では動画を読めません'))});
+ const W=108,H=192,cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d',{willReadFrequently:true});
+ const seek=t=>new Promise(r=>{v.onseeked=r;v.currentTime=t});const grab=()=>{x.drawImage(v,0,0,W,H);return x.getImageData(0,0,W,H).data};
+ const dur=v.duration||1,S=[];let lum=0,con=0,sat=0,mot=0,n=0,mn=0;
+ for(const f of[.15,.4,.65,.85]){const t=dur*f;await seek(t);const a=grab();await seek(Math.min(dur-.01,t+.2));const b=grab();let m=0,m2=0,sm=0,df=0;const P=W*H;
+  for(let i=0;i<a.length;i+=4){const y=(.2126*a[i]+.7152*a[i+1]+.0722*a[i+2])/255;m+=y;m2+=y*y;sm+=(Math.max(a[i],a[i+1],a[i+2])-Math.min(a[i],a[i+1],a[i+2]))/255;df+=Math.abs(a[i]-b[i])/255}
+  const mean=m/P;lum+=mean;con+=Math.sqrt(Math.max(0,m2/P-mean*mean));sat+=sm/P;mot+=df/P;n++}
+ URL.revokeObjectURL(v.src);lum/=n;con/=n;sat/=n;mot/=n;
+ const f=(x,lo,hi,sl)=>x<lo?Math.max(0,1-(lo-x)/sl):x>hi?Math.max(0,1-(x-hi)/sl):1;
+ const sc=Math.round(100*(.3*f(lum,.18,.55,.2)+.25*f(con,.14,.35,.1)+.2*f(sat,.1,.55,.2)+.25*f(mot,.01,.12,.08)));
+ return{lum:+lum.toFixed(3),contrast:+con.toFixed(3),sat:+sat.toFixed(3),motion:+mot.toFixed(3),score:sc,note:'輝度・コントラスト・彩度・動きの簡易指標です【推測】。美しさの判定ではありません'}}
+function credit(c){const T=TERMS[c.provider];return'Video by '+(c.creator||'(作者名不明)')+' from '+T.name+' ('+c.page+')'}
+function ledgerEntry(c,note){const T=TERMS[c.provider];return{provider:c.provider,id:c.id,pageUrl:c.page,creator:c.creator||'',creatorUrl:c.creatorUrl||'',license:T.license,licenseUrl:T.url,termsCheckedOn:T.checked,fetchedAt:new Date().toISOString(),credit:credit(c),query:c.q,visual:note||null,ownerConfirmed:true,note:'権利と内容はオーナーが確認済み。TikTok投稿は別途オーナー承認'}}
+// ---- UI
+const esc=s=>String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+let LINES=[],QS=[];
+function lines(){return $('sc').value.split('\n').map(s=>s.trim()).filter(Boolean)}
+$('bq').onclick=()=>{QS=keywords(lines());$('kw').innerHTML=QS.map((k,i)=>'<div class="card">'+esc(k.line)+'<input data-i="'+i+'" class="qi" value="'+esc(k.queries.join(', '))+'"></div>').join('')+'<p class="note">英語の検索語を直せます（カンマ区切り）。辞書方式のため、合わない場合は直してください。</p>'};
+$('kc').onclick=()=>{KEYS.pexels=KEYS.pixabay='';$('kp').value=$('kx').value='';$('st').textContent='キーを消去しました'};
+async function runSearch(){KEYS.pexels=$('kp').value.trim();KEYS.pixabay=$('kx').value.trim();if(!QS.length)$('bq').onclick();
+ document.querySelectorAll('.qi').forEach(e=>{QS[+e.dataset.i].queries=e.value.split(',').map(s=>s.trim()).filter(Boolean)});
+ const out=[],errs=[],top1=new Set();$('st').textContent='検索中…';const need=3.5;
+ for(const k of QS){const cand=[];for(const q of k.queries){for(const fn of[searchPexels,searchPixabay]){try{cand.push(...await fn(q))}catch(e){errs.push(clean(e.message)+(/Failed to fetch|NetworkError|Load failed/.test(e.message)?'（通信が遮断された可能性：CORS／ネットワーク）':''))}}}
+  const seen=new Set(),u=used();const L=cand.filter(c=>{const key=c.provider+':'+c.id;if(seen.has(key))return false;seen.add(key);return true}).map(c=>({c,s:scoreMeta(c,need),dup:u.includes(c.provider+':'+c.id)})).filter(x=>!x.dup&&!top1.has(x.c.provider+':'+x.c.id)).sort((a,b)=>b.s.score-a.s.score).slice(0,3);
+  if(L[0])top1.add(L[0].c.provider+':'+L[0].c.id);
+  out.push({k,L})}
+ window.LAST=out;$('res').innerHTML=out.map((o,i)=>'<h2>場面'+(i+1)+'：'+esc(o.k.line)+'</h2>'+(o.L.length?o.L.map((x,j)=>'<div class="card">'+(x.c.thumb?'<img src="'+esc(x.c.thumb)+'" alt="">':'')+'<div>'+TERMS[x.c.provider].name+' ／ '+x.c.w+'x'+x.c.h+' ／ '+x.c.dur+'秒 ／ 提案点 '+x.s.score+'（メタ情報のみ【推測】）</div><div class="note">作者: '+esc(x.c.creator||'不明')+' ／ 検索語: '+esc(x.c.q)+'</div><a href="'+esc(x.c.page)+'" target="_blank" rel="noopener noreferrer">元ページで確認</a><br><label><input type="checkbox" id="ck'+i+'_'+j+'" style="width:auto"> 権利と内容（人物・商標・不適切表現）を自分で確認した</label><button data-a="'+i+','+j+'">この素材を取り込む</button></div>').join(''):'<div class="note">候補なし（キー未入力・通信失敗・重複除外のいずれか）</div>')).join('');
+ $('st').innerHTML=(errs.length?'<span class="ng">'+[...new Set(errs)].map(esc).join('<br>')+'</span>':'<span class="ok">検索完了</span>')+'<br>※結果の提供元表示：Pexels／Pixabay。Pixabayの検索結果は24時間キャッシュします。'}
+$('bs').onclick=()=>runSearch();
+$('res').onclick=async e=>{const a=e.target.dataset&&e.target.dataset.a;if(!a)return;const [i,j]=a.split(',').map(Number),x=window.LAST[i].L[j],c=x.c;if(!$('ck'+i+'_'+j).checked){$('st').innerHTML='<span class="ng">先に権利確認のチェックを入れてください（自動採用はしません）</span>';return}
+ $('st').textContent='取り込み中…';try{const r=await fetch(c.file);if(!r.ok)throw new Error('HTTP '+r.status);const b=await r.blob();if(b.size>60*1048576)throw new Error('60MB超のため中止');
+  let vis=null;try{vis=await visualEval(b)}catch(er){vis={note:'映像解析不可: '+er.message}}
+  const L=ls('ss_ledger',[]);L.push(ledgerEntry(c,vis));lw('ss_ledger',L);const U=used();U.push(c.provider+':'+c.id);lw('ss_used',U);
+  const url=URL.createObjectURL(b),n=c.provider+'-'+c.id+'.mp4';
+  $('st').innerHTML='<span class="ok">取り込み完了</span> '+(b.size/1048576).toFixed(1)+'MB'+(vis.score!=null?'／映像指標 '+vis.score+'点【推測】':'')+'<br><a download="'+n+'" href="'+url+'">動画を端末へ保存</a><pre>'+esc('出所: '+TERMS[c.provider].name+'\nURL: '+c.page+'\n作者: '+(c.creator||'')+'\nライセンス: '+TERMS[c.provider].license+' '+TERMS[c.provider].url+'\n確認: '+TERMS[c.provider].checked+' オーナー確認済み\nクレジット: '+credit(c))+'</pre><span class="note">上の5項目を試作ページの権利欄へ貼り付けて使います。</span>';renderLed()}
+ catch(er){$('st').innerHTML='<span class="ng">取り込みできませんでした: '+esc(clean(er.message))+'。動画配信元がブラウザからの取得を許可していない可能性があります【未確認】。「元ページで確認」から手動保存し、試作ページで取り込んでください（権利欄の記入は必要です）。</span>'}};
+function renderLed(){const L=ls('ss_ledger',[]);$('led').innerHTML=L.length?L.map(l=>esc(l.provider+':'+l.id+' ／ '+l.credit)).join('<br>'):'なし'}
+$('bx').onclick=()=>{const b=new Blob([JSON.stringify(ls('ss_ledger',[]),null,1)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='license-ledger.json';a.click()};
+renderLed();
+window.SS={keywords,scoreMeta,credit,ledgerEntry,visualEval,searchPexels,searchPixabay,KEYS,rateOk,RATE,cget,cput,clean,runSearch};
+</script></body></html>
