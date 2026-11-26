@@ -24,6 +24,15 @@ label{display:block}small{color:#9aa0ad}
 やがて朝日が昇り、景色が変わる</textarea>
 <p><button id="bDir" class="p">台本から演出を設計して反映</button><button id="bDirV">別案を出す</button><button id="bDirA">標準A案（15秒）に戻す</button></p>
 <div id="dirsum" class="note"></div>
+<h2>外部AI（ChatGPT・Claude）の映像設計を取り込む</h2>
+<p class="note">追加のAPI費用なしで、ChatGPTやClaudeの通常の画面で作った映像設計JSON（become.design/1）を貼り付けて反映できます。形式・範囲を検証し、外れた値は取り込みません。コードは実行しません。外部AIの設計の良し悪しは検証されません【未確認】。</p>
+<p><button id="bDJP">AIへの依頼文を作る（台本欄の内容を使用）</button> <button id="bDJC">依頼文をコピー</button></p>
+<textarea id="djp" readonly style="width:100%;min-height:60px;box-sizing:border-box;background:#141a27;color:#aab3c8;border:1px solid #39435a;border-radius:8px;padding:8px;font-size:11px" hidden></textarea>
+<textarea id="dj" placeholder="ここにAIが出力したJSONを貼り付け" style="width:100%;min-height:90px;box-sizing:border-box;background:#1b2130;color:#e8eaf0;border:1px solid #39435a;border-radius:8px;padding:8px;font-size:12px"></textarea>
+<p><button id="bDJ" class="p">JSONを検証して反映</button></p>
+<div id="djs" class="note"></div>
+<h2>演出ライブラリの実装状況</h2>
+<div id="implt" class="note"></div>
 <h2>スタイルと字幕</h2>
 <p><label>制作スタイル <select id="sty"><option value="A">A 映画風モチベーション（実装）</option><option value="B" disabled>B 海外ドキュメンタリー風（設計候補）</option><option value="C" disabled>C 実写とモーショングラフィックス（設計候補）</option></select></label>
 <label>字幕の書体 <select id="fnt"><option value="serif">明朝体</option><option value="gothic">ゴシック体</option></select></label></p>
@@ -42,6 +51,7 @@ label{display:block}small{color:#9aa0ad}
 <p><label><input type="radio" name="kind" value="real"> 実素材での評価</label><label><input type="radio" name="kind" value="mock" checked> 模擬素材での評価（映像品質の判定には使えません）</label></p>
 <div id="ev"></div><p><button id="bEv">評価を集計</button></p><pre id="evo">未集計</pre>
 <script src="../director/director.js"></script>
+<script src="../design/design.js"></script>
 <script>
 'use strict';
 const W=1080,H=1920,FPS=30,MW=540,MH=960,GOLD='#d4af37';
@@ -64,6 +74,11 @@ const LN0=[
  {t0:6.3,d:3.5,toks:[['でも、'],['その痛みは、'],['止まれない',1],['証拠じゃない。']]},
  {t0:10,d:2.5,toks:[['まだ、'],['歩こう',1],['としている'],['証拠だ。']]}];
 const S={base:{sc:SCN0,ln:LN0,D:15},sc:JSON.parse(JSON.stringify(SCN0)),ln:JSON.parse(JSON.stringify(LN0)),narr:null,off:0,aligned:false,warn:[],clips:[null,null,null,null],mix:null,font:'serif',busy:false,ft:[],left:false,cur:-1,meas:null,lastV:null,isMockNarr:false};
+/* 速度再マップ（スローモーション/スピードランプ）とJ・Lカット */
+const RAMP0=2.2,RAMP1=.3;
+function rateAt(i,u){const k=S.sc[i]&&S.sc[i].spd;return k==='slow'?.5:k==='ramp'?RAMP1+(RAMP0-RAMP1)*(1-u)*(1-u):1}
+function mediaT(i,t){const s=S.sc[i],d=s.b-s.a,e=Math.max(0,t-s.a),u=Math.min(1,e/d);return s.spd==='slow'?.5*e:s.spd==='ramp'?d*(RAMP1*u+(RAMP0-RAMP1)*(1-Math.pow(1-u,3))/3):e}
+function applyCuts(){const A=S.sc,n=A.length-1;for(let i=1;i<n;i++){const c=A[i].cut;if(!c||c.type==='none')continue;let a=A[i].a+(c.type==='j-cut'?-c.off:c.off);a=Math.max(A[i-1].a+1,Math.min(A[i+1].a-1,a));A[i].a=a;A[i-1].b=a}}
 const sceneAt=t=>{const n=S.sc.length;for(let i=0;i<n;i++)if(t>=S.sc[i].a&&t<S.sc[i].b)return i;return n-1};
 function mulberry(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 /* ---------- 模擬素材（実写ではない。試験用） ---------- */
@@ -137,7 +152,7 @@ if(GL){try{const vs=`attribute vec2 p;varying vec2 v;void main(){v=(p+1.)*.5;gl_
  ['t','uF','uFade','uFlash','uLk','uLx','uGrain','uVig','uSat','uCon','uLift','uGain'].forEach(n=>GU[n]=GL.getUniformLocation(GP,n));GL.viewport(0,0,CW,CH)}catch(e){GL=null;S.warn.push('WebGLを使えないため2D描画で代替します: '+e.message)}}
 const noise=document.createElement('canvas');noise.width=noise.height=256;{const g=noise.getContext('2d'),d=g.createImageData(256,256),r=mulberry(3);for(let i=0;i<d.data.length;i+=4){const v=r()*255;d.data[i]=d.data[i+1]=d.data[i+2]=v;d.data[i+3]=255}g.putImageData(d,0,0)}
 function drawCover(g,src,c){const sw=src.videoWidth||src.width,sh=src.videoHeight||src.height;if(!sw||!sh)return;const k=Math.max(CW/sw,CH/sh)*c.z,dw=sw*k,dh=sh*k;g.drawImage(src,(CW-dw)/2+c.px*CW,(CH-dh)/2+c.py*CW,dw,dh)}
-function srcFor(i,t,u){const c=S.clips[i];if(c&&c.el&&c.el.videoWidth&&c.el.readyState>=2)return c.el;return paintMock(S.sc[i].mock,t,u)}
+function srcFor(i,t,u){const c=S.clips[i];if(c&&c.el&&c.el.videoWidth&&c.el.readyState>=2){if(!S.busy)try{c.el.playbackRate=rateAt(i,u)}catch{}return c.el}return paintMock(S.sc[i].mock,S.sc[i].a+mediaT(i,t),u)}
 function renderFrame(t){const i=sceneAt(t),c=camera(i,t),tr=trans(t),fr=Math.round(t*FPS);cg.setTransform(1,0,0,1,0,0);cg.fillStyle='#000';cg.fillRect(0,0,CW,CH);
  const src=srcFor(i,t,c.u);if(src)drawCover(cg,src,c);const g=S.sc[i].g;
  if(GL){GL.bindTexture(GL.TEXTURE_2D,GT);GL.texImage2D(GL.TEXTURE_2D,0,GL.RGBA,GL.RGBA,GL.UNSIGNED_BYTE,cam);GL.uniform1i(GU.t,0);GL.uniform1f(GU.uF,fr%997);GL.uniform1f(GU.uFade,tr.fade);GL.uniform1f(GU.uFlash,tr.flash);GL.uniform1f(GU.uLk,tr.lk);GL.uniform1f(GU.uLx,tr.lx);GL.uniform1f(GU.uGrain,i===4?.03:.07);GL.uniform1f(GU.uVig,g.vig);GL.uniform1f(GU.uSat,g.sat);GL.uniform1f(GU.uCon,g.con);GL.uniform3fv(GU.uLift,g.lift);GL.uniform3fv(GU.uGain,g.gain);GL.drawArrays(GL.TRIANGLE_STRIP,0,4);og.setTransform(1,0,0,1,0,0);og.globalAlpha=1;og.drawImage(glc,0,0)}
@@ -180,7 +195,7 @@ function alignNarr(buf){S.warn=S.warn.filter(w=>!/^ナレーション/.test(w));
  for(let k=1;k<n;k++)A[k].a=Math.max(k===1?1.8:A[k-1].a+1.6,L[k].t0-(k===1?.4:k===2?.3:.2));
  A[n].a=Math.max(A[n-1].a+1.6,L[n-1].t0+L[n-1].d+.7);
  const lim=D-1.4;if(A[n].a>lim){A[n].a=lim;S.warn.push('ナレーションが長く、'+D+'秒の終わりの余韻が短くなります（最後の文の終わり '+(L[n-1].t0+L[n-1].d).toFixed(1)+'秒）')}
- for(let i=0;i<n;i++)A[i].b=A[i+1].a;A[n].b=D;S.aligned=true;return true}
+ for(let i=0;i<n;i++)A[i].b=A[i+1].a;A[n].b=D;applyCuts();S.aligned=true;return true}
 function mockNarr(offs=[]){const sr=48000,b=new AudioBuffer({length:D*sr,sampleRate:sr,numberOfChannels:1}),x=b.getChannelData(0),r=mulberry(21);
  S.base.ln.forEach((L,i)=>{const t0=L.t0+(offs[i]||0),d=L.d;const a=Math.round(t0*sr),n=Math.round(d*sr);for(let j=0;j<n&&a+j<x.length;j++){const t=j/sr,syl=.5+.5*Math.sin(2*Math.PI*4.2*t),env=Math.min(1,t/.03,(d-t)/.05)*(.35+.65*syl),f0=118+10*Math.sin(2*Math.PI*.7*t);let v=0;for(let h=1;h<=6;h++)v+=Math.sin(2*Math.PI*f0*h*t)/h;x[a+j]=.18*env*v+.01*(r()*2-1)*env}});return b}
 /* ---------- 素材の取り込みとライセンス記録 ---------- */
@@ -312,7 +327,7 @@ async function exportOffline(){if(S.busy)return null;S.busy=true;const st=(m,c)=
   let M;try{M=await import('../mp4-lab/lib/mp4enc.js')}catch(e){S.busy=false;st('実験用エンコーダを読み込めませんでした: '+e.message+'。従来の③書き出しを使ってください','w');return null}
   const clipsOn=S.clips.map((c,i)=>c&&c.el?i:-1).filter(i=>i>=0),seek=(el,t)=>new Promise(ok=>{let d=false;const f=()=>{if(!d){d=true;el.removeEventListener('seeked',f);ok()}};el.addEventListener('seeked',f);try{el.pause()}catch{}el.currentTime=t;setTimeout(f,1500)});
   const r=await M.encodeMp4({canvas:out,fps:FPS,frames:Math.round(D*FPS),audio:S.mix,vBitrate:CW>=1080?10e6:5e6,
-   render:async(i,t)=>{const sc=sceneAt(t),c=S.clips[sc];if(c&&c.el&&c.el.duration){const q=(t-S.sc[sc].a)+c.meta.inp,d=c.el.duration;await seek(c.el,d>0?q%d:q)}renderFrame(t)},
+   render:async(i,t)=>{const sc=sceneAt(t),c=S.clips[sc];if(c&&c.el&&c.el.duration){const q=mediaT(sc,t)+c.meta.inp,d=c.el.duration;await seek(c.el,d>0?q%d:q)}renderFrame(t)},
    progress:p=>st('H.264+AAC書き出し中 '+Math.round(p*100)+'%')});
   S.busy=false;const blob=r.blob,rep=BSInspect(await blob.arrayBuffer()),v=await verifyBlob(blob);
   window.CP.lastBlob=blob;const url=URL.createObjectURL(blob);$('dl').href=url;$('dl').download='CINEMATIC-PRO-A-15s-h264.mp4';$('dl').hidden=false;$('dl').textContent='H.264+AAC版を保存';
@@ -339,12 +354,12 @@ $('bPrep').onclick=async()=>{S.mix=null;await prep();renderFrame(4.5)};$('bPrev'
 
 /* ---------- 解像度切替時の制作データ保護（端末内のみ・APIキーは含まない） ---------- */
 function idbSess(){return new Promise((ok,ng)=>{const r=indexedDB.open('cp_session',1);r.onupgradeneeded=()=>r.result.createObjectStore('s',{keyPath:'k'});r.onsuccess=()=>ok(r.result);r.onerror=()=>ng(new Error('IndexedDBを開けません'))})}
-async function saveSession(){const rec={k:'last',at:Date.now(),dsc:$('dsc').value,plan:S.base.sc!==SCN0,dv:DV,font:S.font,narr:S.narrFile||null,mockNarr:!!S.isMockNarr,
+async function saveSession(){const rec={k:'last',at:Date.now(),dsc:$('dsc').value,plan:S.base.sc!==SCN0&&!S.dj,dj:S.dj||null,dv:DV,font:S.font,narr:S.narrFile||null,mockNarr:!!S.isMockNarr,
   clips:S.clips.map((c,i)=>c&&c.file?{i,file:c.file,src:c.meta.src,url:c.meta.url,by:c.meta.by,lic:c.meta.lic,inp:c.meta.inp}:null).filter(Boolean)};
  const db=await idbSess();await new Promise((ok,ng)=>{const t=db.transaction('s','readwrite');t.objectStore('s').put(rec);t.oncomplete=ok;t.onerror=()=>ng(new Error('保存に失敗（容量不足の可能性）'));t.onabort=t.onerror})}
 async function restoreSession(){let rec=null;try{const db=await idbSess();rec=await new Promise((ok,ng)=>{const q=db.transaction('s').objectStore('s').get('last');q.onsuccess=()=>ok(q.result);q.onerror=()=>ng(q.error)})}catch{}
  if(!rec||Date.now()-rec.at>10*60*1000)return false;
- $('dsc').value=rec.dsc;DV=rec.dv||0;if(rec.font){S.font=rec.font;try{$('fnt').value=rec.font}catch{}}if(rec.plan)applyDirector();
+ $('dsc').value=rec.dsc;DV=rec.dv||0;if(rec.font){S.font=rec.font;try{$('fnt').value=rec.font}catch{}}if(rec.dj){$('dj').value=rec.dj;importDesign()}else if(rec.plan)applyDirector();
  for(const c of rec.clips){if(c.i>=S.clips.length)continue;$('cs'+c.i).value=c.src;$('cu'+c.i).value=c.url;$('cc'+c.i).value=c.by;$('cl'+c.i).value=c.lic;$('ck'+c.i).checked=true;$('ci'+c.i).value=c.inp;await useClip(c.i,c.file)}
  if(rec.narr){try{const b=await new OfflineAudioContext(1,1,48000).decodeAudioData(await rec.narr.arrayBuffer());S.narr=b;S.narrFile=rec.narr;S.isMockNarr=false;S.mix=null;await prep()}catch{}}
  else if(rec.mockNarr){S.narr=mockNarr();S.isMockNarr=true;S.mix=null;await prep()}
@@ -364,22 +379,34 @@ function planToBase(P,endHold){const n=P.scenes.length,total=P.scenes.reduce((q,
   if(i>0){if(x.transition==='flash-white')tr='flash';else if(x.transition==='dip-black')tr='dip';else if(x.transition==='dissolve'){tr='dip';tw=.18}else if(prev&&prev.role==='turn')tr='leak'}
   const nxt=P.scenes[i+1],sfx={};if(x.role==='turn')sfx.hit=1;if(nxt&&nxt.role==='turn')sfx.riser=1;if(tr==='dip')sfx.sub=1;if(tr==='leak')sfx.whoosh=1;
   let mock=null;for(const k of x.concepts)if(MOCKC[k]){mock=MOCKC[k];break}if(!mock)mock=x.emotion.v<-.25?'rain':x.emotion.v>.4?'road':'dawn';
-  const o={id:'S'+(i+1),name:ROLEJ[x.role]||x.role,a:x.start,b:+(x.start+x.dur).toFixed(2),mock,z:c.z.slice(),p:c.p.slice(),g:JSON.parse(JSON.stringify(GRP[x.grade==='cold-teal'?'cold-teal':x.grade==='warm-gold'?'warm-gold':'muted-neutral'])),tr,sfx,role:x.role,dir:{camera:x.camera,transition:x.transition,speed:x.speed,emphasis:x.emphasis}};if(tw)o.tw=tw;return o});
+  const dj=P.meta.source==='design-json';if(dj){if(x.transition==='cut')tr='none';for(const k of Object.keys(sfx))delete sfx[k];Object.assign(sfx,x.sfx||{})}
+  const o={id:'S'+(i+1),name:ROLEJ[x.role]||x.role,a:x.start,b:+(P.scenes[i+1]?P.scenes[i+1].start:x.start+x.dur).toFixed(2),spd:x.speed==='slow-motion'?'slow':x.speed==='speed-ramp'?'ramp':'',cut:x.cut||(dj?{type:'none',off:0}:x.role==='turn'?{type:'j-cut',off:.3}:{type:'none',off:0}),q:x.queries||[],mock,z:c.z.slice(),p:c.p.slice(),g:JSON.parse(JSON.stringify(GRP[x.grade==='cold-teal'?'cold-teal':x.grade==='warm-gold'?'warm-gold':'muted-neutral'])),tr,sfx,role:x.role,dir:{camera:x.camera,transition:x.transition,speed:x.speed,emphasis:x.emphasis,fx:x.fx||[]}};if(tw)o.tw=tw;return o});
  sc[n-1].b=+total.toFixed(2);sc.push({id:'END',name:'余韻',a:+total.toFixed(2),b:Dn,mock:'black',z:[1,1.04],p:[0,0,0,0],g:{sat:1,con:1,gain:[1,1,1],lift:[0,0,0],vig:.3},tr:'endfade',sfx:{shimmer:1},role:'end'});
  const ln=P.scenes.map((x,i)=>({t0:+(x.start+(i===0?.5:.3)).toFixed(2),d:+Math.max(1,x.dur-.7).toFixed(2),toks:chunk(x.text,x.emphasis)}));
  return{sc,ln,D:Dn}}
-function loadBase(base,label){S.base={sc:base.sc,ln:base.ln,D:base.D};S.sc=JSON.parse(JSON.stringify(base.sc));S.ln=JSON.parse(JSON.stringify(base.ln));D=base.D;N=D*FPS;S.clips=S.sc.slice(0,S.sc.length-1).map(()=>null);S.narr=null;S.isMockNarr=false;S.mix=null;S.aligned=false;S.off=0;S.warn=S.warn.filter(w=>/^WebGL/.test(w));
+function loadBase(base,label){S.base={sc:base.sc,ln:base.ln,D:base.D};S.sc=JSON.parse(JSON.stringify(base.sc));S.ln=JSON.parse(JSON.stringify(base.ln));applyCuts();D=base.D;N=D*FPS;S.clips=S.sc.slice(0,S.sc.length-1).map(()=>null);S.narr=null;S.isMockNarr=false;S.mix=null;S.aligned=false;S.off=0;S.warn=S.warn.filter(w=>/^WebGL/.test(w));
  clipForm();ledger();renderFrame(Math.min(1.5,D-.1));try{$('nst').textContent='ナレーション未取込（BGMのみ）。台本が変わったため、ナレーションは取り込み直してください。'}catch{}
  const L=S.ln.map((l,i)=>(i+1)+'. '+l.toks.map(k=>k[0]).join('')).join('　');try{$('dirsum').textContent=label+'｜'+(S.sc.length-1)+'場面＋余韻・全体'+D+'秒｜字幕: '+L}catch{}}
 let DV=0;
-function applyDirector(){const P=DIR.plan($('dsc').value,{variant:DV});if(!P.scenes.length){$('dirsum').textContent='台本が空です';return null}
+function applyDirector(){S.dj=null;const P=DIR.plan($('dsc').value,{variant:DV});if(!P.scenes.length){$('dirsum').textContent='台本が空です';return null}
  const b=planToBase(P);loadBase(b,'ディレクター案'+(DV?'（別案'+DV+'）':''));window.LASTPLAN=P;
  const sm=P.scenes.map((x,i)=>(i+1)+'. '+(ROLEJ[x.role]||x.role)+' '+x.dur+'秒｜'+x.camera+'｜'+x.transition+'｜'+x.speed+'｜'+x.grade+(x.emphasis.length?'｜強調:'+x.emphasis.join('・'):'')).join('\n');
  $('dirsum').textContent=$('dirsum').textContent+'\n'+sm+(P.meta.advice.length?'\n⚠ '+P.meta.advice.join('\n⚠ '):'')+(D>=90?'\n⚠ 90秒を超える分は反映できません':'');return P}
 $('bDir').onclick=()=>{DV=0;applyDirector()};$('bDirV').onclick=()=>{DV++;applyDirector()};
-$('bDirA').onclick=()=>{loadBase({sc:SCN0,ln:LN0,D:15},'標準A案（15秒・固定5場面）')};
+$('bDirA').onclick=()=>{S.dj=null;loadBase({sc:SCN0,ln:LN0,D:15},'標準A案（15秒・固定5場面）')};
 if(/restore=1/.test(location.hash))restoreSession().then(()=>{history.replaceState(null,'',location.pathname+location.search+'#res='+RES)});
 
+
+/* ---------- 外部AIの設計JSON取り込み ---------- */
+function importDesign(){const R=BSDesign.validate($('dj').value);const o=$('djs');
+ if(!R.ok){o.className='note w';o.textContent='取り込めません（反映していません）:\n・'+R.errors.join('\n・');return null}
+ const b=planToBase(R.plan,R.plan.meta.ending.holdSec);S.dj=$('dj').value;DV=0;loadBase(b,'設計JSON取込「'+(R.plan.meta.title||'無題')+'」');window.LASTPLAN=R.plan;
+ const q=R.plan.scenes.map((x,i)=>(i+1)+'. 検索語: '+(x.queries.join(' / ')||'（なし）')).join('\n');
+ o.className='note';o.textContent='反映しました（'+R.plan.scenes.length+'場面・'+R.plan.meta.totalSec+'秒）。素材検索語:\n'+q+(R.warnings.length?'\n⚠ '+R.warnings.join('\n⚠ '):'');return R}
+$('bDJ').onclick=importDesign;
+$('bDJP').onclick=()=>{const t=BSDesign.requestPrompt($('dsc').value);$('djp').value=t;$('djp').hidden=false};
+$('bDJC').onclick=async()=>{const t=BSDesign.requestPrompt($('dsc').value);$('djp').value=t;$('djp').hidden=false;try{await navigator.clipboard.writeText(t);$('djs').textContent='依頼文をコピーしました。ChatGPT/Claudeに貼り付けてください'}catch{$('djp').select();$('djs').textContent='自動コピーできません。上の欄を長押しして全選択→コピーしてください'}};
+(function(){const o=$('implt'),L=BSDesign.IMPL;o.textContent=Object.keys(L).map(k=>(/^実装済み/.test(L[k])?'✔ ':'△ ')+k+'：'+L[k]).join('\n')+'\n※ 完成動画に反映されるのは✔の演出です。△は設計・近似のみ。'})();
 clipForm();ledger();renderFrame(1.5);
-window.CP={exportOffline,S,renderFrame,capLayout,boxes,safeCheck,buildAudio,measure,alignNarr,mockNarr,segments,report,prep,exportVideo,useClip,sceneAt,camera,trans,LN0,SCN0,out,og,GL:!!GL,SAFE,N,FPS,D,ledger,stats};
+window.CP={rateAt,mediaT,applyCuts,importDesign,exportOffline,S,renderFrame,capLayout,boxes,safeCheck,buildAudio,measure,alignNarr,mockNarr,segments,report,prep,exportVideo,useClip,sceneAt,camera,trans,LN0,SCN0,out,og,GL:!!GL,SAFE,N,FPS,D,ledger,stats};
 </script></body></html>
