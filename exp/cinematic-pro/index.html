@@ -24,6 +24,7 @@ label{display:block}small{color:#9aa0ad}
 やがて朝日が昇り、景色が変わる</textarea>
 <p><button id="bDir" class="p">台本から演出を設計して反映</button><button id="bDirV">別案を出す</button><button id="bDirA">標準A案（15秒）に戻す</button></p>
 <div id="dirsum" class="note"></div>
+<div class="note">同じ台本・素材・音声で演出だけを切り替えて比べます（採点は完成動画を見て行います）</div><p><button id="vA">A 基本</button><button id="vB">B 高度</button><button id="vC">C ディレクター最適化</button></p>
 <h2>外部AI（ChatGPT・Claude）の映像設計を取り込む</h2>
 <p class="note">追加のAPI費用なしで、ChatGPTやClaudeの通常の画面で作った映像設計JSON（become.design/1）を貼り付けて反映できます。形式・範囲を検証し、外れた値は取り込みません。コードは実行しません。外部AIの設計の良し悪しは検証されません【未確認】。</p>
 <p><button id="bDJP">AIへの依頼文を作る（台本欄の内容を使用）</button> <button id="bDJC">依頼文をコピー</button></p>
@@ -405,8 +406,8 @@ function govTrim(o,keep){/* 1つ削る。削った内容を返す。物語の核
  const core=o.role==='turn'||o.role==='climax';
  if(o.px>1){o.px--;return'パララックスを'+(o.px+1)+'層→'+o.px+'層'}if(o.beat){o.beat=false;return'拍吸着'}if(o.px===1){o.px=0;return'パララックス'}
  if(o.tr==='leak'){o.tr='none';delete o.tw;return'ライトリーク'}if(o.cut&&o.cut.type!=='none'&&!core){o.cut={type:'none',off:0};return'J/Lカット'}
- if(o.spd==='ramp'&&!core){o.spd='';return'スピードランプ'}if(o.mask&&!core){o.mask=null;return'マスキング'}if(o.kin==='track'){o.kin='';return'文字の収束演出'}
- if(o.tr==='flash'&&!core){o.tr='dip';return'フラッシュ→暗転'}if(o.kin==='char'&&!core){o.kin='track';return'文字ごとの演出→収束'}return null}
+ if(o.spd==='ramp'){o.spd='';return'スピードランプ'}if(o.mask){o.mask=null;return'マスキング'}if(o.kin==='track'){o.kin='';return'文字の収束演出'}
+ if(o.tr==='flash'){o.tr='dip';return'フラッシュ→暗転'}if(o.kin==='char'&&!core){o.kin='track';return'文字ごとの演出→収束'}return null}
 function govern(sc,log){const out=log||[],n=sc.length-1;if(!GOV.on)return out;
  for(let i=1;i<n;i++){const o=sc[i];
   if(o.mask&&o.mc){o.mask=null;out.push({id:o.id,rule:'競合',msg:'マッチカットとマスキングは同時に使えないため、マスキングを外しました（マッチカットはカメラ連続性を保つ必要があります）'})}
@@ -433,6 +434,15 @@ function loadBase(base,label){S.base={sc:base.sc,ln:base.ln,D:base.D,bpm:base.bp
  clipForm();ledger();govShow();renderFrame(Math.min(1.5,D-.1));try{$('nst').textContent='ナレーション未取込（BGMのみ）。台本が変わったため、ナレーションは取り込み直してください。'}catch{}
  const L=S.ln.map((l,i)=>(i+1)+'. '+l.toks.map(k=>k[0]).join('')).join('　');try{$('dirsum').textContent=label+'｜'+(S.sc.length-1)+'場面＋余韻・全体'+D+'秒｜字幕: '+L}catch{}}
 function govShow(){try{const g=(S.base&&S.base.gov)||[];$('govt').textContent=GOV.on?(g.length?'演出の自動調整（理由）:\n'+g.map(x=>'・'+x.id+'［'+x.rule+'］'+x.msg).join('\n'):'演出の自動調整: 競合・過剰・偏りは検出されませんでした'):'演出の自動調整: オフ'}catch{}}
+/* ---------- A/B/Cの比較用に、同じ台本・素材・音声から3つの演出案を作る（評価は人が完成動画で行う） ---------- */
+function makeVariant(k,base){const b=JSON.parse(JSON.stringify(base||S.base)),n=b.sc.length-1,log=[];
+ b.sc.forEach((o,i)=>{if(i>=n)return;
+  if(k==='A'){o.kin='';o.mask=null;o.mc=false;o.px=0;o.spd='';o.beat=false;o.cut={type:'none',off:0};if(o.tr==='flash'||o.tr==='leak')o.tr='none';o.sfx={};o.g=JSON.parse(JSON.stringify(GRP['muted-neutral']))}
+  if(k==='B'&&i>0){o.kin='char';o.px=2;o.beat=true;if(!o.mc)o.mask={type:['iris','slit','wipe-up'][i%3],dur:.6};if(i%3===0)o.spd='ramp';o.tr=o.mc?'none':'flash'}});
+ if(k==='B'){const q=b.sc[0];q.kin='char';q.px=2}
+ b.gov=[];if(k==='C'){const sv=GOV.on;GOV.on=true;try{govern(b.sc,b.gov)}finally{GOV.on=sv}}return b}
+function applyVariant(k){const b=makeVariant(k,S.baseOrig||S.base);if(!S.baseOrig)S.baseOrig=JSON.parse(JSON.stringify(S.base));const K={c:S.clips,n:S.narr,m:S.mix,al:S.aligned,o:S.off,mk:S.isMockNarr};loadBase(b,'比較案'+k);if(K.c&&K.c.length===S.clips.length)S.clips=K.c;S.narr=K.n;S.mix=K.m;S.aligned=K.al;S.off=K.o;S.isMockNarr=K.mk;try{clipForm()}catch{}renderFrame(Math.min(1.5,D-.1));return b}
+['A','B','C'].forEach(k=>{const e=$('v'+k);if(e)e.onclick=()=>{if(!S.base){return}applyVariant(k)}});
 let DV=0;
 function applyDirector(){S.dj=null;const P=DIR.plan($('dsc').value,{variant:DV});if(!P.scenes.length){$('dirsum').textContent='台本が空です';return null}
  const b=planToBase(P);loadBase(b,'ディレクター案'+(DV?'（別案'+DV+'）':''));window.LASTPLAN=P;
@@ -481,5 +491,5 @@ $('bDJP').onclick=()=>{const t=BSDesign.requestPrompt($('dsc').value);$('djp').v
 $('bDJC').onclick=async()=>{const t=BSDesign.requestPrompt($('dsc').value);$('djp').value=t;$('djp').hidden=false;try{await navigator.clipboard.writeText(t);$('djs').textContent='依頼文をコピーしました。ChatGPT/Claudeに貼り付けてください'}catch{$('djp').select();$('djs').textContent='自動コピーできません。上の欄を長押しして全選択→コピーしてください'}};
 (function(){const o=$('implt'),L=BSDesign.IMPL;o.textContent=Object.keys(L).map(k=>(/^実装済み/.test(L[k])?'✔ ':'△ ')+k+'：'+L[k]).join('\n')+'\n※ 完成動画に反映されるのは✔の演出です。△は設計・近似のみ。'})();
 clipForm();ledger();renderFrame(1.5);
-window.CP={GOV,govern,fxCost,analyzeBgm,loadBgm,drawParallax,rateAt,mediaT,applyCuts,importDesign,exportOffline,S,renderFrame,capLayout,boxes,safeCheck,buildAudio,measure,alignNarr,mockNarr,segments,report,prep,exportVideo,useClip,sceneAt,camera,trans,LN0,SCN0,out,og,GL:!!GL,SAFE,N,FPS,D,ledger,stats};
+window.CP={makeVariant,applyVariant,GOV,govern,fxCost,analyzeBgm,loadBgm,drawParallax,rateAt,mediaT,applyCuts,importDesign,exportOffline,S,renderFrame,capLayout,boxes,safeCheck,buildAudio,measure,alignNarr,mockNarr,segments,report,prep,exportVideo,useClip,sceneAt,camera,trans,LN0,SCN0,out,og,GL:!!GL,SAFE,N,FPS,D,ledger,stats};
 </script></body></html>
