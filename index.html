@@ -4,7 +4,7 @@
 <title>BECOME. STUDIO</title>
 <meta name="theme-color" content="#07080a"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@800;900&family=Shippori+Mincho+B1:wght@700;800&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#07080a;--pn:#111317;--ln:#2a2d33;--gold:#c9a45c;--g2:#e8cf9a;--ink:#f4efe6;--mute:#9a968c;--serif:"Shippori Mincho B1","Noto Serif JP","Hiragino Mincho ProN",serif;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 html{background:var(--bg);scroll-padding-top:env(safe-area-inset-top,0px)}
@@ -37,7 +37,7 @@ nav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:re
 nav button{margin:0;border:0;border-radius:0;background:none;color:var(--mute);min-height:58px;font-size:12px;padding:6px 2px}#info,#vs,#vf,#vi{white-space:pre-line}nav button.on{color:var(--gold);box-shadow:inset 0 2px 0 var(--gold)}
 @media (prefers-reduced-motion:reduce){button:active{transform:none}}
 </style></head><body>
-<header><span class="logo">BECOME.</span><span>STUDIO v6.3</span><span id="ep">EP.001</span></header>
+<header><span class="logo">BECOME.</span><span>STUDIO v6.4</span><span id="ep">EP.001</span></header>
 <p id="st" role="status">準備完了。テーマを確認して「動画を作る」を押してください。</p>
 <main>
 <section id="hero">
@@ -57,6 +57,12 @@ nav button{margin:0;border:0;border-radius:0;background:none;color:var(--mute);m
 <a class="dl" id="dl" hidden>完成動画を保存</a>
 <button id="share" hidden>共有（TikTok等へ）</button>
 <p id="fmt" class="note"></p>
+<section id="gate" hidden><h2>投稿前セキュリティゲート</h2><p id="gsum"></p><ul id="gl" style="list-style:none;padding:0"></ul>
+<label for="srcn">出典メモ（統計・研究・名言を使った場合は必ず記入。例: 文献名・発行元・年）</label><textarea id="srcn" style="min-height:70px" placeholder="出典が無い場合は空のままにし、該当する表現を台本から削除してください"></textarea>
+<p><button id="grun">もう一度検査する</button><button id="gailabel">投稿文にAI生成の表記を追加</button></p>
+<div class="ck"><input type="checkbox" id="gack"><span>REVIEWの項目を、自分の目と耳で確認しました（オーナー確認）</span></div>
+<p><button id="glog">監査ログを保存（.txt）</button></p>
+<p class="note">このゲートは機械的に検出できる範囲の検査です。TikTok側の審査通過を保証しません。BLOCKの間は、保存・共有・TikTok送信を停止します。</p></section>
 <label for="cap">投稿文</label><textarea id="cap" style="min-height:150px"></textarea>
 <label for="tags">ハッシュタグ</label><textarea id="tags" style="min-height:80px"></textarea>
 <button id="cc">投稿文コピー</button><button id="ct">タグコピー</button><button id="ca">全部コピー</button><button id="srt">字幕SRT保存</button><button id="gp">投稿文を作り直す</button>
@@ -80,6 +86,7 @@ nav button{margin:0;border:0;border-radius:0;background:none;color:var(--mute);m
 <button class="pri" id="ttup">下書きに送る</button><p class="note" id="ttpm"></p></div>
 </details>
 <details id="lab"><summary>競合研究（参考動画の制作手法を分析）</summary>
+<p class="note"><b>他者の動画の構成・映像・台本の模倣や転載は禁止です。</b>分析は、自分の動画の改善の参考にする目的だけに使ってください。</p>
 <p class="note">他人の動画・台本・音声は転載しません。分析するのは「長さ・切り替えの速さ・間・音量の推移」などの数値だけで、動画ファイルはこの端末の中だけで処理します（外部送信なし）。</p>
 <label for="cu">参考にするTikTokのURL（任意）</label><input type="text" id="cu" placeholder="https://www.tiktok.com/…"><button id="cfetch">URLから公開情報を取得</button>
 <label for="cf">参考動画の保存ファイル（映像と音声を分析できます）</label><input type="file" id="cf" accept="video/*">
@@ -517,7 +524,7 @@ async function run(mode,M0,tag){
  if(rec&&!M.A)return refuse('ナレーション音声がありません。BGMのみの動画は書き出しません。詳細設定の「AI NARRATION」で音声を生成または取り込み、「動画に適用」を押してください');
  if(rec){const bad=chkM(M);if(bad)return refuse('書き出しを中止しました。'+bad)}
  if(rec&&M.miss)return refuse(`音声が未生成の行が${M.miss}行あります。全行を生成または取り込みしてから書き出してください`);
- try{await Promise.race([document.fonts.load(`800 48px "Shippori Mincho B1"`,$('script').value),new Promise(r=>setTimeout(r,3000))])}catch{}
+ try{await Promise.race([Promise.all([document.fonts.load(`800 48px "Shippori Mincho B1"`,$('script').value),document.fonts.load(`900 48px "Noto Sans JP"`,$('script').value)]),new Promise(r=>setTimeout(r,3000))])}catch{}
  const rs=tag==='test'?'720':$('res').value;cv.width=rec?+rs:540;cv.height=Math.round(cv.width*16/9);
  try{
   const ctx=new AC();await ctx.resume();LOG((rec?'書き出し':'再生')+' AudioContext='+ctx.state+' sr='+ctx.sampleRate);if(ctx.state!=='running')throw new Error('AudioContextが起動しません（state='+ctx.state+'）');S.ac=ctx;S.mode=mode;S.last=-1;S.partial=false;S.lastM=M;
@@ -552,14 +559,14 @@ async function verify(blob,M){const el=$('vf'),meter=S.fr?`録画中の出力レ
 function finish(ch,mime){const T=S.tag==='test';if(!ch.length){say('動画を生成できませんでした');S.fin&&S.fin({ok:false,msg:'動画を生成できませんでした'});return}
  const type=(mime||ch[0].type||'video/webm').split(';')[0],ext=type.includes('mp4')?'mp4':'webm',blob=new Blob(ch,{type}),url=URL.createObjectURL(blob);
  if(T){if(S.turl)URL.revokeObjectURL(S.turl);S.tb=blob;S.turl=url;$('rvt').src=url;$('rvt').hidden=false}
- else{if(S.url)URL.revokeObjectURL(S.url);S.blob=blob;S.url=url;S.name=`BECOME-${pad3(S.ep)}.${ext}`;
+ else{S.gateState=null;S.gackAt=null;$('gack').checked=false;if(S.url)URL.revokeObjectURL(S.url);S.blob=blob;S.url=url;S.name=`BECOME-${pad3(S.ep)}.${ext}`;
   $('dl').href=url;$('dl').download=S.name;$('dl').hidden=true;$('rv').src=url;$('share').hidden=true;
   $('fmt').textContent=ext==='mp4'?'形式: MP4。そのままTikTokへ投稿できます。':'形式: WebM。この端末はMP4録画に非対応です。詳細設定の「WebM形式だった場合」の手順で変換してください。'}
  say('書き出し完了。音声を検査しています…');const part=S.partial;S.partial=false;
  verify(blob,S.lastM).then(r=>{if(T){say(r.ok?'テスト動画：ナレーションを検出しました':'テスト動画：'+(r.unverified?'音声の自動検査ができませんでした':'ナレーションを検出できませんでした'));S.fin&&S.fin(r);return}
   if(r.ok){$('dl').textContent='完成動画を保存（'+S.name.split('.').pop().toUpperCase()+'）';$('dl').hidden=false;$('share').hidden=!(navigator.canShare&&navigator.share);say(part?'途中停止した動画ですがナレーションは検出されました。再書き出しを推奨します':'完成。ナレーションを検出しました。再生して確認してから保存してください')}
   else if(r.unverified){$('dl').textContent='保存（音声は未検査・再生して確認してください）';$('dl').hidden=false;say('⚠ 音声の自動検査ができませんでした。再生して声が入っているか確認してください')}
-  else say('✖ 不合格：動画にナレーションが入っていません。保存はできません。');S.fin&&S.fin(r)})}
+  else say('✖ 不合格：動画にナレーションが入っていません。保存はできません。');S.lastV=r;try{gateRender()}catch(e){LOG('gate '+e.message)}S.fin&&S.fin(r)})}
 $('bPlay').onclick=()=>run('prev');$('bStop').onclick=()=>{stopAll();say('停止しました')};
 $('share').onclick=async()=>{try{if(!S.blob)return xmsg('共有する動画がありません',1);const f=new File([S.blob],S.name,{type:S.blob.type});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'BECOME.'});xmsg('共有画面を開きました。TikTokを選んでください')}else xmsg('⚠ この端末・ブラウザは動画ファイルの共有に対応していません。「完成動画を保存」で端末に保存し、TikTokアプリの＋ボタンからアップロードで選んでください',1)}catch(e){xmsg(e&&e.name==='AbortError'?'共有をキャンセルしました':'⚠ 共有できませんでした（'+(e&&e.message)+'）。「完成動画を保存」で保存し、TikTokアプリの＋ボタンからアップロードで選んでください',1)}};
 
@@ -694,7 +701,7 @@ function fitTarget(){const tg=+$('dur').value,A=S.act;if(!A||A.mode!=='clips')re
  if(cut){$('script').value=L.join('\n');S.act={...A,bufs};S.cand=S.act}return{cut}}
 async function makeVideo(){
  if(S.xbusy)return xmsg('処理中です。完了までお待ちください');
- S.xbusy=true;S.cancel=false;S.nline=null;const b=$('mk');b.disabled=true;b.textContent='作成中…';$('mkstop').hidden=false;$('result').hidden=true;stopAll();
+ S.xbusy=true;S.cancel=false;S.nline=null;const b=$('mk');b.disabled=true;b.textContent='作成中…';$('mkstop').hidden=false;$('result').hidden=true;$('gate').hidden=true;$('gack').checked=false;S.gackAt=null;S.gateState=null;stopAll();
  MS.forEach((_,i)=>ms(i,'○'));S.ph=[0,1];S.after=0;S.pend=0;prog(0,null);xmsg('処理中：ボタンを受け付けました。台本をつくっています…');
  let cur=0,tk=null;
  try{await sleep(60);
@@ -702,7 +709,7 @@ async function makeVideo(){
   if(!window.MediaRecorder||!document.createElement('canvas').captureStream)throw JE('このブラウザは動画の録画に対応していません。Android版のChromeで開いてください');
   ms(0,'▶');const imp=$('eng').value==='import'&&S.act;
   if(!imp){$('eng').value='kokoro';$('vo').value='jm_kumo';S.tplKey=tplKey($('th').value);S.tpl=TPL[S.tplKey];S.tplStyle=S.tpl.sty;if($('autos').checked)gen();S.act=null;S.cand=null;S.gDone=false}
-  if(!lines().length)throw JE('台本が空です');ms(0,'✔',lines().length+'行／'+(S.tpl?S.tpl.n:''));ckc();
+  if(!lines().length)throw JE('台本が空です');{const pb=gateItems().filter(x=>x.s==='BLOCK'&&'FGI'.includes(x.k));if(pb.length)throw JE('制作前の検査でBLOCKになりました（'+pb.map(x=>x.k+'：'+x.n).join('、')+'）。音声の生成は行っていません。\n'+pb[0].m)}ms(0,'✔',lines().length+'行／'+(S.tpl?S.tpl.n:''));ckc();
   cur=1;ms(1,'▶','準備中');
   if(imp)ms(1,'✔','取り込み音声を使用');
   else{const tN=Date.now();let lT=null;S.onNar=(i,n)=>{ckc();if(lT==null)lT=Date.now();S.nline=i;S.nN=n};
@@ -719,11 +726,11 @@ async function makeVideo(){
    try{r=await recWait(M)}catch(e){r={ok:false,msg:jp(e),err:e}}
    ckc();if(r&&(r.ok||r.unverified)){ok=true;break}LOG('本番書き出し失敗('+k+'): '+(r&&r.msg));if(k<2)xmsg('書き出しに失敗したため、自動で1回だけやり直します…',1)}
   if(!ok){if(r&&r.err)throw r.err;throw JE(r&&r.msg?r.msg.split('\n').filter(Boolean).slice(-1)[0]:'書き出しに失敗しました')}
-  ms(3,'✔','完成'+(r.unverified?'（音声は未検査）':''));recVid(M);cur=4;ms(4,'▶');$('gp').onclick();ms(4,'✔');
+  ms(3,'✔','完成'+(r.unverified?'（音声は未検査）':''));S.lastV=r;recVid(M);gateRender();cur=4;ms(4,'▶');$('gp').onclick();ms(4,'✔');
   prog(1,0);$('result').hidden=false;$('result').scrollIntoView({behavior:'smooth',block:'start'});
   xmsg(r.unverified?'⚠ 音声の自動検査ができませんでした。上の動画を再生して、声が入っているか耳で確認してから保存してください':'✔ 完成しました。動画を再生して確認し、「完成動画を保存」を押してください',r.unverified);
  }catch(e){LOG('作成失敗: '+String(e&&e.stack||e).slice(0,300));const m=e&&e.cancel?'中止しました':jp(e);ms(cur,'✖',m.split('\n')[0]);xmsg('✖ '+m,1)}
- finally{if(tk)clearInterval(tk);S.onNar=null;S.xbusy=false;S.ph=[0,1];S.after=0;S.pend=0;b.disabled=false;b.textContent='② 動画を作る';$('mkstop').hidden=true}}
+ finally{if(tk)clearInterval(tk);S.onNar=null;S.xbusy=false;S.ph=[0,1];S.after=0;S.pend=0;b.disabled=false;b.textContent='③ 動画を作る';$('mkstop').hidden=true}}
 $('mk').onclick=()=>makeVideo();$('mkstop').onclick=()=>{S.cancel=true;xmsg('中止しています…',1);stopAll()};
 
 /* ---------- v4.0: Gemini TTS（第一候補）・テンプレート・競合研究・成果分析 ---------- */
@@ -806,12 +813,95 @@ $('gtest').onclick=async()=>{const b=$('gtest');b.disabled=true;$('gst').textCon
  catch(e){LOG('gtest失敗: '+e.message);$('gst').textContent='✖ '+gmsg(e)+'\n詳細: '+String(e.message).slice(0,200)}finally{b.disabled=false}};
 function gui_keep(){}
 gui();
+/* ---------- v6.4: BEYOND. SECURITY PROTOCOL v1.0 投稿前セキュリティゲート（A〜J）・監査ログ ---------- */
+const TOS={date:'2026-11-26',note:'TikTok公式ページを確認（AI生成コンテンツ: support.tiktok.com／コミュニティガイドライン: tiktok.com/community-guidelines／Creator Rewards: newsroom.tiktok.com 2024-03-18）。ガイドラインのページ内表記は「Last updated, March 2023」で、現行版かどうかは確認できません'};
+const SGR={
+ inj:/(ignore (all|any|previous)|disregard|以前の(指示|命令)|命令を無視|システムプロンプト|プロンプト|APIキー|パスワード|アクセストークン|sk-[A-Za-z0-9]|AIza[0-9A-Za-z_-]{10,}|送信して|送って|実行して)/i,
+ pii:/(0\d{1,4}[-ー]?\d{1,4}[-ー]?\d{3,4}|[\w.+-]+@[\w-]+\.[\w.-]+|https?:\/\/|www\.|(都|道|府|県).{1,8}(市|区|町|村).{0,12}[0-9０-９])/,
+ stat:/([0-9０-９]+(\.[0-9]+)?\s*(%|％|割|パーセント)|[0-9０-９]+人に[0-9０-９]+人|(多くの|ほとんどの|大半の|大多数の)人(は|が)|[0-9０-９]+倍)/,
+ res:/(研究|実験|論文|調査|統計|データによると|科学的|脳科学|心理学者|科学者|ハーバード|スタンフォード|エビデンス|証明され)/,
+ med:/(うつ病|鬱|うつ|病気|治る|治療|診断|薬|ADHD|不眠症|自律神経|障害|トラウマ)/,
+ gua:/((必ず|絶対(に)?|確実に|100\s*[%％]|誰でも)(成功|稼|変われ|変わる|勝て|痩せ|治|実現|叶))|人生(が|は)(必ず|絶対)/,
+ weak:/(必ず|絶対|確実|保証|間違いなく)/,
+ money:/(稼|月収|年収|万円|副業|投資|株|FX|仮想通貨|借金|訴え|法律|弁護士)/,
+ quote:/(名言|格言|曰く|「[^」]{4,}」\s*(と|は)?\s*(言|語|述)|[―—-]\s*[ァ-ヶ一-龠A-Za-z]{2,})/,
+ sui:/(死にたい|自殺|自傷|リスカ|消えたい|殺す|殺せ|死ね|首を吊)/,
+ ins:/(バカ|馬鹿|クズ|無能|負け組|ゴミ|カス|情けない|お前は|ダメ人間|価値がない)/,
+ fear:/(手遅れ|終わりだ|人生終了|取り返しがつかない|後悔するぞ|もう遅い|一生.{0,6}(惨め|貧乏|孤独))/,
+ risk:/(断食|一気飲み|徹夜|限界まで|無理やり|我慢して耐え)/,
+ bait:/(フォローしないと|いいね(を)?お願い|相互フォロー|フォロバ|拡散して|シェアしないと|いいねしないと)/};
+const bg2=t=>{const s=String(t).replace(/\s/g,''),m=new Set();for(let i=0;i<s.length-1;i++)m.add(s.slice(i,i+2));return m},sim=(a,b)=>{const A=bg2(a),B=bg2(b);if(!A.size||!B.size)return 0;let n=0;A.forEach(x=>{if(B.has(x))n++});return n/(A.size+B.size-n)};
+function gateItems(){const L=lines(),txt=L.join('\n'),th=$('th').value.trim(),all=th+'\n'+txt,src=(S.act&&S.act.src)||'',V=vids(),cur=V[0],dur=cur?cur.dur:0,own=(mgHandle()||'').toLowerCase(),I=[],add=(k,n,s,m)=>I.push({k,n,s,m}),srcn=($('srcn').value||'').trim();
+ const hit=(re,t=all)=>{const m=t.match(re);return m?m[0]:null};
+ /* A TikTok規約 */
+ {const b=hit(SGR.bait,txt);add('A','TikTok規約',b?'REVIEW':'REVIEW',(b?'「'+b+'」はエンゲージメント誘導にあたる可能性があります。':'')+'規約確認日 '+TOS.date+'。'+TOS.note+'。最新の規約は人が確認してください（最新情報を確認できないため、PASSにはしません）')}
+ /* B AI生成表示 */
+ {const parts=['音声: AI合成（'+(ENG[src]||'不明')+'）','映像: コードで生成したCG（実在人物の顔・声は使用していません）'];if(S.photos.length)parts.push('写真: 利用者が追加（AI生成かどうかは本人が確認）');add('B','AI生成表示','REVIEW','使用箇所 → '+parts.join('／')+'。TikTokの投稿画面で「AI生成コンテンツ」の設定をオンにするか、投稿文に明記してください（公式: リアルなAI生成の画像・音声・映像は表示が必要）。意図的に隠すことは禁止です')}
+ /* C 著作権 */
+ {const q=hit(SGR.quote,txt);if(S.photos.length||q)add('C','著作権',  'REVIEW',(S.photos.length?'追加した写真 '+S.photos.length+'枚の権利は、ご自身で確認してください。':'')+(q?'名言・引用らしき表現「'+q+'」があります。発言者と原典を確認し、確認できない場合は削除してください。':''));else add('C','著作権','PASS','BGM・効果音・図・人物はすべてアプリ内で合成・描画しています（外部素材なし）。他者の動画・音楽・画像は使っていません')}
+ /* D 商用利用 */
+ {const d=[];let s='PASS';d.push('BGM・効果音: アプリ内で合成（外部素材なし）');
+  if(src==='gemini')d.push('音声(Gemini): 生成物の所有権をGoogleは主張しない（Gemini API追加利用規約 2025-10-17版、確認日 2026-11-26）。無料枠では入出力が製品改善に使われます');
+  else if(src==='kokoro'){s='REVIEW';d.push('音声(Kokoro): モデル本体はApache-2.0。日本語音声データの由来・条件は確認できません')}
+  else if(src==='eleven'){s='REVIEW';d.push('音声(ElevenLabs): 商用利用は契約プランの条件に依存。プランを確認してください')}
+  s='REVIEW';d.push('フォント(Shippori Mincho B1、Noto Sans JP): 二次情報でOFL-1.1。Google公式の一次情報は未取得のため確認できません');add('D','商用利用許諾',s,d.join('／'))}
+ /* E オリジナリティ */
+ {let s='PASS';const m=[];let mx=0,mxv=null;V.slice(1).forEach(v=>{if(v.scr){const x=sim(txt,v.scr);if(x>mx){mx=x;mxv=v}}});
+  if(mx>=.8){s='BLOCK';m.push('過去動画「'+mxv.th+'」と台本の類似度 '+(mx*100).toFixed(0)+'%（80%以上）。内容を作り直してください')}else if(mx>=.5){s='REVIEW';m.push('過去動画「'+mxv.th+'」と台本の類似度 '+(mx*100).toFixed(0)+'%。重複していないか確認してください')}else m.push('過去動画との台本の類似度は最大 '+(mx*100).toFixed(0)+'%'+(V.length<2?'（比較対象の動画がありません）':''));
+  if(S.rolesFor&&S.rolesFor===$('script').value){if(s==='PASS')s='REVIEW';m.push('台本はテンプレートの自動生成のままです。独自の解説・考察・視点を加えたか確認してください')}
+  if($('bgs').value==='mg'&&S.kits){const sc=S.lastM?S.lastM.sc:[],ks=new Set();sc.forEach((c,i)=>{const K=S.kits.get(c.s+'|'+i);if(K)ks.add(K.icon||K.chart||'-')});if(sc.length>=4&&ks.size<Math.min(4,sc.length-1)){if(s==='PASS')s='REVIEW';m.push('図解の種類が少なく単調です（'+ks.size+'種）')}else m.push('図解の種類: '+ks.size+'種')}
+  if($('bgs').value==='real'&&S.photos.length){if(s==='PASS')s='REVIEW';m.push('写真が主体の構成です。独自の解説が入っているか確認してください（静止画の羅列は不可）')}
+  if(dur&&dur<60){if(s==='PASS')s='REVIEW';m.push('長さ '+dur+'秒。収益化を目指す場合は原則75〜90秒')}else if(dur)m.push('長さ '+dur+'秒');
+  add('E','オリジナリティ',s,m.join('／'))}
+ /* F ファクトチェック */
+ {let s='PASS';const m=[],st=hit(SGR.stat),rs=hit(SGR.res),md=hit(SGR.med),gu=hit(SGR.gua),wk=hit(SGR.weak),mn=hit(SGR.money),q=hit(SGR.quote,txt);
+  if(st||rs){if(srcn){s='REVIEW';m.push('統計・研究に関する表現「'+(st||rs)+'」があります。出典メモ「'+srcn.slice(0,40)+'」が実在し、内容と一致するか確認してください')}else{s='BLOCK';m.push('統計・研究に関する表現「'+(st||rs)+'」がありますが、出典メモが空です。出典を確認できないため、削除するか出典を入力してください（架空の研究・根拠のない統計は禁止）')}}
+  if(gu){s='BLOCK';m.push('成功・変化を保証する表現「'+gu+'」があります。保証はしないでください')}else if(wk){if(s==='PASS')s='REVIEW';m.push('断定表現「'+wk+'」があります。保証にならないか確認してください')}
+  if(md){if(s==='PASS')s='REVIEW';m.push('医療・精神に関する語「'+md+'」があります。断定していないか確認してください')}
+  if(mn){if(s==='PASS')s='REVIEW';m.push('金銭・法律に関する語「'+mn+'」があります。根拠のない助言になっていないか確認してください')}
+  if(q){if(s==='PASS')s='REVIEW';m.push('名言・引用らしき表現があります。発言者と原典を確認してください')}
+  if(s==='PASS')m.push('統計・研究・医療・保証の表現は検出されませんでした（機械的な検査です。内容の事実確認は人が行ってください）');add('F','ファクトチェック',s,m.join('／'))}
+ /* G 視聴者保護 */
+ {let s='PASS';const m=[],su=hit(SGR.sui),ins=hit(SGR.ins),fe=hit(SGR.fear),rk=hit(SGR.risk);
+  if(su){s='BLOCK';m.push('自傷・自殺・暴力に関する語「'+su+'」があります')}
+  if(ins){if(s==='PASS')s='REVIEW';m.push('人格否定にあたる可能性のある語「'+ins+'」があります')}
+  if(fe){if(s==='PASS')s='REVIEW';m.push('不安をあおる表現「'+fe+'」があります')}
+  if(rk){if(s==='PASS')s='REVIEW';m.push('危険な行動を連想させる語「'+rk+'」があります')}
+  if(s==='PASS')m.push('危険・差別・人格否定・過度な不安の語は検出されませんでした（機械的な検査です。トーンは人が確認してください）');add('G','視聴者保護',s,m.join('／'))}
+ /* H 音声・字幕品質 */
+ {const r=S.lastV;let s='REVIEW';const m=[];if(!r){m.push('音声の自動検査結果がありません')}else if(r.ok){m.push('音声の自動検査: 合格')}else if(r.unverified){m.push('音声の自動検査: 検査できませんでした')}else{s='BLOCK';m.push('音声の自動検査: 不合格（ナレーションなし）')}
+  const lg=L.filter(x=>x.length>40);if(lg.length)m.push('40文字を超える字幕行が'+lg.length+'行あります');m.push('声の自然さ・字幕の誤字は、再生して耳と目で確認してください');add('H','音声・字幕品質',s,m.join('／'))}
+ /* I 個人情報・外部入力 */
+ {let s='PASS';const m=[],pi=hit(SGR.pii),ij=hit(SGR.inj),hd=(all.match(/@[\w.]+/g)||[]).filter(h=>h.toLowerCase()!==own);
+  if(ij){s='BLOCK';m.push('外部からの命令・認証情報を思わせる語「'+ij+'」が台本またはテーマにあります（プロンプトインジェクションの疑い）')}
+  if(pi){s='BLOCK';m.push('個人情報・連絡先・URLらしき文字「'+pi+'」があります')}
+  if(hd.length){if(s==='PASS')s='REVIEW';m.push('他人のアカウント名らしき表記 '+hd.join(',')+'があります')}
+  if(s==='PASS')m.push('電話・メール・URL・住所・認証情報らしき文字は検出されませんでした');add('I','個人情報・外部入力',s,m.join('／'))}
+ /* J 収益化適格性 */
+ add('J','収益化適格性（事前確認）','REVIEW','Creator Rewardsの条件（公式 2024-03-18: 18歳以上・フォロワー1万以上・直近30日10万再生以上・1分超の独創的な動画・良好なアカウント）をこのアプリでは確認できません。日本での提供状況と現行条件も確認できません。本動画の長さ: '+(dur?dur+'秒':'不明'));
+ return I}
+const SGC={PASS:'#6fcf97',REVIEW:'#f2c94c',BLOCK:'#eb5757'};
+function gateRender(){const I=S.gate=gateItems(),b=I.some(x=>x.s==='BLOCK'),r=I.some(x=>x.s==='REVIEW');S.gateState=b?'BLOCK':r?'REVIEW':'PASS';
+ $('gl').innerHTML=I.map(x=>`<li style="margin:.5em 0"><b style="color:${SGC[x.s]}">${x.s}</b> <b>${x.k}：${esc(x.n)}</b><br><small>${esc(x.m)}</small></li>`).join('');
+ $('gsum').innerHTML=b?'<b style="color:#eb5757">BLOCK：投稿準備を停止しました。</b> 保存・共有・TikTok送信はできません。BLOCKの項目を直して、動画を作り直してください':r?'<b style="color:#f2c94c">REVIEW：オーナーの確認が必要です。</b> 各項目を読み、下のチェックを入れると保存・共有ができます':'<b style="color:#6fcf97">全項目PASS（確認できた範囲）</b>。ただしTikTok側の審査通過を保証するものではありません';
+ $('gack').parentElement.hidden=S.gateState!=='REVIEW';$('gate').hidden=false;gateSync()}
+function gateSync(){const st=S.gateState,ok=st==='PASS'||(st==='REVIEW'&&$('gack').checked);if(st==='REVIEW'&&$('gack').checked&&!S.gackAt)S.gackAt=new Date().toISOString();if(!$('gack').checked)S.gackAt=null;
+ if(st==='BLOCK'){$('dl').hidden=true;$('share').hidden=true}else if(!ok){$('dl').hidden=true;$('share').hidden=true}else{const v=S.lastV;if(v&&(v.ok||v.unverified))$('dl').hidden=false;$('share').hidden=!(navigator.canShare&&navigator.share&&v&&(v.ok||v.unverified))}
+ const tb=$('ttup');if(tb)tb.dataset.gate=ok?'1':'0'}
+$('gack').onchange=gateSync;
+$('gailabel').onclick=()=>{const c=$('cap');if(!/AI生成/.test(c.value))c.value=c.value.trimEnd()+'\n\n※この動画はAI音声とAI生成の映像（CG）を使用しています。';say('投稿文にAI生成の表記を追加しました')};
+function gateLog(){const V=vids(),cur=V[0]||{},I=S.gate||gateItems(),th=$('th').value.trim(),rev=V.filter(v=>v.th===th).map(v=>'  - '+(v.at||v.date)+' EP.'+pad3(v.ep)+' ('+(v.sty||'')+' '+v.dur+'秒)').join('\n');
+ const t=['BEYOND. 監査ログ（BECOME. STUDIO v6.4）','','制作日時: '+(cur.at||new Date().toISOString()),'エピソード: EP.'+pad3(S.ep),'テーマ: '+th,'動画スタイル: '+$('vs5').selectedOptions[0].textContent,'長さ: '+(cur.dur||'')+'秒','','【台本】',lines().join('\n'),'','【素材の出典・利用許諾】','BGM・効果音・図・人物: アプリ内で合成・描画（外部素材なし）','音声: '+(ENG[S.act&&S.act.src]||'不明'),'写真: '+(S.photos.length?S.photos.length+'枚（利用者提供・権利は本人確認）':'なし'),'フォント: Shippori Mincho B1 / Noto Sans JP（二次情報でOFL-1.1・Google公式は未確認）','','【AI使用箇所】','音声合成（AI）、映像生成（コードによるCG）','','【規約確認日】',TOS.date+'：'+TOS.note,'出典: https://support.tiktok.com/en/using-tiktok/creating-videos/ai-generated-content , https://www.tiktok.com/community-guidelines/en/integrity-authenticity/ , https://newsroom.tiktok.com/introducing-the-new-creator-rewards-program','','【検査結果】',...I.map(x=>x.s+' '+x.k+' '+x.n+': '+x.m),'総合: '+S.gateState,'※全項目PASSでもTikTok側の審査通過を保証しません','','【出典メモ（統計・研究を使った場合）】',($('srcn').value||'なし'),'','【修正履歴（同じテーマの制作記録）】',rev||'  なし','','【最終承認状態】',S.gackAt?'オーナー確認済み '+S.gackAt:(S.gateState==='PASS'?'自動検査PASS（オーナーの最終承認は別途必要）':S.gateState==='BLOCK'?'BLOCK（投稿停止）':'未承認')].join('\n');
+ const a=store.get('bs_audit',[]);a.unshift({at:new Date().toISOString(),ep:S.ep,th,state:S.gateState});store.set('bs_audit',a.slice(0,50));return t}
+$('glog').onclick=()=>{const t=gateLog(),n=new Date(),p=x=>String(x).padStart(2,'0'),fn=`監査ログ_${n.getFullYear()}${p(n.getMonth()+1)}${p(n.getDate())}-${p(n.getHours())}${p(n.getMinutes())}_EP${pad3(S.ep)}.txt`,u=URL.createObjectURL(new Blob([t],{type:'text/plain;charset=utf-8'})),a=document.createElement('a');a.href=u;a.download=fn;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);say('監査ログを保存しました。Google Driveの「07_改善履歴・検証結果」にアップロードしてください')};
+
+$('grun').onclick=()=>{try{gateRender();say('再検査しました')}catch(e){say('検査に失敗: '+e.message)}};
 const VSTY={mg:{tpl:'cinema',bgs:'mg',acc:null,n:'図解・矢印・数字・人物がアニメーションする黒背景の映像。心理や自己啓発の解説向け。'},real:{tpl:'growth',bgs:'real',acc:null,n:'写真を追加すると実写の映像になります。写真が無い場合は、夕景のシルエット映像で代替します（実写の動画素材は使いません）。'},cinema:{tpl:'cinema',bgs:'auto',acc:null,n:'予告編のように重厚な、夜景・光の筋・星空などのダークシネマ。'},psych:{tpl:'psych',bgs:'mg',acc:'#b79cff',n:'心理学の用語を図解で見せる、紫アクセントのアニメーション。'},story:{tpl:'growth',bgs:'auto',acc:null,n:'1日目から積み上げる成長ドキュメンタリー調のストーリー。'}};
 function applyStyle(){const k=$('vs5').value,v=VSTY[k]||VSTY.mg;$('tpl').value=v.tpl;$('bgs').value=v.bgs;S.acc=v.acc;S.tplKey=null;$('vs5n').textContent=v.n;store.set('bs_vs5',k)}
 $('brand').value=store.get('bs_brand','BEYOND.');$('handle').value=store.get('bs_handle','@beyond8428');$('brand').oninput=()=>store.set('bs_brand',$('brand').value);$('handle').oninput=()=>store.set('bs_handle',$('handle').value);
 $('vs5').onchange=applyStyle;
 /* 制作指示リンク: #s=スタイル&t=テーマ&x=台本(改行区切り)&d=秒 を読み込む（自動で動画作成は始めない） */
-function jobImport(){try{const h=location.hash.replace(/^#/,'');if(!/(^|&)(t|x)=/.test(h))return;const q=new URLSearchParams(h),st=q.get('s'),t=(q.get('t')||'').slice(0,60),x=(q.get('x')||'').replace(/\r/g,'').trim().slice(0,3000),d=q.get('d');
+function jobImport(){try{const h=location.hash.replace(/^#/,'');if(!/(^|&)(t|x)=/.test(h))return;if(SGR.inj.test(decodeURIComponent(h.replace(/\+/g,' ')))){$('jobn').textContent='✖ 制作指示リンクに、命令や認証情報を思わせる語が含まれていたため、読み込みを停止しました（安全のため）';history.replaceState(null,'',location.pathname+location.search);return}const q=new URLSearchParams(h),st=q.get('s'),t=(q.get('t')||'').slice(0,60),x=(q.get('x')||'').replace(/\r/g,'').trim().slice(0,3000),d=q.get('d');
  if(st&&VSTY[st]){$('vs5').value=st;applyStyle()}if(t)$('th').value=t;if(d&&[...$('dur').options].some(o=>o.value===d))$('dur').value=d;
  if(x){$('script').value=x;$('autos').checked=false}else $('autos').checked=true;S.rolesFor=null;upd();
  $('jobn').textContent='✔ 制作指示を読み込みました（'+(t||'テーマ未指定')+'／'+(VSTY[st]?$('vs5').selectedOptions[0].textContent:'スタイルは現在の選択')+(x?'／台本'+x.split('\n').filter(Boolean).length+'行':'')+'）。内容を確認して「③ 動画を作る」を押してください';
@@ -890,7 +980,7 @@ xui();
 
 /* --- 成果の記録 --- */
 const vids=()=>store.get('bs_vids',[]);
-function recVid(M){const a=vids();a.unshift({id:Date.now(),ep:S.ep,date:new Date().toLocaleDateString('ja-JP'),th:$('th').value.trim(),tpl:S.tplKey||'cinema',eng:S.act.src,voice:S.act.src==='eleven'?xvoice():S.act.src==='gemini'?$('gv').value:'jm_kumo',dur:Math.round(M.D),lines:M.sc.length,m:null});store.set('bs_vids',a.slice(0,60));S.curVid=a[0].id;aui()}
+function recVid(M){const a=vids();a.unshift({id:Date.now(),ep:S.ep,date:new Date().toLocaleDateString('ja-JP'),th:$('th').value.trim(),tpl:S.tplKey||'cinema',eng:S.act.src,voice:S.act.src==='eleven'?xvoice():S.act.src==='gemini'?$('gv').value:'jm_kumo',dur:Math.round(M.D),lines:M.sc.length,scr:lines().join('\n'),sty:$('vs5').value,at:new Date().toISOString(),m:null});store.set('bs_vids',a.slice(0,60));S.curVid=a[0].id;aui()}
 const num=id=>{const v=$(id).value.trim();return v===''?null:Math.max(0,+v)};
 const pct=(a,b)=>b>0&&a!=null?(100*a/b):null,f1=x=>x==null?'—':x.toFixed(1);
 function aui(){const a=vids(),sel=$('av'),cur=sel.value;sel.innerHTML=a.length?a.map(v=>`<option value="${v.id}">${esc(v.date)} ${esc(v.th).slice(0,16)}（${TPL[v.tpl]?TPL[v.tpl].n:v.tpl}・${v.dur}秒）</option>`).join(''):'<option value="">作成済みの動画がありません</option>';if(cur&&a.some(v=>String(v.id)===cur))sel.value=cur;else if(S.curVid)sel.value=S.curVid;
@@ -995,7 +1085,7 @@ async function ttsync(){const m=$('ttmsg');m.textContent='取得中…';try{cons
   if(u.follower_count!=null){const sn=store.get('bs_ttsnap',[]),day=new Date().toISOString().slice(0,10);if(sn.length&&sn[sn.length-1].d===day)sn[sn.length-1]={d:day,f:u.follower_count,l:u.likes_count,v:u.video_count};else sn.push({d:day,f:u.follower_count,l:u.likes_count,v:u.video_count});store.set('bs_ttsnap',sn.slice(-120))}
   ttRender(d);m.textContent=`取得しました（${new Date().toLocaleString('ja-JP')}）。動画 ${vs.length}本`}catch(e){m.textContent='✖ '+jp(e);if(!store.get('bs_tts',''))ttui()}}
 $('ttsync').onclick=ttsync;
-$('ttup').onclick=async()=>{const m=$('ttpm');if(!S.blob)return(m.textContent='先に「動画を作る」で動画を作成してください');if(!$('ttc').checked)return(m.textContent='同意のチェックを入れてください（無断では送信しません）');
+$('ttup').onclick=async()=>{const m=$('ttpm');if(!S.gateState||S.gateState==='BLOCK'||(S.gateState==='REVIEW'&&!$('gack').checked))return(m.textContent='投稿前セキュリティゲートを通過していません。完成動画の下の検査結果を確認してください（BLOCKは送信できません。REVIEWはオーナー確認のチェックが必要です）');if(!S.blob)return(m.textContent='先に「動画を作る」で動画を作成してください');if(!$('ttc').checked)return(m.textContent='同意のチェックを入れてください（無断では送信しません）');
  const b=$('ttup');b.disabled=true;try{m.textContent='TikTokに送信の準備をしています…';const i=await ttapi('/api/upload/init',{size:S.blob.size});m.textContent='動画を送信しています（'+(S.blob.size/1048576).toFixed(1)+'MB）…';
   const w=ttw(),r=await fetch(w+'/api/upload/put?t='+encodeURIComponent(i.put),{method:'PUT',headers:{Authorization:'Bearer '+store.get('bs_tts',''),'X-Video-Type':S.blob.type||'video/mp4'},body:S.blob}).catch(e=>{throw Object.assign(new Error('送信に失敗しました（'+e.message+'）'),{jp:1})});const pj=await r.json().catch(()=>null);if(!r.ok||!pj||!pj.ok)throw Object.assign(new Error('TikTokへの動画送信に失敗しました（'+(pj&&pj.error&&pj.error.message||'HTTP '+r.status)+'）'),{jp:1});
   let st='';for(let k=0;k<20;k++){await sleep(3000);const s=await ttapi('/api/status',{publish_id:i.publish_id});st=s.data&&s.data.status;m.textContent='TikTok側の処理状況: '+st;if(st==='SEND_TO_USER_INBOX'||st==='PUBLISH_COMPLETE'||st==='FAILED'){if(st==='FAILED')throw Object.assign(new Error('TikTok側で失敗しました（'+(s.data.fail_reason||'理由不明')+'）'),{jp:1});break}}
