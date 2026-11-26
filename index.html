@@ -242,7 +242,7 @@ P.act.push('今日、ひとつだけ決めろ。','朝の10分を、自分のた
 P.proof.push('結果は遅れて届く。だから、続けた者が勝つ。','迷う時間があるなら、1歩進め。','苦しい日に動いた1日が、未来を作る。');
 function estD(L){const rt=rate();return L.reduce((q,x,i)=>q+.15+Math.max(1.2,x.length*.15/rt)+(i<L.length-1?gapF(x,i,L.length):1),0)}
 
-const lines=()=>$('script').value.split('\n').map(s=>s.trim()).filter(Boolean);
+const lines=()=>$('script').value.split(/\r\n|[\r\n\u2028\u2029\u0085\v\f]/).map(s=>s.trim()).filter(Boolean).flatMap(l=>l.length>45?l.split(/(?<=[。！？!?])/).map(x=>x.trim()).filter(Boolean):[l]);
 const rate=()=>(+$('spd').value||92)/100;
 function dtct(buf,n){const ch=buf.getChannelData(0),sr=buf.sampleRate,fr=Math.floor(sr*.01),nf=Math.floor(ch.length/fr),e=new Float32Array(nf);let mx=0;
  for(let f=0;f<nf;f++){let q=0;for(let i=f*fr;i<(f+1)*fr;i++)q+=ch[i]*ch[i];e[f]=Math.sqrt(q/fr);if(e[f]>mx)mx=e[f]}
@@ -546,7 +546,7 @@ async function run(mode,M0,tag){
  }catch(e){cleanup();say('エラー: '+jp(e));S.fin&&S.fin({ok:false,msg:e.message,err:e})}}
 function envOf(x,sr,t0,t1,hop=.05){const o=[],h=Math.floor(sr*hop);for(let a=Math.floor(t0*sr);a>=0&&a+h<=Math.floor(t1*sr)&&a+h<=x.length;a+=h){let q=0;for(let j=a;j<a+h;j++)q+=x[j]*x[j];o.push(Math.sqrt(q/h))}return o}
 function pcorr(a,b){const n=Math.min(a.length,b.length);if(n<8)return 0;let ma=0,mb=0;for(let i=0;i<n;i++){ma+=a[i];mb+=b[i]}ma/=n;mb/=n;let sab=0,saa=0,sbb=0;for(let i=0;i<n;i++){const x=a[i]-ma,y=b[i]-mb;sab+=x*y;saa+=x*x;sbb+=y*y}const d=Math.sqrt(saa*sbb);return d>1e-12?sab/d:0}
-function chkM(M){if(!M.A)return'ナレーション音声がありません';const L=lines(),list=M.A.mode==='single'?[[M.A.buf,L.join('')]]:M.A.bufs.map((b,i)=>[b,L[i]||'あ']);for(let i=0;i<list.length;i++){const[b,t]=list[i];if(!b)return`${i+1}行目の音声がありません`;const v=vcheck(b,t);if(!v.ok)return`${M.A.mode==='single'?'取り込み音声':(i+1)+'行目の音声'}が不正です：${v.why}`}if(+$('nv').value<10)return'ナレーション音量が10%未満です。音量を上げてください';return null}
+function chkM(M){if(!M.A)return'ナレーション音声がありません';const L=M.sc&&M.sc.length?M.sc.map(c=>c.s):lines(),list=M.A.mode==='single'?[[M.A.buf,L.join('')]]:M.A.bufs.map((b,i)=>[b,L[i]||'あ']);for(let i=0;i<list.length;i++){const[b,t]=list[i];if(!b)return`${i+1}行目の音声がありません`;const v=vcheck(b,t);if(!v.ok)return`${M.A.mode==='single'?'取り込み音声':(i+1)+'行目の音声'}が不正です：${v.why}`}if(+$('nv').value<10)return'ナレーション音量が10%未満です。音量を上げてください';return null}
 async function refMix(M,withN){const sr=16000,off=new OfflineAudioContext(1,Math.ceil(sr*M.D),sr);S.refNV=1;try{build(off,off.destination,0,withN?M:{...M,A:null});return(await off.startRendering()).getChannelData(0)}finally{S.refNV=null}}
 function bestC(d,sr,ref,a,b){const r=envOf(ref,16000,a,b);let best=-1;for(let l=-8;l<=8;l++){const c=pcorr(envOf(d,sr,OFF+a+l*.05,OFF+b+l*.05),r);if(c>best)best=c}return best}
 async function verify(blob,M){const el=$('vf'),meter=S.fr?`録画中の出力レベル: 最大 ${db(S.pk)} dB / 発音フレーム率 ${Math.round(100*S.live/S.fr)}%`:'';el.textContent=meter+'\n書き出しファイルの音声を検査中…';
@@ -709,7 +709,7 @@ async function makeVideo(){
   if(!window.MediaRecorder||!document.createElement('canvas').captureStream)throw JE('このブラウザは動画の録画に対応していません。Android版のChromeで開いてください');
   ms(0,'▶');const imp=$('eng').value==='import'&&S.act;
   if(!imp){$('eng').value='kokoro';$('vo').value='jm_kumo';S.tplKey=tplKey($('th').value);S.tpl=TPL[S.tplKey];S.tplStyle=S.tpl.sty;if($('autos').checked)gen();S.act=null;S.cand=null;S.gDone=false}
-  if(!lines().length)throw JE('台本が空です');{const pb=gateItems().filter(x=>x.s==='BLOCK'&&'FGI'.includes(x.k));if(pb.length)throw JE('制作前の検査でBLOCKになりました（'+pb.map(x=>x.k+'：'+x.n).join('、')+'）。音声の生成は行っていません。\n'+pb[0].m)}ms(0,'✔',lines().length+'行／'+(S.tpl?S.tpl.n:''));ckc();
+  if(!lines().length)throw JE('台本が空です');if(!imp){const nt=lines().join('\n');if($('script').value!==nt){$('script').value=nt;S.rolesFor=null;LOG('台本の改行を整えました（'+lines().length+'行）')}}{const pb=gateItems().filter(x=>x.s==='BLOCK'&&'FGI'.includes(x.k));if(pb.length)throw JE('制作前の検査でBLOCKになりました（'+pb.map(x=>x.k+'：'+x.n).join('、')+'）。音声の生成は行っていません。\n'+pb[0].m)}ms(0,'✔',lines().length+'行／'+$('vs5').selectedOptions[0].textContent);ckc();
   cur=1;ms(1,'▶','準備中');
   if(imp)ms(1,'✔','取り込み音声を使用');
   else{const tN=Date.now();let lT=null;S.onNar=(i,n)=>{ckc();if(lT==null)lT=Date.now();S.nline=i;S.nN=n};
