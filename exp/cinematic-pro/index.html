@@ -252,7 +252,7 @@ async function useClip(i,fileOverride){const f=fileOverride||$('cf'+i).files[0],
  el.currentTime=meta.inp;S.clips[i]={el,meta,w,name:f.name,file:f};$('cm'+i).textContent='反映しました'+(w.length?'（注意: '+w.join('／')+'）':'');ledger();return true}
 function ledger(){const u=S.clips.map((c,i)=>c?`${S.sc[i].id}: ${c.meta.src}｜${c.meta.url}｜制作者 ${c.meta.by}｜${c.meta.lic}｜確認日 ${c.meta.at}｜クレジット案: Video by ${c.meta.by} (${c.meta.src.split('（')[0]})`:null).filter(Boolean);
  const m=S.clips.map((c,i)=>c?null:S.sc[i].id).filter(Boolean).concat([S.sc[S.sc.length-1].id]);
- $('ledger').textContent=(bgmEff()==='ext'?'BGM: '+S.bgm.name+'｜'+S.bgm.src+'｜'+S.bgm.lic+'｜オーナー権利確認済み\n':'')+(bgmEff()==='none'?'BGM: なし（内蔵BGMも使いません）。投稿時にTikTok内の楽曲を追加する場合は、アカウントの種別と楽曲の利用範囲（商用可否）を投稿前に確認してください\n':'')+(u.length?u.join('\n'):'（実素材なし）')+'\n模擬素材の場面: '+m.join(', ')+'\n権利条件や規約が変わったら、保存済みの動画も再審査してください。TikTok投稿時は、AI生成の音声・映像を含む場合にAI生成ラベルが必要です。'}
+ $('ledger').textContent=(bgmEff()==='ext'?'BGM: '+S.bgm.name+'｜'+S.bgm.src+'｜'+S.bgm.lic+'｜オーナー権利確認済み\n':'')+(S.bgmMode==='external'&&!S.bgm?'BGM: 外部BGMが未取込（BGMなしと同じ扱い。内蔵BGMは流しません）\n':'')+(bgmEff()==='none'&&!(S.bgmMode==='external'&&!S.bgm)?'BGM: なし（内蔵BGMも使いません）。投稿時にTikTok内の楽曲を追加する場合は、アカウントの種別と楽曲の利用範囲（商用可否）を投稿前に確認してください\n':'')+(u.length?u.join('\n'):'（実素材なし）')+'\n模擬素材の場面: '+m.join(', ')+'\n権利条件や規約が変わったら、保存済みの動画も再審査してください。TikTok投稿時は、AI生成の音声・映像を含む場合にAI生成ラベルが必要です。'}
 /* ---------- 再生・書き出し ---------- */
 function startScene(i){S.cur=i;const c=S.clips[i];if(c&&c.el){try{c.el.currentTime=c.meta.inp;c.el.play()}catch{}}S.clips.forEach((q,k)=>{if(q&&k!==i)try{q.el.pause()}catch{}})}
 function say(m,c){$('st').textContent=m;$('st').className='note '+(c||'')}
@@ -517,6 +517,7 @@ function applyDirector(){S.dj=null;const P=DIR.plan($('dsc').value,{variant:DV})
  $('dirsum').textContent=$('dirsum').textContent+'\n'+sm+(P.meta.advice.length?'\n⚠ '+P.meta.advice.join('\n⚠ '):'')+(D>=90?'\n⚠ 90秒を超える分は反映できません':'');return P}
 $('bDir').onclick=()=>{DV=0;applyDirector()};$('bDirV').onclick=()=>{DV++;applyDirector()};
 $('bDirA').onclick=()=>{S.dj=null;loadBase({sc:SCN0,ln:LN0,D:15},'標準A案（15秒・固定5場面）')};
+try{const sv=localStorage.getItem('cp_bgmmode');if(sv&&!/restore=1/.test(location.hash))setBgmMode(sv)}catch{}
 if(/restore=1/.test(location.hash))restoreSession().then(()=>{history.replaceState(null,'',location.pathname+location.search+'#res='+RES)});
 
 
@@ -557,9 +558,9 @@ async function loadBgm(file,notes){const st=$('bgst');
   if(S.aligned&&S.narr)alignNarr(S.narr);else{S.sc=JSON.parse(JSON.stringify(S.base.sc));applyCuts()}
   S.bgmMode='external';bgmUi();clipForm();ledger();st.className='note';st.textContent='取り込みました: '+file.name+'｜テンポ約 '+an.bpm+' BPM｜最初の拍 '+an.phase+'秒｜盛り上がり（音量が最も急に上がる点）約 '+an.buildAt+'秒｜長さ '+an.dur.toFixed(1)+'秒'+(an.dur<D?'｜⚠ 動画('+D+'秒)より短いため、終わりは無音になります':'')+(W.length?'｜⚠ '+W.join('／'):'')+'｜検出は目安です【推測】';return true}
  catch(e){S.bgm=null;st.className='note w';st.textContent='この端末では読み込めない音源です: '+e.message;return false}}
-function bgmEff(){const m=S.bgmMode;if(m==='none')return'none';if(m==='builtin')return'builtin';return S.bgm?'ext':'builtin'}
+function bgmEff(){const m=S.bgmMode;if(m==='none')return'none';if(m==='builtin')return'builtin';if(m==='external')return S.bgm?'ext':'none';return S.bgm?'ext':'builtin'}
 function beatOn(){const e=bgmEff();return e==='ext'||(e==='builtin'&&!!(S.base&&S.base.bpm))}
-function bgmUi(){try{const e=bgmEff(),v=S.bgmMode==='none'?'none':(S.bgmMode==='external'&&!S.bgm?'external':(e==='ext'?'external':'builtin'));document.querySelectorAll('input[name=bgmm]').forEach(r=>{r.checked=r.value===v});const t=$('bgmst');if(S.bgmMode==='external'&&!S.bgm){t.className='note w';t.textContent='外部BGMが未取込のため、いまは内蔵BGMで書き出されます。下で音源を取り込んでください'}else if(e==='none'){t.className='note';t.textContent='BGMなし: ドローン・拍の低音キック・拍同期カットを停止しています（ナレーションと効果音は維持）。カットは台本・ナレーションに従います。TikTokの楽曲は投稿時に追加します'+(S.bgm?'｜取り込み済みの音源は保持（使いません）':'')}else{t.className='note';t.textContent=e==='ext'?'外部BGMを使用中':'内蔵BGM（自前合成）を使用中'}}catch{}}
+function bgmUi(){try{const e=bgmEff(),v=S.bgmMode==='none'?'none':(S.bgmMode==='external'?'external':(S.bgmMode==='builtin'?'builtin':(e==='ext'?'external':'builtin')));try{if(S.bgmMode)localStorage.setItem('cp_bgmmode',S.bgmMode)}catch{};document.querySelectorAll('input[name=bgmm]').forEach(r=>{r.checked=r.value===v});const t=$('bgmst');if(S.bgmMode==='external'&&!S.bgm){t.className='note w';t.textContent='⚠ 外部BGMが未取込です。内蔵BGMは流さず、BGMなしと同じ（ドローン・拍の低音キック・拍同期カットを停止）で書き出されます。下で音源を取り込むか、「内蔵BGM」または「BGMなし」を選んでください'}else if(e==='none'){t.className='note';t.textContent='BGMなし: ドローン・拍の低音キック・拍同期カットを停止しています（ナレーションと効果音は維持）。カットは台本・ナレーションに従います。TikTokの楽曲は投稿時に追加します'+(S.bgm?'｜取り込み済みの音源は保持（使いません）':'')}else{t.className='note';t.textContent=e==='ext'?'外部BGMを使用中':'内蔵BGM（自前合成）を使用中'}}catch{}}
 function setBgmMode(m){if(!['builtin','external','none'].includes(m))return false;const was=bgmEff();S.bgmMode=m;S.mix=null;if(bgmEff()!==was||m==='none'||was==='none'){try{if(S.aligned&&S.narr)alignNarr(S.narr);else{S.sc=JSON.parse(JSON.stringify(S.base.sc));applyCuts()}}catch{}try{clipForm();ledger()}catch{}}bgmUi();return true}
 document.querySelectorAll('input[name=bgmm]').forEach(r=>{r.onchange=()=>{if(r.checked)setBgmMode(r.value)}});
 $('bBgm').onclick=()=>{const f=$('bgf').files[0];if(!f){$('bgst').textContent='音源ファイルを選んでください';return}loadBgm(f)};
