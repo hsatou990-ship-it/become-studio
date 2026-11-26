@@ -78,7 +78,8 @@ const S={base:{sc:SCN0,ln:LN0,D:15},sc:JSON.parse(JSON.stringify(SCN0)),ln:JSON.
 const RAMP0=2.2,RAMP1=.3;
 function rateAt(i,u){const k=S.sc[i]&&S.sc[i].spd;return k==='slow'?.5:k==='ramp'?RAMP1+(RAMP0-RAMP1)*(1-u)*(1-u):1}
 function mediaT(i,t){const s=S.sc[i],d=s.b-s.a,e=Math.max(0,t-s.a),u=Math.min(1,e/d);return s.spd==='slow'?.5*e:s.spd==='ramp'?d*(RAMP1*u+(RAMP0-RAMP1)*(1-Math.pow(1-u,3))/3):e}
-function applyCuts(){const A=S.sc,n=A.length-1;for(let i=1;i<n;i++){const c=A[i].cut;if(!c||c.type==='none')continue;let a=A[i].a+(c.type==='j-cut'?-c.off:c.off);a=Math.max(A[i-1].a+1,Math.min(A[i+1].a-1,a));A[i].a=a;A[i-1].b=a}}
+function applyCuts(){const A=S.sc,n=A.length-1;for(let i=1;i<n;i++){const c=A[i].cut;if(!c||c.type==='none')continue;let a=A[i].a+(c.type==='j-cut'?-c.off:c.off);a=Math.max(A[i-1].a+1,Math.min(A[i+1].a-1,a));A[i].a=a;A[i-1].b=a}
+ const bp=S.base&&S.base.bpm;if(bp)for(let i=1;i<n;i++){if(!A[i].beat)continue;const bt=60/bp,k=Math.round(A[i].a/bt),a=k*bt;if(Math.abs(a-A[i].a)>.3)continue;const c=Math.max(A[i-1].a+1,Math.min(A[i+1].a-1,a));A[i].a=c;A[i-1].b=c}}
 const sceneAt=t=>{const n=S.sc.length;for(let i=0;i<n;i++)if(t>=S.sc[i].a&&t<S.sc[i].b)return i;return n-1};
 function mulberry(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 /* ---------- 模擬素材（実写ではない。試験用） ---------- */
@@ -107,7 +108,7 @@ function paintMock(k,t,u){const g=mg;g.globalCompositeOperation='source-over';g.
  return mc}
 function lerpc(a,b,u){const f=s=>[1,3,5].map(i=>parseInt(s.substr(i,2),16)),A=f(a),B=f(b);return'rgb('+A.map((v,i)=>Math.round(lerp(v,B[i],u))).join(',')+')'}
 /* ---------- カメラ・場面転換 ---------- */
-function camera(i,t){const s=S.sc[i],u=clamp((t-s.a)/(s.b-s.a)),e=ease(u);return{z:lerp(s.z[0],s.z[1],e),px:lerp(s.p[0],s.p[2],e)+.0018*Math.sin(t*1.3+1)+.001*Math.sin(t*2.9),py:lerp(s.p[1],s.p[3],e)+.0014*Math.sin(t*1.1)+.0008*Math.sin(t*3.3+2),u}}
+function camera(i,t){const s=S.sc[i],u=clamp((t-s.a)/(s.b-s.a)),e=ease(u),pn=(s.beat&&S.base&&S.base.bpm)?.03*Math.exp(-Math.max(0,t-s.a)*7):0;return{z:lerp(s.z[0],s.z[1],e)+pn,px:lerp(s.p[0],s.p[2],e)+.0018*Math.sin(t*1.3+1)+.001*Math.sin(t*2.9),py:lerp(s.p[1],s.p[3],e)+.0014*Math.sin(t*1.1)+.0008*Math.sin(t*3.3+2),u}}
 function trans(t){const A=S.sc;let fade=0,flash=0,lk=0,lx=0;
  A.forEach((s,k)=>{if(k===0)return;
   if(s.tr==='dip')fade=Math.max(fade,clamp(1-Math.abs(t-s.a)/(s.tw||.1)));
@@ -118,11 +119,14 @@ function trans(t){const A=S.sc;let fade=0,flash=0,lk=0,lx=0;
 /* ---------- 字幕（レイアウトは描画と計測で共通） ---------- */
 function fontOf(sz,w){return`${w||700} ${sz}px ${FF[S.font]}`}
 const mm=document.createElement('canvas').getContext('2d');
+const backOut=u=>{const c1=1.70158,c3=c1+1;return 1+c3*Math.pow(u-1,3)+c1*Math.pow(u-1,2)};
 function capLayout(t){const out=[];const FS=81,MAXW=880;
- S.ln.forEach((L,li)=>{const t1=L.t0+L.d,nx=S.ln[li+1],hideAt=Math.min(t1+.6,nx?nx.t0-.06:1e9);if(t<L.t0-.05||t>hideAt)return;const tot=L.toks.reduce((q,k)=>q+k[0].length,0);let cum=0;const T=L.toks.map(k=>{const s=L.t0+L.d*cum/tot;cum+=k[0].length;const sz=k[1]?FS*1.35:FS;mm.font=fontOf(sz);const w=mm.measureText(k[0]).width+(k[1]?10:0);return{s:k[0],emph:!!k[1],ts:s,sz,w}});
+ S.ln.forEach((L,li)=>{const t1=L.t0+L.d,nx=S.ln[li+1],hideAt=Math.min(t1+.6,nx?nx.t0-.06:1e9);if(t<L.t0-.05||t>hideAt)return;const tot=L.toks.reduce((q,k)=>q+k[0].length,0);let cum=0;const kin=S.sc[li]&&S.sc[li].kin;let T;if(kin==='char'||kin==='track'){T=[];L.toks.forEach(k=>{for(const ch of k[0]){const s=L.t0+L.d*cum/tot;cum+=1;const sz=k[1]?FS*1.35:FS;mm.font=fontOf(sz);T.push({s:ch,emph:!!k[1],ts:s,sz,w:mm.measureText(ch).width+(k[1]?3:0),ch:1})}})}else T=L.toks.map(k=>{const s=L.t0+L.d*cum/tot;cum+=k[0].length;const sz=k[1]?FS*1.35:FS;mm.font=fontOf(sz);const w=mm.measureText(k[0]).width+(k[1]?10:0);return{s:k[0],emph:!!k[1],ts:s,sz,w,tk:kin==='track'?1:0}});
   const rows=[[]];let acc=0;T.forEach(k=>{if(acc+k.w>MAXW&&rows[rows.length-1].length){rows.push([]);acc=0}acc+=k.w;rows[rows.length-1].push(k)});
   const rh=FS*1.55,y0=H*.46-(rows.length-1)*rh/2,fo=1-clamp((t-(hideAt-.2))/.2);
-  rows.forEach((row,ri)=>{const rw=row.reduce((q,k)=>q+k.w,0);let x=(W-rw)/2;row.forEach(k=>{const a=clamp((t-k.ts)/.18),e=ease(a);const sc=k.emph?1+.12*(1-e):1;out.push({s:k.s,emph:k.emph,x,y:y0+ri*rh+(1-e)*22,sz:k.sz*sc,w:k.w,alpha:a*fo,li});x+=k.w})})});
+  rows.forEach((row,ri)=>{const rw=row.reduce((q,k)=>q+k.w,0);let x=(W-rw)/2;row.forEach(k=>{if(k.ch&&kin==='track'){const a=clamp((t-L.t0)/.8),e=ease(a);out.push({s:k.s,emph:k.emph,x:x+(x+k.w/2-W/2)*(1-e)*.45,y:y0+ri*rh,sz:k.sz,w:k.w,alpha:e*fo,li});x+=k.w;return}
+   if(k.ch){const a=clamp((t-k.ts)/.22),b=backOut(a);const sc=k.emph?1+.5*(1-b):1;out.push({s:k.s,emph:k.emph,x,y:y0+ri*rh+(1-b)*34,sz:k.sz*Math.max(.6,sc),w:k.w,alpha:clamp(a*2)*fo,li});x+=k.w;return}
+   const a=clamp((t-k.ts)/.18),e=ease(a);const sc=k.emph?1+.12*(1-e):1;const tkx=k.tk?(1-e)*k.w*.35:0;out.push({s:k.s,emph:k.emph,x:x-tkx,y:y0+ri*rh+(1-e)*22,sz:k.sz*sc,w:k.w,alpha:a*fo,li});x+=k.w+(k.tk?(1-e)*k.w*.0:0)})})});
  return out.filter(o=>o.alpha>0)}
 function logoLayout(t){const a=S.sc[S.sc.length-1].a+.2;if(t<a)return null;const u=clamp((t-a)/.6);return{alpha:ease(u),lineW:360*ease(clamp((t-a-.2)/.6)),y:H*.46}}
 function boxes(t){const r=[];capLayout(t).forEach(o=>r.push({x0:o.x,x1:o.x+o.w,y0:o.y-o.sz*.9,y1:o.y+o.sz*.25}));const l=logoLayout(t);if(l){r.push({x0:W/2-210,x1:W/2+210,y0:l.y-80,y1:l.y+60})}return r}
@@ -179,6 +183,7 @@ async function buildAudio(){const sr=48000,oc=new OfflineAudioContext(2,D*sr,sr)
  A.forEach(sc=>{if(!(sc.sfx&&sc.sfx.whoosh))return;const t=sc.a-.1,n2=oc.createBufferSource();n2.buffer=noiseBuf(oc,.5,11);const bp=oc.createBiquadFilter();bp.type='bandpass';bp.Q.value=.9;bp.frequency.setValueAtTime(3000,t);bp.frequency.exponentialRampToValueAtTime(400,t+.4);const q=oc.createGain();q.gain.setValueAtTime(.06,t);q.gain.linearRampToValueAtTime(0,t+.45);n2.connect(bp);bp.connect(q);q.connect(bed);n2.start(t);
   [880,1318.5].forEach(f=>{const o=oc.createOscillator();o.frequency.value=f;const q2=oc.createGain();q2.gain.setValueAtTime(.012,t+.1);q2.gain.exponentialRampToValueAtTime(.0005,t+1.8);o.connect(q2);q2.connect(bed);o.start(t+.1);o.stop(t+2)})});
  A.forEach(sc=>{if(!(sc.sfx&&sc.sfx.shimmer))return;const t=sc.a+.2;[220,329.6].forEach(f=>{const o=oc.createOscillator();o.frequency.value=f;const q=oc.createGain();q.gain.setValueAtTime(0,t);q.gain.linearRampToValueAtTime(.012,t+.5);q.gain.exponentialRampToValueAtTime(.0005,D-.05);o.connect(q);q.connect(bed);o.start(t);o.stop(D)})});
+ if(S.base&&S.base.bpm&&A.some(q=>q.beat)){const bt=60/S.base.bpm;for(let t=bt;t<EA.a-.3;t+=bt){const o=oc.createOscillator();o.frequency.setValueAtTime(90,t);o.frequency.exponentialRampToValueAtTime(42,t+.12);const q=oc.createGain();q.gain.setValueAtTime(.11,t);q.gain.exponentialRampToValueAtTime(.001,t+.22);o.connect(q);q.connect(bed);o.start(t);o.stop(t+.25)}}
  if(S.narr){const nb=S.narr,x=nb.getChannelData(0);let act=[];for(let i=0;i<x.length;i++)if(Math.abs(x[i])>.01)act.push(x[i]);let q=0;act.forEach(v=>q+=v*v);const rms=Math.sqrt(q/Math.max(1,act.length)),fac=Math.min(6,Math.pow(10,-18/20)/Math.max(rms,1e-5));
   const src=oc.createBufferSource();src.buffer=nb;const gn=oc.createGain();gn.gain.value=fac;src.connect(gn);gn.connect(mx);const o=S.off;src.start(Math.max(0,o),Math.max(0,-o))}
  const buf=await oc.startRendering();S.mix=buf;return buf}
@@ -380,11 +385,11 @@ function planToBase(P,endHold){const n=P.scenes.length,total=P.scenes.reduce((q,
   const nxt=P.scenes[i+1],sfx={};if(x.role==='turn')sfx.hit=1;if(nxt&&nxt.role==='turn')sfx.riser=1;if(tr==='dip')sfx.sub=1;if(tr==='leak')sfx.whoosh=1;
   let mock=null;for(const k of x.concepts)if(MOCKC[k]){mock=MOCKC[k];break}if(!mock)mock=x.emotion.v<-.25?'rain':x.emotion.v>.4?'road':'dawn';
   const dj=P.meta.source==='design-json';if(dj){if(x.transition==='cut')tr='none';for(const k of Object.keys(sfx))delete sfx[k];Object.assign(sfx,x.sfx||{})}
-  const o={id:'S'+(i+1),name:ROLEJ[x.role]||x.role,a:x.start,b:+(P.scenes[i+1]?P.scenes[i+1].start:x.start+x.dur).toFixed(2),spd:x.speed==='slow-motion'?'slow':x.speed==='speed-ramp'?'ramp':'',cut:x.cut||(dj?{type:'none',off:0}:x.role==='turn'?{type:'j-cut',off:.3}:{type:'none',off:0}),q:x.queries||[],mock,z:c.z.slice(),p:c.p.slice(),g:JSON.parse(JSON.stringify(GRP[x.grade==='cold-teal'?'cold-teal':x.grade==='warm-gold'?'warm-gold':'muted-neutral'])),tr,sfx,role:x.role,dir:{camera:x.camera,transition:x.transition,speed:x.speed,emphasis:x.emphasis,fx:x.fx||[]}};if(tw)o.tw=tw;return o});
+  const o={id:'S'+(i+1),name:ROLEJ[x.role]||x.role,a:x.start,b:+(P.scenes[i+1]?P.scenes[i+1].start:x.start+x.dur).toFixed(2),spd:x.speed==='slow-motion'?'slow':x.speed==='speed-ramp'?'ramp':'',kin:(x.kinetic&&x.kinetic!=='none')?x.kinetic:(dj?'':(x.role==='turn'||x.role==='climax')?'char':''),beat:!!x.beat,cut:x.cut||(dj?{type:'none',off:0}:x.role==='turn'?{type:'j-cut',off:.3}:{type:'none',off:0}),q:x.queries||[],mock,z:c.z.slice(),p:c.p.slice(),g:JSON.parse(JSON.stringify(GRP[x.grade==='cold-teal'?'cold-teal':x.grade==='warm-gold'?'warm-gold':'muted-neutral'])),tr,sfx,role:x.role,dir:{camera:x.camera,transition:x.transition,speed:x.speed,emphasis:x.emphasis,fx:x.fx||[]}};if(tw)o.tw=tw;return o});
  sc[n-1].b=+total.toFixed(2);sc.push({id:'END',name:'余韻',a:+total.toFixed(2),b:Dn,mock:'black',z:[1,1.04],p:[0,0,0,0],g:{sat:1,con:1,gain:[1,1,1],lift:[0,0,0],vig:.3},tr:'endfade',sfx:{shimmer:1},role:'end'});
  const ln=P.scenes.map((x,i)=>({t0:+(x.start+(i===0?.5:.3)).toFixed(2),d:+Math.max(1,x.dur-.7).toFixed(2),toks:chunk(x.text,x.emphasis)}));
- return{sc,ln,D:Dn}}
-function loadBase(base,label){S.base={sc:base.sc,ln:base.ln,D:base.D};S.sc=JSON.parse(JSON.stringify(base.sc));S.ln=JSON.parse(JSON.stringify(base.ln));applyCuts();D=base.D;N=D*FPS;S.clips=S.sc.slice(0,S.sc.length-1).map(()=>null);S.narr=null;S.isMockNarr=false;S.mix=null;S.aligned=false;S.off=0;S.warn=S.warn.filter(w=>/^WebGL/.test(w));
+ return{sc,ln,D:Dn,bpm:(P.meta.bgm&&P.meta.bgm.bpm)||0}}
+function loadBase(base,label){S.base={sc:base.sc,ln:base.ln,D:base.D,bpm:base.bpm||0};S.sc=JSON.parse(JSON.stringify(base.sc));S.ln=JSON.parse(JSON.stringify(base.ln));applyCuts();D=base.D;N=D*FPS;S.clips=S.sc.slice(0,S.sc.length-1).map(()=>null);S.narr=null;S.isMockNarr=false;S.mix=null;S.aligned=false;S.off=0;S.warn=S.warn.filter(w=>/^WebGL/.test(w));
  clipForm();ledger();renderFrame(Math.min(1.5,D-.1));try{$('nst').textContent='ナレーション未取込（BGMのみ）。台本が変わったため、ナレーションは取り込み直してください。'}catch{}
  const L=S.ln.map((l,i)=>(i+1)+'. '+l.toks.map(k=>k[0]).join('')).join('　');try{$('dirsum').textContent=label+'｜'+(S.sc.length-1)+'場面＋余韻・全体'+D+'秒｜字幕: '+L}catch{}}
 let DV=0;
