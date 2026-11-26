@@ -1,0 +1,1335 @@
+<!doctype html><html lang="ja"><head>
+<meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'none'; form-action 'none'"><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>BECOME. STUDIO ナレーション比較試験（実験）</title><meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#07080a"><link rel="manifest" href="../../manifest.webmanifest"><link rel="icon" href="../../icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@800;900&family=Shippori+Mincho+B1:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07080a;--pn:#111317;--ln:#2a2d33;--gold:#c9a45c;--g2:#e8cf9a;--ink:#f4efe6;--mute:#9a968c;--serif:"Shippori Mincho B1","Noto Serif JP","Hiragino Mincho ProN",serif;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{background:var(--bg);scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 "Noto Sans JP",system-ui,sans-serif;padding-bottom:40px}
+header{display:flex;align-items:baseline;gap:10px;padding:14px 18px 4px}
+.logo{font:800 22px var(--serif);letter-spacing:.32em;color:var(--gold)}
+header span{color:var(--mute);font-size:12px}#ep{margin-left:auto;color:var(--g2)}
+.stage{display:flex;justify-content:center;padding:6px 0 8px;background:radial-gradient(60% 80% at 50% 40%,#1d1910,transparent)}
+canvas{height:40vh;aspect-ratio:9/16;max-width:92%;border:1px solid #3a3322;border-radius:6px;box-shadow:0 0 60px #c9a45c22,0 20px 50px #000}
+.bar{display:flex;gap:8px;padding:0 16px;align-items:center}.bar #clock{margin-left:auto;color:var(--mute);font-variant-numeric:tabular-nums}
+#st{position:sticky;top:4px;z-index:20;margin:8px 16px;white-space:pre-line;padding:8px 12px;border-left:2px solid var(--gold);background:var(--pn);color:var(--g2);font-size:13px}
+[hidden]{display:none!important}.pn{padding:4px 0}main{padding:0 16px}.lead{font:800 19px/1.6 var(--serif);color:var(--g2);margin:14px 0 4px}#hero{padding-bottom:6px}#mk{display:block;width:100%;min-height:68px;margin:14px 0 8px;font:800 22px var(--serif);letter-spacing:.25em;border-radius:14px;box-shadow:0 0 40px #c9a45c33}#mkstop{width:100%}#sv{font-size:11px;color:#8fbf8f;margin-left:8px}#sv.bad{color:#ff9a8a;font-weight:700}#a3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}#a3 button{margin:0;min-height:48px;font-size:13px}#scsum{margin:6px 0}#svw{color:#ff9a8a;font-weight:700;font-size:13px}#snapp,#fitp{border:1px solid #3a3322;border-radius:10px;padding:8px;margin:8px 0}#fitp{border:2px solid #e0b860}#fitp button,#snapp button{display:block;width:100%;min-height:48px;margin:6px 0;text-align:left}#ms li{padding:8px 12px;margin:6px 0;font-size:13px}#result{border-top:1px solid #3a3322;margin-top:14px}#dl{font-size:20px;padding:20px;border-radius:14px;box-shadow:0 0 40px #c9a45c44}#share{width:100%;min-height:56px}#adv>summary{font-size:15px;min-height:44px;display:flex;align-items:center}#adv h2{margin-top:22px;padding-top:10px;border-top:1px solid var(--ln)}
+h2{font:800 17px var(--serif);color:var(--gold);margin:18px 0 8px}
+label{display:block;color:var(--mute);font-size:13px;margin:12px 0 4px}
+input,textarea,select,button{font:inherit;color:var(--ink);background:var(--pn);border:1px solid var(--ln);border-radius:10px;padding:12px;min-height:48px}
+input[type=text],textarea,select{width:100%}textarea{min-height:200px;line-height:1.7}
+input[type=checkbox]{width:22px;height:22px;min-height:0;accent-color:var(--gold);vertical-align:-5px;margin-right:8px}
+input[type=range]{width:100%;padding:0;accent-color:var(--gold)}
+.ck{display:flex;align-items:center;color:var(--ink);font-size:14px;margin:6px 0}
+button{cursor:pointer;margin:4px 4px 4px 0}button:active{transform:scale(.97)}button:disabled{opacity:.4}
+button.pri{background:linear-gradient(180deg,#e8cf9a,#b8913f);color:#15110a;font-weight:700;border:0}
+progress{width:100%;accent-color:var(--gold)}
+details{border:1px solid var(--ln);border-radius:10px;padding:8px 12px;margin:10px 0;background:var(--pn);font-size:13px;color:#cfcabd}summary{cursor:pointer;color:var(--g2);min-height:32px}
+video{width:100%;max-height:50vh;background:#000;border-radius:8px}
+ul{list-style:none;padding:0}li{border:1px solid var(--ln);border-radius:10px;padding:10px 12px;margin:8px 0;background:var(--pn)}li small{display:block;color:var(--mute)}
+a.dl{display:block;text-align:center;padding:14px;border-radius:10px;background:var(--gold);color:#15110a;font-weight:700;text-decoration:none;margin:8px 0}
+.note{color:var(--mute);font-size:12px}
+nav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(6,1fr);background:#0b0c0fee;border-top:1px solid #3a3322;padding-bottom:env(safe-area-inset-bottom,0px);backdrop-filter:blur(8px)}
+nav button{margin:0;border:0;border-radius:0;background:none;color:var(--mute);min-height:58px;font-size:12px;padding:6px 2px}#info,#vs,#vf,#vi{white-space:pre-line}nav button.on{color:var(--gold);box-shadow:inset 0 2px 0 var(--gold)}
+@media (prefers-reduced-motion:reduce){button:active{transform:none}}
+</style></head><body>
+<header><span class="logo">BECOME.</span><span>STUDIO 比較試験（実験）</span><span id="ep">EP.001</span><span id="sv" role="status"></span></header>
+<p id="st" role="status">準備完了。テーマを確認して「動画を作る」を押してください。</p>
+<main>
+<section id="hero">
+<p class="lead">台本はあなたの許可なく書き換わりません。スタイルとテーマを確認して、ボタンを1回。</p>
+<label for="vs5">① 動画スタイル</label><select id="vs5"><option value="mg">図解モーショングラフィックス</option><option value="real">実写モチベーション</option><option value="cinema">ダークシネマ</option><option value="psych">心理学アニメーション</option><option value="story">ストーリー</option></select>
+<p class="note" id="vs5n"></p>
+<label for="th">② テーマ</label><input type="text" id="th" value="人生を変えたい君へ。" maxlength="60" autocomplete="off">
+<p class="note" id="scsum"></p><p id="svw" hidden></p>
+<button class="pri" id="mk">▶ 現在の台本で動画を作る</button>
+<div id="a3"><button id="remk">🔁 同じ台本で作り直す</button><button id="edsc">✏ 台本を編集する</button><button id="rsd">↩ 前の下書きを復元</button></div>
+<div id="snapp" hidden></div>
+<div id="fitp" hidden><b id="fitt"></b><p class="note" id="fitm"></p><button id="fit1"></button><button id="fit2">✂ 台本を自分で短くする（生成を止めて台本欄へ）</button><button id="fit3">■ 生成を中止する（台本はそのまま）</button></div>
+<button id="mkstop" hidden>■ 中止する</button>
+<ul id="ms"><li id="ms0">○ 台本をつくる</li><li id="ms1">○ ナレーションを生成</li><li id="ms2">○ 尺と字幕を合わせる</li><li id="ms3">○ 動画を書き出す（テスト→本番）</li><li id="ms4">○ 投稿文をつくる</li></ul>
+<p class="note" id="prevn" style="color:#e0b860"></p><p class="note" id="vnote"></p><p class="note" id="jobn" style="color:#e0b860;font-weight:700"></p><progress id="pg" max="1" value="0"></progress><div id="xp" class="note">進捗 0% / 残り --</div>
+<p class="note">初回だけ、音声エンジンの取得に数分かかります（2回目以降は短縮されます）。作成中は画面を消さず、このページを開いたままにしてください。</p>
+</section>
+<section id="result" hidden>
+<h2>④ 完成。保存してTikTokへ</h2>
+<video id="rv" controls playsinline preload="metadata"></video>
+<a class="dl" id="dl" hidden>完成動画を保存</a>
+<button id="share" hidden>共有（TikTok等へ）</button>
+<p id="fmt" class="note"></p>
+<section id="gate" hidden><h2>投稿前セキュリティゲート</h2><p id="gsum"></p><ul id="gl" style="list-style:none;padding:0"></ul>
+<label for="srcn">出典メモ（統計・研究・名言を使った場合は必ず記入。例: 文献名・発行元・年）</label><textarea id="srcn" style="min-height:70px" placeholder="出典が無い場合は空のままにし、該当する表現を台本から削除してください"></textarea>
+<p><button id="grun">もう一度検査する</button><button id="gailabel">投稿文にAI生成の表記を追加</button></p>
+<div class="ck"><input type="checkbox" id="gack"><span>REVIEWの項目を、自分の目と耳で確認しました（オーナー確認）</span></div>
+<p><button id="glog">監査ログを保存（.txt）</button></p>
+<p class="note">このゲートは機械的に検出できる範囲の検査です。TikTok側の審査通過を保証しません。BLOCKの間は、保存・共有・TikTok送信を停止します。</p></section>
+<label for="cap">投稿文</label><textarea id="cap" style="min-height:150px"></textarea>
+<label for="tags">ハッシュタグ</label><textarea id="tags" style="min-height:80px"></textarea>
+<button id="cc">投稿文コピー</button><button id="ct">タグコピー</button><button id="ca">全部コピー</button><button id="srt">字幕SRT保存</button><button id="gp">投稿文を作り直す</button>
+<details><summary>音声の自動検査結果</summary><p id="vf" class="note"></p></details>
+<p class="note">投稿の流れ：「完成動画を保存」で端末に保存 → TikTokアプリの＋ボタン → アップロードで保存した動画を選ぶ → 投稿文をコピーして貼り付け。</p>
+</section>
+<div class="stage"><canvas id="cv" width="540" height="960"></canvas></div>
+<div class="bar"><span id="clock">0:00</span></div>
+<details id="tt"><summary>TikTokアカウント連携（分析・企画・下書き送信）</summary>
+<p class="note">TikTok公式のログイン（OAuth 2.0）を使います。パスワードはこのアプリに入力しません。連携後に取得するのは、プロフィール、フォロワー数、公開動画の再生・いいね・コメント・シェア数です。自動投稿はしません。</p>
+<p class="note" id="ttst"></p>
+<label for="ttw">中継サーバーのURL（Cloudflare Workers・設定後に入力）</label><input type="text" id="ttw" placeholder="https://…workers.dev"><button id="ttwsave">URLを保存</button>
+<p><button class="pri" id="ttcon">TikTokでログイン（連携を許可）</button><button id="ttcon2">下書き送信の権限も許可して再ログイン</button><button id="ttsync" hidden>最新データを取得</button><button id="ttout" hidden>連携を解除</button></p>
+<p class="note" id="ttmsg"></p><div id="ttprof" style="padding:8px 0"></div>
+<h2>投稿データの分析</h2><pre id="ttana" class="note" style="white-space:pre-wrap;font-size:12px;margin:4px 0"></pre>
+<h2>次回動画の企画提案</h2><ul id="ttplan"></ul>
+<h2>公開動画一覧</h2><ul id="ttlist"></ul>
+<div id="ttpost" hidden><h2>TikTokの下書きに送る</h2>
+<p class="note">作成した動画を、TikTokアプリの下書き（受信トレイ）に送ります。公開はTikTokアプリであなた自身が行います。必要な権限（video.upload）はTikTokの審査対象で、未承認の間は使えない場合があります。</p>
+<div class="ck"><input type="checkbox" id="ttc"><span>この動画をTikTokの下書きとして送信することに同意します</span></div>
+<button class="pri" id="ttup">下書きに送る</button><p class="note" id="ttpm"></p></div>
+</details>
+<details id="lab"><summary>競合研究（参考動画の制作手法を分析）</summary>
+<p class="note"><b>他者の動画の構成・映像・台本の模倣や転載は禁止です。</b>分析は、自分の動画の改善の参考にする目的だけに使ってください。</p>
+<p class="note">他人の動画・台本・音声は転載しません。分析するのは「長さ・切り替えの速さ・間・音量の推移」などの数値だけで、動画ファイルはこの端末の中だけで処理します（外部送信なし）。</p>
+<label for="cu">参考にするTikTokのURL（任意）</label><input type="text" id="cu" placeholder="https://www.tiktok.com/…"><button id="cfetch">URLから公開情報を取得</button>
+<label for="cf">参考動画の保存ファイル（映像と音声を分析できます）</label><input type="file" id="cf" accept="video/*">
+<label>公開数値（アプリで見えるものを入力・任意）</label>
+<input type="number" id="c_v" inputmode="numeric" placeholder="再生数"><input type="number" id="c_l" inputmode="numeric" placeholder="いいね数" style="margin-top:6px"><input type="number" id="c_c" inputmode="numeric" placeholder="コメント数" style="margin-top:6px"><input type="number" id="c_s" inputmode="numeric" placeholder="保存数" style="margin-top:6px">
+<p><button class="pri" id="canal">分析する</button><button id="capply" hidden>長さと間の傾向を次の動画に反映</button></p>
+<pre id="cout" class="note" style="white-space:pre-wrap;word-break:break-all;font-size:12px;margin:4px 0">未分析</pre>
+</details>
+<details id="ana"><summary>成果の記録と改善提案</summary>
+<p class="note">TikTokの数値はAPIでは取得できないため、アプリの画面を見て入力します。</p>
+<label for="av">対象の動画</label><select id="av"></select>
+<label for="ash">TikTok分析画面のスクリーンショット（数値を見ながら入力するための表示用。自動読み取りは未実装です）</label><input type="file" id="ash" accept="image/*"><img id="ashp" hidden style="width:100%;border-radius:8px;margin-top:6px" alt="スクリーンショット">
+<input type="number" id="a_v" inputmode="numeric" placeholder="再生回数" style="margin-top:8px"><input type="number" id="a_a" inputmode="decimal" placeholder="平均視聴時間（秒）" style="margin-top:6px"><input type="number" id="a_s" inputmode="numeric" placeholder="保存数" style="margin-top:6px"><input type="number" id="a_l" inputmode="numeric" placeholder="いいね数" style="margin-top:6px"><input type="number" id="a_f" inputmode="numeric" placeholder="フォロワー増加数" style="margin-top:6px">
+<p><button class="pri" id="arec">成果を記録</button><button id="asug">改善提案を作る</button><button id="anext" hidden>次回の動画に反映</button></p>
+<pre id="aout" class="note" style="white-space:pre-wrap;font-size:12px;margin:4px 0"></pre>
+<ul id="atb"></ul>
+</details>
+<details id="adv"><summary>詳細設定（通常は触らなくて大丈夫です）</summary>
+<section class="pn" id="pgb"><h2>ブランド表示（動画に入る名前）</h2>
+<label for="brand">ブランド名</label><input type="text" id="brand" maxlength="16">
+<label for="handle">アカウント名（終わりの数秒に表示）</label><input type="text" id="handle" maxlength="24"></section>
+<details><summary>ElevenLabs（有料・将来用。通常は使いません）</summary><section class="pn" id="pgx">
+<h2>ElevenLabs ナレーション（有料）</h2>
+<div class="ck"><input type="checkbox" id="xon"><span>ElevenLabsの声を使う（キー未設定・残り不足・上限超過のときは使わず、Gemini→無料Kokoroへ切替。追加課金はしません）</span></div>
+<label for="xk">ElevenLabs APIキー（既定：このタブを開いている間だけ保持）</label><input type="password" id="xk" autocomplete="off" placeholder="ここに貼り付けて「キーを保存」">
+<p><button class="pri" id="xsave">キーを保存</button><button id="xcheck">契約と残りを確認</button><button id="xclr">キーを消す</button></p>
+<p><button id="xfind">日本語の男性の声を探す</button></p>
+<label for="xvl">声の候補</label><select id="xvl"></select>
+<p><button id="xprev">試し聞き（無料）</button><button class="pri" id="xuse">この声を採用</button></p><audio id="xaud" controls hidden style="width:100%"></audio>
+<label for="xmodel">モデル</label><select id="xmodel"><option value="eleven_multilingual_v2">Multilingual v2（安定・推奨）</option><option value="eleven_v3">v3（表現が豊か・実験的）</option></select>
+<label for="xcap">1本あたりの上限（文字数。超えると生成しません）</label><input type="number" id="xcap" min="100" max="20000" step="100">
+<label for="xmcap">今月の自主上限（文字数・このアプリ内の合計）</label><input type="number" id="xmcap" min="500" max="500000" step="500">
+<p><button id="xtest">ElevenLabsで試し聞き</button></p>
+<p class="note" id="xst" style="white-space:pre-wrap"></p>
+<p class="note">生成の前に、契約の残りクレジットを毎回確認し、足りなければ何も生成せず止まります。同じ台本の再生成は端末内に保存した音声を使うため、追加消費しません。ElevenLabs側の設定画面で「上限を超えた分の従量課金」はオフのままにしてください。</p>
+</section></details>
+<section class="pn" id="pg0">
+<h2>AIナレーション（Gemini・第一候補）</h2>
+<div class="ck"><input type="checkbox" id="gon" checked><span>Geminiの声を使う（キー未設定・上限到達・失敗のときは、自動で無料のKokoroへ切り替え）</span></div>
+<label for="gk">Gemini APIキー（既定：このタブを開いている間だけ保持。タブを閉じると消えます）</label><input type="password" id="gk" autocomplete="off" placeholder="ここに貼り付けて「キーを保存」">
+<div id="kmig" class="pn" hidden style="border:1px solid #e0b860;border-radius:10px;padding:8px"><b>端末に保存済みのキーがあります（非推奨）</b><p class="note">同じドメインの他のページや拡張機能から読める可能性があります。</p><button id="kmv">このタブだけに移して、端末から削除</button><button id="kdl">今すぐ削除</button><button id="kkp">そのまま残す（非推奨）</button></div>
+<div class="ck"><input type="checkbox" id="kper"><span>キーを端末に保存する（<b>非推奨</b>：同一ドメインの他ページ・拡張機能・端末紛失で漏れるおそれ）</span></div>
+<div class="ck"><input type="checkbox" id="gokc"><span>Google AI Studioで、このキーのプロジェクトが無料枠で、請求先が未設定（または支出上限を設定済み）であることを<b>自分で確認した</b>（未確認の間、Geminiは使わずKokoroで作ります）</span></div>
+<div class="ck"><input type="checkbox" id="gunv"><span>無料枠を公式資料で確認できていないGemini 3.8系も使う（AI Studioのレート制限画面で、無料枠があることを自分で確認した場合のみ）</span></div>
+<p><button id="kall">保存されたキー類を全て安全に削除（Gemini・ElevenLabs・TikTok）</button></p>
+<label for="gv">声</label><select id="gv"><option value="Charon">Charon（落ち着いた解説調）</option><option value="Orus">Orus（芯のある声）</option><option value="Algenib">Algenib（かすれた低音）</option><option value="Alnilam">Alnilam（力強い声）</option><option value="Rasalgethi">Rasalgethi（解説調）</option><option value="Iapetus">Iapetus（明瞭な声）</option><option value="Fenrir">Fenrir（熱のある声）</option><option value="Puck">Puck（明るい声）</option></select>
+<label for="gpx">中継サーバーのURL（任意・上級者向け。入れるとAPIキーは端末に不要）</label><input type="text" id="gpx" placeholder="未使用なら空のまま">
+<div class="ck"><input type="checkbox" id="gtag"><span>文中の読点に短い間のタグを入れる（実験的。タグが読み上げられたらオフ）</span></div>
+<label for="gcap">1日のGemini呼び出し自主上限（回。失敗・再試行も数えます。超えると自動でKokoroへ。目安であり、課金防止の保証ではありません）</label><input type="number" id="gcap" min="5" max="500" step="5">
+<p><button class="pri" id="gsave">キーを保存</button><button id="gtest">Geminiで試し聞き</button><button id="gclr">キーを消す</button></p>
+<p class="note" id="gst"></p>
+<p class="note">キーは Google AI Studio（aistudio.google.com）で無料で発行できます。請求先（クレジットカード）を登録しないプロジェクトのキーを使うと、無料枠の上限を超えても課金されません。無料枠では入力内容がGoogleの製品改善に使われる場合があります（公式の料金ページの記載）。</p>
+<label for="tpl">演出テンプレート</label><select id="tpl"><option value="auto">自動（テーマから選択）</option><option value="cinema">ダークシネマ</option><option value="psych">心理学ストーリー</option><option value="growth">努力・成長ドキュメンタリー</option></select>
+</section>
+
+<section class="pn" id="nab"><h2>ナレーション比較試験（実験。通常の動画づくりの動作は変わりません）</h2>
+<p class="note">同じ台本の6行を、A（現行：1行ずつ生成、速度は上の設定値）、B（Aと同じ音声を速度100%で再生）、C（数行ずつまとめて生成＋短い感情指示、速度100%）で聴き比べます。同じ声・同じモデルです。Geminiの無料枠の呼び出しを使います（目安：Aが6回、Cが2回、Bは追加なし）。無料枠の確認が未申告のときは実行できません。</p>
+<p class="note"><b>手順</b>：①上のGemini欄にAPIキーを入れる（このタブで入力済みなら不要）→ ②「無料枠・請求先の確認」のチェックをオン → ③下の「A・B・Cを生成する」→ ④A→B→Cの順に▶を押して聴く → ⑤いちばん自然なものを選んで「結果を保存してコピー」→ チャットに貼り付け。</p>
+<label for="nabp">試験する範囲</label><select id="nabp"><option value="first">最初の6行（序盤）</option><option value="mid">中盤の6行</option><option value="last">最後の6行（終盤）</option></select>
+<label for="nabk">Cでまとめる行数</label><select id="nabk"><option value="3">3行ずつ</option><option value="4">4行ずつ</option><option value="6">6行（1回）</option></select>
+<p><button class="pri" id="nabgo">A・B・Cを生成する</button><button id="nabx">中止</button></p>
+<p class="note" id="nabst">未実行</p>
+<p><button id="nabA" disabled>▶ A 現行</button><button id="nabB" disabled>▶ B 速度100%</button><button id="nabC" disabled>▶ C 一括</button><button id="nabS">■ 停止</button></p>
+<pre id="nabo" class="note" style="white-space:pre-wrap;word-break:break-all"></pre>
+<label for="nabw">いちばん自然に聞こえたのは</label><select id="nabw"><option value="">未選択</option><option value="A">A</option><option value="B">B</option><option value="C">C</option></select>
+<input type="text" id="nabm" maxlength="80" placeholder="メモ（例：Cは中盤が良い、Aはこもる）">
+<p><button id="nabsv">結果を保存してコピー</button><button id="nabfx" hidden>Cの低精度の部分を1行ずつ生成して復旧</button></p>
+</section>
+
+<section class="pn" id="p0">
+<h2>台本（通常は触らなくて大丈夫です）</h2>
+<button class="pri" id="gen">テーマから台本を新規生成（今の台本は退避されます）</button><button id="cpPrompt">外部AI用の依頼文をコピー</button>
+<p class="note">自動生成は端末内のテンプレート組み立てです（AIモデルではありません・無料・通信なし）。ChatGPT、Gemini、Claudeの無料版で作った台本は、下欄に貼り付けて使えます。</p>
+<label>台本（1行 = 1シーン）</label>
+<textarea id="script"></textarea>
+<button id="split">シーン自動分割</button><button id="cpScript">台本コピー</button>
+<p class="note" id="info"></p>
+</section>
+
+<section class="pn" id="pv">
+<h2>AI NARRATION</h2>
+<label>音声エンジン</label>
+<select id="eng"><option value="kokoro">Kokoro 日本語（端末内AI・実験的）</option><option value="import">外部TTSの音声を取り込む（確実）</option></select>
+<label>音声モデル（Kokoroの日本語音声）</label>
+<select id="vo"><option value="jm_kumo">jm_kumo / 日本語・男性</option><option value="jf_alpha">jf_alpha / 日本語・女性</option><option value="jf_gongitsune">jf_gongitsune / 日本語・女性</option><option value="jf_nezumi">jf_nezumi / 日本語・女性</option><option value="jf_tebukuro">jf_tebukuro / 日本語・女性</option></select>
+<label>仕上がり</label><select id="pre"><option value="cinema">映画ナレーション（初期・0.92倍）</option><option value="trailer">予告編風（より低く重厚・0.86倍）</option><option value="std">標準（1.0倍）</option></select>
+<label>読み上げ速度 <b id="spv">0.92</b>倍（再生速度で調整。声はやや低くなります）</label><input type="range" id="spd" min="70" max="120" value="92">
+<label>ナレーション音量 <b id="nvv">100</b>%</label><input type="range" id="nv" min="0" max="150" value="100">
+<label>文と文の間 <b id="gpv">0.6</b>秒</label><input type="range" id="gap" min="20" max="120" value="60">
+<div class="ck"><input type="checkbox" id="deep" checked><span>低音強調（重厚感）</span></div>
+<div class="ck"><input type="checkbox" id="rev" checked><span>映画風の残響（軽いリバーブ）</span></div>
+<label>残響量 <b id="rvv">18</b>%</label><input type="range" id="rvl" min="0" max="40" value="18">
+<div class="ck"><input type="checkbox" id="tts"><span>映像プレビュー時のみ端末の読み上げ音声を使う（書き出しには入りません）</span></div>
+<p><button class="pri" id="genv">音声を生成</button><button id="pvv">音声試聴</button><button id="apply">動画に適用</button><button id="wav">WAV保存</button></p>
+<progress id="pgv" max="1" value="0"></progress>
+<p><button id="diag">接続診断</button><button id="cbtn">キャッシュ状態</button></p>
+<p class="note" id="dg"></p><p><button id="lgc">実行ログをコピー</button></p><pre id="lg" class="note" style="white-space:pre-wrap;word-break:break-all;font-size:11px;margin:4px 0"></pre><p class="note" id="cinfo"></p>
+<p class="note" id="vs">未生成。Kokoroはこの公開ページでは通信制限で動かない可能性が高く、その場合は下の取り込みを使います。</p>
+<h2>外部音声の取り込み</h2>
+<label>1行1ファイル（ファイル名順に台本の行へ割り当て）</label><input type="file" id="audm" accept="audio/*" multiple>
+<label>全文1ファイル（無音を検出してシーンを自動同期）</label><input type="file" id="aud" accept="audio/*">
+<button id="mic">● マイクで録音</button><button id="clr">音声を外す</button>
+<p class="note" id="an">音声なし</p>
+<p class="note" id="vi"></p>
+<details id="fb"><summary>外部TTSでWAV・MP3を作る手順</summary>
+1. Chromeで <a href="https://nerosui.github.io/kokoro-js-jp/" target="_blank" rel="noopener" style="color:var(--g2)">kokoro-js-jpのデモ</a>（READMEに記載。保存ボタンの有無は未確認）を開く。<br>2. 日本語音声 jm_kumo（男性）で台本を1行ずつ生成し、音声を保存する。保存できない場合は他の無料TTSでも可。<br>3. 上の「1行1ファイル」で、ファイル名を 01、02、03 の順にして選ぶ。または全文を1ファイルで生成し「全文1ファイル」で選ぶ（行の間にはっきり無音を入れること）。<br>4. 「動画に適用」を確認し、プレビューで同期を確認する。</details>
+<details id="lc"><summary>ライセンスとクレジット（2026年11月25日確認分）</summary>
+Kokoro-82M：モデルの重みはApache-2.0。モデルカードに商用デプロイ歓迎との記載あり（出典：huggingface.co/hexgrad/Kokoro-82M）。生成音声へのクレジット表記義務は、確認した範囲では記載なし（確認できません）。任意の表記例：Voice: Kokoro-82M (Apache-2.0)。<br>モデルカードには学習データのCC BY音源のクレジット欄がありますが、内容は未確認です。<br>kokoro-js-jp：Apache-2.0。日本語辞書とHTSボイスの条件が書かれたTHIRD_PARTY_NOTICES.mdは取得制限で読めておらず、確認できません。収益化前に必ずご自身で確認してください。<br>HeadTTS：MIT。ただし英語のみ対応で、日本語には使えません。<br>法的助言ではありません。</details>
+</section>
+
+<section class="pn" id="p1">
+<h2>映像</h2>
+<p><button class="pri" id="bPlay">▶ プレビュー</button><button id="bStop">■ 停止</button></p>
+<label>動画時間（ナレーション取込時は音声の長さが優先）</label>
+<select id="dur"><option value="45">45秒</option><option value="60">60秒</option><option value="75" selected>75秒</option><option value="90">90秒</option><option value="120">120秒</option></select>
+<label>映像スタイル</label>
+<select id="bgs"><option value="real">実写モチベーション風（写真があれば実写／無ければ夕景シルエット）</option><option value="mg" selected>モーショングラフィックス（黒背景・白い人物・図解）</option><option value="auto">自動（3シーンごとに切替）</option><option value="mountain">山と太陽</option><option value="rays">光の筋</option><option value="city">夜の街</option><option value="stars">星空</option><option value="rain">雨と光</option></select>
+<label>背景写真（任意・複数可。無ければ生成アニメ）</label><input type="file" id="imgs" accept="image/*" multiple>
+<h2>BGM・効果音</h2>
+<div class="ck"><input type="checkbox" id="bgm" checked><span>オリジナル合成BGM（重低音パッドと鼓動）</span></div>
+<div class="ck"><input type="checkbox" id="sfx" checked><span>効果音（場面転換のヒット音とウーシュ）</span></div>
+<label>BGM音量 <b id="vlv">12</b>%（ナレーション中は自動で約35%に低下）</label><input type="range" id="vol" min="0" max="100" value="12">
+</section>
+
+<section class="pn" id="p2">
+<h2>書き出し</h2>
+<h2>動作テスト（約4〜5秒）</h2>
+<p><button id="t1">1 音声生成</button><button id="t2">2 字幕同期</button><button id="t3">3 動画書き出し</button><button class="pri" id="tall">全部テスト</button></p>
+<p class="note" id="tr">未実行</p>
+<p><button id="tl">▶ 生成音声を試聴</button><button id="tp">▶ 書き出し動画を再生</button></p>
+<label>画質モード</label><select id="res"><option value="720">軽量 720×1280・24fps（Android推奨）</option><option value="1080">高画質 1080×1920・30fps（重い）</option></select>
+<video id="rvt" controls playsinline hidden></video>
+<details><summary>WebM形式だった場合（MP4へ変換）</summary>
+Android ChromeのMediaRecorderはMP4またはWebMを出力します。このアプリは対応形式を自動選択します。WebMの場合の手順（変換の成否は端末により異なり、未検証です）：<br>1. 保存したWebMをCapCutで取り込めるか試す。<br>2. 取り込めない場合は、無料の変換サイト（CloudConvert等）でMP4に変換する。<br>3. 変換後、TikTokアプリで投稿する。</details>
+<details><summary>端末の読み上げ音声を使いたい場合（CapCut連携）</summary>
+ブラウザは端末の読み上げ音声を動画に録音できません。次のどちらかで補完してください：<br>方法A：詳細設定の映像の欄のマイク録音で自分の声を入れる、または他アプリで作った音声ファイルを取り込む。<br>方法B：音声なし（BGMのみ）で書き出し、SRTを保存し、CapCutで動画を取り込んでテキスト読み上げ機能で男性ボイスを追加する。メニュー名はCapCutの版で異なり、字幕ファイルの取り込み可否は未検証です。</details>
+</section>
+
+<section class="pn" id="p4">
+<h2>履歴と次回への再利用</h2>
+<button class="pri" id="save">現在の台本を保存</button>
+<p class="note">保存先はこの端末のブラウザ内です。ブラウザのデータを消去すると失われます。</p>
+<ul id="hl"></ul>
+</section>
+</details>
+</main>
+<footer style="padding:18px 16px 30px;color:var(--mute);font-size:12px;text-align:center"><a href="privacy.html" style="color:var(--g2)">プライバシーポリシー</a> ／ <a href="terms.html" style="color:var(--g2)">利用規約</a><br>BECOME. STUDIO — 自己啓発ショート動画の制作ツール</footer>
+<script>
+'use strict';
+const $=i=>document.getElementById(i),cv=$('cv'),g=cv.getContext('2d');
+const FONT='"Shippori Mincho B1","Noto Serif JP","Noto Serif CJK JP","Hiragino Mincho ProN",serif';
+const S={ph:[0,1],after:0,pend:0,xbusy:false,t3ok:null,part:null,keep:false,busy:false,fin:null,tag:'',act:null,cand:null,tts:null,photos:[],ep:1,ac:null,raf:0,mr:null,wl:null,url:null,blob:null,name:'',mode:'',last:-1,mic:null};
+const H0=location.hash,NABQ=/[#&]nab=1/.test(location.hash);if(/^#(tt|tterr)=/.test(H0))history.replaceState(null,'',location.pathname+location.search);
+const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch{return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){store.err=String(e&&e.name||e);return false}}};
+const rnd=a=>a[Math.floor(Math.random()*a.length)],shuf=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(p=>p[1]);
+const say=m=>{m=RD(m);$('st').textContent=m;const x=$('xs');if(x&&!S.xbusy)x.textContent=m},fmt=s=>Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),nf=x=>{const v=Number(x);return x==null||x===''||!Number.isFinite(v)?'—':String(Math.round(v*100)/100)},idf=x=>String(x).replace(/[^\w.-]/g,'');
+const pad3=n=>String(n).padStart(3,'0');
+
+/* ---------- 台本 ---------- */
+const P={
+hook:['このままの人生で、本当に満足か？','変わりたい。そう思うのに、なぜ動けない？','1年後も同じ場所にいる自分を、想像できるか？'],
+pain:['毎朝同じ時間に起き、同じ道を歩き、同じ夜を迎える。','いつかやる。そう言って、何年が過ぎた？','スマホを眺めている間に、時間だけが減っていく。','他人の成功を眺めて、自分を小さく見積もっていないか。','忙しいを理由に、本当にやりたいことから逃げていないか。'],
+truth:['人生は、待っているだけでは変わらない。','才能の差より、続けた日数の差が現実を作る。','変化は静かに始まる。誰にも気づかれない場所で。'],
+act:['すべてを変える必要はない。','毎日30分、未来の自分のために使え。','本を1ページ読む。','小さな挑戦を、ひとつだけ始める。','昨日の自分を、1ミリだけ超えろ。','スマホを置いて、まず5分だけ動け。'],
+proof:['自信があるから行動するんじゃない。','行動するから、自信が生まれるんだ。','誰にも評価されなくていい。','前に進んだ事実だけが、お前を裏切らない。'],
+close:['理想を語るな。理想になれ。','今日が、その1日目だ。','変わるのは、今だ。']};
+const DEF=['このままの人生で、本当に満足か？','毎朝起きて、仕事に行って、家に帰る。','スマホを眺めて眠り、また同じ朝を迎える。','いつか成功したい。いつか自由になりたい。','でも、そのいつかのために、今日何をした？','人生は待っているだけでは変わらない。','すべてを一度に変える必要はない。','毎日30分、未来の自分のために使ってみろ。','本を読む。新しいことを学ぶ。','小さな挑戦を、ひとつだけ始める。','誰にも評価されなくていい。','昨日の自分より少しでも前に進めばいい。','自信があるから行動するんじゃない。','行動するから、自信が生まれるんだ。','理想を語るな。理想になれ。'];
+P.pain.push('やらない理由なら、いくらでも見つかる。','比べるほど、自分だけが止まって見える。','気づけば、また日曜の夜になっている。','変わりたいと言いながら、昨日と同じ選択をしていないか。');
+P.truth.push('環境は変えられなくても、次の一歩は選べる。','続ける人は特別じゃない。やめなかっただけだ。','小さな習慣が、数年後の人生の形を決める。');
+P.act.push('今日、ひとつだけ決めろ。','朝の10分を、自分のために取り戻せ。','完璧を待つな。粗くていい、先に動け。');
+P.proof.push('結果は遅れて届く。だから、続けた者が勝つ。','迷う時間があるなら、1歩進め。','苦しい日に動いた1日が、未来を作る。');
+function estD(L){const rt=rate();return L.reduce((q,x,i)=>q+.15+Math.max(1.2,x.length*.15/rt)+(i<L.length-1?gapF(x,i,L.length):1),0)}
+
+/* v6.6: 台本の行とシーンタグ。タグは「本文 // key=value, key=value」。許可リストの値だけ採用し、音声・字幕には使わない */
+const TGV={intent:['hook','q','pain','truth','step','number','contrast','proof','close'],emo:['calm','tense','hope','sad','power'],comp:['fig','type','prop','list'],act:['stand','walk','run','sit','sitUp','slump','think','reach','up','point'],prop:['clock','calendar','phone','book','brain','bulb','mountain','target','check','sunrise','stairs','loop','hourglass','eye','notebook','shoes','desk','sprout','door','q','line','bars','down','donut'],bg:['grid','rays','dots','glow'],cam:['push','pull','panl','panr','rise','drift','none'],tr:['wipe','circle','slide','flash','cut']};
+let PLm=null;
+function parseTag(ts,text){const tg={},bad=[];ts.split(/[;,；，、]/).forEach(q=>{const m=q.trim().match(/^([a-z]+)\s*=\s*(.+)$/);if(!m)return;const k=m[1],v=m[2].trim();if(k==='emph'){if(v.length<=12&&text.includes(v))tg.emph=v;else bad.push(k)}else if(TGV[k]&&TGV[k].includes(v))tg[k]=v;else bad.push(k+'='+v.slice(0,12))});return{tg,bad}}
+function PL(){const raw=$('script').value;if(PLm&&PLm.raw===raw)return PLm.items;const items=[];
+ raw.split(/\r\n|[\r\n\u2028\u2029\u0085\v\f]/).forEach(l=>{l=l.trim();if(!l)return;let ts='';const m=l.match(/\s\/\/(\s|$)/);if(m){ts=l.slice(m.index+m[0].length-(m[1]?m[1].length:0)).trim();l=l.slice(0,m.index).trim()}if(!l)return;
+  const parts=l.length>45?l.split(/(?<=[。！？!?])/).map(x=>x.trim()).filter(Boolean):[l];parts.forEach((q,j)=>{const r=j?{tg:{},bad:[]}:parseTag(ts,q);items.push({t:q,ts:j?'':ts,tg:r.tg,bad:r.bad})})});
+ PLm={raw,items};return items}
+const lines=()=>PL().map(x=>x.t);
+const rate=()=>S.rateOv!=null?S.rateOv:(+$('spd').value||92)/100;
+function dtct(buf,n){const ch=buf.getChannelData(0),sr=buf.sampleRate,fr=Math.floor(sr*.01),nf=Math.floor(ch.length/fr),e=new Float32Array(nf);let mx=0;
+ for(let f=0;f<nf;f++){let q=0;for(let i=f*fr;i<(f+1)*fr;i++)q+=ch[i]*ch[i];e[f]=Math.sqrt(q/fr);if(e[f]>mx)mx=e[f]}
+ if(n<2)return{cuts:[0,buf.duration],found:0};
+ const th=mx*.06;let f0=0,f1=nf-1;while(f0<nf&&e[f0]<th)f0++;while(f1>0&&e[f1]<th)f1--;
+ const runs=[];let st=-1;for(let f=f0;f<=f1+1;f++){const z=f<=f1&&e[f]<th;if(z&&st<0)st=f;if(!z&&st>=0){if(f-st>=15)runs.push({a:st,b:f,l:f-st});st=-1}}
+ if(runs.length<n-1)return{cuts:null,found:runs.length};
+ const pick=runs.sort((x,y)=>y.l-x.l).slice(0,n-1).sort((x,y)=>x.a-y.a);
+ return{cuts:[0,...pick.map(r=>(r.a+r.b)/2*fr/sr),buf.duration],found:runs.length}}
+function propCuts(L,dur){const w=L.map(x=>Math.max(x.length,8)+6),sum=w.reduce((a,b)=>a+b,0);let t=0;const c=[0];w.forEach(x=>{t+=dur*x/sum;c.push(t)});return c}
+function gapF(x,i,n){let q=+$('gap').value/100;if(x.length<=10)q+=.25;if(/[！？!?]$/.test(x))q+=.15;if(i===n-2)q+=.3;return q}
+function model(A=S.act,L=lines()){
+ const rt=rate(),LEAD=.3,n=L.length;let sc=[],D;
+ if(!n)return{sc:[],D:+$('dur').value,A:null};
+ if(A&&A.mode==='single'){
+  if(A.cuts&&A.cuts.length===n+1)A.cache={n,cuts:A.cuts,found:n-1,given:1};else if(!A.cache||A.cache.n!==n){const r=dtct(A.buf,n);A.cache={n,cuts:r.cuts,found:r.found}}
+  const cuts=A.cache.cuts||propCuts(L,A.buf.duration);D=LEAD+A.buf.duration/rt+1;
+  sc=L.map((s,i)=>{const a=i?LEAD+cuts[i]/rt:0,b=i<n-1?LEAD+cuts[i+1]/rt:D;return{s,i,t0:a,d:b-a,au:i?null:{buf:A.buf,start:LEAD}}});
+  return{sc,D,A,note:A.cache.cuts?'字幕の切替は音声の無音区間から自動検出（'+A.cache.found+'箇所検出）':'無音の区切りが足りません（'+A.cache.found+'箇所）。文字数比例で配分しています。行の間に無音を入れて再生成してください'}}
+ if(A&&A.mode==='clips'){let t=0,miss=0;sc=L.map((s,i)=>{const b=A.bufs[i];if(!b)miss++;const dur=b?b.duration/rt:Math.max(1.2,s.length*.15/rt),d=.15+dur+(i<n-1?gapF(s,i,n):1);const o={s,i,t0:t,d,au:b?{buf:b,start:t+.15}:null};t+=d;return o});return{sc,D:t,A,miss}}
+ D=+$('dur').value;const w=L.map(x=>Math.max(x.length,8)+6),sum=w.reduce((a,b)=>a+b,0);let t=0;sc=L.map((s,i)=>{const d=D*w[i]/sum,o={s,i,t0:t,d};t+=d;return o});return{sc,D,A:null}}
+/* ---------- v6.8: APIキーの保存（既定=このタブの間だけ）・削除・伏せ字化 ---------- */
+const KN={g:'bs_gk',x:'bs_xk'},SK={g:'bs_s_gk',x:'bs_s_xk'};
+const kpers=()=>!!store.get('bs_kpers',false);
+function kget(n){let v='';try{v=sessionStorage.getItem(SK[n])||''}catch{}return v||(store.get(KN[n],'')||'')}
+function kset(n,v){let ok=false;try{sessionStorage.setItem(SK[n],v);ok=sessionStorage.getItem(SK[n])===v}catch{}if(kpers()){const o=store.set(KN[n],v);ok=ok||o}else if(store.get(KN[n],'')){/* 旧保存は移行操作まで触らない */}return ok}
+const RD=m=>{m=String(m).replace(/AIza[0-9A-Za-z_-]{20,}/g,'[KEY]').replace(/\b(sk|xi)[-_][0-9A-Za-z_-]{16,}/g,'[KEY]');for(const n of['g','x']){const v=kget(n);if(v&&v.length>=12)m=m.split(v).join('[KEY]')}const t=store.get('bs_tts','');if(t&&String(t).length>=12)m=m.split(String(t)).join('[KEY]');return m};
+function kscan(v){const hit=[];if(!v||v.length<12)return hit;try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if((localStorage.getItem(k)||'').includes(v))hit.push('端末の保存領域：'+k)}}catch{}try{for(let i=0;i<sessionStorage.length;i++){const k=sessionStorage.key(i);if((sessionStorage.getItem(k)||'').includes(v))hit.push('このタブの保存領域：'+k)}}catch{}if(typeof LG!=='undefined'&&LG.join('\n').includes(v))hit.push('実行ログ');return hit}
+async function kscanIdb(v){const d=await idbP('get');return d&&JSON.stringify(d).includes(v)?['別領域への退避（IndexedDB）']:[]}
+async function kdel(n,ns){const v=kget(n);try{sessionStorage.removeItem(SK[n])}catch{}store.set(KN[n],'');try{localStorage.removeItem(KN[n])}catch{}if(n==='x')try{localStorage.removeItem('bs_xv')}catch{}
+ let hit=[];if(v&&!ns){hit=kscan(v).concat(await kscanIdb(v))}return{had:!!v,left:hit,gone:!kget(n),v}}
+async function kleft(rs){let out=[];for(const r of rs){if(r.v){out=out.concat(kscan(r.v),await kscanIdb(r.v))}}return[...new Set(out)]}
+function kreport(name,r){if(!r.had)return say(name+'：削除するキーはありませんでした');return say(r.gone&&!r.left.length?`✔ ${name}のキーを削除し、読み戻して消えたことを確認しました（旧保存領域・退避・ログも検査済み）。削除は端末内の消去であり、キー自体は無効になりません。漏れた疑いがあるときはGoogle側で再発行してください`:`⚠ ${name}のキーを消しましたが、次の場所に残っています：${r.left.join('、')}。台本などに貼り付けていないか確認してください`)}
+/* ---------- v6.7: 台本の完全保護（自動保存・退避・復元）。APIキーは対象外（ホワイトリスト方式） ---------- */
+const DK=['th','script','dur','vs5','tpl','bgs','res','vo','pre','spd','nv','gap','vol','rvl','bgm','sfx','deep','rev','gon','srcn'];
+const SN=(()=>{const a=store.get('bs_snap',[]);return Array.isArray(a)?a:[]})();
+let saveT=null,lastSave=null,saveBad=false,idbOk=null;
+const hhmm=t=>new Date(t).toLocaleTimeString('ja-JP');
+function dgather(){const d={v:1,ep:S.ep,at:Date.now()};DK.forEach(k=>{const e=$(k);if(e)d[k]=e.type==='checkbox'?e.checked:e.value});return d}
+const idbP=(m,v)=>new Promise(r=>{try{const q=indexedDB.open('bs_safe',1);q.onupgradeneeded=()=>q.result.createObjectStore('d');q.onerror=()=>r(null);q.onsuccess=()=>{try{const db=q.result,tx=db.transaction('d',m==='get'?'readonly':'readwrite'),o=tx.objectStore('d'),rq=m==='get'?o.get('draft'):m==='put'?o.put(v,'draft'):o.delete('draft');rq.onsuccess=()=>{r(m==='get'?rq.result||null:true);db.close()};rq.onerror=()=>{r(null);db.close()}}catch{r(null)}}}catch{r(null)}});
+function sv(){const e=$('sv'),w=$('svw');if(saveBad){e.textContent='⚠ 保存できません';e.className='bad';w.hidden=false;w.textContent='⚠ 自動保存に失敗しました（端末の保存容量不足の可能性）。いまの台本は画面を開いている間は残りますが、念のため台本欄の「台本をコピー」で控えてください。退避は別の領域に試みています。'}else{e.className='';w.hidden=true;e.textContent=lastSave?'保存 '+hhmm(lastSave):''}}
+function dsave(now){clearTimeout(saveT);const run=()=>{const d=dgather();let ok=store.set('bs_draft',d);if(ok){try{const b=JSON.parse(localStorage.getItem('bs_draft')||'null');ok=!!b&&b.script===d.script&&b.th===d.th}catch{ok=false}}
+ if(ok){saveBad=false;lastSave=new Date();if(idbOk)idbP('del');try{sessionStorage.removeItem('bs_draft2')}catch{}}
+ else{saveBad=true;LOG('自動保存に失敗: '+(store.err||'検証不一致'));try{sessionStorage.setItem('bs_draft2',JSON.stringify(d))}catch{}idbP('put',d).then(r=>{idbOk=!!r;LOG('別領域への退避: '+(r?'成功':'失敗'))})}
+ sv()};if(now)run();else saveT=setTimeout(run,400)}
+function snap(why,src){const d=src||{th:$('th').value,script:$('script').value,ep:S.ep};if(!d.script||!String(d.script).trim())return false;if(SN[0]&&SN[0].script===d.script)return false;SN.unshift({at:Date.now(),why,th:d.th||'',script:d.script,ep:d.ep||1});if(SN.length>8)SN.length=8;let n=SN.length,ok=false;while(n>0&&!(ok=store.set('bs_snap',SN.slice(0,n))))n=n>2?n-2:0;if(!ok){LOG('退避の保存に失敗（画面を開いている間は復元できます）');$('prevn').textContent='⚠ 前の下書きの退避を端末に保存できませんでした（画面を閉じるまでは復元できます）'}return true}
+function rsRender(){const e=$('snapp');if(!SN.length){e.innerHTML='<p class="note">退避された下書きはまだありません</p>';return}e.innerHTML='<p class="note">タップすると、その下書きに戻します（いまの台本も退避されます）</p>'+SN.map((x,i)=>`<button data-i="${i}">${esc(hhmm(x.at))}｜${esc(x.why)}｜${String(x.script).split('\n').filter(l=>l.trim()).length}行｜${esc(String(x.th).slice(0,14))}</button>`).join('')}
+function tab(){const d=$('adv');if(d)d.open=true}
+$('rsd').onclick=()=>{const e=$('snapp');if(e.hidden){rsRender();e.hidden=false}else e.hidden=true};
+$('snapp').onclick=ev=>{const b=ev.target.closest('button');if(!b)return;const x=SN[+b.dataset.i];if(!x)return;snap('復元の前');$('th').value=x.th;$('script').value=x.script;S.ep=x.ep||S.ep;S.rolesFor=null;upd();dsave(true);$('snapp').hidden=true;say('前の下書きを復元しました（'+hhmm(x.at)+'）')};
+$('edsc').onclick=()=>{tab(0);setTimeout(()=>{const e=$('script');e.scrollIntoView({block:'center'});e.focus()},50)};
+function drestore(){let d=store.get('bs_draft',null),from='';try{const s2=JSON.parse(sessionStorage.getItem('bs_draft2')||'null');if(s2&&(!d||(s2.at||0)>(d.at||0))){d=s2;from='（保存容量不足のため、一時領域から）'}}catch{}
+ if(!d){const c=store.get('bs_cur',null);if(c&&c.script!=null)d={th:c.th,script:c.script,ep:c.ep}}
+ if(!d)return false;const sk=new Set(S.impSkip||[]);
+ if(d.vs5&&VSTY[d.vs5]&&!sk.has('vs5')){$('vs5').value=d.vs5;applyStyle()}
+ DK.forEach(k=>{if(k==='vs5'||sk.has(k)||d[k]===undefined)return;const e=$(k);if(!e)return;if(e.type==='checkbox')e.checked=!!d[k];else{if(e.tagName==='SELECT'&&![...e.options].some(o=>o.value===String(d[k]))){if(k==='dur'&&+d[k]>0)e.add(new Option(d[k]+'秒',d[k]));else return}e.value=d[k]}});
+ if(!sk.has('script')&&d.ep)S.ep=d.ep;['spd','nv','gap','vol','rvl'].forEach(k=>$(k).dispatchEvent(new Event('input')));
+ if(d.at)$('prevn').textContent='前回の自動保存（'+new Date(d.at).toLocaleString('ja-JP')+'）から台本と設定を復元しました'+from;return true}
+function pstate(st,msg){store.set('bs_prog',{at:Date.now(),st,msg:String(msg||'').slice(0,120)})}
+function fitAsk(D,tg){return new Promise(res=>{const need=Math.ceil(D+1),o=[...$('dur').options].map(x=>+x.value).filter(v=>v>=need).sort((a,b)=>a-b),nd=o.length?o[0]:Math.ceil(need/15)*15;
+ $('fitt').textContent=`内容が設定時間に収まりません（音声 ${fmt(D)}／設定 ${tg}秒）`;$('fitm').textContent='文章は1行も省略していません。どうするか選んでください（選ぶまで動画は作りません）。';$('fit1').textContent=`⏱ 動画時間を${nd}秒に延長して続ける`;
+ $('fitp').hidden=false;$('fitp').scrollIntoView({block:'center'});xmsg('設定時間に収まりません。画面の3つから選んでください',1);
+ S.fitRes=v=>{S.fitRes=null;$('fitp').hidden=true;if(v==='ext'){if(![...$('dur').options].some(x=>+x.value===nd))$('dur').add(new Option(nd+'秒',String(nd)));$('dur').value=String(nd);upd();dsave(true)}res(v)};
+ $('fit1').onclick=()=>S.fitRes&&S.fitRes('ext');$('fit2').onclick=()=>S.fitRes&&S.fitRes('edit');$('fit3').onclick=()=>S.fitRes&&S.fitRes('abort')})}
+['pagehide','visibilitychange'].forEach(ev=>addEventListener(ev,()=>{if(ev==='pagehide'||document.visibilityState==='hidden')dsave(true)}));
+DK.forEach(k=>{const e=$(k);if(e)['input','change'].forEach(ev=>e.addEventListener(ev,()=>dsave()))});
+function upd(){const M=model(),n=lines().length,D=M.D,tg=+$('dur').value;let m=n?`${n}シーン / 合計 ${fmt(D)}${M.A?'（ナレーション同期）':'（音声なし・文字数比例）'}`:'台本が空です';
+ if(M.A&&D>tg+.5){const cut=Math.ceil((D-tg)/(D/n));m+=`\n⚠ 目標${tg}秒を${(D-tg).toFixed(1)}秒超過。音声は切断しません。対策：台本を約${cut}行減らす、読み上げ速度を上げる、間を短くする、または動画時間を${Math.ceil(D/15)*15}秒以上に変更`}
+ if(M.miss)m+=`\n⚠ 音声が未生成の行が${M.miss}行あります（推定時間で表示）`;
+ if(M.A&&M.A.mode==='clips'&&M.A.bufs.length!==n)m+=`\n⚠ 音声${M.A.bufs.length}件と台本${n}行が不一致です`;
+ if(M.note)m+='\n'+M.note;
+ $('info').textContent=m;$('vi').textContent=M.A?m:'';dsave();$('scsum').textContent=n?`台本 ${n}行／約${fmt(D)}（設定 ${tg}秒）｜${lines()[0].slice(0,18)}…`:'台本が空です。「台本を編集する」か、台本欄で新規生成してください';$('ep').textContent='EP.'+pad3(S.ep)}
+$('split').onclick=()=>{snap('シーン分割の前');const out=[];PL().forEach(it=>{let first=true;const push=x=>{out.push(x+(first&&it.ts?' // '+it.ts:''));first=false};it.t.split(/(?<=[。！？!?])/).forEach(p=>{p=p.trim();if(!p)return;if(p.length>26){let cur='';p.split(/(?<=、)/).forEach(x=>{if((cur+x).length>26&&cur){push(cur);cur=''}cur+=x});if(cur)push(cur)}else push(p)})});$('script').value=out.join('\n');upd();say('シーンを分割しました')};
+async function copy(txt,msg){try{await navigator.clipboard.writeText(txt);say(msg||'コピーしました')}catch{say('コピーできません。テキストを長押しして手動でコピーしてください')}}
+$('cpScript').onclick=()=>copy($('script').value,'台本をコピーしました');
+$('cpPrompt').onclick=()=>copy(`あなたは自己啓発ショート動画の脚本家です。テーマ「${$('th').value}」で、約${model().D.toFixed(0)}秒（15〜18行）のナレーション台本を書いてください。条件：1行=1シーン、1行は最大24文字、冒頭は問いかけ、最後は短い名言で締める、顔出しなし、番号や記号を付けない、台本のみ出力。`,'依頼文をコピーしました。外部AIに貼り付け、出てきた台本を下欄へ貼ってください');
+$('gen').onclick=()=>{snap('新規生成の前');gen();dsave(true)};$('script').oninput=upd;$('th').oninput=upd;$('dur').onchange=upd;$('deep').onchange=upd;
+
+/* ---------- 映像 ---------- */
+const rng=n=>{const x=Math.sin(n*127.1+311.7)*43758.5453;return x-Math.floor(x)};
+const ST=['mountain','rays','city','stars','rain'];
+function bg(sty,t,u,k){
+ const gr=g.createLinearGradient(0,0,0,1280);gr.addColorStop(0,'#161a23');gr.addColorStop(.6,'#0b0d12');gr.addColorStop(1,'#020203');g.fillStyle=gr;g.fillRect(0,0,720,1280);
+ if(sty==='mountain'){const sx=360+Math.sin(k*2.1)*130,r=g.createRadialGradient(sx,470,10,sx,470,420);r.addColorStop(0,'#c9a45c88');r.addColorStop(1,'#0000');g.fillStyle=r;g.fillRect(0,0,720,1000);g.fillStyle='#d9b878';g.beginPath();g.arc(sx,470,70+u*12,0,7);g.fill();
+  for(let l=0;l<3;l++){g.fillStyle=['#1d2229','#12161c','#08090c'][l];g.beginPath();g.moveTo(0,1280);for(let x=0;x<=750;x+=30)g.lineTo(x,760+l*120-rng(x/30+l*17+k*5)*150+Math.sin(x*.012+t*.15*(l+1))*22);g.lineTo(750,1280);g.fill()}
+  g.fillStyle='#020203';g.beginPath();g.arc(360,880,19,0,7);g.fill();g.beginPath();g.moveTo(336,905);g.lineTo(384,905);g.lineTo(396,1010);g.lineTo(374,1010);g.lineTo(372,1100);g.lineTo(350,1100);g.lineTo(346,1010);g.lineTo(324,1010);g.fill()}
+ else if(sty==='rays'){const r=g.createRadialGradient(360,-60,10,360,-60,1000);r.addColorStop(0,'#e8cf9a66');r.addColorStop(1,'#0000');g.fillStyle=r;g.fillRect(0,0,720,1280);
+  for(let j=0;j<9;j++){const a=Math.PI/2+(j-4)*.17+Math.sin(t*.25+j)*.04;g.fillStyle='rgba(232,207,154,.07)';g.beginPath();g.moveTo(360,-60);g.lineTo(360+Math.cos(a-.035)*1600,-60+Math.sin(a-.035)*1600);g.lineTo(360+Math.cos(a+.035)*1600,-60+Math.sin(a+.035)*1600);g.fill()}
+  g.fillStyle='#020203';g.fillRect(0,1060,720,220)}
+ else if(sty==='city'){g.fillStyle='#d9b87844';g.beginPath();g.arc(520,330,60,0,7);g.fill();
+  for(let x=0,b=0;x<720;x+=48,b++){const h=220+rng(b+k)*480;g.fillStyle='#0a0c10';g.fillRect(x,1280-h,46,h);for(let y=1280-h+16;y<1260;y+=26)for(let w=6;w<40;w+=14)if(rng(b*31+y+w+Math.floor(t*.5))>.72){g.fillStyle='rgba(232,207,154,.55)';g.fillRect(x+w,y,6,10)}}}
+ else if(sty==='stars'){for(let j=0;j<150;j++){const a=.3+.7*Math.abs(Math.sin(t*(.4+rng(j)*1.2)+j));g.fillStyle=`rgba(244,239,230,${a*.8})`;g.fillRect((rng(j+3)*720+t*2)%720,rng(j+99)*1000,rng(j)>.9?3:1.6,rng(j)>.9?3:1.6)}
+  const r=g.createLinearGradient(0,800,0,1280);r.addColorStop(0,'#0000');r.addColorStop(1,'#c9a45c55');g.fillStyle=r;g.fillRect(0,800,720,480);
+  g.strokeStyle=`rgba(232,207,154,${.9*(1-u)})`;g.lineWidth=3;g.beginPath();g.moveTo(80+u*500,100+u*350);g.lineTo(80+u*500-90,100+u*350-60);g.stroke()}
+ else{for(let j=0;j<8;j++){const r=g.createRadialGradient(rng(j+k)*720,300+rng(j+9)*700,0,rng(j+k)*720,300+rng(j+9)*700,90);r.addColorStop(0,'#c9a45c33');r.addColorStop(1,'#0000');g.fillStyle=r;g.fillRect(0,0,720,1280)}
+  g.strokeStyle='rgba(200,210,225,.22)';g.lineWidth=2;g.beginPath();for(let j=0;j<90;j++){const x=rng(j)*760,y=((rng(j+50)*1400+t*900*(.6+rng(j+7)))%1400)-60;g.moveTo(x,y);g.lineTo(x-12,y+60)}g.stroke()}}
+function wrap(s,max){const o=[];let l='';for(const ch of s){if(g.measureText(l+ch).width>max&&l){o.push(l);l=''}l+=ch}if(l)o.push(l);return o}
+/* ---------- v6.0: モーショングラフィックス映像（黒背景・白い人物・図解・キネティック字幕） ---------- */
+const mcl=(x,a=0,b=1)=>Math.max(a,Math.min(b,x)),mea=x=>1-Math.pow(1-mcl(x),3),mei=x=>{x=mcl(x);return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2},mbk=x=>{x=mcl(x);const a=1.70158,b=a+1;return 1+b*Math.pow(x-1,3)+a*Math.pow(x-1,2)};
+const MGF='"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans CJK JP",sans-serif',WH='#f5f1ea';let GD='#e0b860',R2D=Math.PI/180;
+const lmb=(x,y,a1,l1,a2,l2)=>{const ax=x+Math.sin(a1*R2D)*l1,ay=y+Math.cos(a1*R2D)*l1,a=a1+a2;return[[x,y],[ax,ay],[ax+Math.sin(a*R2D)*l2,ay+Math.cos(a*R2D)*l2]]};
+/* --- 人物（関節を持つ白いマネキン）--- */
+function mgPose(n,ph){const w=Math.sin(ph),c=Math.cos(ph);
+ switch(n){
+ case'walk':{const a=28*w,b=28*Math.sin(ph+Math.PI),k1=8+34*Math.max(0,Math.cos(ph)),k2=8+34*Math.max(0,Math.cos(ph+Math.PI));return{sp:7,hd:0,A1:[-a*.9,-14],A2:[a*.9,-14],L1:[a,-k1],L2:[b,-k2],bob:5*Math.abs(w)}}
+ case'run':{const a=50*w,b=50*Math.sin(ph+Math.PI);return{sp:17,hd:-4,A1:[-a*1.1,-85],A2:[a*1.1,-85],L1:[a,-(20+55*Math.max(0,Math.cos(ph)))],L2:[b,-(20+55*Math.max(0,Math.cos(ph+Math.PI)))],bob:9*Math.abs(w)}}
+ case'sit':return{sp:26+2*w,hd:22,A1:[38,-78],A2:[30,-70],L1:[88,-88],L2:[80,-80],seat:1};
+ case'sitUp':return{sp:4,hd:0,A1:[28,-60],A2:[22,-50],L1:[88,-88],L2:[82,-82],seat:1};
+ case'slump':return{sp:24+1.5*w,hd:30,A1:[10,-6],A2:[4,-6],L1:[8,-14],L2:[-4,-12]};
+ case'think':return{sp:8,hd:16,A1:[28,-135],A2:[-4,-8],L1:[6,-4],L2:[-6,-4]};
+ case'up':return{sp:-3,hd:-14,A1:[158+4*w,-4],A2:[168-4*w,-4],L1:[12,-3],L2:[-12,-3]};
+ case'reach':return{sp:6,hd:-6,A1:[100,-6],A2:[-8,-6],L1:[14,-6],L2:[-14,-4]};
+ case'point':return{sp:4,hd:0,A1:[82,-4],A2:[-8,-8],L1:[6,-3],L2:[-6,-3]};
+ default:return{sp:2+1.2*w,hd:0,A1:[7,-6+2*w],A2:[-6,-6-2*w],L1:[4,-2],L2:[-4,-2]}}}
+function mgFig(x,gy,s,dir,pn,ph,al,col){const P=mgPose(pn,ph),tl=120*s,r=31*s;g.save();g.translate(x,0);g.scale(dir,1);g.translate(-x,0);g.globalAlpha*=al==null?1:al;g.lineCap='round';g.lineJoin='round';
+ const L=(a)=>lmb(0,0,a[0],85*s,a[1],85*s);let fd=Math.max(L(P.L1)[2][1],L(P.L2)[2][1]);const py=gy-fd-(P.bob||0)*s,px=x;
+ const nk=[px+Math.sin(P.sp*R2D)*tl,py-Math.cos(P.sp*R2D)*tl],sh=[px+(nk[0]-px)*.9,py+(nk[1]-py)*.9];
+ const lg=(a,sx,sy)=>lmb(sx,sy,a[0],85*s,a[1],85*s),ar=(a,sx,sy)=>lmb(sx,sy,a[0],68*s,a[1],62*s);
+ const draw=(pts,w,c)=>{g.strokeStyle=c;g.lineWidth=w;g.beginPath();g.moveTo(pts[0][0],pts[0][1]);for(let i=1;i<pts.length;i++)g.lineTo(pts[i][0],pts[i][1]);g.stroke()};
+ const back=col||'#a9a49a',front=col||WH;
+ if(P.seat){g.fillStyle='#2a2a2a';g.strokeStyle='#555';g.lineWidth=2;g.beginPath();g.roundRect(px-44*s,py+14*s,96*s,fd-14*s+ (gy-py-fd) ,6);g.fill();g.stroke()}
+ draw(lg(P.L2,px,py),25*s,back);draw(ar(P.A2,sh[0],sh[1]),19*s,back);
+ draw([[px,py],nk],47*s,front);
+ const hc=[nk[0]+Math.sin((P.sp+P.hd)*R2D)*(r+9*s),nk[1]-Math.cos((P.sp+P.hd)*R2D)*(r+9*s)];g.fillStyle=front;g.beginPath();g.arc(hc[0],hc[1],r,0,7);g.fill();
+ draw(lg(P.L1,px,py),25*s,front);draw(ar(P.A1,sh[0],sh[1]),19*s,front);
+ g.restore();return{head:hc,hand:ar(P.A1,sh[0],sh[1])[2],py}}
+/* --- アイコン・図解（白い線画＋金のアクセント）--- */
+function mgIcon(n,x,y,s,t,p){g.save();g.translate(x,y);g.scale(s,s);g.lineCap='round';g.lineJoin='round';g.strokeStyle=WH;g.lineWidth=7;g.fillStyle=WH;g.globalAlpha*=mcl(p*1.4);const dash=(len)=>g.setLineDash([len*mcl(p*1.15),len*3]);
+ const circ=(cx,cy,r)=>{g.beginPath();g.arc(cx,cy,r,0,7);};
+ switch(n){
+ case'clock':{dash(640);circ(0,0,100);g.stroke();g.setLineDash([]);for(let i=0;i<12;i++){const a=i*Math.PI/6;g.lineWidth=i%3?3:6;g.beginPath();g.moveTo(Math.sin(a)*84,-Math.cos(a)*84);g.lineTo(Math.sin(a)*96,-Math.cos(a)*96);g.stroke()}
+  g.lineWidth=7;const m=t*1.8,h=m/12;g.beginPath();g.moveTo(0,0);g.lineTo(Math.sin(m)*78,-Math.cos(m)*78);g.stroke();g.lineWidth=9;g.beginPath();g.moveTo(0,0);g.lineTo(Math.sin(h)*52,-Math.cos(h)*52);g.stroke();g.fillStyle=GD;circ(0,0,9);g.fill();break}
+ case'calendar':{dash(900);g.beginPath();g.roundRect(-100,-95,200,190,16);g.stroke();g.setLineDash([]);g.fillStyle=GD;g.beginPath();g.roundRect(-100,-95,200,42,[16,16,0,0]);g.fill();g.lineWidth=5;for(let i=0;i<3;i++){}
+  const n2=Math.floor(mcl(p)*16);for(let i=0;i<20;i++){const cx=-72+(i%5)*36,cy=-28+Math.floor(i/5)*34;g.strokeStyle='#4a4a4a';g.lineWidth=3;g.strokeRect(cx-10,cy-10,20,20);if(i<n2){g.strokeStyle=GD;g.lineWidth=5;g.beginPath();g.moveTo(cx-8,cy);g.lineTo(cx-2,cy+7);g.lineTo(cx+9,cy-8);g.stroke()}}break}
+ case'phone':{dash(700);g.beginPath();g.roundRect(-62,-115,124,230,20);g.stroke();g.setLineDash([]);g.fillStyle='#1a1a1a';g.beginPath();g.roundRect(-52,-98,104,196,12);g.fill();const off=(t*60)%48;g.save();g.beginPath();g.rect(-52,-98,104,196);g.clip();for(let i=-1;i<5;i++){const yy=-88+i*48+off;g.fillStyle=i%2?'#3a3a3a':'#5a5a5a';g.beginPath();g.roundRect(-44,yy,88,36,8);g.fill();g.fillStyle=GD;g.beginPath();g.arc(-30,yy+18,7,0,7);g.fill()}g.restore();g.fillStyle=WH;g.beginPath();g.roundRect(-18,-108,36,5,3);g.fill();break}
+ case'book':{dash(800);g.beginPath();g.moveTo(0,-70);g.quadraticCurveTo(-60,-95,-120,-70);g.lineTo(-120,75);g.quadraticCurveTo(-60,50,0,75);g.quadraticCurveTo(60,50,120,75);g.lineTo(120,-70);g.quadraticCurveTo(60,-95,0,-70);g.moveTo(0,-70);g.lineTo(0,75);g.stroke();g.setLineDash([]);g.lineWidth=4;g.strokeStyle='#777';for(let i=0;i<4;i++){const w2=mcl(p*3-i*.3);g.beginPath();g.moveTo(-100,-38+i*22);g.lineTo(-100+78*w2,-38+i*22+0);g.moveTo(22,-38+i*22);g.lineTo(22+78*w2,-38+i*22);g.stroke()}g.strokeStyle=GD;g.lineWidth=6;g.beginPath();g.moveTo(60,-72);g.lineTo(60,-30+Math.sin(t*3)*4);g.stroke();break}
+ case'brain':{const N=[[0,-90],[-85,-45],[85,-45],[-100,35],[100,35],[-45,95],[45,95],[0,0],[-45,-30],[45,-30]],E=[[0,1],[0,2],[1,3],[2,4],[3,5],[4,6],[5,6],[7,0],[7,1],[7,2],[7,3],[7,4],[7,5],[7,6],[8,0],[9,0],[8,1],[9,2]];g.lineWidth=3;g.strokeStyle='#8c8c8c';E.forEach(([a,b])=>{g.beginPath();g.moveTo(N[a][0],N[a][1]);g.lineTo(N[b][0],N[b][1]);g.stroke()});
+  N.forEach((q,i)=>{g.fillStyle=WH;circ(q[0],q[1],i===7?15:9);g.fill()});E.forEach(([a,b],i)=>{const f=((t*.9+i*.37)%1);g.fillStyle=GD;g.globalAlpha*=.9;circ(N[a][0]+(N[b][0]-N[a][0])*f,N[a][1]+(N[b][1]-N[a][1])*f,5);g.fill();g.globalAlpha/=.9});const pu=.5+.5*Math.sin(t*3);g.strokeStyle=GD;g.globalAlpha*=.35*pu;g.lineWidth=5;circ(0,0,26+14*pu);g.stroke();break}
+ case'bulb':{dash(520);circ(0,-30,62);g.stroke();g.setLineDash([]);g.beginPath();g.moveTo(-26,30);g.lineTo(-26,70);g.lineTo(26,70);g.lineTo(26,30);g.stroke();g.beginPath();g.moveTo(-22,88);g.lineTo(22,88);g.stroke();const pu=.6+.4*Math.sin(t*4);g.strokeStyle=GD;g.lineWidth=6;g.globalAlpha*=pu;for(let i=0;i<8;i++){const a=i*Math.PI/4+Math.PI/8;g.beginPath();g.moveTo(Math.sin(a)*86,-30-Math.cos(a)*86);g.lineTo(Math.sin(a)*112,-30-Math.cos(a)*112);g.stroke()}g.fillStyle=GD;g.globalAlpha=.25*pu*mcl(p);circ(0,-30,56);g.fill();break}
+ case'mountain':{dash(900);g.beginPath();g.moveTo(-170,90);g.lineTo(-60,-60);g.lineTo(-10,10);g.lineTo(55,-100);g.lineTo(170,90);g.closePath();g.stroke();g.setLineDash([]);g.strokeStyle=GD;g.lineWidth=6;g.beginPath();g.moveTo(55,-100);g.lineTo(55,-172);g.stroke();g.fillStyle=GD;const w3=Math.sin(t*5)*5;g.beginPath();g.moveTo(55,-172);g.lineTo(100,-160+w3);g.lineTo(55,-146);g.closePath();g.fill();break}
+ case'target':{g.lineWidth=7;[100,68,36].forEach((r,i)=>{g.setLineDash([r*6.3*mcl(p*1.2-i*.1),r*20]);circ(0,0,r);g.stroke()});g.setLineDash([]);g.fillStyle=GD;circ(0,0,12);g.fill();const f=mea(p*1.1-.25);g.strokeStyle=GD;g.lineWidth=8;g.beginPath();g.moveTo(130-130*(1-f)*-1+ (1-f)*140,-130-(1-f)*120);g.lineTo(6,-6);g.stroke();break}
+ case'check':{for(let i=0;i<3;i++){const yy=-80+i*80,q=mcl(p*3-i*.6);g.globalAlpha=1;g.strokeStyle=WH;g.lineWidth=6;g.beginPath();g.roundRect(-110,yy-26,52,52,10);g.stroke();g.strokeStyle='#555';g.lineWidth=7;g.beginPath();g.moveTo(-34,yy);g.lineTo(-34+130*mcl(q*1.5),yy);g.stroke();if(q>.5){g.strokeStyle=GD;g.lineWidth=9;g.beginPath();g.moveTo(-100,yy);g.lineTo(-88,yy+13);g.lineTo(-68,yy-14);g.stroke()}}break}
+ case'sunrise':{const rise=mea(p*1.1);g.save();g.beginPath();g.rect(-220,-260,440,260);g.clip();g.fillStyle=GD;circ(0,70-rise*120,76);g.fill();g.lineWidth=5;g.strokeStyle=GD;g.globalAlpha*=.6;for(let i=0;i<13;i++){const a=-Math.PI+(i+.5)*Math.PI/13,r1=96+Math.sin(t*3+i)*6;g.beginPath();g.moveTo(Math.cos(a)*r1,70-rise*120+Math.sin(a)*r1);g.lineTo(Math.cos(a)*(r1+34),70-rise*120+Math.sin(a)*(r1+34));g.stroke()}g.restore();g.strokeStyle=WH;g.lineWidth=6;g.beginPath();g.moveTo(-220,0);g.lineTo(220,0);g.stroke();break}
+ case'stairs':{dash(900);g.beginPath();g.moveTo(-150,100);for(let i=0;i<5;i++){g.lineTo(-150+i*60,100-i*42);g.lineTo(-90+i*60,100-i*42)}g.lineTo(150,100-5*42+0);g.lineTo(150,100);g.stroke();break}
+ case'loop':{g.lineWidth=9;g.rotate(t*1.4);g.beginPath();g.arc(0,0,86,.3,Math.PI*1.7);g.stroke();const a=Math.PI*1.7,ex=Math.cos(a)*86,ey=Math.sin(a)*86;g.beginPath();g.moveTo(ex-4,ey-30);g.lineTo(ex,ey);g.lineTo(ex+28,ey-14);g.stroke();g.rotate(-t*1.4);g.strokeStyle=GD;g.lineWidth=5;g.globalAlpha*=.6;circ(0,0,112);g.setLineDash([8,14]);g.stroke();break}
+ case'hourglass':{g.lineWidth=7;g.beginPath();g.moveTo(-70,-110);g.lineTo(70,-110);g.lineTo(8,0);g.lineTo(70,110);g.lineTo(-70,110);g.lineTo(-8,0);g.closePath();g.stroke();const f=(t*.25)%1;g.fillStyle=GD;g.beginPath();g.moveTo(-8-(1-f)*50,-100+f*70);g.lineTo(8+(1-f)*50,-100+f*70);g.lineTo(2,-6);g.lineTo(-2,-6);g.closePath();g.fill();g.beginPath();g.moveTo(-60*f,104);g.lineTo(60*f,104);g.lineTo(0,104-f*70);g.closePath();g.fill();g.fillRect(-1.5,0,3,100);break}
+ case'q':{g.fillStyle=GD;g.font=`900 ${300}px ${MGF}`;g.textAlign='center';g.textBaseline='middle';g.globalAlpha*=.95;g.fillText('?',0,Math.sin(t*2)*8);break}
+ case'notebook':{dash(900);g.beginPath();g.roundRect(-90,-110,180,220,14);g.stroke();g.setLineDash([]);g.lineWidth=5;for(let i=0;i<5;i++){g.beginPath();g.moveTo(-50,-60+i*32);g.lineTo(-50+110*mcl(p*2.2-i*.35),-60+i*32);g.stroke()}g.fillStyle=GD;for(let i=0;i<5;i++){circ(-90,-80+i*40,7);g.fill()}const w=mcl(p*1.4);g.strokeStyle=GD;g.lineWidth=8;g.beginPath();g.moveTo(40+Math.sin(t*5)*6,40+w*0);g.lineTo(96,-18);g.stroke();break}
+ case'shoes':{dash(760);g.beginPath();g.moveTo(-120,60);g.lineTo(-120,-10);g.quadraticCurveTo(-60,-20,-20,-70);g.lineTo(20,-60);g.quadraticCurveTo(40,0,130,20);g.quadraticCurveTo(150,40,130,60);g.closePath();g.stroke();g.setLineDash([]);g.strokeStyle=GD;g.lineWidth=7;g.beginPath();g.moveTo(-125,74);g.lineTo(140,74);g.stroke();g.strokeStyle=WH;g.lineWidth=5;for(let i=0;i<3;i++){g.beginPath();g.moveTo(-6+i*14,-46+i*16);g.lineTo(20+i*14,-30+i*16);g.stroke()}g.strokeStyle=GD;g.globalAlpha*=.7;for(let i=0;i<3;i++){const o=(t*3+i*.33)%1;g.beginPath();g.moveTo(-150-o*30,6+i*22);g.lineTo(-190-o*60,6+i*22);g.stroke()}break}
+ case'desk':{dash(900);g.beginPath();g.moveTo(-160,50);g.lineTo(160,50);g.moveTo(-130,50);g.lineTo(-130,120);g.moveTo(130,50);g.lineTo(130,120);g.stroke();g.setLineDash([]);g.lineWidth=7;g.beginPath();g.moveTo(70,50);g.lineTo(70,10);g.lineTo(100,-60);g.lineTo(46,-84);g.stroke();g.fillStyle=GD;g.beginPath();g.moveTo(30,-70);g.lineTo(66,-96);g.lineTo(76,-60);g.closePath();g.fill();const gl=.12+.06*Math.sin(t*3);g.fillStyle=`rgba(224,184,96,${gl*mcl(p*2)})`;g.beginPath();g.moveTo(40,-62);g.lineTo(76,-50);g.lineTo(130,50);g.lineTo(-30,50);g.closePath();g.fill();g.strokeStyle=WH;g.lineWidth=5;g.beginPath();g.roundRect(-110,6,80,44,6);g.stroke();break}
+ case'sprout':{g.lineWidth=8;const h=mea(p*1.1);g.beginPath();g.moveTo(0,100);g.quadraticCurveTo(-14,100-60*h,0,100-120*h);g.stroke();const lf=d=>{const s2=mcl(p*1.6-.5);g.save();g.translate(0,100-120*h*.92);g.scale(d*s2,s2);g.fillStyle=GD;g.beginPath();g.moveTo(0,0);g.quadraticCurveTo(50,-60,100,-20);g.quadraticCurveTo(50,20,0,0);g.fill();g.restore()};lf(1);lf(-1);g.strokeStyle='#666';g.lineWidth=5;g.beginPath();g.moveTo(-70,106);g.lineTo(70,106);g.stroke();break}
+ case'door':{dash(720);g.beginPath();g.roundRect(-70,-130,140,240,8);g.stroke();g.setLineDash([]);const o=mea(p*1.1),lg=g.createLinearGradient(0,-130,0,110);lg.addColorStop(0,`rgba(224,184,96,${.55*o})`);lg.addColorStop(1,`rgba(224,184,96,${.15*o})`);g.fillStyle=lg;g.fillRect(-70,-130,140,240);g.fillStyle='#202020';g.strokeStyle=WH;g.lineWidth=6;g.beginPath();g.moveTo(-70,-130);g.lineTo(-70+140*(1-.72*o),-130+34*o);g.lineTo(-70+140*(1-.72*o),110-34*o);g.lineTo(-70,110);g.closePath();g.fill();g.stroke();g.fillStyle=GD;g.globalAlpha*=.5*o;g.beginPath();g.moveTo(-10,110);g.lineTo(80,110);g.lineTo(80+150*o,190);g.lineTo(-10+10*o,190);g.closePath();g.fill();break}
+ case'eye':{dash(500);g.beginPath();g.moveTo(-120,0);g.quadraticCurveTo(0,-90,120,0);g.quadraticCurveTo(0,90,-120,0);g.stroke();g.setLineDash([]);const ox=Math.sin(t*1.5)*22;g.fillStyle=GD;circ(ox,0,34);g.fill();g.fillStyle='#000';circ(ox,0,14);g.fill();break}
+ }
+ g.restore()}
+function mgChart(n,x,y,s,t,p){g.save();g.translate(x,y);g.scale(s,s);g.lineCap='round';g.lineJoin='round';g.globalAlpha*=mcl(p*1.5);const ax=()=>{g.strokeStyle='#666';g.lineWidth=4;g.beginPath();g.moveTo(-150,-110);g.lineTo(-150,110);g.lineTo(160,110);g.stroke();g.strokeStyle='#2c2c2c';g.lineWidth=2;for(let i=1;i<4;i++){g.beginPath();g.moveTo(-150,110-i*55);g.lineTo(160,110-i*55);g.stroke()}};
+ if(n==='line'){ax();const pts=[0,.08,.14,.2,.28,.3,.45,.58,.72,.9,1].map((v,i,a)=>[-140+i*29,100-v*190]),q=mcl(p*1.1)*(pts.length-1);g.strokeStyle=GD;g.lineWidth=9;g.beginPath();g.moveTo(pts[0][0],pts[0][1]);let ex=pts[0][0],ey=pts[0][1];for(let i=1;i<pts.length;i++){const f=mcl(q-(i-1));if(f<=0)break;ex=pts[i-1][0]+(pts[i][0]-pts[i-1][0])*f;ey=pts[i-1][1]+(pts[i][1]-pts[i-1][1])*f;g.lineTo(ex,ey)}g.stroke();g.fillStyle=WH;g.beginPath();g.arc(ex,ey,12,0,7);g.fill();g.strokeStyle=GD;g.globalAlpha*=.4;g.lineWidth=4;g.beginPath();g.arc(ex,ey,22+6*Math.sin(t*5),0,7);g.stroke()}
+ else if(n==='bars'||n==='down'){ax();for(let i=0;i<6;i++){const v=n==='bars'?.18+i*.15:.95-i*.15,h=190*v*mea(p*1.3-i*.12);g.fillStyle=i===5?(n==='bars'?GD:'#c0554a'):WH;g.globalAlpha=(i===5?1:.85)*mcl(p*1.5);g.beginPath();g.roundRect(-128+i*49,110-h,32,h,4);g.fill()}}
+ else if(n==='donut'){const v=mcl(p*1.1);g.lineWidth=26;g.strokeStyle='#2a2a2a';g.beginPath();g.arc(0,0,100,0,7);g.stroke();g.strokeStyle=GD;g.beginPath();g.arc(0,0,100,-Math.PI/2,-Math.PI/2+Math.PI*2*v*(S.mgPct||.7));g.stroke()}
+ g.restore()}
+/* --- 台本の意味から演出を決める（v6.6 シーンディレクター：意図→構図・小道具・姿勢・背景・カメラ・遷移。タグがあればタグを優先）--- */
+const MGK=[
+ [/スマホ|画面|SNS|眺め|通知/,{icon:'phone',pose:'sit',bg:'dots',emo:'sad'}],
+ [/毎朝|毎晩|同じ|繰り返|いつか|待っ|変わらな|また今日/,{icon:'loop',pose:'slump',bg:'dots',emo:'sad'}],
+ [/時間が|過ぎ|減って|年が|もう遅/,{icon:'hourglass',pose:'slump',bg:'dots',emo:'sad'}],
+ [/失う|損|痛み|苦し|逃げ|諦/,{chart:'down',pose:'slump',bg:'dots',emo:'sad'}],
+ [/脳|心理|バイアス|作業興奮|損失回避|効果|性質/,{icon:'brain',pose:'think',bg:'grid'}],
+ [/見て(い)?な|他人|評価|スポットライト|比べ|見返/,{icon:'eye',pose:'stand',bg:'grid'}],
+ [/ノート|書く|書い|メモ|記録/,{icon:'notebook',pose:'sitUp',bg:'grid'}],
+ [/靴|履|走|運動|散歩|ジョギング/,{icon:'shoes',pose:'run',bg:'rays',emo:'power'}],
+ [/机|デスク|作業|勉強|宿題/,{icon:'desk',pose:'sitUp',bg:'grid'}],
+ [/本|読|学ぶ|学び|知識|ページ/,{icon:'book',pose:'sitUp',bg:'grid'}],
+ [/扉|ドア|入口|スタート|踏み出|最初の|動き出|準備|用意/,{icon:'door',pose:'reach',bg:'glow',emo:'hope'}],
+ [/芽|育て|種|少しずつ|小さな|小さく|積み重ね/,{icon:'sprout',pose:'stand',bg:'glow',emo:'hope'}],
+ [/挑戦|始め|一歩|動け/,{icon:'stairs',pose:'walk',bg:'rays',stairs:1,emo:'hope'}],
+ [/続け|積み|毎日|日数|継続|習慣|コツコツ|やめなかっ/,{icon:'calendar',pose:'walk',bg:'grid'}],
+ [/成功|理想|未来|自由|夢|景色|頂|本気/,{icon:'mountain',pose:'reach',bg:'rays',emo:'hope'}],
+ [/自信|行動|前に進|超え|成長|変化|変わる/,{chart:'line',pose:'walk',bg:'grid',emo:'power'}],
+ [/気づ|思い|考え|決め|答え|本当|具体的/,{icon:'bulb',pose:'think',bg:'rays'}],
+ [/タイマー|朝|2分|分/,{icon:'clock',pose:'stand',bg:'grid'}],
+ [/結果|証拠|事実|裏切らな/,{icon:'check',pose:'stand',bg:'grid',emo:'power'}]];
+const MGU={'分':'clock','秒':'clock','時間':'clock','日':'calendar','年':'calendar','回':'target','ページ':'book','ミリ':'target','%':'donut','％':'donut','つ':'target','本':'book'};
+const MGI={hook:'tense',q:'tense',pain:'sad',contrast:'tense',step:'hope',number:'power',truth:'calm',proof:'power',close:'hope'};
+const MGFB={step:['sprout','door','target','stairs'],truth:['bulb','check','eye','brain'],pain:['loop','hourglass','phone','down'],proof:['check','line'],contrast:['eye','bulb'],q:['q','eye'],number:['target'],hook:['q'],close:['sunrise']};
+const MGPOSE={pain:['slump','sit'],step:['walk','reach','point'],truth:['think','stand'],proof:['stand','point'],contrast:['stand','think'],q:['stand','think'],number:['stand','point'],hook:['stand'],close:['up']};
+const MGCAM={hook:'push',q:'push',pain:'pull',contrast:'panl',step:'push',number:'push',truth:'panr',proof:'drift',close:'rise'};
+const MGCOMP={hook:['type'],q:['type','prop'],pain:['fig','prop'],contrast:['type','fig'],step:['fig','prop','type'],number:['fig'],truth:['prop','type','fig'],proof:['fig','prop'],close:['fig']};
+const CAMS=['push','pull','panl','panr','drift','rise'],TRS=['wipe','circle','slide','flash'],BGS=['grid','rays','dots','glow'],CHARTS=['line','bars','down','donut'];
+const mgFw=x=>x.replace(/[０-９]/g,d=>String.fromCharCode(d.charCodeAt(0)-65248)),hsh=x=>{let h=2166136261;for(let i=0;i<x.length;i++){h^=x.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0};
+function mgIntent(s,k,n,role){if(k===0)return'hook';if(k===n-1)return'close';const ro={hook:'hook',pain:'pain',truth:'truth',act:'step',proof:'proof',close:'close',story:'truth',psych:'truth'}[role];if(ro)return ro;
+ if(/[？?]$|ませんか|ですか|でしょうか/.test(s))return'q';
+ if(/[0-9０-９]+\s*(分|時間|秒|日|年|回|ページ|ミリ|%|％|つ|本)/.test(s))return'number';
+ if(/必要は|構いません|大丈夫|なくてもいい|てもいい|でもいい|もいい/.test(s))return'truth';
+ if(/でも|しかし|けれど|ではなく|じゃなく|のに/.test(s))return'contrast';
+ if(/(よう|ください|ほしい|おこう|てみる|ておく)[。]?$/.test(s))return'step';
+ if(/(ない|ません|できず|られず|しまう)[。]?$/.test(s)||/苦し|痛|不安|迷|逃げ|諦|失/.test(s))return'pain';
+ if(/結果|証拠|事実/.test(s))return'proof';return'truth'}
+function mgWord(s,kw,tg){if(tg.emph)return tg.emph;const cl=s.split(/[、。！？!?]/).map(x=>x.trim()).filter(Boolean);if(kw.length){const c=cl.find(x=>x.includes(kw[0]));if(c&&c.length<=10)return c;if(kw[0].length>1)return kw[0]}const f=cl.find(x=>x.length<=10);return f||s.slice(0,8)}
+function mgPlan(texts,items){const n=texts.length,seed=hsh(texts.join('')),K=[],roles=S.rolesFor===$('script').value?(S.roles||[]):[],par=texts.map(x=>/なら、/.test(x)),cnt={},pc={};
+ const last=(f,m=2)=>K.slice(-m).map(f),POS=['stairs','mountain','sprout','door'];
+ for(let k=0;k<n;k++){const s=texts[k],tg=(items&&items[k]&&items[k].t===s)?items[k].tg:{},intent=tg.intent||mgIntent(s,k,n,roles[k]);let V={};const kw=[];for(const[r,v]of MGK){const q=s.match(r);if(q){V=v;kw.push(q[0]);break}}
+  const X={icon:V.icon||null,chart:V.chart||null,pose:null,bg:null,emo:null,stairs:V.stairs||0,kw,intent,big:null,side:(k+seed)%2?1:-1,hook:0,close:0,tg};
+  const m=s.match(/([0-9０-９]+)\s*(分|時間|秒|日|年|回|ページ|ミリ|%|％|つ|本)/);if(m){X.big={n:+mgFw(m[1]),u:m[2]};X.icon=MGU[m[2]]||'target';X.chart=null;kw.push(m[0].replace(/\s/g,''))}
+  (s.match(/[0-9０-９]+/g)||[]).forEach(d=>kw.push(d));
+  if(intent==='pain'&&POS.includes(X.icon)){X.icon='hourglass'}
+  if(tg.prop){if(CHARTS.includes(tg.prop)){X.chart=tg.prop;X.icon=null}else{X.icon=tg.prop;X.chart=null}}
+  const pp=()=>X.icon||X.chart;
+  if(!pp()){const fb=MGFB[intent]||MGFB.truth;let pk=null,bs=1e9;for(let j=0;j<fb.length;j++){const c2=fb[(k+seed+j)%fb.length];if(last(x=>x.icon||x.chart).includes(c2))continue;const sc2=pc[c2]||0;if(sc2<bs){bs=sc2;pk=c2}}pk=pk||fb[(k+seed)%fb.length];if(CHARTS.includes(pk))X.chart=pk;else X.icon=pk}
+  else if(!tg.prop&&!X.big&&intent!=='hook'&&intent!=='close'&&(last(x=>x.icon||x.chart).includes(pp())||(pc[pp()]||0)>=2)){const fb=(MGFB[intent]||MGFB.truth).filter(c2=>!last(x=>x.icon||x.chart).includes(c2)&&c2!==pp()).sort((a,b)=>(pc[a]||0)-(pc[b]||0));if(fb.length){const c2=fb[0];X.icon=CHARTS.includes(c2)?null:c2;X.chart=CHARTS.includes(c2)?c2:null}}
+  X.emo=tg.emo||V.emo||MGI[intent];
+  const pl=MGPOSE[intent]||['stand'],pv=K.length?K[K.length-1]:null;X.pose=tg.act||V.pose||pl[(k+seed)%pl.length];
+  if(!tg.act&&pv&&X.pose===pv.pose){const alt=['stand','think','walk','reach','point','sitUp'].filter(x=>x!==pv.pose&&x!==X.pose);X.pose=(pl.find(x=>x!==pv.pose))||alt[(k+seed)%alt.length]}
+  X.bg=tg.bg||V.bg||{sad:'dots',tense:'rays',hope:'glow',calm:'grid',power:'grid'}[X.emo];if(!tg.bg&&pv&&X.bg===pv.bg){const al=BGS.filter(x=>x!==pv.bg);X.bg=al[(k+seed)%al.length]}
+  X.cam=tg.cam||MGCAM[intent];if(!tg.cam&&pv&&X.cam===pv.cam){const al=CAMS.filter(x=>x!==pv.cam);X.cam=al[(k+seed)%al.length]}
+  X.tr=k===0?'none':(tg.tr||(()=>{const al=TRS.filter(x=>!pv||x!==pv.tr);return al[(k+seed)%al.length]})());X.entry=X.tr==='circle'?1:X.tr==='slide'?2:0;
+  const cv0={tense:2,power:2,sad:0,calm:1,hope:1}[X.emo];X.capv=pv&&pv.capv===cv0&&!tg.emo?(cv0+1)%3:cv0;
+  /* 構図 */
+  if(tg.comp)X.comp=tg.comp;else if(par[k]&&((k>0&&par[k-1])||(k<n-1&&par[k+1]))&&k>0&&k<n-1)X.comp='list';else{const cs=MGCOMP[intent]||['fig'],cap=c2=>c2==='fig'?Math.ceil(n*.5):Math.ceil(n*.4),p1=K.length?K[K.length-1].comp:'',p2=K.length>1?K[K.length-2].comp:'';let pk=null;for(const c2 of cs){if((cnt[c2]||0)>=cap(c2))continue;if(c2===p1&&c2===p2)continue;if(c2===p1&&c2!=='fig')continue;pk=c2;break}X.comp=pk||cs[cs.length-1]}
+  if(k===n-1){X.close=1;if(!tg.prop){X.icon='sunrise';X.chart=null}if(!tg.act)X.pose='up';X.big=null;if(!tg.comp)X.comp='fig'}
+  if(k===0)X.hook=1;
+  if(X.big&&!tg.comp&&X.comp!=='list')X.comp='fig';
+  if(X.comp==='type'){X.tx=mgWord(s,kw,tg);if(tg.emph&&!X.kw.includes(tg.emph))X.kw.unshift(tg.emph)}
+  cnt[X.comp]=(cnt[X.comp]||0)+1;{const pq=X.icon||X.chart;if(pq)pc[pq]=(pc[pq]||0)+1}K.push(X)}
+ /* 並列文（〜なら、〜）の連続は、チェックリストに積み上げる */
+ for(let k=0;k<n;k++)if(K[k].comp==='list'){const lab=x=>{const q=x.split('、');return(q.length>1?q.slice(1).join('、'):x).replace(/[。]$/,'').slice(0,16)};let j=k;const L=[];while(j>=0&&K[j].comp==='list'&&(j===k||j>=0)){L.unshift(lab(texts[j]));j--;if(j>=0&&K[j].comp!=='list')break}K[k].list=L}
+ return K}
+function mgKit(c,k,n,sc){const raw=$('script').value;if(!S.mgp||S.mgp.sc!==sc||S.mgp.raw!==raw||S.mgp.rf!==S.rolesFor||!sc){const texts=sc?sc.map(x=>x.s):lines(),K=mgPlan(texts,PL());S.kits=new Map();K.forEach((X,i)=>S.kits.set(texts[i]+'|'+i,X));S.mgp={sc,raw,rf:S.rolesFor,K}}
+ return S.mgp.K[Math.min(k,S.mgp.K.length-1)]||{icon:null,chart:null,pose:'stand',bg:'grid',kw:[],comp:'fig',cam:'none',tr:'none',entry:0,capv:0,side:-1,intent:'truth',emo:'calm',tg:{}}}
+/* --- 背景効果 --- */
+function mgBg(kind,t,k){const gr=g.createRadialGradient(360,520,40,360,520,820);gr.addColorStop(0,'#101010');gr.addColorStop(1,'#000');g.fillStyle=gr;g.fillRect(0,0,720,1280);
+ if(kind==='grid'){g.strokeStyle='rgba(255,255,255,.07)';g.lineWidth=2;const off=(t*40)%60;for(let i=-1;i<14;i++){const y=720+i*60+off*0;const yy=720+Math.pow((i*60+off)/700,1.6)*560;if(yy>720&&yy<1280){g.beginPath();g.moveTo(0,yy);g.lineTo(720,yy);g.stroke()}}for(let i=-10;i<=10;i++){g.beginPath();g.moveTo(360+i*30,720);g.lineTo(360+i*160,1280);g.stroke()}}
+ else if(kind==='rays'){g.save();g.translate(360,560);g.rotate(t*.05+k);g.strokeStyle='rgba(224,184,96,.07)';g.lineWidth=3;for(let i=0;i<28;i++){g.rotate(Math.PI*2/28);g.beginPath();g.moveTo(130,0);g.lineTo(900,0);g.stroke()}g.restore()}
+ else if(kind==='glow'){const r=430+40*Math.sin(t*1.2+k),gg=g.createRadialGradient(360,640,10,360,640,r);gg.addColorStop(0,'rgba(224,184,96,.20)');gg.addColorStop(1,'rgba(224,184,96,0)');g.fillStyle=gg;g.fillRect(0,0,720,1280)}
+ else if(kind==='dots'){for(let i=0;i<60;i++){const x=(rng(i+k*7)*720+t*(6+i%5*3))%720,y=(rng(i+90+k)*1000-t*(8+i%4*4)+4000)%1000+80;g.fillStyle=`rgba(255,255,255,${.05+.1*rng(i+3)})`;g.beginPath();g.arc(x,y,1.5+rng(i)*2,0,7);g.fill()}}
+ const hz=g.createLinearGradient(0,640,0,780);hz.addColorStop(0,'rgba(224,184,96,0)');hz.addColorStop(1,'rgba(224,184,96,.08)');g.fillStyle=hz;g.fillRect(0,640,720,140)}
+/* --- 字幕（音声に同期して1文字ずつ点灯。数字・キーワードは金色）--- */
+function mgCap(c,lt,k,sc){const s=c.s,fs=Math.round((s.length>20?44:s.length>12?52:60)*(k===0?1.18:1)),vr=mgKit(c,k,sc.length,sc).capv;g.font=`900 ${fs}px ${MGF}`;const tw=g.measureText(s).width,nl=Math.max(1,Math.ceil(tw/600)),ls=wrap(s,nl>1?Math.min(600,tw/nl*1.1+fs*.5):600),n=s.length;
+ const wts=[...s].map(ch=>/[、，,]/.test(ch)?3:/[。！？!?]/.test(ch)?4:1),tot=wts.reduce((p,q)=>p+q,0);let dur=c.au?c.au.buf.duration/rate():c.d*.8,st=c.au?c.au.start-c.t0:.15;const p=mcl((lt-st)/dur+.03);let acc=0;const lit=wts.map(w=>{acc+=w;return acc/tot<=p+1e-6?1:0});
+ const kws=mgKit(c,k,sc.length,sc).kw;const hi=new Array(n).fill(0);kws.forEach(w=>{let i=-1;while((i=s.indexOf(w,i+1))>=0){for(let j=i;j<i+w.length;j++)hi[j]=1}});
+ const fi=mea(lt/.3),fo=mcl((c.d-lt)/.2),al=Math.min(fi,fo),lh=fs*1.5,y0=905-((ls.length-1)*lh)/2;g.save();g.globalAlpha*=al;g.textBaseline='middle';g.textAlign='left';let idx=0;
+ ls.forEach((ln,j)=>{let x=(720-g.measureText(ln).width)/2+(vr===1?(1-fi)*(j%2?-90:90):0);const y=y0+j*lh+(vr===0?(1-fi)*22:0);[...ln].forEach(ch=>{const w=g.measureText(ch).width,on=lit[idx],pop=on?Math.max(0,1-(p-(wts.slice(0,idx+1).reduce((a,b)=>a+b,0)/tot))*0):0;
+   g.save();g.translate(x+w/2,y);if(vr===2&&fi<1){const z=1+.35*(1-fi);g.scale(z,z)}if(on){const age=(p*tot-wts.slice(0,idx+1).reduce((a,b)=>a+b,0))*-1;const sc2=1+.14*Math.max(0,1-Math.abs(age)/1.2);g.scale(sc2,sc2)}
+   g.lineWidth=fs*.22;g.strokeStyle='rgba(0,0,0,.95)';g.strokeText(ch,-w/2,0);g.fillStyle=on?(hi[idx]?GD:WH):(hi[idx]?'rgba(224,184,96,.3)':'rgba(245,241,234,.28)');g.fillText(ch,-w/2,0);g.restore();x+=w;idx++})});g.restore()}
+/* --- 場面の描画 --- */
+function mgScene(K,lt,u,c,k){const gy=790,t=lt,pr=mea(lt/.9),ph=lt*(K.pose==='run'?9:5.4);const S1=K.big?.7:1.08;
+ g.strokeStyle='rgba(255,255,255,.22)';g.lineWidth=3;const gl=g.createLinearGradient(80,0,640,0);gl.addColorStop(0,'rgba(255,255,255,0)');gl.addColorStop(.2,'rgba(255,255,255,.3)');gl.addColorStop(.8,'rgba(255,255,255,.3)');gl.addColorStop(1,'rgba(255,255,255,0)');g.strokeStyle=gl;g.beginPath();g.moveTo(80,gy+2);g.lineTo(640,gy+2);g.stroke();
+ const fx=K.hook||K.close?360:K.side<0?190:530,ix=K.hook||K.close?360:K.side<0?520:210;let gyy=gy,fdir=K.side<0?1:-1;let figX=fx;
+ if(K.pose==='walk'){figX=fx+ (K.hook||K.close?0:Math.sin(lt*.8)*26)}
+ if(K.stairs){const st=mcl(lt/c.d);gyy=gy-Math.floor(st*5)*0-st*150;g.strokeStyle='rgba(255,255,255,.5)';g.lineWidth=5;g.beginPath();g.moveTo(figX-210,gy+2);for(let i=0;i<5;i++){g.lineTo(figX-210+i*70,gy-i*30);g.lineTo(figX-140+i*70,gy-i*30)}g.stroke();figX=fx-100+st*190;fdir=1}
+ if(K.close){g.save();g.globalAlpha*=.0;g.restore()}
+ const big=K.big,bn=big?Math.round(big.n*mea(lt/Math.max(.5,c.d*.55))):0;
+ if(K.hook){const sp=g.createRadialGradient(360,760,10,360,420,520);sp.addColorStop(0,'rgba(255,255,255,.2)');sp.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=sp;g.beginPath();g.moveTo(300,120);g.lineTo(420,120);g.lineTo(560,gy);g.lineTo(160,gy);g.closePath();g.fill()}
+ if(K.close||K.icon==='sunrise'){mgIcon('sunrise',360,gy-6,2.1*pr,t,mea(lt/1.2))}
+ const fp=mgFig(figX,gyy,K.hook||K.close?1.2:S1*1.0,fdir,K.pose,ph,mea(lt/.45));
+ if(K.hook){mgIcon('q',360,350,1.15,t,mea(lt/.6)*1)}
+ else if(K.icon&&K.icon!=='sunrise'){const sc3=K.big?.9:K.icon==='mountain'?.9:1.2,yy=K.big?620:500;if(K.icon==='donut'){mgChart('donut',ix,yy,.9,t,mea(lt/1.2))}else mgIcon(K.icon,K.big?(K.side<0?520:200):ix,yy,sc3*pr,t,mea(lt/1.0))}
+ if(K.chart)mgChart(K.chart,ix,500,1.15,t,mea(lt/1.4));
+ if(big){g.save();g.textAlign='center';g.textBaseline='middle';const sx=1+.1*(1-mbk(lt/.5));g.translate(360,K.side<0?250:250);g.scale(sx,sx);g.font=`900 210px ${MGF}`;const txt=(big.u==='%'||big.u==='％'?bn:bn)+'';g.lineWidth=14;g.strokeStyle='#000';g.strokeText(txt,-60,0);g.fillStyle=GD;g.fillText(txt,-60,0);const w=g.measureText(txt).width;g.font=`900 74px ${MGF}`;g.fillStyle=WH;g.textAlign='left';g.lineWidth=10;g.strokeText(big.u,-60+w/2+14,36);g.fillText(big.u,-60+w/2+14,36);g.restore()}}
+function mgTrans(lt,k,c,K){const a=.34,tr=K.tr;if(lt>a||tr==='cut'||tr==='none')return;const q=lt/a;g.save();if(tr==='wipe'){const x=-120+q*960;const gr=g.createLinearGradient(x-90,0,x+90,0);gr.addColorStop(0,'rgba(255,255,255,0)');gr.addColorStop(.5,`rgba(255,255,255,${.5*(1-q)})`);gr.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=gr;g.fillRect(x-90,0,180,1280)}
+ else if(tr==='circle'){g.strokeStyle=`rgba(224,184,96,${.8*(1-q)})`;g.lineWidth=8;g.beginPath();g.arc(360,470,40+q*700,0,7);g.stroke()}
+ else if(tr==='flash'){g.fillStyle=`rgba(255,255,255,${.5*Math.pow(1-q,2)})`;g.fillRect(0,0,720,1280)}
+ else{g.fillStyle=`rgba(255,255,255,${.22*(1-q)})`;g.fillRect(0,0,720,1280);const y=1280-q*1500;g.fillStyle=`rgba(224,184,96,${.9*(1-q)})`;g.fillRect(0,y,720,6)}
+ g.restore()}
+
+const mgBrand=()=>([...(($('brand').value||'BEYOND.').trim())].join(' ')),mgHandle=()=>($('handle').value||'').trim();
+function mgChrome(t,D,c,lt,sc,k){/* 上部の進行バー・ブランド・終わりのブランドカード */
+ g.save();g.fillStyle='rgba(255,255,255,.12)';g.fillRect(0,0,720,6);g.fillStyle=GD;g.fillRect(0,0,720*mcl(t/D),6);
+ g.globalAlpha=.9;g.fillStyle=GD;g.font=`800 22px ${MGF}`;g.textAlign='center';g.textBaseline='middle';g.fillText(mgBrand(),360,86);g.restore();
+ if(k===sc.length-1){const q=mcl((lt-(c.d-1.8))/.5);if(q>0){g.save();g.globalAlpha=q;g.textAlign='center';g.textBaseline='middle';const bs=1+.06*(1-mea(q));g.translate(360,1060);g.scale(bs,bs);g.font=`900 72px ${MGF}`;g.lineWidth=12;g.strokeStyle='#000';const b=mgBrand();g.strokeText(b,0,0);g.fillStyle=GD;g.fillText(b,0,0);const h=mgHandle();if(h){g.font=`700 28px ${MGF}`;g.fillStyle=WH;g.globalAlpha=q*.9;g.fillText(h,0,52)}g.restore()}}}
+function mgHook(lt){/* 冒頭の引き込み：白フラッシュ・色ずれ・リング・パンチイン */
+ if(lt<.5){const q=lt/.5;g.save();g.fillStyle=`rgba(255,255,255,${.55*Math.pow(1-q,2)})`;g.fillRect(0,0,720,1280);
+  for(let i=0;i<6;i++){const y=rng(i+Math.floor(lt*30))*900+100;g.fillStyle=`rgba(${i%2?'255,60,80':'60,220,255'},${.25*(1-q)})`;g.fillRect(0,y,720,3+rng(i)*6)}
+  g.strokeStyle=`rgba(224,184,96,${.9*(1-q)})`;g.lineWidth=6;g.beginPath();g.arc(360,520,30+q*620,0,7);g.stroke();g.restore()}
+ if(lt<3){const q=mcl(lt/3);g.save();g.strokeStyle=`rgba(224,184,96,${.35*(1-q)})`;g.lineWidth=4;g.strokeRect(14,14,692,1252);g.restore()}}
+/* --- v6.6 構図：文字主役／小道具主役／チェックリスト、カメラ、感情の色 --- */
+function mgCam(K,lt,d){const p=mcl(lt/Math.max(.5,d)),e=mei(p);switch(K.cam){case'push':return{s:1+.11*e,x:0,y:0};case'pull':return{s:1.12-.11*e,x:0,y:0};case'panl':return{s:1.07,x:34-68*p,y:0};case'panr':return{s:1.07,x:-34+68*p,y:0};case'rise':return{s:1.05,x:0,y:42-84*e};case'drift':return{s:1.05,x:Math.sin(p*3.1)*16,y:Math.cos(p*2.3)*12};default:return{s:1,x:0,y:0}}}
+function mgTint(K,lt){const e=K.emo;if(e==='sad')g.fillStyle='rgba(50,85,140,.10)';else if(e==='hope')g.fillStyle='rgba(255,170,70,.06)';else if(e==='tense')g.fillStyle=`rgba(180,40,40,${.045+.025*Math.sin(lt*7)})`;else return;g.fillRect(0,0,720,1280)}
+function mgType(K,lt,c,k){const tx=K.tx||c.s.slice(0,8),h=Math.ceil(tx.length/2),ls=tx.length>5?[tx.slice(0,h),tx.slice(h)]:[tx],mx=Math.max(...ls.map(x=>x.length)),fs=mcl(Math.floor(640/Math.max(1,mx)),90,230),q=mea(lt/.42),z=1+(K.hook?1.7:.8)*(1-q),cx=360,cy=440,sh=K.hook&&lt<.35?(1-lt/.35)*10:0;
+ g.save();g.globalAlpha*=.5;g.strokeStyle='rgba(224,184,96,.18)';g.lineWidth=4;for(let i=0;i<3;i++){const sz=160+i*120;g.save();g.translate(cx,cy);g.rotate(lt*(.25+i*.1)*(i%2?-1:1)+k+i);g.strokeRect(-sz/2,-sz/2,sz,sz);g.restore()}g.restore();
+ if(K.intent==='q'||(K.hook&&/[？?]/.test(c.s))){g.save();g.globalAlpha*=.1;g.fillStyle=GD;g.font=`900 760px ${MGF}`;g.textAlign='center';g.textBaseline='middle';g.fillText('?',cx,cy+20);g.restore()}
+ g.save();g.translate(cx+(rng(Math.floor(lt*60))-.5)*sh*2,cy+(rng(Math.floor(lt*60)+9)-.5)*sh*2);g.scale(z,z);g.textAlign='center';g.textBaseline='middle';g.font=`900 ${fs}px ${MGF}`;const lh=fs*1.08,y0=-(ls.length-1)*lh/2;
+ if(K.hook&&lt<.4){const a=.5*(1-lt/.4);ls.forEach((l,i)=>{g.fillStyle=`rgba(255,60,80,${a})`;g.fillText(l,-9,y0+i*lh);g.fillStyle=`rgba(60,220,255,${a})`;g.fillText(l,9,y0+i*lh)})}
+ ls.forEach((l,i)=>{g.lineWidth=fs*.14;g.strokeStyle='#000';g.strokeText(l,0,y0+i*lh);g.fillStyle=i%2?WH:GD;g.fillText(l,0,y0+i*lh)});g.restore();
+ const bw=mcl(mx*fs*.9,200,640)*mea((lt-.25)/.5);g.fillStyle=GD;g.fillRect(360-bw/2,cy+(ls.length*fs*1.08)/2+22,bw,8)}
+function mgPropScene(K,lt,c,k){const pr=mea(lt/.7),t=lt,gy=840,gl=g.createRadialGradient(360,gy,10,360,gy,300);gl.addColorStop(0,'rgba(224,184,96,.22)');gl.addColorStop(1,'rgba(224,184,96,0)');g.fillStyle=gl;g.fillRect(0,gy-300,720,600);
+ g.strokeStyle='rgba(255,255,255,.35)';g.lineWidth=3;g.beginPath();g.ellipse(360,gy,230*pr,36*pr,0,0,7);g.stroke();
+ for(let i=0;i<8;i++){const a=t*.8+i*Math.PI/4,r=270+Math.sin(t*1.5+i)*14;g.fillStyle=`rgba(224,184,96,${.25+.2*Math.sin(t*2+i)})`;g.beginPath();g.arc(360+Math.cos(a)*r,470+Math.sin(a)*r*.6,5,0,7);g.fill()}
+ if(K.icon){const sc=K.icon==='q'?1.2:(K.icon==='mountain'||K.icon==='stairs'?1.6:1.9);mgIcon(K.icon,360,480,sc*(.85+.15*pr),t,mea(lt/1.0))}else if(K.chart)mgChart(K.chart,360,490,1.5,t,mea(lt/1.4))}
+function mgList(K,lt,c,k){const it=K.list||[],vis=it.slice(-4),y0=300;g.save();g.textBaseline='middle';
+ vis.forEach((s,i)=>{const cur=i===vis.length-1,q=cur?mea(lt/.55):1,y=y0+i*128+(cur?(1-q)*40:0);g.globalAlpha=cur?q:.62;g.fillStyle='#161616';g.strokeStyle=cur?GD:'#3a3a3a';g.lineWidth=cur?4:3;g.beginPath();g.roundRect(70,y-52,580,104,20);g.fill();g.stroke();
+  const ck=cur?mcl((lt-.5)/.35):1;g.strokeStyle=cur?GD:WH;g.lineWidth=6;g.beginPath();g.arc(128,y,26,0,7);g.stroke();if(ck>0){g.beginPath();g.moveTo(114,y);if(ck<.5)g.lineTo(114+11*ck*2,y+11*ck*2);else{g.lineTo(125,y+11);g.lineTo(125+18*(ck-.5)*2,y+11-23*(ck-.5)*2)}g.stroke()}
+  g.fillStyle=cur?WH:'#cfcabf';g.font=`800 ${mcl(Math.floor(430/Math.max(1,s.length)),26,42)}px ${MGF}`;g.textAlign='left';g.fillText(s,176,y)});g.restore()}
+function drawMG(t,D,sc){const W=cv.width;GD=S.acc||'#e0b860';g.save();g.setTransform(W/720,0,0,W/720,0,0);
+ const c=sc.find(x=>t<x.t0+x.d)||sc[sc.length-1]||{s:'',t0:0,d:D,i:0},k=c.i,lt=Math.max(0,t-c.t0),K=mgKit(c,k,sc.length,sc),cam=mgCam(K,lt,c.d);
+ if(K.big&&(K.big.u==='%'||K.big.u==='％'))S.mgPct=mcl(K.big.n/100);
+ g.fillStyle='#000';g.fillRect(0,0,720,1280);g.save();g.translate(360-cam.x*.35,640-cam.y*.35);g.scale(1.04,1.04);g.translate(-360,-640);mgBg(K.bg,t,k);g.restore();
+ const tin=mea(lt/.5),tout=mcl((c.d-lt)/.22),m=K.entry;g.save();
+ if(m===1){g.beginPath();g.arc(360,470,mea(lt/.45)*900+1,0,7);g.clip()}
+ const sk=(k===0?1.22-.22*mea(lt/.7):.94+.06*tin)+(1-tout)*.04;g.translate(360+cam.x,470+cam.y);g.scale(sk*cam.s,sk*cam.s);g.translate(-360,-470);if(m===2)g.translate(0,(1-tin)*60);g.globalAlpha=Math.min(1,tin*1.6)*tout;
+ if(K.comp==='type')mgType(K,lt,c,k);else if(K.comp==='prop')mgPropScene(K,lt,c,k);else if(K.comp==='list'&&K.list)mgList(K,lt,c,k);else mgScene(K,lt,0,c,k);g.restore();
+ mgTint(K,lt);mgTrans(lt,k,c,K);
+ mgChrome(t,D,c,lt,sc,k);
+ mgCap(c,lt,k,sc);if(k===0)mgHook(lt);
+ const v=g.createRadialGradient(360,640,260,360,640,860);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(0,0,0,.65)');g.fillStyle=v;g.fillRect(0,0,720,1280);
+ for(let j=0;j<46;j++){g.fillStyle='rgba(255,255,255,.045)';g.fillRect(Math.random()*720,Math.random()*1280,2,2)}
+ g.restore();return k}
+
+/* ---------- v6.1: 実写モチベーション風（写真があれば実写、無ければ夕景のシルエット映像） ---------- */
+const RPAL=[['#0d1020','#6b2f3c','#f2a65a'],['#071522','#1f4d63','#f0c27a'],['#150d1c','#7a3a2a','#ffd08a'],['#0a0f14','#2d3e4a','#e8b36a']];
+function drawReal(t,D,sc){const W=cv.width;g.save();g.setTransform(W/720,0,0,W/720,0,0);
+ const c=sc.find(x=>t<x.t0+x.d)||sc[sc.length-1]||{s:'',t0:0,d:D,i:0},k=c.i,lt=Math.max(0,t-c.t0),u=mcl(lt/c.d),K=mgKit(c,k,sc.length,sc),pal=RPAL[k%4];
+ g.fillStyle='#000';g.fillRect(0,0,720,1280);
+ if(S.photos.length){const im=S.photos[k%S.photos.length],dir=k%2?1:-1,z=Math.max(720/im.width,1280/im.height)*(1.06+u*.12);g.save();g.translate(dir*(u-.5)*40,0);g.drawImage(im,(720-im.width*z)/2,(1280-im.height*z)/2,im.width*z,im.height*z);g.restore();
+  g.fillStyle='rgba(255,140,60,.10)';g.fillRect(0,0,720,1280);const tg=g.createLinearGradient(0,0,0,1280);tg.addColorStop(0,'rgba(10,40,60,.35)');tg.addColorStop(.6,'rgba(0,0,0,.05)');tg.addColorStop(1,'rgba(0,0,0,.6)');g.fillStyle=tg;g.fillRect(0,0,720,1280)}
+ else{const sk=g.createLinearGradient(0,0,0,800);sk.addColorStop(0,pal[0]);sk.addColorStop(.6,pal[1]);sk.addColorStop(1,pal[2]);g.fillStyle=sk;g.fillRect(0,0,720,1280);
+  const sx=360+Math.sin(k*1.7)*120,sy=560-u*40;const sg=g.createRadialGradient(sx,sy,10,sx,sy,420);sg.addColorStop(0,'rgba(255,240,200,.95)');sg.addColorStop(.12,'rgba(255,200,120,.55)');sg.addColorStop(1,'rgba(255,160,80,0)');g.fillStyle=sg;g.fillRect(0,0,720,1280);
+  for(let L=0;L<3;L++){const col=['#2a2230','#1a1622','#0c0a10'][L],amp=[90,70,50][L],base=[690,730,770][L],sp=[6,14,26][L];g.fillStyle=col;g.beginPath();g.moveTo(0,1280);for(let x=0;x<=720;x+=20){const y=base-amp*(Math.sin((x+t*sp+k*90+L*200)*.012)*.5+Math.sin((x+t*sp*.7+L*77)*.031)*.3+.4);g.lineTo(x,y)}g.lineTo(720,1280);g.fill();
+   const fg=g.createLinearGradient(0,base-90,0,base+30);fg.addColorStop(0,'rgba(255,200,150,0)');fg.addColorStop(1,`rgba(255,190,130,${.16-L*.04})`);g.fillStyle=fg;g.fillRect(0,base-90,720,120)}
+  g.fillStyle='#050408';g.fillRect(0,800,720,480);
+  const fx=K.pose==='walk'||K.pose==='run'?200+u*320:360,gy=800;
+  mgFig(fx,gy,1.25,1,K.pose==='sit'||K.pose==='sitUp'?'stand':K.pose,lt*5.4,1,'#050408');
+  const rg=g.createLinearGradient(0,800,0,900);rg.addColorStop(0,'rgba(255,190,130,.25)');rg.addColorStop(1,'rgba(255,190,130,0)');g.fillStyle=rg;g.fillRect(0,800,720,100);
+  g.strokeStyle='rgba(255,230,190,.35)';g.lineWidth=3;g.beginPath();g.moveTo(sx-260,sy);g.lineTo(sx+260,sy);g.stroke();
+  for(let j=0;j<50;j++){g.fillStyle=`rgba(255,220,170,${.1+.2*rng(j)})`;g.beginPath();g.arc((rng(j+4)*720+t*(8+j%5*4))%720,(rng(j+60)*900-t*(6+j%4*3)+3600)%900+100,1+rng(j)*2,0,7);g.fill()}}
+ const fl=mcl((.3-lt)/.3);if(fl>0){g.fillStyle=`rgba(255,235,200,${.5*fl})`;g.fillRect(0,0,720,1280)}
+ g.fillStyle='rgba(0,0,0,.9)';g.fillRect(0,0,720,150);g.fillRect(0,1130,720,150);
+ const v=g.createRadialGradient(360,640,240,360,640,860);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(0,0,0,.6)');g.fillStyle=v;g.fillRect(0,0,720,1280);
+ const gd=GD;GD='#f2c880';mgCap(c,lt,k,sc);GD=gd;
+ GD='#f2c880';mgChrome(t,D,c,lt,sc,k);GD=gd;if(k===0)mgHook(lt);
+ for(let j=0;j<40;j++){g.fillStyle='rgba(255,255,255,.04)';g.fillRect(Math.random()*720,Math.random()*1280,2,2)}
+ g.restore();return k}
+
+function draw(t,D,sc){
+ if($('bgs').value==='real')return drawReal(t,D,sc);
+ if($('bgs').value==='mg'&&!S.photos.length)return drawMG(t,D,sc);
+ const W=cv.width;g.save();g.setTransform(W/720,0,0,W/720,0,0);
+ const c=sc.find(x=>t<x.t0+x.d)||sc[sc.length-1]||{s:'',t0:0,d:D,i:0},k=c.i,lt=t-c.t0,u=Math.min(1,Math.max(0,lt/c.d));
+ const sel=$('bgs').value,sty=sel==='auto'?(S.tpl?S.tpl.st:ST)[Math.floor(k/3)%(S.tpl?S.tpl.st.length:5)]:sel;
+ g.save();g.translate(360,640);g.scale(1+u*.05,1+u*.05);g.translate(-360,-640);
+ if(S.photos.length){const im=S.photos[k%S.photos.length],z=Math.max(720/im.width,1280/im.height)*(1.04+u*.1);g.drawImage(im,(720-im.width*z)/2,(1280-im.height*z)/2,im.width*z,im.height*z);g.fillStyle='#000a';g.fillRect(0,0,720,1280)}else bg(sty,t,u,k);
+ g.restore();
+ for(let j=0;j<70;j++){g.fillStyle='rgba(232,207,154,.18)';g.fillRect((rng(j+9)*720+t*(j%3+1)*6)%720,(rng(j+110)*1280-t*10*(j%4+1)+1280*9)%1280,2,2)}
+ const v=g.createRadialGradient(360,620,160,360,620,760);v.addColorStop(0,'#0000');v.addColorStop(1,'#000d');g.fillStyle=v;g.fillRect(0,0,720,1280);
+ g.fillStyle=`rgba(201,164,92,${.05+.04*Math.sin(t*1.7)})`;g.fillRect(0,0,720,1280);if(S.tpl){g.fillStyle=S.tpl.tint;g.fillRect(0,0,720,1280)}
+ for(let j=0;j<40;j++){g.fillStyle='rgba(255,255,255,.05)';g.fillRect(Math.random()*720,Math.random()*1280,2,2)}
+ const bar=g.createLinearGradient(0,0,0,150);bar.addColorStop(0,'#000');bar.addColorStop(1,'#0000');g.fillStyle=bar;g.fillRect(0,0,720,150);g.save();g.translate(0,1280);g.scale(1,-1);g.fillRect(0,0,720,150);g.restore();
+ g.textAlign='center';g.textBaseline='middle';g.fillStyle='#c9a45c';g.font=`800 24px ${FONT}`;g.fillText('B E C O M E .',360,86);
+ const op=g.createRadialGradient(360,620,10,360,620,360);op.addColorStop(0,'#0007');op.addColorStop(1,'#0000');g.fillStyle=op;g.fillRect(0,380,720,480);
+ const fs=c.s.length>18?46:54;g.font=`800 ${fs}px ${FONT}`;g.textAlign='left';
+ const ls=wrap(c.s,590),fo=Math.max(0,Math.min(1,(c.d-lt)/.35)),last=k===sc.length-1;
+ ls.forEach((ln,j)=>{let x=(720-g.measureText(ln).width)/2;const y=620+(j-(ls.length-1)/2)*fs*1.55;[...ln].forEach((ch,q)=>{const a=Math.max(0,Math.min(1,(lt-(q+j*8)*.035)/.4))*fo;g.globalAlpha=a;g.fillStyle=last?'#e8cf9a':'#f4efe6';g.fillText(ch,x,y+(1-a)*20);x+=g.measureText(ch).width});g.globalAlpha=1});
+ if(lt<.25){g.fillStyle=`rgba(232,207,154,${.2*(1-lt/.25)})`;g.fillRect(0,0,720,1280)}
+ g.fillStyle='#3a3322';g.fillRect(90,1196,540,3);g.fillStyle='#c9a45c';g.fillRect(90,1196,540*Math.min(1,t/D),3);
+ g.restore();return k}
+
+/* ---------- 音 ---------- */
+const CH=[[55,82.41,110,130.81],[43.65,65.41,87.31,110],[65.41,98,130.81,164.81],[49,73.42,98,123.47]];
+function hit(ctx,out,at,a){const o=ctx.createOscillator(),n=ctx.createGain();o.frequency.setValueAtTime(95,at);o.frequency.exponentialRampToValueAtTime(34,at+.7);n.gain.setValueAtTime(.0001,at);n.gain.exponentialRampToValueAtTime(.9*a,at+.02);n.gain.exponentialRampToValueAtTime(.0001,at+1);o.connect(n);n.connect(out);o.start(at);o.stop(at+1.1)}
+function whoosh(ctx,out,at,a,nb){const s=ctx.createBufferSource();s.buffer=nb;const f=ctx.createBiquadFilter();f.type='bandpass';f.Q.value=1.2;f.frequency.setValueAtTime(250,at);f.frequency.exponentialRampToValueAtTime(3200,at+.4);const n=ctx.createGain();n.gain.setValueAtTime(.0001,at);n.gain.linearRampToValueAtTime(.22*a,at+.3);n.gain.linearRampToValueAtTime(.0001,at+.45);s.connect(f);f.connect(n);n.connect(out);s.start(at);s.stop(at+.5)}
+function ir(ctx){const n=Math.floor(ctx.sampleRate*1.6),b=ctx.createBuffer(2,n,ctx.sampleRate);for(let c=0;c<2;c++){const d=b.getChannelData(c);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/n,3)}return b}
+function peakOf(b){let p=0;for(let c=0;c<b.numberOfChannels;c++){const d=b.getChannelData(c);for(let i=0;i<d.length;i++){const v=Math.abs(d[i]);if(v>p)p=v}}return p}
+function master(ctx,dest,t0,D){const m=ctx.createGain();m.gain.value=.9;const cp=ctx.createDynamicsCompressor(),li=ctx.createDynamicsCompressor();li.threshold.value=-3;li.knee.value=0;li.ratio.value=20;li.attack.value=.003;li.release.value=.1;
+ const f=ctx.createGain();f.gain.setValueAtTime(0,t0);f.gain.linearRampToValueAtTime(1,t0+1);f.gain.setValueAtTime(1,t0+Math.max(1,D-1.5));f.gain.linearRampToValueAtTime(0,t0+D);
+ m.connect(cp);cp.connect(li);li.connect(f);f.connect(dest);const an=ctx.createAnalyser();an.fftSize=2048;f.connect(an);return{m,an}}
+function narr(ctx,out,t0,M){if(!M.A)return null;const rt=rate(),deep=$('deep').checked,bus=ctx.createGain();bus.gain.value=S.refNV!=null?S.refNV:+$('nv').value/100;
+ const lo=ctx.createBiquadFilter();lo.type='lowshelf';lo.frequency.value=200;lo.gain.value=deep?5:0;const bp=ctx.createBiquadFilter();bp.type='peaking';bp.frequency.value=110;bp.Q.value=.8;bp.gain.value=deep?2.5:0;bus.connect(lo);lo.connect(bp);bp.connect(out);
+ if($('rev').checked){const cvl=ctx.createConvolver();cvl.buffer=ir(ctx);const rg=ctx.createGain();rg.gain.value=+$('rvl').value/100;bp.connect(rg);rg.connect(cvl);cvl.connect(out)}
+ let a=1e9,b=0;M.sc.forEach(c=>{if(!c.au)return;const s=ctx.createBufferSource();s.buffer=c.au.buf;s.playbackRate.value=rt;const n=ctx.createGain(),p=peakOf(c.au.buf);n.gain.value=p>0?Math.min(4,.89/p):1;s.connect(n);n.connect(bus);s.start(t0+c.au.start);a=Math.min(a,c.au.start);b=Math.max(b,c.au.start+c.au.buf.duration/rt)});
+ return a<1e9?[a,b]:null}
+function build(ctx,dest,t0,M){const sc=M.sc,D=M.D,{m,an}=master(ctx,dest,t0,D);
+ const base=(+$('vol').value)/100,bb=ctx.createGain();bb.gain.setValueAtTime(base,t0);bb.connect(m);
+ const span=narr(ctx,m,t0,M);S.span=span;
+ if(span&&$('bgm').checked){bb.gain.setTargetAtTime(base*.35,t0+Math.max(0,span[0]-.25),.2);bb.gain.setTargetAtTime(base,t0+span[1]+.25,.5)}
+ if($('bgm').checked&&base>0){const g0=ctx.createGain();g0.gain.setValueAtTime(0,t0);g0.gain.linearRampToValueAtTime(.5,t0+3);g0.gain.setValueAtTime(.5,t0+Math.max(3,D-3));g0.gain.linearRampToValueAtTime(0,t0+D);const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=650;g0.connect(lp);lp.connect(bb);
+  for(let v=0;v<4;v++){const o=ctx.createOscillator();o.type='triangle';o.detune.value=(v-1.5)*5;o.frequency.setValueAtTime(CH[0][v],t0);for(let n=0;n*7.5<D;n++)o.frequency.setTargetAtTime(CH[n%4][v],t0+n*7.5,.5);o.connect(g0);o.start(t0);o.stop(t0+D+.5)}
+  for(let tt=t0+D*.15;tt<t0+D-4;tt+=1.6)hit(ctx,bb,tt,.8)}
+ if($('sfx').checked){const sx=ctx.createGain();sx.gain.value=span?.3:.5;sx.connect(m);const nb=ctx.createBuffer(1,ctx.sampleRate,ctx.sampleRate),d=nb.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+  sc.forEach((c,i)=>{const e=i===0||i===sc.length-1;hit(ctx,sx,t0+c.t0,e?1:.5);if(i>0)whoosh(ctx,sx,Math.max(t0,t0+c.t0-.35),e?1:.5,nb)})}
+ return an}
+
+/* ---------- 再生・録画 ---------- */
+function cleanup(){cancelAnimationFrame(S.raf);clearTimeout(S.tm);S.an=null;if(S.ac){S.ac.close().catch(()=>{});S.ac=null}if(S.wl){S.wl.release().catch(()=>{});S.wl=null}if('speechSynthesis'in window)speechSynthesis.cancel();S.mode='';if(!S.xbusy)$('mk').disabled=false;$('bPlay').disabled=false}
+function stopAll(){cancelAnimationFrame(S.raf);clearTimeout(S.tm);if(S.mr&&S.mr.state==='recording'){S.partial=true;S.mr.stop()}else cleanup()}
+const OFF=.4;
+async function run(mode,M0,tag){
+ stopAll();const M=M0||model(),sc=M.sc;S.tag=tag||'';if(!sc.length)return say('台本を入力してください');
+ const rec=mode==='rec',D=M.D;
+ const refuse=m=>{LOG('書き出し拒否: '+m);say(m);S.fin&&S.fin({ok:false,msg:m})};
+ if(rec&&!M.A)return refuse('ナレーション音声がありません。BGMのみの動画は書き出しません。詳細設定の「AI NARRATION」で音声を生成または取り込み、「動画に適用」を押してください');
+ if(rec){const bad=chkM(M);if(bad)return refuse('書き出しを中止しました。'+bad)}
+ if(rec&&M.miss)return refuse(`音声が未生成の行が${M.miss}行あります。全行を生成または取り込みしてから書き出してください`);
+ try{await Promise.race([Promise.all([document.fonts.load(`800 48px "Shippori Mincho B1"`,$('script').value),document.fonts.load(`900 48px "Noto Sans JP"`,$('script').value)]),new Promise(r=>setTimeout(r,3000))])}catch{}
+ const rs=tag==='test'?'720':$('res').value;cv.width=rec?+rs:540;cv.height=Math.round(cv.width*16/9);
+ try{
+  const ctx=new AC();await ctx.resume();LOG((rec?'書き出し':'再生')+' AudioContext='+ctx.state+' sr='+ctx.sampleRate);if(ctx.state!=='running')throw new Error('AudioContextが起動しません（state='+ctx.state+'）');S.ac=ctx;S.mode=mode;S.last=-1;S.partial=false;S.lastM=M;
+  const dest=rec?ctx.createMediaStreamDestination():ctx.destination,t0=ctx.currentTime+OFF;S.an=build(ctx,dest,t0,M);S.pk=0;S.live=0;S.fr=0;S.fb=new Float32Array(S.an.fftSize);
+  if(rec){if(!cv.captureStream||!window.MediaRecorder)throw Error('このブラウザは動画録画に非対応です。Android Chromeで開いてください');
+   const stream=cv.captureStream(+rs===1080?30:24);dest.stream.getAudioTracks().forEach(x=>stream.addTrack(x));
+   LOG('録画ストリーム 映像'+stream.getVideoTracks().length+' 音声'+stream.getAudioTracks().length);if(!stream.getAudioTracks().length)throw new Error('音声トラックを録画ストリームに追加できませんでした（MediaStream）。この端末・ブラウザでは音声付き録画ができません');
+   const mime=['video/mp4;codecs=avc1.42001f,mp4a.40.2','video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'].find(x=>MediaRecorder.isTypeSupported(x)),ch=[];LOG('録画形式: '+(mime||'ブラウザ既定')+' / '+rs+'p');
+   const mr=new MediaRecorder(stream,{...(mime?{mimeType:mime}:{}),videoBitsPerSecond:+rs===1080?6e6:3e6,audioBitsPerSecond:128000});
+   mr.ondataavailable=e=>e.data.size&&ch.push(e.data);mr.onstop=()=>{const ty=mr.mimeType;cleanup();finish(ch,ty)};mr.onerror=e=>{say('録画エラー: '+(e.error&&e.error.message||'不明'));cleanup();S.fin&&S.fin({ok:false,msg:'録画エラー',err:e.error})};S.mr=mr;mr.start(1000);
+   $('bPlay').disabled=true;say('書き出し中。画面を消さずにお待ちください。')}
+  else say('プレビュー再生中');
+  try{S.wl=await navigator.wakeLock.request('screen')}catch{}
+  const loop=()=>{const t=ctx.currentTime-t0,i=draw(Math.max(0,t),D,sc);$('clock').textContent=fmt(Math.max(0,t))+' / '+fmt(D);{const f=Math.min(1,Math.max(0,t/D));prog(S.ph[0]+(S.ph[1]-S.ph[0])*f,(D-Math.max(0,t))+(S.after||0)+(S.pend||0))}
+   if(S.an&&t>0){S.an.getFloatTimeDomainData(S.fb);let p=0;for(let k=0;k<S.fb.length;k++){const v=Math.abs(S.fb[k]);if(v>p)p=v}if(p>S.pk)S.pk=p;if(p>.01)S.live++;S.fr++}
+   if(mode==='prev'&&$('tts').checked&&!M.A&&i!==S.last&&'speechSynthesis'in window){S.last=i;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(sc[i].s);u.lang='ja-JP';u.pitch=.6;u.rate=.9;const vo=speechSynthesis.getVoices().find(v=>v.lang==='ja-JP'&&/male|男|keita|ichiro/i.test(v.name))||speechSynthesis.getVoices().find(v=>v.lang==='ja-JP');if(vo)u.voice=vo;speechSynthesis.speak(u)}
+   if(t>=D){if(rec&&S.mr.state==='recording')S.mr.stop();else{cleanup();say('プレビュー終了')}return}S.raf=requestAnimationFrame(loop)};
+  loop();
+ }catch(e){cleanup();say('エラー: '+jp(e));S.fin&&S.fin({ok:false,msg:e.message,err:e})}}
+function envOf(x,sr,t0,t1,hop=.05){const o=[],h=Math.floor(sr*hop);for(let a=Math.floor(t0*sr);a>=0&&a+h<=Math.floor(t1*sr)&&a+h<=x.length;a+=h){let q=0;for(let j=a;j<a+h;j++)q+=x[j]*x[j];o.push(Math.sqrt(q/h))}return o}
+function pcorr(a,b){const n=Math.min(a.length,b.length);if(n<8)return 0;let ma=0,mb=0;for(let i=0;i<n;i++){ma+=a[i];mb+=b[i]}ma/=n;mb/=n;let sab=0,saa=0,sbb=0;for(let i=0;i<n;i++){const x=a[i]-ma,y=b[i]-mb;sab+=x*y;saa+=x*x;sbb+=y*y}const d=Math.sqrt(saa*sbb);return d>1e-12?sab/d:0}
+function chkM(M){if(!M.A)return'ナレーション音声がありません';const L=M.sc&&M.sc.length?M.sc.map(c=>c.s):lines(),list=M.A.mode==='single'?[[M.A.buf,L.join('')]]:M.A.bufs.map((b,i)=>[b,L[i]||'あ']);for(let i=0;i<list.length;i++){const[b,t]=list[i];if(!b)return`${i+1}行目の音声がありません`;const v=vcheck(b,t);if(!v.ok)return`${M.A.mode==='single'?'取り込み音声':(i+1)+'行目の音声'}が不正です：${v.why}`}if(+$('nv').value<10)return'ナレーション音量が10%未満です。音量を上げてください';return null}
+async function refMix(M,withN){const sr=16000,off=new OfflineAudioContext(1,Math.ceil(sr*M.D),sr);S.refNV=1;try{build(off,off.destination,0,withN?M:{...M,A:null});return(await off.startRendering()).getChannelData(0)}finally{S.refNV=null}}
+function bestC(d,sr,ref,a,b){const r=envOf(ref,16000,a,b);let best=-1;for(let l=-8;l<=8;l++){const c=pcorr(envOf(d,sr,OFF+a+l*.05,OFF+b+l*.05),r);if(c>best)best=c}return best}
+async function verify(blob,M){const el=$('vf'),meter=S.fr?`録画中の出力レベル: 最大 ${db(S.pk)} dB / 発音フレーム率 ${Math.round(100*S.live/S.fr)}%`:'';el.textContent=meter+'\n書き出しファイルの音声を検査中…';
+ try{const c=new AC(),b=await c.decodeAudioData(await blob.arrayBuffer());c.close();const d=b.getChannelData(0),sr=b.sampleRate;let mx=0;for(let i=0;i<d.length;i++){const a=Math.abs(d[i]);if(a>mx)mx=a}
+  let q=0,n=0;if(M&&M.A)M.sc.forEach(c2=>{if(!c2.au)return;const a=Math.floor((OFF+c2.au.start)*sr),e=Math.min(d.length,Math.floor((OFF+c2.au.start+c2.au.buf.duration/rate())*sr));for(let j=a;j<e;j++){q+=d[j]*d[j];n++}});
+  const nr=n?Math.sqrt(q/n):0;let cF=0,cB=0,a0=1e9,b0=0;if(M&&M.A){M.sc.forEach(c2=>{if(c2.au){a0=Math.min(a0,c2.au.start);b0=Math.max(b0,c2.au.start+c2.au.buf.duration/rate())}});const rf=await refMix(M,true),rb=await refMix(M,false);cF=Math.max(0,bestC(d,sr,rf,a0,b0));cB=Math.max(0,bestC(d,sr,rb,a0,b0))}
+  const ok=!!(M&&M.A)&&n>0&&nr>=NMIN&&cF>=.5&&cF-cB>=.1,txt=`${meter}\n検査: 書き出しファイル ${b.duration.toFixed(1)}秒 / 全体最大 ${db(mx)} dB / ナレーション区間RMS ${db(nr)} dB\n照合: 「ナレーション入りの想定音声」との一致 ${cF.toFixed(2)} / 「BGMのみの想定音声」との一致 ${cB.toFixed(2)}（合格: 前者が0.50以上かつ後者より0.10以上高い）`;
+  el.textContent=txt+(ok?'\n判定: 合格。ファイルの音声がナレーション入りの想定と一致しました（端末内の自動計測。最終確認は再生して耳で行ってください）':'\n判定: ✖ 不合格。ファイルの音声がBGMのみの想定に近く、動画にナレーションが入っていません');LOG(txt.replace(/\n/g,' / ')+' 合格='+ok);return{ok,msg:el.textContent}
+ }catch(e){const m='書き出し動画の音声を自動検査できませんでした: '+e.message+'。合格扱いにはしません。再生して耳で確認してください';el.textContent=meter+'\n'+m;LOG(m);return{ok:false,unverified:true,msg:m}}}
+function finish(ch,mime){const T=S.tag==='test';if(!ch.length){say('動画を生成できませんでした');S.fin&&S.fin({ok:false,msg:'動画を生成できませんでした'});return}
+ const type=(mime||ch[0].type||'video/webm').split(';')[0],ext=type.includes('mp4')?'mp4':'webm',blob=new Blob(ch,{type}),url=URL.createObjectURL(blob);
+ if(T){if(S.turl)URL.revokeObjectURL(S.turl);S.tb=blob;S.turl=url;$('rvt').src=url;$('rvt').hidden=false}
+ else{S.gateState=null;S.gackAt=null;$('gack').checked=false;if(S.url)URL.revokeObjectURL(S.url);S.blob=blob;S.url=url;S.name=`BECOME-${pad3(S.ep)}.${ext}`;
+  $('dl').href=url;$('dl').download=S.name;$('dl').hidden=true;$('rv').src=url;$('share').hidden=true;
+  $('fmt').textContent=ext==='mp4'?'形式: MP4。そのままTikTokへ投稿できます。':'形式: WebM。この端末はMP4録画に非対応です。詳細設定の「WebM形式だった場合」の手順で変換してください。'}
+ say('書き出し完了。音声を検査しています…');const part=S.partial;S.partial=false;
+ verify(blob,S.lastM).then(r=>{if(T){say(r.ok?'テスト動画：ナレーションを検出しました':'テスト動画：'+(r.unverified?'音声の自動検査ができませんでした':'ナレーションを検出できませんでした'));S.fin&&S.fin(r);return}
+  if(r.ok){$('dl').textContent='完成動画を保存（'+S.name.split('.').pop().toUpperCase()+'）';$('dl').hidden=false;$('share').hidden=!(navigator.canShare&&navigator.share);say(part?'途中停止した動画ですがナレーションは検出されました。再書き出しを推奨します':'完成。ナレーションを検出しました。再生して確認してから保存してください')}
+  else if(r.unverified){$('dl').textContent='保存（音声は未検査・再生して確認してください）';$('dl').hidden=false;say('⚠ 音声の自動検査ができませんでした。再生して声が入っているか確認してください')}
+  else say('✖ 不合格：動画にナレーションが入っていません。保存はできません。');S.lastV=r;try{gateRender()}catch(e){LOG('gate '+e.message)}S.fin&&S.fin(r)})}
+$('bPlay').onclick=()=>run('prev');$('bStop').onclick=()=>{stopAll();say('停止しました')};
+$('share').onclick=async()=>{try{if(!S.blob)return xmsg('共有する動画がありません',1);const f=new File([S.blob],S.name,{type:S.blob.type});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'BECOME.'});xmsg('共有画面を開きました。TikTokを選んでください')}else xmsg('⚠ この端末・ブラウザは動画ファイルの共有に対応していません。「完成動画を保存」で端末に保存し、TikTokアプリの＋ボタンからアップロードで選んでください',1)}catch(e){xmsg(e&&e.name==='AbortError'?'共有をキャンセルしました':'⚠ 共有できませんでした（'+(e&&e.message)+'）。「完成動画を保存」で保存し、TikTokアプリの＋ボタンからアップロードで選んでください',1)}};
+
+/* ---------- 取り込み ---------- */
+async function dec(ab){const c=new(window.AudioContext||window.webkitAudioContext)();try{return await c.decodeAudioData(ab)}finally{c.close()}}
+async function setAudio(ab,name){try{const b=await dec(ab);S.cand=S.act={mode:'single',buf:b,src:name};$('an').textContent=`${name}（${fmt(b.duration)}）を取り込み、動画に適用しました`;upd();say('取り込み完了。字幕の切替は音声の無音区間から自動同期します')}catch(e){say('音声を読み込めません: '+e.message)}}
+$('aud').onchange=async e=>{const f=e.target.files[0];if(f)await setAudio(await f.arrayBuffer(),f.name)};
+$('audm').onchange=async e=>{const fs=[...e.target.files].sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true}));if(!fs.length)return;try{const bufs=[];for(const f of fs)bufs.push(await dec(await f.arrayBuffer()));S.cand=S.act={mode:'clips',bufs,src:'files'};$('an').textContent=`${fs.length}ファイルを取り込み、行順に適用しました（${fs.map(f=>f.name).slice(0,3).join('、')}…）`;upd();say('取り込み完了。各ファイルの実際の長さから字幕時間を決定しました')}catch(x){say('音声を読み込めません: '+x.message)}};
+$('clr').onclick=()=>{S.cand=S.act=null;$('aud').value='';$('audm').value='';$('an').textContent='音声なし';$('vs').textContent='音声を外しました';upd()};
+$('mic').onclick=async()=>{if(S.mic&&S.mic.state==='recording'){S.mic.stop();return}
+ try{const st=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}}),ch=[],r=new MediaRecorder(st);S.mic=r;r.ondataavailable=e=>ch.push(e.data);
+  r.onstop=async()=>{st.getTracks().forEach(t=>t.stop());$('mic').textContent='● マイクで録音';await setAudio(await new Blob(ch,{type:r.mimeType}).arrayBuffer(),'録音')};r.start();$('mic').textContent='■ 録音を停止';say('録音中。行の間にはっきり間を空けて読み上げてください')}catch(e){say('マイクを使えません: '+e.message)}};
+$('imgs').onchange=async e=>{try{S.photos=await Promise.all([...e.target.files].map(async f=>{const u=URL.createObjectURL(f),im=new Image();try{im.src=u;await im.decode();return im}finally{URL.revokeObjectURL(u)}}));say(S.photos.length+'枚の背景写真を取り込みました')}catch(x){say('画像読み込み失敗: '+x.message)}};
+
+/* ---------- SRT ---------- */
+const stamp=t=>{const m=Math.round(t*1000);return[Math.floor(m/36e5),Math.floor(m/6e4)%60,Math.floor(m/1e3)%60].map(x=>String(x).padStart(2,'0')).join(':')+','+String(m%1000).padStart(3,'0')};
+$('srt').onclick=()=>{const sc=model().sc;if(!sc.length)return;const u=URL.createObjectURL(new Blob([sc.map((c,i)=>`${i+1}\n${stamp(c.t0)} --> ${stamp(c.t0+c.d)}\n${c.s}\n`).join('\n')],{type:'text/plain;charset=utf-8'})),a=document.createElement('a');a.href=u;a.download=`BECOME-${pad3(S.ep)}.srt`;a.click();setTimeout(()=>URL.revokeObjectURL(u),3e4)};
+
+/* ---------- 投稿文 ---------- */
+const KW=[['朝','#朝活'],['習慣|続け','#習慣化'],['本|読','#読書'],['挑戦','#挑戦'],['仕事','#仕事術'],['自由','#自由'],['お金|稼','#お金の話'],['自信','#自信をつける'],['未来','#未来の自分'],['行動','#行動力'],['理想','#理想の自分']];
+$('gp').onclick=()=>{const L=lines();if(!L.length)return say('台本を入力してください');const all=L.join(''),t=$('th').value.trim();
+ $('cap').value=`${L[0]}\n\n${t}\n${L[L.length-1]}\n\n${rnd(['保存して、迷った日に見返して。','今日の一歩を、コメントで宣言して。','同じ気持ちの人に送ってあげて。','フォローして、明日も続きを見に来て。'])}`;
+ const tg=['#自己啓発','#人生を変える','#マインドセット','#モチベーション','#名言'];KW.forEach(([r,h])=>{if(new RegExp(r).test(all))tg.push(h)});tg.push('#fyp');$('tags').value=[...new Set(tg)].slice(0,10).join(' ');say('生成しました。件数や内容は最終的にご自身で調整してください')};
+$('cc').onclick=()=>copy($('cap').value);$('ct').onclick=()=>copy($('tags').value);$('ca').onclick=()=>copy($('cap').value+'\n\n'+$('tags').value,'投稿文とタグをコピーしました');
+
+/* ---------- 履歴・再利用 ---------- */
+function hist(){const h=store.get('bs_hist',[]);$('hl').innerHTML=h.length?h.map((x,i)=>`<li><b>EP.${pad3(nf(x.ep)==='—'?0:Number(x.ep))} ${esc(x.th)}</b><small>${esc(x.d)} / ${String(x.script).split('\n').filter(Boolean).length}シーン</small><button data-a="load" data-i="${i}">開く</button><button data-a="next" data-i="${i}">次回作に再利用</button><button data-a="del" data-i="${i}">削除</button></li>`).join(''):'<li>まだ保存がありません</li>'}
+$('save').onclick=()=>{const h=store.get('bs_hist',[]);h.unshift({ep:S.ep,th:$('th').value,script:$('script').value,d:new Date().toLocaleString('ja-JP')});const okh=store.set('bs_hist',h.slice(0,30));hist();say(okh?'保存しました':'⚠ 保存できませんでした（端末の保存容量不足）。台本をコピーして控えてください')};
+$('hl').onclick=e=>{const b=e.target.closest('button');if(!b)return;const h=store.get('bs_hist',[]),i=+b.dataset.i,x=h[i];if(!x)return;
+ if(b.dataset.a==='del'){h.splice(i,1);store.set('bs_hist',h);hist()}
+ else{snap('履歴を開く前');$('th').value=x.th;let L=x.script.split('\n').filter(Boolean);
+  if(b.dataset.a==='next'){S.ep=Math.max(...h.map(v=>v.ep))+1;L[0]=rnd(P.hook.filter(v=>v!==L[0]));L[L.length-1]=rnd(P.close.filter(v=>v!==L[L.length-1]));$('bgs').value=rnd(ST);say(`EP.${pad3(S.ep)}として複製しました。冒頭と結びを差し替え、背景も変更済みです。中盤を書き換えて仕上げてください`)}else{S.ep=x.ep;say('台本を開きました')}
+  $('script').value=L.join('\n');upd();tab(0)}};
+
+/* ---------- AI NARRATION ---------- */
+const tmo=ms=>new Promise((_,r)=>setTimeout(()=>{const e=new Error('timeout');e.name='TimeoutError';r(e)},ms));
+const KJ='https://cdn.jsdelivr.net/npm/kokoro-js-jp@0.2.0/dist/kokoro-jp.web.js';
+function why(e){const m=RD(String(e&&e.message||e)),gpu=navigator.gpu?'WebGPUあり':'WebGPUなし（WASM）';
+ if(e&&e.bad)return'音声は生成されましたが、中身が使えません：'+m+'。Kokoroがこの端末で正しく動作していません（モデルのメモリ不足や精度の問題の可能性。未特定）。画面下の実行ログを確認してください。';
+ if(!('DecompressionStream'in window))return'非対応ブラウザ：日本語辞書の展開に必要なDecompressionStreamがありません。最新のChromeで開いてください。';
+ if(e instanceof RangeError||/memory|alloc|OOM/i.test(m))return'メモリ不足：モデルと日本語辞書で約100MB超を使います。他のアプリやタブを閉じて再読込してください。';
+ if(e&&e.name==='TimeoutError')return'読み込みタイムアウト：回線が遅いか、通信が遮断されています。';
+ return`音声エンジンの読み込みに失敗しました。通信（Wi-Fiまたはモバイル通信）が切れた、または初回のモデル・辞書の取得（合計で約100MB超）が途中で止まった可能性があります（${gpu}、詳細：${m.slice(0,100)}）。`}
+async function loadK(){if(S.tts)return S.tts;if(!('DecompressionStream'in window))throw new Error('DecompressionStream');
+ $('vs').textContent='Kokoroを読み込み中…（初回はモデルと辞書のダウンロードで数分かかる場合があります）';
+ const mod=await Promise.race([import(KJ),tmo(60000)]);S.tts=await Promise.race([mod.KokoroJP.load(),tmo(600000)]);return S.tts}
+/* ---------- v2.2 audio guard ---------- */
+const AC=window.AudioContext||window.webkitAudioContext,LG=[];
+function LOG(m){m=RD(m);LG.push(new Date().toLocaleTimeString('ja-JP')+' '+m);if(LG.length>80)LG.shift();const e=$('lg');if(e)e.textContent=LG.join('\n')}
+const db=x=>(20*Math.log10(x+1e-9)).toFixed(1),NMIN=.02;
+function bstats(b){let nan=0,pk=0,q=0,n=0;for(let c=0;c<b.numberOfChannels;c++){const d=b.getChannelData(c);for(let i=0;i<d.length;i++){const v=d[i];if(v!==v){nan++;continue}const a=Math.abs(v);if(a>pk)pk=a;q+=v*v;n++}}return{dur:b.duration,sr:b.sampleRate,nan,pk,rms:Math.sqrt(q/Math.max(1,n))}}
+const sfmt=t=>`${t.dur.toFixed(2)}秒 ${t.sr}Hz ピーク${db(t.pk)}dB RMS${db(t.rms)}dB NaN${t.nan}`;
+function vcheck(b,text){const t=bstats(b),min=Math.max(.5,text.replace(/[。、！？\s]/g,'').length*.07);let w=null;
+ if(t.nan)w='数値が壊れています（NaN '+t.nan+'個）';else if(t.pk<.02)w='無音です（ピーク'+db(t.pk)+'dB）';else if(t.rms<.003)w='ほぼ無音です（RMS'+db(t.rms)+'dB）';else if(t.dur<min)w=`短すぎます（${t.dur.toFixed(2)}秒、目安${min.toFixed(1)}秒以上）`;return{ok:!w,why:w,s:t}}
+function trimBuf(b){const d=b.getChannelData(0),th=.01;let a=0,e=d.length-1;while(a<e&&Math.abs(d[a])<th)a++;while(e>a&&Math.abs(d[e])<th)e--;a=Math.max(0,a-Math.floor(b.sampleRate*.03));e=Math.min(d.length-1,e+Math.floor(b.sampleRate*.08));const n=e-a+1;if(n<=0||n>=d.length-1)return b;
+ const o=new AudioBuffer({length:n,sampleRate:b.sampleRate,numberOfChannels:1}),x=new Float32Array(d.subarray(a,e+1)),f=Math.floor(b.sampleRate*.01);for(let i=0;i<f&&i<n;i++){x[i]*=i/f;x[n-1-i]*=i/f}o.copyToChannel(x,0);return o}
+async function speakOne(tts,text,voice){const a=await tts.speak(text,voice);LOG('speak完了 型='+(a&&a.constructor&&a.constructor.name)+' キー='+Object.keys(a||{}).join(',').slice(0,80));let b=null,e1='';
+ try{if(a&&a.toBlob){const bl=a.toBlob();LOG('toBlob '+bl.size+'バイト '+bl.type);b=await dec(await bl.arrayBuffer())}}catch(e){e1=e.message;LOG('toBlob変換失敗: '+e.message)}
+ let v=b?vcheck(b,text):null;if(b)LOG('WAV経由: '+sfmt(v.s)+(v.ok?'':' → 不合格: '+v.why));
+ if((!v||!v.ok)&&a&&a.audio&&a.audio.length){try{const sr=a.sampling_rate||24000,ab=new AudioBuffer({length:a.audio.length,sampleRate:sr,numberOfChannels:1});ab.copyToChannel(Float32Array.from(a.audio),0);const v2=vcheck(ab,text);LOG('RawAudio直接: '+sfmt(v2.s)+(v2.ok?'':' → 不合格: '+v2.why));if(v2.ok||!v){b=ab;v=v2}}catch(e){LOG('RawAudio変換失敗: '+e.message)}}
+ if(!b)throw new Error('音声データを取得できません（'+e1+'）');if(!v.ok)throw Object.assign(new Error(v.why),{bad:1});
+ const tr=trimBuf(b);return vcheck(tr,text).ok?tr:b}
+async function ensureVoice(){const vo=$('vo').value;if(S.vt===vo&&S.tclip)return;const tts=await loadK();LOG('テスト文を生成: '+TL);S.tclip=await speakOne(tts,TL,vo);S.vt=vo;S.ttext=null;LOG('テスト文OK: '+sfmt(bstats(S.tclip)))}
+async function genAll(){const L=lines();if(!L.length)throw new Error('台本が空です');try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch{}
+ $('vs').textContent='まずテスト文で音声を確認しています…';await ensureVoice();const tts=await loadK(),key=L.join('|')+$('vo').value;if(!S.part||S.part.key!==key)S.part={key,bufs:[]};const bufs=S.part.bufs,t1=Date.now();
+ for(let i=0;i<L.length;i++){if(bufs[i])continue;$('vs').textContent=`生成中 ${i+1}/${L.length}行目（${Math.round((Date.now()-t1)/1000)}秒経過。失敗しても続きから再開できます）`;$('pgv').value=i/L.length;S.onNar&&S.onNar(i,L.length);
+  let last;for(let k=0;k<2&&!bufs[i];k++){try{bufs[i]=await speakOne(tts,L[i],$('vo').value);LOG(`${i+1}行目OK`)}catch(e){last=e;LOG(`${i+1}行目失敗(${k+1}回目): `+e.message)}}if(!bufs[i])throw last}
+ $('pgv').value=1;S.cand={mode:'clips',bufs:bufs.slice(),src:'kokoro',vk:'k:'+$('vo').value};$('vs').textContent=`生成完了：${L.length}行。全行の音声データを検査済み（無音・破損なし）。まず「音声試聴」で聞こえるか確認し、「動画に適用」を押してください`}
+$('genv').onclick=async()=>{if($('eng').value==='import'){$('fb').open=true;return say('外部音声の取り込み方式です。下の欄からWAVまたはMP3を選んでください')}
+ stopAll();$('genv').disabled=true;try{await genAll();say('音声を生成しました')}catch(e){LOG('失敗: '+String(e&&e.stack||e).slice(0,400));const r=why(e);if(!e.bad)S.tts=null;$('eng').value='import';$('fb').open=true;$('vs').textContent='生成に失敗しました（生成済みの行は保持。再実行で続きから再開）。\n原因：'+r+'\n代替：下の手順で外部TTSのWAV・MP3を取り込めます';say('Kokoro生成に失敗。原因と代替手段を詳細設定の「AI NARRATION」に表示しました')}finally{$('genv').disabled=false}};
+$('apply').onclick=()=>{if(!S.cand)return say('適用する音声がありません。先に生成または取り込みを行ってください');S.act=S.cand;upd();const M=model();$('vs').textContent=`動画に適用しました。動画時間 ${fmt(M.D)}`;say('適用済み。映像プレビューで同期を確認してください')};
+async function listen(M,label){stopAll();try{const ctx=new AC();await ctx.resume();LOG('試聴 AudioContext='+ctx.state+' sr='+ctx.sampleRate+' 音量'+$('nv').value+'%');if(ctx.state!=='running')throw new Error('AudioContextが起動しません（state='+ctx.state+'）。画面をタップして再実行してください');S.ac=ctx;
+ const t0=ctx.currentTime+.2,{m,an}=master(ctx,ctx.destination,t0,M.D),sp=narr(ctx,m,t0,M);if(!sp)throw new Error('再生できる音声がありません');const fb=new Float32Array(an.fftSize);let pk=0;
+ const poll=()=>{an.getFloatTimeDomainData(fb);let p=0;for(let k=0;k<fb.length;k++){const a=Math.abs(fb[k]);if(a>p)p=a}if(p>pk)pk=p;$('vs').textContent=`試聴中（${label}）出力 ${db(p)} dB / 最大 ${db(pk)} dB / ナレーション音量 ${$('nv').value}%`;S.raf=requestAnimationFrame(poll)};poll();say('試聴中');
+ S.tm=setTimeout(()=>{cancelAnimationFrame(S.raf);const ok=pk>.02;LOG('試聴終了 最大'+db(pk)+'dB');cleanup();$('vs').textContent=ok?`試聴終了。アプリの出力は最大 ${db(pk)} dB でした。それでも聞こえない場合は、端末のメディア音量・マナーモード・Bluetooth接続を確認してください`:`✖ 試聴の出力が無音でした（最大 ${db(pk)} dB）。音声データまたは音量設定に問題があります`;say(ok?'試聴終了':'試聴の出力が無音です')},M.D*1000+400)}catch(e){cleanup();LOG('試聴エラー '+e.message);$('vs').textContent='✖ 試聴エラー: '+e.message;say('試聴エラー')}}
+$('pvv').onclick=async()=>{const A=S.cand||S.act;if(!A)return say('試聴する音声がありません。先に生成または取り込みを行ってください');await listen(model(A),A===S.cand?'生成音声':'適用音声')};
+function wavBlob(b){const n=b.length,ch=b.numberOfChannels,sr=b.sampleRate,v=new DataView(new ArrayBuffer(44+n*ch*2)),w=(o,t)=>[...t].forEach((c,i)=>v.setUint8(o+i,c.charCodeAt(0)));
+ w(0,'RIFF');v.setUint32(4,36+n*ch*2,true);w(8,'WAVEfmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,ch,true);v.setUint32(24,sr,true);v.setUint32(28,sr*ch*2,true);v.setUint16(32,ch*2,true);v.setUint16(34,16,true);w(36,'data');v.setUint32(40,n*ch*2,true);
+ let o=44;const d=[];for(let c=0;c<ch;c++)d.push(b.getChannelData(c));for(let i=0;i<n;i++)for(let c=0;c<ch;c++){const x=Math.max(-1,Math.min(1,d[c][i]));v.setInt16(o,x<0?x*32768:x*32767,true);o+=2}return new Blob([v],{type:'audio/wav'})}
+$('wav').onclick=async()=>{const A=S.cand||S.act;if(!A)return say('保存する音声がありません');try{const M=model(A),sr=44100,off=new OfflineAudioContext(2,Math.ceil(sr*M.D),sr),{m}=master(off,off.destination,0,M.D);narr(off,m,0,M);const r=await off.startRendering(),u=URL.createObjectURL(wavBlob(r)),a=document.createElement('a');a.href=u;a.download=`BECOME-${pad3(S.ep)}-narration.wav`;a.click();setTimeout(()=>URL.revokeObjectURL(u),3e4);say('ナレーションWAV（加工・間を反映）を保存しました')}catch(e){say('WAV生成失敗: '+e.message)}};
+[['spd','spv',v=>(v/100).toFixed(2)],['nv','nvv',v=>v],['gap','gpv',v=>(v/100).toFixed(1)],['vol','vlv',v=>v],['rvl','rvv',v=>v]].forEach(([i,o,f])=>{$(i).oninput=()=>{$(o).textContent=f(+$(i).value);upd()}});
+
+
+/* ---------- v2.1: 自動生成・テスト・診断 ---------- */
+async function recWait(M,tag){const p=new Promise(r=>S.fin=r);run('rec',M,tag);try{return await Promise.race([p,tmo(M.D*1000+90000)])}finally{S.fin=null}}
+
+const TL='理想を語るな。理想になれ。';
+async function t1(){if($('eng').value!=='kokoro')return{ok:false,msg:'－ 音声生成：エンジンが「取り込み」方式です。取り込んだ音声は「音声試聴」で確認し、書き出し後の自動検査で合否を判定します'};
+ try{const t0=performance.now();S.vt=null;S.tclip=null;await ensureVoice();return{ok:true,msg:`✔ 音声生成「${TL}」：${sfmt(bstats(S.tclip))}（${((performance.now()-t0)/1000).toFixed(1)}秒）。データは無音・破損なし。次に「生成音声を試聴」で実際に聞こえるか確認してください`}}
+ catch(e){LOG('t1失敗: '+String(e&&e.stack||e).slice(0,300));if(!e.bad)S.tts=null;return{ok:false,msg:'✖ 音声生成：'+why(e)}}}
+function t2(){const cl=S.tclip;if(!cl)return{ok:false,msg:'✖ 字幕同期：テスト音声がありません。先に「1 音声生成」を成功させてください'};const M=model({mode:'clips',bufs:[cl]},[TL]),rt=rate(),er=[];let sum=0;
+ M.sc.forEach((c,i)=>{if(Math.abs(c.t0-sum)>1e-6)er.push('開始時刻不整合'+i);sum+=c.d;if(!c.au||c.au.start<c.t0||c.au.start+c.au.buf.duration/rt>c.t0+c.d+1e-6)er.push('音声がシーン外'+i)});if(Math.abs(sum-M.D)>1e-6)er.push('合計不一致');
+ cv.width=270;cv.height=480;draw(M.sc[0].t0+1.2,M.D,M.sc);const px=g.getImageData(0,0,270,480).data;let lit=0;for(let i=0;i<px.length;i+=388)if(px[i]+px[i+1]+px[i+2]>300)lit++;cv.width=540;cv.height=960;{const m=model();draw(0,m.D,m.sc)}
+ const ok=!er.length&&lit>0;return{ok,msg:`${ok?'✔':'✖'} 字幕同期：合計 ${M.D.toFixed(2)}秒（実音声の長さから計算）、字幕の描画${lit>0?'を確認':'を検出できず'}${er.length?'、'+er.join('、'):''}。聴感上のずれは別途確認してください`}}
+async function t3(){const cl=S.tclip;if(!cl)return{ok:false,msg:'✖ 動画書き出し：テスト音声がありません。先に「1 音声生成」を成功させてください（BGMのみの動画は作りません）'};const M=model({mode:'clips',bufs:[cl]},[S.ttext||TL]);let r;try{r=await recWait(M,'test')}catch(e){r={ok:false,msg:'タイムアウト'}}
+ if(r&&r.ok)S.t3ok=S.vt;return{ok:!!(r&&r.ok),msg:`${r&&r.ok?'✔':'✖'} 動画書き出し：${M.D.toFixed(1)}秒、${S.tb?(S.tb.size/1024).toFixed(0):0}KB。`+(r?(r.err?jp(r.err):r.msg).replace(/\n/g,' '):'')+(r&&r.ok?' 次に「書き出し動画を再生」で実際に声が聞こえるか確認してください':'')}}
+$('tl').onclick=()=>{if(!S.tclip)return say('テスト音声がありません。先に「1 音声生成」を成功させてください');listen(model({mode:'clips',bufs:[S.tclip]},[TL]),'テスト音声「'+TL+'」')};
+$('tp').onclick=()=>{const v=$('rvt');if(!S.tb||v.hidden)return say('再生する書き出し動画がありません。先に「3 動画書き出し」を成功させてください');stopAll();v.muted=false;v.volume=1;v.scrollIntoView({block:'center'});v.currentTime=0;v.play().then(()=>say('書き出し動画を再生中（動画プレーヤーの音量も確認してください）')).catch(e=>say('再生できません。動画プレーヤーの再生ボタンを直接押してください: '+e.message))};
+$('lgc').onclick=()=>copy(LG.join('\n')||'ログなし','実行ログをコピーしました');
+$('t1').onclick=async()=>{$('tr').textContent='実行中…';$('tr').textContent=(await t1()).msg};
+$('t2').onclick=()=>{$('tr').textContent=t2().msg};
+$('t3').onclick=async()=>{$('tr').textContent='実行中（約5秒）…';$('tr').textContent=(await t3()).msg};
+$('tall').onclick=async()=>{const o=[];const sh=()=>{$('tr').textContent=o.join('\n')};o.push('1 実行中…');sh();o[0]=(await t1()).msg;o.push('2 実行中…');sh();o[1]=t2().msg;o.push('3 実行中（約5秒）…');sh();o[2]=(await t3()).msg;sh()};
+async function diag(){const o=[],chk=async(n,u)=>{try{const r=await Promise.race([fetch(u,{method:'HEAD'}),tmo(15000)]);o.push(`${r.ok?'✔':'✖'} ${n}: HTTP ${r.status}`)}catch(e){o.push(`✖ ${n}: ${e.name==='TimeoutError'?'タイムアウト':'通信不可（CSPまたはCORSで遮断の可能性）'}`)}};
+ $('dg').textContent='診断中…';await chk('jsDelivr（Kokoroモジュール）',KJ);await chk('jsDelivr（日本語辞書 約24MB）','https://cdn.jsdelivr.net/npm/kokoro-js-jp@0.2.0/dist/open_jtalk_dic_utf_8-1.11.tar.gz');await chk('Hugging Face（モデル。パスは推定）','https://huggingface.co/onnx-community/Kokoro-82M-v1.0-ONNX/resolve/main/config.json');
+ o.push(`WebGPU: ${navigator.gpu?'あり':'なし'} / DecompressionStream: ${'DecompressionStream'in window?'あり':'なし'} / HTTPS: ${isSecureContext?'はい':'いいえ'}`);
+ o.push(`端末メモリ目安: ${navigator.deviceMemory?navigator.deviceMemory+'GB以上':'不明'}${performance.memory?' / JSヒープ上限 '+Math.round(performance.memory.jsHeapSizeLimit/1048576)+'MB':''}`);$('dg').textContent=o.join('\n')}
+async function cinfo(){const o=[];try{if(navigator.storage&&navigator.storage.estimate){const e=await navigator.storage.estimate();o.push(`ストレージ: 使用 ${(e.usage/1048576).toFixed(0)}MB / 上限 ${(e.quota/1048576).toFixed(0)}MB`)}if(navigator.storage&&navigator.storage.persisted)o.push('永続化: '+((await navigator.storage.persisted())?'許可済み':'未許可'));if(window.caches)for(const k of await caches.keys())o.push(`キャッシュ ${k}: ${(await(await caches.open(k)).keys()).length}件`)}catch(e){o.push('取得失敗: '+e.message)}$('cinfo').textContent=o.join('\n')||'情報なし'}
+$('diag').onclick=diag;$('cbtn').onclick=cinfo;
+const PR={cinema:[92,18,1,65],trailer:[86,24,1,75],std:[100,8,0,50]};
+$('pre').onchange=()=>{const p=PR[$('pre').value];$('spd').value=p[0];$('rvl').value=p[1];$('deep').checked=!!p[2];$('gap').value=p[3];['spd','rvl','gap'].forEach(i=>$(i).oninput())};
+if('serviceWorker'in navigator&&location.protocol==='https:'){const had=!!navigator.serviceWorker.controller;let rl=0;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!had||rl||S.xbusy||S.mr&&S.mr.state==='recording')return;rl=1;location.reload()});navigator.serviceWorker.register('../../sw.js',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{})}
+
+/* ---------- v2.3: 書き出しフロー ---------- */
+function xmsg(m,bad){m=RD(m);$('st').textContent=m;const x=$('xs');if(x){x.textContent=m;x.style.color=bad?'#ff9a8a':''}LOG(m)}
+function prog(p,rem){$('pg').value=Math.min(1,Math.max(0,p));const x=$('xp');if(x)x.textContent=`進捗 ${Math.round(Math.min(1,Math.max(0,p))*100)}% / 残り${rem==null?'：計測中':'約 '+fmt(Math.max(0,rem))}`}
+const JE=m=>Object.assign(new Error(m),{jp:1});
+function jp(e){const m=RD(String(e&&e.message||e)),n=e&&e.name;if(e&&e.jp)return m;
+ if(n==='NotAllowedError')return'ブラウザに許可されませんでした（'+m+'）。画面を一度タップしてからやり直してください';
+ if(n==='NotSupportedError')return'この端末は、この形式の録画に対応していません（'+m+'）。画質を「軽量 720p」にして再実行してください';
+ if(n==='QuotaExceededError'||/quota/i.test(m))return'端末の保存容量が足りません。不要なファイルを削除してください';
+ if(n==='TimeoutError'||/timeout/i.test(m))return'時間切れです。処理が長引いています。もう一度お試しください';
+ if(e instanceof RangeError||/memory/i.test(m))return'メモリ不足です。他のアプリを閉じて、画質を720pにしてやり直してください';
+ return'予期しないエラー：'+m}
+/* ---------- v3.0: ワンボタン全自動 ---------- */
+const MS=['台本をつくる','ナレーションを生成','尺と字幕を合わせる','動画を書き出す（テスト→本番）','投稿文をつくる'];
+function ms(i,c,t){const e=$('ms'+i);if(e)e.textContent=c+' '+MS[i]+(t?'：'+t:'')}
+const ckc=()=>{if(S.cancel)throw Object.assign(new Error('中止しました'),{cancel:1,jp:1})};
+const sleep=t=>new Promise(r=>setTimeout(r,t));
+async function makeVideo(){
+ if(S.xbusy)return xmsg('処理中です。完了までお待ちください');
+ S.xbusy=true;S.cancel=false;S.nline=null;snap('動画生成の開始前');dsave(true);pstate('running','動画生成中');const b=$('mk');b.disabled=true;$('remk').disabled=true;b.textContent='作成中…';$('mkstop').hidden=false;$('result').hidden=true;$('gate').hidden=true;$('gack').checked=false;S.gackAt=null;S.gateState=null;stopAll();
+ MS.forEach((_,i)=>ms(i,'○'));S.ph=[0,1];S.after=0;S.pend=0;prog(0,null);xmsg('処理中：ボタンを受け付けました。台本をつくっています…');
+ let cur=0,tk=null;
+ try{await sleep(60);
+  if(!$('th').value.trim())throw JE('テーマが空です。テーマを入力してください（例：人生を変えたい君へ。）');
+  if(!window.MediaRecorder||!document.createElement('canvas').captureStream)throw JE('このブラウザは動画の録画に対応していません。Android版のChromeで開いてください');
+  ms(0,'▶');const imp=$('eng').value==='import'&&S.act;
+  if(!imp){if($('eng').value==='import')$('eng').value='kokoro';S.tplKey=tplKey($('th').value);S.tpl=TPL[S.tplKey];S.tplStyle=S.tpl.sty;S.act=null;S.cand=null;S.gDone=false}
+  if(!lines().length)throw JE('台本が空です。「✏ 台本を編集する」で台本を入れるか、台本欄の「テーマから台本を新規生成」を押してください');{const pb=gateItems().filter(x=>x.s==='BLOCK'&&'FGI'.includes(x.k));if(pb.length)throw JE('制作前の検査でBLOCKになりました（'+pb.map(x=>x.k+'：'+x.n).join('、')+'）。音声の生成は行っていません。\n'+pb[0].m)}ms(0,'✔',lines().length+'行／'+$('vs5').selectedOptions[0].textContent);ckc();
+  cur=1;ms(1,'▶','準備中');
+  if(imp)ms(1,'✔','取り込み音声を使用');
+  else{const tN=Date.now();let lT=null;S.onNar=(i,n)=>{ckc();if(lT==null)lT=Date.now();S.nline=i;S.nN=n};
+   tk=setInterval(()=>{const el=(Date.now()-tN)/1000;if(S.nline==null){prog(.02+.08*(1-Math.exp(-el/120)),null);ms(1,'▶','音声エンジンを準備中（初回のみ数分）経過 '+fmt(el))}
+    else{const i=S.nline,n=S.nN,avg=i>0?(Date.now()-lT)/1000/i:4;prog(.10+.35*i/n,(n-i)*avg+estD(lines())+14);ms(1,'▶',`${i+1}/${n}行目を生成中`)}},500);
+   await narrate();clearInterval(tk);tk=null;ms(1,'✔',S.act.bufs.length+'行 生成完了（'+(ENG[S.act.src]||'')+'）'+(S.xFall&&S.act.src!=='eleven'?'／ElevenLabs不使用：'+S.xFall:'')+(S.gFall&&S.act.src==='kokoro'?'／Gemini不使用：'+S.gFall:''))}
+  ckc();cur=2;ms(2,'▶');let tg=+$('dur').value;upd();let M=model();
+  if(!M.A)throw JE('ナレーション音声がありません。BGMのみの動画は作りません');if(M.miss)throw JE('未生成の行があります');const bad=chkM(M);if(bad)throw JE(bad);
+  if(M.D>tg+1){const ch=await fitAsk(M.D,tg);ckc();if(ch==='abort')throw JE('生成を中止しました。台本は1行も変更していません');if(ch==='edit'){tab(0);setTimeout(()=>{$('script').scrollIntoView({block:'center'});$('script').focus()},50);throw JE('台本を短くしてから、もう一度「現在の台本で動画を作る」を押してください。台本は変更していません')}tg=+$('dur').value;M=model()}
+  ms(2,'✔',`合計 ${fmt(M.D)}（目標 ${fmt(tg)}）`+(M.D>tg+1?'／目標より長いまま続行':''));
+  cur=3;ms(3,'▶','準備');const vk=S.act.vk,pre=!!vk&&S.t3ok!==vk;
+  if(pre){ms(3,'▶','5秒テスト');S.ph=[.45,.5];S.after=2;S.pend=M.D+6;xmsg('5秒テスト（720p・ナレーション付き）を作っています…');if(S.act.src==='kokoro'&&!S.tclip)await ensureVoice();const t=await t3();ckc();if(!t.ok)throw JE('5秒テストが失敗したため、本番の書き出しを中止しました。'+t.msg);S.t3ok=vk;S.pend=0}
+  let r=null,ok=false;
+  for(let k=1;k<=2&&!ok;k++){ckc();S.ph=[.5,.98];S.after=4;S.pend=0;M=model();ms(3,'▶',`本番を書き出し中（約${fmt(M.D)}。画面を消さないでください）`+(k>1?'（自動やり直し）':''));xmsg(`本番の動画を書き出しています（実時間で約${fmt(M.D)}かかります。画面を消さないでください）`+(k>1?'（自動やり直し）':''));
+   try{r=await recWait(M)}catch(e){r={ok:false,msg:jp(e),err:e}}
+   ckc();if(r&&(r.ok||r.unverified)){ok=true;break}LOG('本番書き出し失敗('+k+'): '+(r&&r.msg));if(k<2)xmsg('書き出しに失敗したため、自動で1回だけやり直します…',1)}
+  if(!ok){if(r&&r.err)throw r.err;throw JE(r&&r.msg?r.msg.split('\n').filter(Boolean).slice(-1)[0]:'書き出しに失敗しました')}
+  ms(3,'✔','完成'+(r.unverified?'（音声は未検査）':''));S.lastV=r;recVid(M);gateRender();cur=4;ms(4,'▶');$('gp').onclick();ms(4,'✔');
+  pstate('done','完成');prog(1,0);$('result').hidden=false;$('result').scrollIntoView({behavior:'smooth',block:'start'});
+  xmsg(r.unverified?'⚠ 音声の自動検査ができませんでした。上の動画を再生して、声が入っているか耳で確認してから保存してください':'✔ 完成しました。動画を再生して確認し、「完成動画を保存」を押してください',r.unverified);
+ }catch(e){LOG('作成失敗: '+String(e&&e.stack||e).slice(0,300));const m=e&&e.cancel?'中止しました':jp(e);ms(cur,'✖',m.split('\n')[0]);pstate(e&&e.cancel?'cancel':'failed',MS[cur]+'：'+m.split('\n')[0]);xmsg('✖ '+m+'（台本はそのまま残っています）',1)}
+ finally{if(tk)clearInterval(tk);S.onNar=null;S.xbusy=false;S.ph=[0,1];S.after=0;S.pend=0;b.disabled=false;$('remk').disabled=false;b.textContent='▶ 現在の台本で動画を作る';$('mkstop').hidden=true;$('fitp').hidden=true;S.fitRes=null;dsave(true)}}
+$('mk').onclick=()=>makeVideo();$('remk').onclick=()=>{if(S.xbusy)return;snap('作り直しの前');S.act=null;S.cand=null;S.t3ok=null;S.gDone=false;makeVideo()};$('mkstop').onclick=()=>{S.cancel=true;S.fitRes&&S.fitRes('abort');xmsg('中止しています…',1);stopAll()};
+
+/* ---------- v4.0: Gemini TTS（第一候補）・テンプレート・競合研究・成果分析 ---------- */
+const GM=['gemini-3.8-flash-tts','gemini-3.8-flash-lite-tts','gemini-3.1-flash-tts-preview'],GURL='https://generativelanguage.googleapis.com/v1beta/interactions';
+const GBASE='30代後半の日本人男性ナレーター。声は低く、胸に響く落ち着いたバリトン。映画やドキュメンタリーの語りのように、重厚で知的。感情を内に秘め、語尾は強めすぎず余韻を残す。文の頭は静かに入り、大事な言葉の前で一拍おき、そこだけ少し強める。息づかいが聞こえる自然な間をとり、ゆっくりめのテンポで語る。アナウンサー調や機械的な棒読み、抑揚のない一本調子は絶対にしない。';
+const GR={hook:'ほとんど囁くほど静かに、自分自身に問いかけるように。問いの語尾は少し上げずに沈め、長めの間を置く。',pain:'重く、胸に刺さるように。やや苦しげに、声を落として低く沈め、言葉と言葉の間をわずかに引き伸ばす。',truth:'確信を込めて、力強く。一語一語を噛みしめる。',act:'背中を押すように、熱を帯びて、力強く。',proof:'静かな確信とあたたかさをもって、穏やかに。',close:'一段と低く、ゆっくり。最後の一言の前で深く息をつくような間を置き、噛みしめるように、余韻を残して締める。',story:'目の前の情景を思い出すように、淡々と、感情をにじませて。',psych:'知的で落ち着いた口調で、大切な言葉をはっきり強調する。'};
+const gkey=()=>kget('g');
+const gday=()=>new Date(Date.now()+324e5).toISOString().slice(0,10);
+const gcount=()=>{const d=gday(),o=store.get('bs_gc',null);return o&&o.d===d?o:{d,n:0}};
+const gcapv=()=>Math.max(1,+store.get('bs_gcap',60)||60);
+/* 無料枠を公式資料で確認できたモデルのみ既定で使う（確認日と出典を明示）。確認できないモデルは、オーナーが自分で確認して設定で解放した場合のみ */
+const GMV=[{id:'gemini-3.1-flash-tts-preview',chk:'2026-11-26',src:'ai.google.dev/gemini-api/docs/pricing（標準=無料枠あり）'}],GMU=['gemini-3.8-flash-tts','gemini-3.8-flash-lite-tts'];
+const gmods=()=>store.get('bs_gunv',false)?[...GMU,...GMV.map(x=>x.id)]:GMV.map(x=>x.id);
+const gok=()=>store.get('bs_gok',null);
+function gblock(){if(!(gkey()||$('gpx').value.trim()))return'APIキー未設定';if(!gok())return'無料枠・請求状態の確認が未申告のため、Geminiは使いません（無料のKokoroで作ります）';return''}
+async function greserve(){const run=()=>{const o=gcount();if(o.n>=gcapv())return'cap';o.n++;if(!store.set('bs_gc',o))return'save';return(store.get('bs_gc',{}).n===o.n)?'ok':'save'};try{if(navigator.locks&&navigator.locks.request)return await navigator.locks.request('bs_gc',run)}catch{}return run()}
+S.gc=new Map();S.gWait=25000;
+const gtagify=t=>t.replace(/、/g,'、<short pause>').replace(/([。！？])(?=.)/g,'$1<long pause>');
+async function gcall(text,style,voice,model){
+ const px=$('gpx').value.trim(),key=gkey();if(!px&&!key)throw Object.assign(new Error('APIキー未設定'),{gkey:1});{const gb=gblock();if(gb)throw Object.assign(new Error(gb),{gcap:1,gblock:1})}if(!gmods().includes(model))throw Object.assign(new Error('無料枠を確認できていないモデルは使いません：'+model),{gcap:1,gblock:1});if(S.gBud!=null&&(S.gcalls||0)>=S.gBud)throw Object.assign(new Error('この生成の呼び出し予算（'+S.gBud+'回）に達しました'),{gcap:1,gbud:1});const rs=await greserve();if(rs==='cap')throw Object.assign(new Error('本日の自主上限（'+gcapv()+'回）に達しました'),{gq:1,gcap:1});if(rs!=='ok')throw Object.assign(new Error('呼び出し回数を記録できないため、Geminiは使いません'),{gcap:1,gblock:1});S.gcalls=(S.gcalls||0)+1;{const o=gcount();if(!S.w80&&o.n>=Math.ceil(gcapv()*.8)){S.w80=1;xmsg('⚠ 本日のGemini呼び出しが上限の80%に達しました（'+o.n+'/'+gcapv()+'回）',1)}}
+ const body={model,input:[{type:'user_input',content:[{type:'text',text,annotations:[{type:'speech_metadata',style}]}]}],response_format:{type:'audio'},generation_config:{speech_config:[{voice}]}};
+ const ctl=new AbortController(),tm=setTimeout(()=>ctl.abort(),90000);let r;
+ try{r=await fetch(px||GURL,{method:'POST',headers:{'Content-Type':'application/json',...(px?{}:{'x-goog-api-key':key})},body:JSON.stringify(body),signal:ctl.signal})}
+ catch(e){throw Object.assign(new Error(e.name==='AbortError'?'時間切れ':'通信できません（'+e.message+'）'),{gnet:1})}finally{clearTimeout(tm)}
+ const raw=await r.text();let j=null;try{j=JSON.parse(raw)}catch{}
+ if(!r.ok){const m=String((j&&j.error&&(j.error.message||j.error.status))||raw).slice(0,200),q=r.status===429||/RESOURCE_EXHAUSTED|quota/i.test(m);
+  throw Object.assign(new Error('HTTP '+r.status+' '+RD(m)),{gq:q,gkey:!q&&(r.status===401||r.status===403||(r.status===400&&/api.?key/i.test(m)))})}
+ let a=null;for(const st of((j&&j.steps)||[]))if(st.type==='model_output')for(const c of(st.content||[]))if(c.type==='audio'&&c.data)a=c;
+ if(!a)throw Object.assign(new Error('応答に音声が含まれていません: '+raw.slice(0,140)),{gfmt:1});
+ const bin=atob(a.data),u8=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u8[i]=bin.charCodeAt(i);
+ if(u8[0]===0x52&&u8[1]===0x49&&u8[2]===0x46&&u8[3]===0x46)return dec(u8.buffer);
+ const n=u8.length>>1,ab=new AudioBuffer({length:n,sampleRate:24000,numberOfChannels:1}),f=new Float32Array(n),dv=new DataView(u8.buffer);for(let i=0;i<n;i++)f[i]=dv.getInt16(i*2,true)/32768;ab.copyToChannel(f,0);return ab}
+const gmsg=e=>e&&e.gq?'Geminiの無料枠の上限に達しました（課金はされません）':e&&e.gkey?'Gemini APIキーが無効、または未設定です':e&&e.gnet?'Geminiに通信できません':e&&e.gfmt?'Geminiの応答形式が想定と違います':e&&e.bad?'Geminiの音声が無音または破損でした':'Geminiでエラー：'+String(e&&e.message||e).slice(0,100);
+async function genGemini(L,roles){const voice=$('gv').value,tx=$('gtag').checked,MD=gmods();let mi=0,waited=false;const bufs=[];S.gcalls=0;S.w80=0;S.gBud=L.length+2;
+ for(let i=0;i<L.length;i++){S.onNar&&S.onNar(i,L.length);$('pgv').value=i/L.length;
+  const ck0=voice+'|'+L[i]+'|'+(roles[i]||'')+'|'+(S.tplStyle||'')+'|'+tx,hit=S.gc.get(ck0);if(hit){bufs[i]=hit;continue}
+  const style=GBASE+' '+(S.tplStyle||'')+' '+(GR[roles[i]]||''),text=tx?gtagify(L[i]):L[i];let last;
+  for(let k=0;k<2&&!bufs[i];k++){
+   try{let b=await gcall(text,style,voice,MD[mi]);const v=vcheck(b,L[i]);if(!v.ok)throw Object.assign(new Error(v.why),{bad:1});const tr=trimBuf(b);b=vcheck(tr,L[i]).ok?tr:b;bufs[i]=b;S.gc.set(ck0,b);LOG(`Gemini ${i+1}行目OK（${MD[mi]}）`)}
+   catch(e){last=e;LOG(`Gemini ${i+1}行目失敗(${k+1}): `+String(e.message).slice(0,160));if(S.cancel)throw Object.assign(new Error('中止しました'),{cancel:1,jp:1});if(e.gkey||e.gcap)throw e;
+    if(e.gq){if(mi<MD.length-1){mi++;continue}if(!waited){waited=true;xmsg('Geminiの回数制限に当たりました。約'+Math.round(S.gWait/1000)+'秒待って1回だけ再試行します…');await sleep(S.gWait);continue}throw e}
+    await sleep(1500*(k+1))}}
+  if(!bufs[i])throw last}
+ $('pgv').value=1;return{mode:'clips',bufs,src:'gemini',vk:'g:'+voice+':'+MD[mi]}}
+async function narrate(){const L=lines();let last;const useX=$('xon').checked&&xkey()&&xvoice(),useG0=$('gon').checked&&(gkey()||$('gpx').value.trim()),gbk=useG0?gblock():'',pre=useG0&&!gbk?(()=>{const need=L.filter((t,i)=>true).length,o=gcount();return o.n+need>gcapv()?'本日の残り回数（'+Math.max(0,gcapv()-o.n)+'回）では足りないため':''})():'',useG=useG0&&!gbk&&!pre;S.gFall='';S.xFall='';
+ const roles=S.rolesFor===$('script').value?S.roles:[];
+ if(useX){try{xmsg('ElevenLabs（人間らしい男性ナレーション）で生成しています…');const A=await genEleven(L,roles);S.cand=S.act=A;S.tclip=A.bufs[0];S.ttext=L[0];S.vt=null;S.gDone=true;return}
+  catch(e){if(e.cancel)throw e;S.xFall=xemsg(e);LOG('ElevenLabs失敗→次の声へ: '+String(e.message).slice(0,160));xmsg('⚠ '+S.xFall+'。次の声エンジンに切り替えます…',1);await sleep(1200)}}
+ else S.xFall=$('xon').checked?(xkey()?'声が未選択':'キー未設定'):'';
+ if(useG){try{xmsg('Gemini（自然な男性ナレーション）で生成しています…');const A=await genGemini(L,roles);S.cand=S.act=A;S.tclip=A.bufs[0];S.ttext=L[0];S.vt=null;S.gDone=true;return}
+  catch(e){if(e.cancel)throw e;S.gFall=gmsg(e);LOG('Gemini失敗→Kokoroへ切替: '+String(e.message).slice(0,160));xmsg('⚠ '+S.gFall+'。無料のKokoroの声に切り替えます…',1);await sleep(1200)}}
+ else S.gFall=$('gon').checked?(gbk||(pre?pre+'、Geminiは使いません（無料のKokoroで作ります）':'キー未設定')):'';
+ for(let k=1;k<=3;k++){ckc();
+  try{xmsg(k>1?`ナレーションの生成をやり直しています（${k}/3回目）…`:'ナレーション（Kokoro）を生成しています…');S.nline=null;await genAll();S.act=S.cand;return}
+  catch(e){if(e.cancel)throw e;last=e;LOG(`ナレーション試行${k}失敗: `+String(e&&e.message||e).slice(0,200));if(!e.bad)S.tts=null;S.vt=null;S.tclip=null;if(k<3)await sleep(1500*k)}}
+ throw JE('ナレーションを作れませんでした（'+(S.xFall?S.xFall+'→':'')+(S.gFall?S.gFall+'→':'')+'Kokoroも3回試しました）。'+why(last)+'\n声が入らない動画は作らないため、ここで止めました。通信状況を確認して、もう一度「動画を作る」を押してください')}
+/* --- テンプレート --- */
+const TPL={
+ cinema:{n:'ダークシネマ',st:['city','rays','stars','mountain','rain'],tint:'rgba(10,28,45,.12)',sty:'予告編のように重厚に語る。',seq:[['hook',1],['pain',2],['truth',1],['theme'],['act',3],['proof',2],['close',1]],grow:['pain','act','proof','truth'],pool:{hook:P.hook,pain:P.pain,truth:P.truth,act:P.act,proof:P.proof,close:P.close}},
+ psych:{n:'心理学ストーリー',st:['stars','rain','rays','stars'],tint:'rgba(60,30,90,.13)',sty:'知的で、語りかけるように。心理学の解説は明瞭に。',seq:[['hook',1],['story',2],['psych',2],['theme'],['pain',1],['act',2],['proof',1],['close',1]],grow:['psych','story','act','pain','proof'],pool:{
+  hook:['なぜ人は、変わりたいと願いながら、変われないのか。','やる気が出ない自分を、責めていないか。','意志が弱いのではない。脳が、そう働いているだけだ。'],
+  story:['ある男は、毎晩こう誓っていた。明日から本気を出す、と。','朝になると、昨日と同じ時間に、同じ画面を開いていた。','一年後、彼は気づいた。足りなかったのは才能ではなく、始め方だった。','彼は、やる気が出るのを待つのをやめた。'],
+  psych:['人は、得をする喜びより、失う痛みを大きく感じる。心理学で、損失回避と呼ばれる性質だ。','今の状態を変えないほうが楽に感じる。これを、現状維持バイアスという。','やる気は、始める前には出ない。動き出したあとから、湧いてくる。作業興奮と呼ばれる現象だ。','他人は、あなたが思うほど、あなたを見ていない。スポットライト効果と呼ばれる。'],
+  pain:P.pain,act:[...P.act,'最初の2分だけでいい。タイマーを2分に合わせろ。','靴を履く。本を開く。最初の動作だけを決めておけ。'],proof:P.proof,close:P.close}},
+ growth:{n:'努力・成長ドキュメンタリー',st:['mountain','city','rays','mountain'],tint:'rgba(95,52,12,.11)',sty:'静かな情熱と誠実さをにじませ、ドキュメンタリーのように語る。',seq:[['hook',1],['story',3],['truth',1],['theme'],['act',2],['proof',1],['close',1]],grow:['story','act','proof','truth'],pool:{
+  hook:['最初の日、彼は何もできなかった。','才能がない。そう言われた日から、すべてが始まった。','1日目の自分を、覚えているか。'],
+  story:['1日目。腕立て伏せは、たった3回だった。','30日目。10回。誰も気づかない、小さな変化。','90日目。鏡の中の自分が、少しだけ違って見えた。','周りが諦めていく中で、彼はただ、昨日と同じことを続けた。','結果が出ない日も、やる気のない日も、積み重ねた。'],
+  truth:[...P.truth,'成長は直線じゃない。ある日、突然跳ねる。その前に、静かな日々がある。'],act:P.act,proof:P.proof,close:['今日も、1ミリ。それでいい。','続けた者だけが、見られる景色がある。','理想を語るな。理想になれ。']}}};
+function tplKey(t){const o=$('tpl').value;if(TPL[o])return o;if(/心理|脳|メンタル|不安|自己肯定|認知|感情|ストレス|習慣の科学|心/.test(t))return'psych';if(/努力|成長|継続|挑戦|毎日|積み上げ|筋トレ|勉強|夢|コツコツ|ダイエット|資格/.test(t))return'growth';return'cinema'}
+function genScript(t,tg,key){const T=TPL[key||'cinema'],c={},seq=T.seq,pool={};
+ seq.forEach(([r,n])=>{if(r!=='theme'){c[r]=n;pool[r]=shuf(T.pool[r]||P[r]||[])}});
+ const mk=()=>{const o=[];seq.forEach(([r])=>{if(r==='theme')o.push([t,'truth']);else pool[r].slice(0,c[r]).forEach(x=>o.push([x,r]))});return o};
+ const E=a=>estD(a.map(x=>x[0]));let L=mk(),k=0,g=0;
+ while(E(L)<tg-5&&g++<80){const key2=T.grow[k++%T.grow.length];if(c[key2]!==undefined&&c[key2]<pool[key2].length){c[key2]++;L=mk()}else if(T.grow.every(o=>c[o]===undefined||c[o]>=pool[o].length))break}
+ g=0;while(E(L)>tg&&g++<30){const key2=T.grow.find(o=>c[o]!==undefined&&c[o]>(o==='act'?2:1));if(!key2)break;c[key2]--;L=mk()}
+ return L}
+function gen(){const t=$('th').value.trim()||'人生を変えたい君へ。',k=S.tplKey||tplKey(t);S.tplKey=k;S.tpl=TPL[k];S.tplStyle=S.tpl.sty;const pr=genScript(t,+$('dur').value,k);$('script').value=pr.map(p=>p[0]).join('\n');S.roles=pr.map(p=>p[1]);S.rolesFor=$('script').value;upd();say('台本を生成しました（'+S.tpl.n+'）。')}
+/* --- Gemini設定UI --- */
+function gui(){const k=gkey(),c=gcount();{const e=$('vnote');if(e)e.textContent=(k||$('gpx').value.trim())?'ナレーション：Gemini（無料枠）。失敗時は自動でKokoroへ切替':'ナレーション：Gemini未設定のため、いまは無料のKokoroで作ります（Geminiのキーを入れると自然な声になります）'}{let sess='';try{sess=sessionStorage.getItem(SK.g)||''}catch{}const loc=!!store.get(KN.g,'');const gb=gblock();$('gst').textContent=`APIキー: ${k?(loc?'端末に保存済み（非推奨）':'このタブの間だけ保持'):'未設定'} ／ 本日のGemini呼び出し: ${c.n}/${gcapv()}回（失敗・再試行・モデル切替も計上）／ 使用モデル: ${gmods().join('、')}／ 状態: ${gb?'停止中（'+gb+'）':'使用可'}\n無料枠の確認済みモデル: ${GMV.map(x=>x.id+'（確認日 '+x.chk+'）').join('、')}。3.8系は無料枠を公式資料で確認できていません。予算アラート・回数制限・支出上限を設けても、完全な課金防止は保証されません。`;$('gk').value='';kmig()}}
+$('gsave').onclick=()=>{const v=$('gk').value.trim();if(!v)return say('キーが空です');if(/\s/.test(v)||v.length<20)return say('キーの形式が正しくありません。コピーし直してください');const ok=kset('g',v);gui();say(ok?(kpers()?'キーを保存しました（端末への保存は非推奨です）':'キーを、このタブを開いている間だけ保持します。タブを閉じると消えます'):'⚠ キーを保持できませんでした')};
+$('gclr').onclick=async()=>{const r=await kdel('g');gui();kreport('Gemini',r)};
+['gon','gtag'].forEach(i=>$(i).onchange=()=>store.set('bs_'+i,$(i).checked));$('gv').onchange=()=>store.set('bs_gv',$('gv').value);$('gpx').onchange=()=>store.set('bs_gpx',$('gpx').value.trim());
+$('gcap').value=gcapv();$('gcap').onchange=()=>store.set('bs_gcap',+$('gcap').value||60);{const a=store.get('bs_gon',true);$('gon').checked=!!a;$('gtag').checked=!!store.get('bs_gtag',true);const v=store.get('bs_gv','Charon');if([...$('gv').options].some(o=>o.value===v))$('gv').value=v;$('gpx').value=store.get('bs_gpx','')}
+/* v6.8: 保存方式・移行・確認申告 */
+function kmig(){const has=!!store.get(KN.g,'')||!!store.get(KN.x,'');$('kmig').hidden=!(has&&!kpers());$('kper').checked=kpers();$('gokc').checked=!!gok();$('gunv').checked=!!store.get('bs_gunv',false)}
+$('kper').onchange=()=>{store.set('bs_kpers',$('kper').checked);if($('kper').checked){['g','x'].forEach(n=>{const v=kget(n);if(v)store.set(KN[n],v)});say('⚠ キーを端末へ保存します。非推奨です')}else{['g','x'].forEach(n=>{const v=store.get(KN[n],'');if(v){try{sessionStorage.setItem(SK[n],v)}catch{}store.set(KN[n],'');try{localStorage.removeItem(KN[n])}catch{}}});say('端末の保存キーを、このタブだけの保持に移しました')}gui();xui()};
+$('kmv').onclick=()=>{['g','x'].forEach(n=>{const v=store.get(KN[n],'');if(v){try{sessionStorage.setItem(SK[n],v)}catch{}store.set(KN[n],'');try{localStorage.removeItem(KN[n])}catch{}}});store.set('bs_kpers',false);const left=[...['g','x'].map(n=>kget(n)).filter(Boolean)].flatMap(v=>kscan(v).filter(x=>!x.startsWith('このタブ')));say(left.length?'⚠ 移しましたが、端末側に残りがあります：'+left.join('、'):'✔ キーをこのタブだけに移し、端末の保存を削除して、残りが無いことを確認しました');gui();xui()};
+$('kdl').onclick=async()=>{const a=await kdel('g',1),b=await kdel('x',1);kreport('Gemini/ElevenLabs',{had:a.had||b.had,gone:a.gone&&b.gone,left:await kleft([a,b])});gui();xui()};
+$('kkp').onclick=()=>{store.set('bs_kpers',true);say('キーを端末に残します（非推奨）');gui()};
+$('kall').onclick=async()=>{const a=await kdel('g',1),b=await kdel('x',1),tt=String(store.get('bs_tts','')||'');store.set('bs_tts','');store.set('bs_tt',null);try{localStorage.removeItem('bs_tts')}catch{}const left=await kleft([a,b,{v:tt.length>=12?tt:''}]);say(left.length?'⚠ 削除しましたが、次の場所に残りがあります：'+left.join('、'):'✔ Gemini・ElevenLabs・TikTokの保存を削除し、旧保存領域・退避・ログに残りが無いことを確認しました。削除は端末内の消去であり、キー自体は無効になりません');gui();xui();ttui()};
+$('gokc').onchange=()=>{if($('gokc').checked)store.set('bs_gok',{at:new Date().toISOString()});else store.set('bs_gok',null);gui()};
+$('gunv').onchange=()=>{store.set('bs_gunv',$('gunv').checked);gui()};
+$('gtest').onclick=async()=>{const b=$('gtest');b.disabled=true;$('gst').textContent='Geminiに依頼中…（無料枠を1回分使います）';
+ try{const tx='理想を語るな。理想になれ。',buf=await gcall($('gtag').checked?gtagify(tx):tx,GBASE+' '+GR.close,$('gv').value,gmods()[0]),v=vcheck(buf,tx);if(!v.ok)throw Object.assign(new Error(v.why),{bad:1});
+  $('gst').textContent=`✔ 生成成功：${sfmt(v.s)}。これから再生します。声が聞こえるか、男性の声か、棒読みでないかを耳で確認してください`;gui_keep();listen(model({mode:'clips',bufs:[buf]},[tx]),'Geminiテスト')}
+ catch(e){LOG('gtest失敗: '+e.message);$('gst').textContent='✖ '+gmsg(e)+'\n詳細: '+String(e.message).slice(0,200)}finally{b.disabled=false}};
+function gui_keep(){}
+gui();
+/* ---------- v6.4: BEYOND. SECURITY PROTOCOL v1.0 投稿前セキュリティゲート（A〜J）・監査ログ ---------- */
+const TOS={date:'2026-11-26',note:'TikTok公式ページを確認（AI生成コンテンツ: support.tiktok.com／コミュニティガイドライン: tiktok.com/community-guidelines／Creator Rewards: newsroom.tiktok.com 2024-03-18）。ガイドラインのページ内表記は「Last updated, March 2023」で、現行版かどうかは確認できません'};
+const SGR={
+ inj:/(ignore (all|any|previous)|disregard|以前の(指示|命令)|命令を無視|システムプロンプト|プロンプト|APIキー|パスワード|アクセストークン|sk-[A-Za-z0-9]|AIza[0-9A-Za-z_-]{10,}|送信して|送って|実行して)/i,
+ pii:/(0\d{1,4}[-ー]?\d{1,4}[-ー]?\d{3,4}|[\w.+-]+@[\w-]+\.[\w.-]+|https?:\/\/|www\.|(都|道|府|県).{1,8}(市|区|町|村).{0,12}[0-9０-９])/,
+ stat:/([0-9０-９]+(\.[0-9]+)?\s*(%|％|割|パーセント)|[0-9０-９]+人に[0-9０-９]+人|(多くの|ほとんどの|大半の|大多数の)人(は|が)|[0-9０-９]+倍)/,
+ res:/(研究|実験|論文|調査|統計|データによると|科学的|脳科学|心理学者|科学者|ハーバード|スタンフォード|エビデンス|証明され)/,
+ med:/(うつ病|鬱|うつ|病気|治る|治療|診断|薬|ADHD|不眠症|自律神経|障害|トラウマ)/,
+ gua:/((必ず|絶対(に)?|確実に|100\s*[%％]|誰でも)(成功|稼|変われ|変わる|勝て|痩せ|治|実現|叶))|人生(が|は)(必ず|絶対)/,
+ weak:/(必ず|絶対|確実|保証|間違いなく)/,
+ money:/(稼|月収|年収|万円|副業|投資|株|FX|仮想通貨|借金|訴え|法律|弁護士)/,
+ quote:/(名言|格言|曰く|「[^」]{4,}」\s*(と|は)?\s*(言|語|述)|[―—-]\s*[ァ-ヶ一-龠A-Za-z]{2,})/,
+ sui:/(死にたい|自殺|自傷|リスカ|消えたい|殺す|殺せ|死ね|首を吊)/,
+ ins:/(バカ|馬鹿|クズ|無能|負け組|ゴミ|カス|情けない|お前は|ダメ人間|価値がない)/,
+ fear:/(手遅れ|終わりだ|人生終了|取り返しがつかない|後悔するぞ|もう遅い|一生.{0,6}(惨め|貧乏|孤独))/,
+ risk:/(断食|一気飲み|徹夜|限界まで|無理やり|我慢して耐え)/,
+ bait:/(フォローしないと|いいね(を)?お願い|相互フォロー|フォロバ|拡散して|シェアしないと|いいねしないと)/};
+const bg2=t=>{const s=String(t).replace(/\s/g,''),m=new Set();for(let i=0;i<s.length-1;i++)m.add(s.slice(i,i+2));return m},sim=(a,b)=>{const A=bg2(a),B=bg2(b);if(!A.size||!B.size)return 0;let n=0;A.forEach(x=>{if(B.has(x))n++});return n/(A.size+B.size-n)};
+function gateItems(){const L=lines(),txt=L.join('\n'),th=$('th').value.trim(),all=th+'\n'+txt+'\n'+$('script').value,src=(S.act&&S.act.src)||'',V=vids(),cur=V[0],dur=cur?cur.dur:0,own=(mgHandle()||'').toLowerCase(),I=[],add=(k,n,s,m)=>I.push({k,n,s,m}),srcn=($('srcn').value||'').trim();
+ const hit=(re,t=all)=>{const m=t.match(re);return m?m[0]:null};
+ /* A TikTok規約 */
+ {const b=hit(SGR.bait,txt);add('A','TikTok規約',b?'REVIEW':'REVIEW',(b?'「'+b+'」はエンゲージメント誘導にあたる可能性があります。':'')+'規約確認日 '+TOS.date+'。'+TOS.note+'。最新の規約は人が確認してください（最新情報を確認できないため、PASSにはしません）')}
+ /* B AI生成表示 */
+ {const parts=['音声: AI合成（'+(ENG[src]||'不明')+'）','映像: コードで生成したCG（実在人物の顔・声は使用していません）'];if(S.photos.length)parts.push('写真: 利用者が追加（AI生成かどうかは本人が確認）');add('B','AI生成表示','REVIEW','使用箇所 → '+parts.join('／')+'。TikTokの投稿画面で「AI生成コンテンツ」の設定をオンにするか、投稿文に明記してください（公式: リアルなAI生成の画像・音声・映像は表示が必要）。意図的に隠すことは禁止です')}
+ /* C 著作権 */
+ {const q=hit(SGR.quote,txt);if(S.photos.length||q)add('C','著作権',  'REVIEW',(S.photos.length?'追加した写真 '+S.photos.length+'枚の権利は、ご自身で確認してください。':'')+(q?'名言・引用らしき表現「'+q+'」があります。発言者と原典を確認し、確認できない場合は削除してください。':''));else add('C','著作権','PASS','BGM・効果音・図・人物はすべてアプリ内で合成・描画しています（外部素材なし）。他者の動画・音楽・画像は使っていません')}
+ /* D 商用利用 */
+ {const d=[];let s='PASS';d.push('BGM・効果音: アプリ内で合成（外部素材なし）');
+  if(src==='gemini')d.push('音声(Gemini): 生成物の所有権をGoogleは主張しない（Gemini API追加利用規約 2025-10-17版、確認日 2026-11-26）。無料枠では入出力が製品改善に使われます');
+  else if(src==='kokoro'){s='REVIEW';d.push('音声(Kokoro): モデル本体はApache-2.0。日本語音声データの由来・条件は確認できません')}
+  else if(src==='eleven'){s='REVIEW';d.push('音声(ElevenLabs): 商用利用は契約プランの条件に依存。プランを確認してください')}
+  s='REVIEW';d.push('フォント(Shippori Mincho B1、Noto Sans JP): 二次情報でOFL-1.1。Google公式の一次情報は未取得のため確認できません');add('D','商用利用許諾',s,d.join('／'))}
+ /* E オリジナリティ */
+ {let s='PASS';const m=[];let mx=0,mxv=null;V.slice(1).forEach(v=>{if(v.scr){const x=sim(txt,v.scr);if(x>mx){mx=x;mxv=v}}});
+  if(mx>=.8){s='BLOCK';m.push('過去動画「'+mxv.th+'」と台本の類似度 '+(mx*100).toFixed(0)+'%（80%以上）。内容を作り直してください')}else if(mx>=.5){s='REVIEW';m.push('過去動画「'+mxv.th+'」と台本の類似度 '+(mx*100).toFixed(0)+'%。重複していないか確認してください')}else m.push('過去動画との台本の類似度は最大 '+(mx*100).toFixed(0)+'%'+(V.length<2?'（比較対象の動画がありません）':''));
+  if(S.rolesFor&&S.rolesFor===$('script').value){if(s==='PASS')s='REVIEW';m.push('台本はテンプレートの自動生成のままです。独自の解説・考察・視点を加えたか確認してください')}
+  if($('bgs').value==='mg'&&S.kits){const sc=S.lastM?S.lastM.sc:[],ks=new Set();sc.forEach((c,i)=>{const K=S.kits.get(c.s+'|'+i);if(K)ks.add((K.comp||'fig')+':'+(K.icon||K.chart||'-'))});if(sc.length>=4&&ks.size<Math.min(4,sc.length-1)){if(s==='PASS')s='REVIEW';m.push('図解の種類が少なく単調です（'+ks.size+'種）')}else m.push('図解の種類: '+ks.size+'種')}
+  if($('bgs').value==='real'&&S.photos.length){if(s==='PASS')s='REVIEW';m.push('写真が主体の構成です。独自の解説が入っているか確認してください（静止画の羅列は不可）')}
+  if(dur&&dur<60){if(s==='PASS')s='REVIEW';m.push('長さ '+dur+'秒。収益化を目指す場合は原則75〜90秒')}else if(dur)m.push('長さ '+dur+'秒');
+  add('E','オリジナリティ',s,m.join('／'))}
+ /* F ファクトチェック */
+ {let s='PASS';const m=[],st=hit(SGR.stat),rs=hit(SGR.res),md=hit(SGR.med),gu=hit(SGR.gua),wk=hit(SGR.weak),mn=hit(SGR.money),q=hit(SGR.quote,txt);
+  if(st||rs){if(srcn){s='REVIEW';m.push('統計・研究に関する表現「'+(st||rs)+'」があります。出典メモ「'+srcn.slice(0,40)+'」が実在し、内容と一致するか確認してください')}else{s='BLOCK';m.push('統計・研究に関する表現「'+(st||rs)+'」がありますが、出典メモが空です。出典を確認できないため、削除するか出典を入力してください（架空の研究・根拠のない統計は禁止）')}}
+  if(gu){s='BLOCK';m.push('成功・変化を保証する表現「'+gu+'」があります。保証はしないでください')}else if(wk){if(s==='PASS')s='REVIEW';m.push('断定表現「'+wk+'」があります。保証にならないか確認してください')}
+  if(md){if(s==='PASS')s='REVIEW';m.push('医療・精神に関する語「'+md+'」があります。断定していないか確認してください')}
+  if(mn){if(s==='PASS')s='REVIEW';m.push('金銭・法律に関する語「'+mn+'」があります。根拠のない助言になっていないか確認してください')}
+  if(q){if(s==='PASS')s='REVIEW';m.push('名言・引用らしき表現があります。発言者と原典を確認してください')}
+  if(s==='PASS')m.push('統計・研究・医療・保証の表現は検出されませんでした（機械的な検査です。内容の事実確認は人が行ってください）');add('F','ファクトチェック',s,m.join('／'))}
+ /* G 視聴者保護 */
+ {let s='PASS';const m=[],su=hit(SGR.sui),ins=hit(SGR.ins),fe=hit(SGR.fear),rk=hit(SGR.risk);
+  if(su){s='BLOCK';m.push('自傷・自殺・暴力に関する語「'+su+'」があります')}
+  if(ins){if(s==='PASS')s='REVIEW';m.push('人格否定にあたる可能性のある語「'+ins+'」があります')}
+  if(fe){if(s==='PASS')s='REVIEW';m.push('不安をあおる表現「'+fe+'」があります')}
+  if(rk){if(s==='PASS')s='REVIEW';m.push('危険な行動を連想させる語「'+rk+'」があります')}
+  if(s==='PASS')m.push('危険・差別・人格否定・過度な不安の語は検出されませんでした（機械的な検査です。トーンは人が確認してください）');add('G','視聴者保護',s,m.join('／'))}
+ /* H 音声・字幕品質 */
+ {const r=S.lastV;let s='REVIEW';const m=[];if(!r){m.push('音声の自動検査結果がありません')}else if(r.ok){m.push('音声の自動検査: 合格')}else if(r.unverified){m.push('音声の自動検査: 検査できませんでした')}else{s='BLOCK';m.push('音声の自動検査: 不合格（ナレーションなし）')}
+  const lg=L.filter(x=>x.length>40);if(lg.length)m.push('40文字を超える字幕行が'+lg.length+'行あります');m.push('声の自然さ・字幕の誤字は、再生して耳と目で確認してください');add('H','音声・字幕品質',s,m.join('／'))}
+ /* I 個人情報・外部入力 */
+ {let s='PASS';const m=[],pi=hit(SGR.pii),ij=hit(SGR.inj),hd=(all.match(/@[\w.]+/g)||[]).filter(h=>h.toLowerCase()!==own);
+  if(ij){s='BLOCK';m.push('外部からの命令・認証情報を思わせる語「'+ij+'」が台本またはテーマにあります（プロンプトインジェクションの疑い）')}
+  if(pi){s='BLOCK';m.push('個人情報・連絡先・URLらしき文字「'+pi+'」があります')}
+  if(hd.length){if(s==='PASS')s='REVIEW';m.push('他人のアカウント名らしき表記 '+hd.join(',')+'があります')}
+  if(s==='PASS')m.push('電話・メール・URL・住所・認証情報らしき文字は検出されませんでした');add('I','個人情報・外部入力',s,m.join('／'))}
+ /* J 収益化適格性 */
+ add('J','収益化適格性（事前確認）','REVIEW','Creator Rewardsの条件（公式 2024-03-18: 18歳以上・フォロワー1万以上・直近30日10万再生以上・1分超の独創的な動画・良好なアカウント）をこのアプリでは確認できません。日本での提供状況と現行条件も確認できません。本動画の長さ: '+(dur?dur+'秒':'不明'));
+ return I}
+const SGC={PASS:'#6fcf97',REVIEW:'#f2c94c',BLOCK:'#eb5757'};
+function gateRender(){const I=S.gate=gateItems(),b=I.some(x=>x.s==='BLOCK'),r=I.some(x=>x.s==='REVIEW');S.gateState=b?'BLOCK':r?'REVIEW':'PASS';
+ $('gl').innerHTML=I.map(x=>`<li style="margin:.5em 0"><b style="color:${SGC[x.s]}">${x.s}</b> <b>${x.k}：${esc(x.n)}</b><br><small>${esc(x.m)}</small></li>`).join('');
+ $('gsum').innerHTML=b?'<b style="color:#eb5757">BLOCK：投稿準備を停止しました。</b> 保存・共有・TikTok送信はできません。BLOCKの項目を直して、動画を作り直してください':r?'<b style="color:#f2c94c">REVIEW：オーナーの確認が必要です。</b> 各項目を読み、下のチェックを入れると保存・共有ができます':'<b style="color:#6fcf97">全項目PASS（確認できた範囲）</b>。ただしTikTok側の審査通過を保証するものではありません';
+ $('gack').parentElement.hidden=S.gateState!=='REVIEW';$('gate').hidden=false;gateSync()}
+function gateSync(){const st=S.gateState,ok=st==='PASS'||(st==='REVIEW'&&$('gack').checked);if(st==='REVIEW'&&$('gack').checked&&!S.gackAt)S.gackAt=new Date().toISOString();if(!$('gack').checked)S.gackAt=null;
+ if(st==='BLOCK'){$('dl').hidden=true;$('share').hidden=true}else if(!ok){$('dl').hidden=true;$('share').hidden=true}else{const v=S.lastV;if(v&&(v.ok||v.unverified))$('dl').hidden=false;$('share').hidden=!(navigator.canShare&&navigator.share&&v&&(v.ok||v.unverified))}
+ const tb=$('ttup');if(tb)tb.dataset.gate=ok?'1':'0'}
+$('gack').onchange=gateSync;
+$('gailabel').onclick=()=>{const c=$('cap');if(!/AI生成/.test(c.value))c.value=c.value.trimEnd()+'\n\n※この動画はAI音声とAI生成の映像（CG）を使用しています。';say('投稿文にAI生成の表記を追加しました')};
+function gateLog(){const V=vids(),cur=V[0]||{},I=S.gate||gateItems(),th=$('th').value.trim(),rev=V.filter(v=>v.th===th).map(v=>'  - '+(v.at||v.date)+' EP.'+pad3(v.ep)+' ('+(v.sty||'')+' '+v.dur+'秒)').join('\n');
+ const t=['BEYOND. 監査ログ（BECOME. STUDIO v6.4）','','制作日時: '+(cur.at||new Date().toISOString()),'エピソード: EP.'+pad3(S.ep),'テーマ: '+th,'動画スタイル: '+$('vs5').selectedOptions[0].textContent,'長さ: '+(cur.dur||'')+'秒','','【台本】',lines().join('\n'),'','【素材の出典・利用許諾】','BGM・効果音・図・人物: アプリ内で合成・描画（外部素材なし）','音声: '+(ENG[S.act&&S.act.src]||'不明'),'写真: '+(S.photos.length?S.photos.length+'枚（利用者提供・権利は本人確認）':'なし'),'フォント: Shippori Mincho B1 / Noto Sans JP（二次情報でOFL-1.1・Google公式は未確認）','','【AI使用箇所】','音声合成（AI）、映像生成（コードによるCG）','','【規約確認日】',TOS.date+'：'+TOS.note,'出典: https://support.tiktok.com/en/using-tiktok/creating-videos/ai-generated-content , https://www.tiktok.com/community-guidelines/en/integrity-authenticity/ , https://newsroom.tiktok.com/introducing-the-new-creator-rewards-program','','【検査結果】',...I.map(x=>x.s+' '+x.k+' '+x.n+': '+x.m),'総合: '+S.gateState,'※全項目PASSでもTikTok側の審査通過を保証しません','','【出典メモ（統計・研究を使った場合）】',($('srcn').value||'なし'),'','【修正履歴（同じテーマの制作記録）】',rev||'  なし','','【最終承認状態】',S.gackAt?'オーナー確認済み '+S.gackAt:(S.gateState==='PASS'?'自動検査PASS（オーナーの最終承認は別途必要）':S.gateState==='BLOCK'?'BLOCK（投稿停止）':'未承認')].join('\n');
+ const a=store.get('bs_audit',[]);a.unshift({at:new Date().toISOString(),ep:S.ep,th,state:S.gateState});store.set('bs_audit',a.slice(0,50));return t}
+$('glog').onclick=()=>{const t=gateLog(),n=new Date(),p=x=>String(x).padStart(2,'0'),fn=`監査ログ_${n.getFullYear()}${p(n.getMonth()+1)}${p(n.getDate())}-${p(n.getHours())}${p(n.getMinutes())}_EP${pad3(S.ep)}.txt`,u=URL.createObjectURL(new Blob([t],{type:'text/plain;charset=utf-8'})),a=document.createElement('a');a.href=u;a.download=fn;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);say('監査ログを保存しました。Google Driveの「07_改善履歴・検証結果」にアップロードしてください')};
+
+$('grun').onclick=()=>{try{gateRender();say('再検査しました')}catch(e){say('検査に失敗: '+e.message)}};
+const VSTY={mg:{tpl:'cinema',bgs:'mg',acc:null,n:'図解・矢印・数字・人物がアニメーションする黒背景の映像。心理や自己啓発の解説向け。'},real:{tpl:'growth',bgs:'real',acc:null,n:'写真を追加すると実写の映像になります。写真が無い場合は、夕景のシルエット映像で代替します（実写の動画素材は使いません）。'},cinema:{tpl:'cinema',bgs:'auto',acc:null,n:'予告編のように重厚な、夜景・光の筋・星空などのダークシネマ。'},psych:{tpl:'psych',bgs:'mg',acc:'#b79cff',n:'心理学の用語を図解で見せる、紫アクセントのアニメーション。'},story:{tpl:'growth',bgs:'auto',acc:null,n:'1日目から積み上げる成長ドキュメンタリー調のストーリー。'}};
+function applyStyle(){const k=$('vs5').value,v=VSTY[k]||VSTY.mg;$('tpl').value=v.tpl;$('bgs').value=v.bgs;S.acc=v.acc;S.tplKey=null;$('vs5n').textContent=v.n;store.set('bs_vs5',k)}
+$('brand').value=store.get('bs_brand','BEYOND.');$('handle').value=store.get('bs_handle','@beyond8428');$('brand').oninput=()=>store.set('bs_brand',$('brand').value);$('handle').oninput=()=>store.set('bs_handle',$('handle').value);
+$('vs5').onchange=applyStyle;
+/* 制作指示リンク: #s=スタイル&t=テーマ&x=台本(改行区切り)&d=秒 を読み込む（自動で動画作成は始めない） */
+function jobImport(){try{const h=location.hash.replace(/^#/,'');if(!/(^|&)(t|x)=/.test(h))return;if(SGR.inj.test(decodeURIComponent(h.replace(/\+/g,' ')))){$('jobn').textContent='✖ 制作指示リンクに、命令や認証情報を思わせる語が含まれていたため、読み込みを停止しました（安全のため）';history.replaceState(null,'',location.pathname+location.search);return}const q=new URLSearchParams(h),st=q.get('s'),t=(q.get('t')||'').slice(0,60),x=(q.get('x')||'').replace(/\r/g,'').trim().slice(0,3000),d=q.get('d');
+ {const od=store.get('bs_draft',null)||store.get('bs_cur',null);if(od&&od.script)snap('起動リンク取り込み前',od)}S.imported=true;S.impSkip=[];
+ if(st&&VSTY[st]){$('vs5').value=st;applyStyle();S.impSkip.push('vs5','tpl','bgs')}if(t){$('th').value=t;S.impSkip.push('th')}if(d&&[...$('dur').options].some(o=>o.value===d)){$('dur').value=d;S.impSkip.push('dur')}
+ if(x){$('script').value=x;S.impSkip.push('script')}S.rolesFor=null;upd();
+ $('jobn').textContent='✔ 制作指示を読み込みました（'+(t||'テーマ未指定')+'／'+(VSTY[st]?$('vs5').selectedOptions[0].textContent:'スタイルは現在の選択')+(x?'／台本'+x.split('\n').filter(Boolean).length+'行':'')+'）。内容を確認して「▶ 現在の台本で動画を作る」を押してください'+(x?'（以前の下書きは「↩ 前の下書きを復元」で戻せます）':'。台本は受け取っていないため、現在の台本をそのまま使います');
+ history.replaceState(null,'',location.pathname+location.search)}catch(e){$('jobn').textContent='制作指示リンクを読み込めませんでした：'+e.message}}
+jobImport();{const k=store.get('bs_vs5','mg');if(VSTY[k])$('vs5').value=k;applyStyle()}
+/* ---------- v6.0: ElevenLabs（有料）ナレーション＋クレジット管理 ---------- */
+const XB='https://api.elevenlabs.io',ENG={eleven:'ElevenLabs',gemini:'Gemini',kokoro:'Kokoro'};
+const xkey=()=>kget('x'),xvoice=()=>store.get('bs_xv','')||'';
+const XS={hook:{st:.42,sy:.4},pain:{st:.38,sy:.5},truth:{st:.5,sy:.4},psych:{st:.5,sy:.3},story:{st:.45,sy:.35},act:{st:.5,sy:.3},proof:{st:.5,sy:.3},close:{st:.4,sy:.5}};
+S.xc=new Map();
+const xmonth=()=>{const m=new Date().toISOString().slice(0,7),o=store.get('bs_xu',null);return o&&o.m===m?o:{m,n:0}};
+const xhist=()=>store.get('bs_xh',[])||[];
+function xerr(r,raw){let j=null;try{j=JSON.parse(raw)}catch{}const d=j&&j.detail,st=(d&&(d.status||d.code))||'',m=String((d&&(d.message||d))||raw).slice(0,200);
+ return Object.assign(new Error('HTTP '+r.status+' '+st+' '+m),{xs:r.status,xcode:String(st),xq:r.status===402||/quota|credit|exceeded/i.test(st+m),xkey:r.status===401||/invalid_api_key|needs_authorization/i.test(st),xperm:r.status===403||/missing_permissions/i.test(st+m),xrate:r.status===429,xvoice:r.status===404||/voice_not_found|invalid_voice/i.test(st+m),xmodel:/model/i.test(st)&&r.status===400})}
+async function xfetch(path,opt={},tmo=60000){const key=xkey();if(!key)throw Object.assign(new Error('APIキー未設定'),{xkey:1});const ctl=new AbortController(),tm=setTimeout(()=>ctl.abort(),tmo);let r;
+ try{r=await fetch(XB+path,{...opt,headers:{'xi-api-key':key,...(opt.body?{'Content-Type':'application/json'}:{}),...(opt.headers||{})},signal:ctl.signal})}
+ catch(e){throw Object.assign(new Error(e.name==='AbortError'?'時間切れ':'通信できません（'+e.message+'）'),{xnet:1})}finally{clearTimeout(tm)}return r}
+async function xsub(){const r=await xfetch('/v1/user/subscription'),raw=await r.text();if(!r.ok)throw xerr(r,raw);const j=JSON.parse(raw);
+ if(typeof j.character_limit!=='number'||typeof j.character_count!=='number')throw Object.assign(new Error('契約情報の形式が想定と違います'),{xfmt:1});
+ return{tier:j.tier,used:j.character_count,limit:j.character_limit,left:j.character_limit-j.character_count,status:j.status,ext:j.max_credit_limit_extension,canExt:!!j.can_extend_character_limit,reset:j.next_character_count_reset_unix}}
+/* 生成前の安全確認：失敗したら一切生成しない（fail-closed） */
+async function xguard(L){const need=L.reduce((a,s)=>a+s.length,0),cap=+$('xcap').value||1500,mcap=+$('xmcap').value||20000,mu=xmonth();
+ if(need>cap)throw Object.assign(new Error('1本あたりの上限（'+cap+'文字）を超えています（今回 '+need+'文字）'),{xblock:1});
+ if(mu.n+need>mcap)throw Object.assign(new Error('今月の自主上限（'+mcap+'文字）を超えるため停止（使用済み '+mu.n+'文字）'),{xblock:1});
+ const s=await xsub();if(!/^(active|trialing)$/.test(String(s.status)))throw Object.assign(new Error('契約の状態が有効ではありません（'+s.status+'）'),{xblock:1});
+ if(need>s.left)throw Object.assign(new Error('契約の残りクレジットが足りません（残り '+s.left+'、必要 '+need+'）。上限を超える課金を防ぐため停止'),{xblock:1,xq:1});
+ return{s,need}}
+async function xcall(text,voice,model,role,prev,next,seedUsed){
+ const rs=XS[role]||{st:.5,sy:.35},body={text,model_id:model,voice_settings:{stability:rs.st,similarity_boost:.8,style:rs.sy,use_speaker_boost:true,speed:1}};
+ if(prev)body.previous_text=prev;if(next)body.next_text=next;if(model!=='eleven_multilingual_v2')body.language_code='ja';
+ const r=await xfetch('/v1/text-to-speech/'+encodeURIComponent(voice)+'?output_format=mp3_44100_128',{method:'POST',body:JSON.stringify(body)},90000);
+ if(!r.ok)throw xerr(r,await r.text());const ab=await r.arrayBuffer();if(ab.byteLength<2000)throw Object.assign(new Error('音声データが小さすぎます'),{bad:1});return dec(ab)}
+const xemsg=e=>!e?'':e.xblock?'ElevenLabsを使わず停止：'+e.message:e.xkey?'ElevenLabsのAPIキーが無効、または未設定です':e.xperm?'ElevenLabsのAPIキーの権限が足りません（Text to Speech と Voices と User の読み取りを許可してください）':e.xq?'ElevenLabsのクレジットが不足しています（追加課金はしていません）':e.xrate?'ElevenLabsの同時利用が多すぎます':e.xvoice?'選んだ声がアカウントで使えません（声を選び直してください）':e.xnet?'ElevenLabsに通信できません':e.bad?'ElevenLabsの音声が無音または破損でした':'ElevenLabsでエラー：'+String(e.message||e).slice(0,100);
+async function genEleven(L,roles){const voice=xvoice(),model=$('xmodel').value;if(!voice)throw Object.assign(new Error('声が未選択です'),{xblock:1});
+ const need0=L.reduce((a,s,i)=>a+(S.xc.has(voice+'|'+model+'|'+s+'|'+(roles[i]||''))?0:s.length),0),todo=L.map((s,i)=>S.xc.has(voice+'|'+model+'|'+s+'|'+(roles[i]||''))?null:s).filter(x=>x!==null);
+ let before=null;if(need0>0){xmsg('契約の残りクレジットを確認しています…');const gd=await xguard(todo);before=gd.s;LOG(`ElevenLabs事前確認OK 残り${gd.s.left} 必要${gd.need} プラン${gd.s.tier}`)}
+ const bufs=[];let spent=0,mdl=model;
+ for(let i=0;i<L.length;i++){S.onNar&&S.onNar(i,L.length);$('pgv').value=i/L.length;const ck=voice+'|'+model+'|'+L[i]+'|'+(roles[i]||''),hit=S.xc.get(ck);if(hit){bufs[i]=hit;continue}
+  let last;for(let k=0;k<2&&!bufs[i];k++){
+   try{let b=await xcall(L[i],voice,mdl,roles[i],L[i-1],L[i+1]);const v=vcheck(b,L[i]);if(!v.ok)throw Object.assign(new Error(v.why),{bad:1});const tr=trimBuf(b);b=vcheck(tr,L[i]).ok?tr:b;bufs[i]=b;S.xc.set(ck,b);spent+=L[i].length;const mu=xmonth();mu.n+=L[i].length;store.set('bs_xu',mu);LOG(`ElevenLabs ${i+1}行目OK（${mdl}）`)}
+   catch(e){last=e;LOG(`ElevenLabs ${i+1}行目失敗(${k+1}): `+String(e.message).slice(0,160));if(S.cancel)throw Object.assign(new Error('中止しました'),{cancel:1,jp:1});
+    if(e.xkey||e.xperm||e.xq||e.xvoice||e.xrate)throw e;if(e.xmodel&&mdl!=='eleven_multilingual_v2'){mdl='eleven_multilingual_v2';continue}if(e.bad&&k===0)continue;await sleep(1500)}}
+  if(!bufs[i])throw last}
+ $('pgv').value=1;let after=null;try{after=await xsub()}catch{}
+ const real=before&&after?after.used-before.used:null;const h=xhist();h.unshift({d:new Date().toLocaleString('ja-JP'),chars:spent,real,left:after?after.left:null,m:mdl});store.set('bs_xh',h.slice(0,20));xui();
+ return{mode:'clips',bufs,src:'eleven',vk:'x:'+voice+':'+mdl}}
+/* --- 設定UI --- */
+function xui(){const k=xkey(),mu=xmonth(),h=xhist()[0];$('xst').textContent=`APIキー: ${k?(store.get(KN.x,'')?'端末に保存済み（非推奨）':'このタブの間だけ保持'):'未設定'} ／ 声: ${xvoice()?xvoice().slice(0,8)+'…':'未選択'} ／ アプリ内の今月使用: ${mu.n}文字${h?`\n直近: ${h.d} 生成${h.chars}文字／契約側の実消費 ${h.real==null?'確認できません':h.real+'文字'}／残り ${h.left==null?'確認できません':h.left}`:''}`;$('xk').value=''}
+$('xsave').onclick=async()=>{const v=$('xk').value.trim();if(!v)return say('キーが空です');if(/\s/.test(v)||v.length<20)return say('キーの形式が正しくありません。コピーし直してください');kset('x',v);xui();await xcheck()};
+$('xclr').onclick=async()=>{const r=await kdel('x');store.set('bs_xv','');xui();kreport('ElevenLabs',r)};
+$('xon').onchange=()=>{};$('xmodel').onchange=()=>store.set('bs_xmodel',$('xmodel').value);$('xcap').onchange=()=>store.set('bs_xcap',+$('xcap').value||1500);$('xmcap').onchange=()=>store.set('bs_xmcap',+$('xmcap').value||20000);
+{$('xon').checked=false;const m=store.get('bs_xmodel','eleven_multilingual_v2');if([...$('xmodel').options].some(o=>o.value===m))$('xmodel').value=m;$('xcap').value=store.get('bs_xcap',1500);$('xmcap').value=store.get('bs_xmcap',20000)}
+async function xcheck(){const b=$('xcheck');b.disabled=true;$('xst').textContent='契約情報を確認しています…（クレジットは消費しません）';
+ try{const s=await xsub();let w='';if(s.ext!==0&&s.ext!=null)w='\n⚠ 上限超過の従量課金が有効になっています（追加枠 '+(s.ext==='unlimited'||s.ext<0?'無制限':s.ext)+'）。ElevenLabsの設定で無効にしてください。このアプリは残りを超える生成を行いません';
+  $('xst').textContent=`✔ プラン ${s.tier}（${s.status}）／今月の使用 ${s.used} / ${s.limit}／残り ${s.left}${w}`}
+ catch(e){$('xst').textContent='✖ '+xemsg(e)+'\n詳細: '+String(e.message).slice(0,160)}finally{b.disabled=false}}
+$('xcheck').onclick=xcheck;
+async function xfind(){const b=$('xfind');b.disabled=true;$('xst').textContent='日本語の男性の声を検索しています…（クレジットは消費しません）';const sel=$('xvl');sel.innerHTML='';S.xv=new Map();
+ try{let n=0;const add=(v,own)=>{if(!v||!v.voice_id||S.xv.has(v.voice_id))return;S.xv.set(v.voice_id,{...v,own});const o=document.createElement('option');o.value=v.voice_id;o.textContent=(own?'【登録済】':'')+v.name+(v.description?'：'+String(v.description).slice(0,24):'');sel.appendChild(o);n++};
+  try{const r=await xfetch('/v1/voices'),raw=await r.text();if(r.ok){(JSON.parse(raw).voices||[]).filter(v=>!v.labels||!v.labels.gender||v.labels.gender==='male').forEach(v=>add(v,true))}}catch(e){if(e.xkey)throw e}
+  const r2=await xfetch('/v1/shared-voices?page_size=24&language=ja&gender=male&sort=usage_character_count_7d'),raw2=await r2.text();if(!r2.ok)throw xerr(r2,raw2);(JSON.parse(raw2).voices||[]).forEach(v=>add(v,false));
+  $('xst').textContent=n?`声の候補 ${n}件。「試し聞き（無料）」で聞き比べ、気に入った声を「この声を採用」してください`:'候補が見つかりません。確認できません'}
+ catch(e){$('xst').textContent='✖ '+xemsg(e)+'\n詳細: '+String(e.message).slice(0,160)}finally{b.disabled=false}}
+$('xfind').onclick=xfind;
+$('xprev').onclick=()=>{const v=S.xv&&S.xv.get($('xvl').value);if(!v||!v.preview_url)return say('試し聞きできる音声がありません');const a=$('xaud');a.src=v.preview_url;a.hidden=false;a.play().catch(()=>{})};
+$('xuse').onclick=async()=>{const id=$('xvl').value,v=S.xv&&S.xv.get(id);if(!v)return say('先に「声を探す」を押して声を選んでください');const b=$('xuse');b.disabled=true;
+ try{if(!v.own){if(!v.public_owner_id)throw Object.assign(new Error('この声はアカウントに追加できません'),{});const r=await xfetch(`/v1/voices/add/${encodeURIComponent(v.public_owner_id)}/${encodeURIComponent(id)}`,{method:'POST',body:JSON.stringify({new_name:'BS '+String(v.name).slice(0,30)})}),raw=await r.text();if(!r.ok&&!/already/i.test(raw))throw xerr(r,raw);let j=null;try{j=JSON.parse(raw)}catch{}if(j&&j.voice_id&&j.voice_id!==id)store.set('bs_xv',j.voice_id);else store.set('bs_xv',id)}else store.set('bs_xv',id);
+  xui();say('声を採用しました（'+v.name+'）。次は「ElevenLabsで試し聞き」で本番の声を確認してください')}
+ catch(e){$('xst').textContent='✖ '+xemsg(e)+'\n詳細: '+String(e.message).slice(0,160)}finally{b.disabled=false}};
+$('xtest').onclick=async()=>{const b=$('xtest');b.disabled=true;const tx='理想を語るな。理想になれ。';$('xst').textContent='ElevenLabsに依頼中…（'+tx.length+'文字分のクレジットを使います）';
+ try{if(!xvoice())throw Object.assign(new Error('声が未選択です'),{xblock:1});const gd=await xguard([tx]);const buf=await xcall(tx,xvoice(),$('xmodel').value,'close','','');const v=vcheck(buf,tx);if(!v.ok)throw Object.assign(new Error(v.why),{bad:1});
+  const mu=xmonth();mu.n+=tx.length;store.set('bs_xu',mu);const a=await xsub().catch(()=>null);const h=xhist();h.unshift({d:new Date().toLocaleString('ja-JP'),chars:tx.length,real:a?a.used-gd.s.used:null,left:a?a.left:null,m:$('xmodel').value});store.set('bs_xh',h.slice(0,20));xui();
+  $('xst').textContent+=`\n✔ 生成成功：${sfmt(v.s)}。これから再生します。男性の声か、低く知的か、棒読みでないかを耳で確認してください`;listen(model({mode:'clips',bufs:[buf]},[tx]),'ElevenLabsテスト')}
+ catch(e){LOG('xtest失敗: '+e.message);$('xst').textContent='✖ '+xemsg(e)+'\n詳細: '+String(e.message).slice(0,200)}finally{b.disabled=false}};
+xui();
+
+/* --- 成果の記録 --- */
+const vids=()=>store.get('bs_vids',[]);
+function recVid(M){const a=vids();a.unshift({id:Date.now(),ep:S.ep,date:new Date().toLocaleDateString('ja-JP'),th:$('th').value.trim(),tpl:S.tplKey||'cinema',eng:S.act.src,voice:S.act.src==='eleven'?xvoice():S.act.src==='gemini'?$('gv').value:'jm_kumo',dur:Math.round(M.D),lines:M.sc.length,scr:lines().join('\n'),sty:$('vs5').value,at:new Date().toISOString(),m:null});store.set('bs_vids',a.slice(0,60));S.curVid=a[0].id;aui()}
+const num=id=>{const v=$(id).value.trim();return v===''?null:Math.max(0,+v)};
+const pct=(a,b)=>b>0&&a!=null?(100*a/b):null,f1=x=>x==null?'—':x.toFixed(1);
+function aui(){const a=vids(),sel=$('av'),cur=sel.value;sel.innerHTML=a.length?a.map(v=>`<option value="${idf(v.id)}">${esc(v.date)} ${esc(v.th).slice(0,16)}（${TPL[v.tpl]?TPL[v.tpl].n:esc(v.tpl)}・${nf(v.dur)}秒）</option>`).join(''):'<option value="">作成済みの動画がありません</option>';if(cur&&a.some(v=>String(v.id)===cur))sel.value=cur;else if(S.curVid)sel.value=S.curVid;
+ $('atb').innerHTML=a.length?a.map(v=>{const m=v.m;return`<li><b>${esc(v.date)} ${esc(v.th).slice(0,18)}</b><small>${TPL[v.tpl]?TPL[v.tpl].n:esc(v.tpl)} / ${ENG[v.eng]||'Kokoro'} / ${nf(v.dur)}秒</small>${m?`<small>再生 ${nf(m.views)} ／ 平均視聴 ${nf(m.avg)}秒（維持率 ${esc(f1(pct(m.avg,v.dur)))}%）／ 保存 ${nf(m.saves)}（保存率 ${esc(f1(pct(m.saves,m.views)))}%）／ いいね ${nf(m.likes)} ／ フォロワー増 ${nf(m.follow)}</small>`:'<small>成果は未記録</small>'}</li>`}).join(''):'<li>まだ記録がありません</li>'}
+$('arec').onclick=()=>{const a=vids(),v=a.find(x=>String(x.id)===$('av').value);if(!v)return say('先に動画を作成してください');const m={views:num('a_v'),avg:num('a_a'),saves:num('a_s'),likes:num('a_l'),follow:num('a_f')};if(Object.values(m).every(x=>x==null))return say('数値を1つ以上入力してください');if(m.avg!=null&&m.avg>v.dur+5)return say(`平均視聴時間（${m.avg}秒）が動画の長さ（${v.dur}秒）を超えています。入力を確認してください`);v.m=m;store.set('bs_vids',a);aui();say('成果を記録しました')};
+$('ash').onchange=e=>{const f=e.target.files[0];if(!f)return;const u=URL.createObjectURL(f);$('ashp').src=u;$('ashp').hidden=false;$('ashp').onload=()=>URL.revokeObjectURL(u)};
+function suggest(){const a=vids().filter(v=>v.m&&v.m.views>0),o=[];if(!a.length)return{txt:'成果を記録した動画がまだありません。再生回数などを入力すると、提案を作れます。',best:null};
+ const last=a[0],m=last.m,ret=pct(m.avg,last.dur),sv=pct(m.saves,m.views),lk=pct(m.likes,m.views),fl=m.follow!=null?1000*m.follow/m.views:null;
+ o.push(`【最新の動画の指標】視聴維持率 ${f1(ret)}%、保存率 ${f1(sv)}%、いいね率 ${f1(lk)}%、1000再生あたりのフォロワー増 ${f1(fl)}人`);
+ if(ret!=null){if(ret<25)o.push('・視聴維持率が低めです。最初の3秒を、問いかけか意外な事実に変える。動画を45〜60秒に短くする。');else if(ret<50)o.push('・維持率は中程度です。中盤（具体例の部分）に感情の山場を1つ足す。');else o.push('・維持率は良好です。同じ構成を続け、テーマだけ変えてください。')}
+ if(sv!=null){if(sv<1)o.push('・保存率が低めです。最後に「明日やる具体的な1行動」を言い切り、保存したくなる形にする。');else if(sv>=3)o.push('・保存率が高めです。保存される要素（行動リスト）を次回も維持してください。')}
+ if(fl!=null&&fl<1)o.push('・フォロワー増が少なめです。結びに「続きはプロフィールから」を入れ、シリーズ化（EP番号を声に出す）を検討してください。');
+ const grp=(key,f)=>{const g={};a.forEach(v=>{const r=pct(v.m.avg,v.dur);if(r==null)return;(g[f(v)]=g[f(v)]||[]).push(r)});return Object.entries(g).filter(([,x])=>x.length>=2).map(([k,x])=>[k,x.reduce((p,q)=>p+q,0)/x.length]).sort((p,q)=>q[1]-p[1])};
+ const gt=grp('tpl',v=>v.tpl);if(gt.length>1)o.push('・テンプレート別の平均維持率: '+gt.map(([k,x])=>`${TPL[k]?TPL[k].n:k} ${x.toFixed(1)}%`).join(' ／ ')+`。次回は「${TPL[gt[0][0]]?TPL[gt[0][0]].n:gt[0][0]}」を優先。`);
+ const ge=grp('eng',v=>v.eng);if(ge.length>1)o.push('・声エンジン別の平均維持率: '+ge.map(([k,x])=>`${ENG[k]||'Kokoro'} ${x.toFixed(1)}%`).join(' ／ '));
+ if(a.length<5)o.push(`・記録が${a.length}本です。比較が安定するのは5本以上が目安です。`);
+ const best=a.slice().sort((p,q)=>(pct(q.m.avg,q.dur)||0)-(pct(p.m.avg,p.dur)||0))[0];o.push(`・維持率が最も高い動画: ${best.date}「${best.th.slice(0,16)}」（${TPL[best.tpl]?TPL[best.tpl].n:best.tpl}・${best.dur}秒）`);
+ o.push('※この基準は一般的な経験則の目安で、TikTokの公式基準ではありません。サンプルが少ないうちは偶然の影響が大きいです。');return{txt:o.join('\n'),best}}
+$('asug').onclick=()=>{const r=suggest();$('aout').textContent=r.txt;S.bestV=r.best;$('anext').hidden=!r.best};
+$('anext').onclick=()=>{const b=S.bestV;if(!b)return;if(TPL[b.tpl])$('tpl').value=b.tpl;const d=[45,60,75,90,120].reduce((p,q)=>Math.abs(q-b.dur)<Math.abs(p-b.dur)?q:p);$('dur').value=String(d);upd();say(`次回の動画に反映しました：テンプレート ${TPL[b.tpl]?TPL[b.tpl].n:b.tpl}、長さ ${d}秒`)};
+aui();
+/* --- 競合研究 --- */
+const seek=(v,t)=>new Promise(r=>{let d=false;const f=()=>{if(!d){d=true;r()}};v.onseeked=f;v.currentTime=Math.min(t,Math.max(0,v.duration-.05));setTimeout(f,2500)});
+async function analyzeVideo(file){
+ const url=URL.createObjectURL(file),v=document.createElement('video');v.muted=true;v.playsInline=true;v.preload='auto';v.src=url;
+ try{await new Promise((res,rej)=>{v.onloadedmetadata=res;v.onerror=()=>rej(new Error('この動画を読み込めません（形式が非対応の可能性）'));setTimeout(()=>rej(Object.assign(new Error('読み込み時間切れ'),{name:'TimeoutError'})),20000)});
+  const dur=v.duration,w=v.videoWidth,h=v.videoHeight;if(!(dur>0))throw new Error('動画の長さを取得できません');
+  const R={file:file.name,size:file.size,dur,w,h,au:null,cuts:[],bright:null,tone:null};
+  if(file.size<120e6){try{const b=await dec(await file.arrayBuffer());R.au=audioStats(b)}catch(e){R.au={err:e.message}}}else R.au={err:'ファイルが大きすぎるため音声は解析していません'};
+  const cw=48,ch=Math.max(8,Math.round(48*h/w)),c=document.createElement('canvas');c.width=cw;c.height=ch;const x=c.getContext('2d',{willReadFrequently:true}),step=Math.max(.25,dur/200),df=[],ts=[];let prev=null,sr=0,sg=0,sb=0,sbr=0,n=0,firstB=null;
+  for(let t=0;t<dur;t+=step){$('cout').textContent=`映像を解析中… ${Math.round(100*t/dur)}%`;await seek(v,t);x.drawImage(v,0,0,cw,ch);const d=x.getImageData(0,0,cw,ch).data;let r=0,g2=0,b=0;
+   for(let i=0;i<d.length;i+=4){r+=d[i];g2+=d[i+1];b+=d[i+2]}const px=d.length/4;sr+=r/px;sg+=g2/px;sb+=b/px;sbr+=(r+g2+b)/px/3;n++;if(firstB==null)firstB=(r+g2+b)/px/3;
+   if(prev){let s=0;for(let i=0;i<d.length;i+=4)s+=Math.abs(d[i]-prev[i])+Math.abs(d[i+1]-prev[i+1])+Math.abs(d[i+2]-prev[i+2]);df.push(s/(px*765));ts.push(t)}prev=new Uint8ClampedArray(d)}
+  const mean=df.reduce((p,q)=>p+q,0)/Math.max(1,df.length),sd=Math.sqrt(df.reduce((p,q)=>p+(q-mean)**2,0)/Math.max(1,df.length)),th=Math.max(.12,mean+2.5*sd);
+  df.forEach((d,i)=>{if(d>th)R.cuts.push(+ts[i].toFixed(2))});R.step=step;R.bright=sbr/n;R.tone={r:sr/n,g:sg/n,b:sb/n};R.mdiff=mean;return R}
+ finally{URL.revokeObjectURL(url)}}
+function audioStats(b){const d=b.getChannelData(0),sr=b.sampleRate,hop=Math.floor(sr*.05),e=[];for(let a=0;a+hop<=d.length;a+=hop){let q=0;for(let j=a;j<a+hop;j++)q+=d[j]*d[j];e.push(Math.sqrt(q/hop))}
+ const s=e.slice().sort((p,q)=>p-q),p95=s[Math.floor(s.length*.95)]||1e-9,th=p95*.08;let sil=0,runs=[],st=-1;e.forEach((v,i)=>{const z=v<th;if(z)sil++;if(z&&st<0)st=i;if(!z&&st>=0){runs.push((i-st)*.05);st=-1}});
+ const pauses=runs.filter(x=>x>=.3).sort((p,q)=>p-q),seg=10,sg=[];for(let k=0;k<seg;k++){const a=Math.floor(e.length*k/seg),z=Math.floor(e.length*(k+1)/seg);let q=0;for(let i=a;i<z;i++)q+=e[i]*e[i];sg.push(Math.sqrt(q/Math.max(1,z-a)))}
+ const tr=[];for(let i=3;i<e.length;i++){const pv=Math.max(e[i-1],e[i-2],e[i-3],1e-6);if(e[i]>p95*.5&&e[i]>pv*3.5&&(!tr.length||i*.05-tr[tr.length-1]>.6))tr.push(+(i*.05).toFixed(2))}
+ let q=0;for(let i=0;i<d.length;i++)q+=d[i]*d[i];const rms=Math.sqrt(q/d.length);let pk=0;for(let i=0;i<d.length;i++){const a=Math.abs(d[i]);if(a>pk)pk=a}
+ const f3=Math.floor(3/.05);let q3=0;for(let i=0;i<Math.min(f3,e.length);i++)q3+=e[i]*e[i];const e3=Math.sqrt(q3/Math.max(1,Math.min(f3,e.length)));
+ return{dur:b.duration,rmsdb:db(rms),pkdb:db(pk),silRatio:sil/e.length,pauses:pauses.length,pMed:pauses.length?pauses[Math.floor(pauses.length/2)]:0,sg,tr,hook3:e3/Math.max(1e-9,rms)}}
+function report(R,man){const o=[],a=R.au,L=(R.dur/Math.max(1,R.cuts.length+1));
+ o.push('【実測】（この端末で、読み込んだ動画ファイルから計測した値）');
+ o.push(`・長さ ${R.dur.toFixed(1)}秒 ／ 画面 ${R.w}×${R.h}（${(R.w/R.h).toFixed(2)}）／ ファイル ${(R.size/1048576).toFixed(1)}MB`);
+ o.push(`・映像の切り替え: 検出 ${R.cuts.length}回（約${R.step.toFixed(2)}秒間隔で標本化。これより短い切替は拾えません）。平均カット長 ${L.toFixed(1)}秒`+(R.cuts.length?`。位置: ${R.cuts.slice(0,12).join('、')}秒${R.cuts.length>12?' ほか':''}`:''));
+ o.push(`・冒頭3秒の切替: ${R.cuts.filter(t=>t<3).length}回 ／ 平均の明るさ ${(R.bright/2.55).toFixed(0)}%（0〜100） ／ 平均色 R${R.tone.r.toFixed(0)} G${R.tone.g.toFixed(0)} B${R.tone.b.toFixed(0)}（${R.tone.r>R.tone.b+12?'暖色寄り':R.tone.b>R.tone.r+12?'寒色寄り':'中間'}）`);
+ if(a&&!a.err){o.push(`・音声: 平均 ${a.rmsdb} dB ／ 最大 ${a.pkdb} dB ／ 無音の割合 ${(a.silRatio*100).toFixed(0)}% ／ 0.3秒以上の間 ${a.pauses}回（中央値 ${a.pMed.toFixed(2)}秒）`);o.push('・音量の推移（10分割・相対dB）: '+a.sg.map(x=>(20*Math.log10(x/Math.max(1e-9,Math.max(...a.sg)))).toFixed(0)).join(' → '))}
+ else o.push('・音声: '+(a&&a.err?'解析できませんでした（'+a.err+'）':'なし'));
+ o.push('');o.push('【推測】（実測値からの推測。正解とは限りません）');
+ if(a&&!a.err){o.push(`・冒頭の引き込み: 冒頭3秒の音量は全体平均の${a.hook3.toFixed(1)}倍（${a.hook3>1.15?'冒頭が強め':a.hook3<.8?'冒頭は控えめ':'平均的'}）、切替${R.cuts.filter(t=>t<3).length}回`);const first=a.sg[0],last=a.sg[a.sg.length-1],mx=Math.max(...a.sg);o.push(`・感情の変化（音量の推移からの推測）: ${a.sg.indexOf(mx)<4?'前半に山場':a.sg.indexOf(mx)>6?'終盤に山場':'中盤に山場'}、終盤は冒頭の${(last/Math.max(1e-9,first)).toFixed(1)}倍の音量`);
+  o.push(`・ナレーションの特徴: BGMが混ざるため声だけは分離できません。間は「${a.pauses}回、中央値${a.pMed.toFixed(2)}秒」から、${a.pMed>.6?'ゆったりした語り':'テンポの速い語り'}と推測`);
+  o.push(`・効果音やBGMの打点の候補（急な音量上昇の位置）: ${a.tr.length?a.tr.slice(0,12).join('、')+'秒':'検出なし'}。実際の音の種類は特定できません`)}
+ o.push(`・台本の構造: 平均カット長 ${L.toFixed(1)}秒から、1文あたり${L<2?'短く（テンポ重視）':L<4?'中程度':'長め（語り重視）'}と推測`);
+ o.push('');o.push('【取得できません】');o.push('・台本の文章（音声認識を使わないため）／ 字幕のデザイン（自動判定は未実装。ご自身の目で確認してください）／ BGMや効果音の具体的な種類');
+ if(man.views){const r=(k)=>man[k]!=null?(100*man[k]/man.views).toFixed(2)+'%':'—';o.push('');o.push('【公開数値（ご自身で入力した値）】');o.push(`・再生 ${man.views} ／ いいね率 ${r('likes')} ／ コメント率 ${r('comm')} ／ 保存率 ${r('saves')}`)}
+ return o.join('\n')}
+$('cfetch').onclick=async()=>{const u=$('cu').value.trim();if(!/^https?:\/\/(www\.|vt\.|vm\.)?tiktok\.com\//i.test(u))return($('cout').textContent='TikTokのURLを入れてください（例：https://www.tiktok.com/@…/video/…）');
+ $('cout').textContent='公開情報（oEmbed）を取得しています…';try{const ctl=new AbortController();setTimeout(()=>ctl.abort(),15000);const r=await fetch('https://www.tiktok.com/oembed?url='+encodeURIComponent(u),{signal:ctl.signal});if(!r.ok)throw new Error('HTTP '+r.status);const j=await r.json();
+  $('cout').textContent=`【取得できた公開情報（TikTok oEmbed）】\n・投稿者: ${j.author_name||'—'}\n・タイトル（投稿文）: ${j.title||'—'}\n※再生数・保存数などの数値は、この方法では取得できません。下の欄にご自身で入力してください。動画の中身（映像・音声）の分析は、保存した動画ファイルを選んだときだけ行えます。`}
+ catch(e){$('cout').textContent='取得できません。ブラウザの制限（CORS）または通信エラーの可能性があります（'+e.message+'）。\nURLからの自動分析はできないため、①TikTokアプリで再生数などを見て下の欄に入力する、②動画を保存したファイルを選ぶ、のどちらかをお使いください。'}};
+$('canal').onclick=async()=>{const f=$('cf').files[0],man={views:num('c_v'),likes:num('c_l'),comm:num('c_c'),saves:num('c_s')};if(!f){if(!man.views)return($('cout').textContent='動画ファイルを選ぶか、数値を入力してください');return($('cout').textContent='【公開数値（ご自身で入力した値）】\n・再生 '+man.views+' ／ いいね率 '+(man.likes!=null?(100*man.likes/man.views).toFixed(2)+'%':'—')+' ／ 保存率 '+(man.saves!=null?(100*man.saves/man.views).toFixed(2)+'%':'—')+'\n映像と音声の分析には、動画ファイルが必要です。')}
+ $('canal').disabled=true;try{S.ref=await analyzeVideo(f);S.refMan=man;$('cout').textContent=report(S.ref,man);$('capply').hidden=false}catch(e){$('cout').textContent='✖ 分析できませんでした：'+jp(e)}finally{$('canal').disabled=false}};
+$('capply').onclick=()=>{const R=S.ref;if(!R)return;const d=[45,60,75,90,120].reduce((p,q)=>Math.abs(q-R.dur)<Math.abs(p-R.dur)?q:p);$('dur').value=String(d);let t=`長さ ${d}秒`;if(R.au&&!R.au.err&&R.au.pauses>2){const gp=Math.min(1.2,Math.max(.3,R.au.pMed));$('gap').value=Math.round(gp*100);$('gap').oninput();t+=`、文の間 ${gp.toFixed(1)}秒`}upd();store.set('bs_ref',{d,t});say('参考動画の「長さ・間」の傾向だけを、次の動画の設定に反映しました（'+t+'）。台本・映像・音声は一切コピーしません')};
+
+/* ---------- v5.0: TikTokアカウント連携（Login Kit / Display API / Content Posting API 下書き送信） ---------- */
+const ttw=()=>String(store.get('bs_ttw','')||'').replace(/\/+$/,'');
+const ttErr={access_token_invalid:'ログインの有効期限が切れました。もう一度ログインしてください',scope_not_authorized:'この操作に必要な権限が許可されていません。権限付きで再ログインしてください',session_invalid:'ログインが必要です。「TikTokでログイン」を押してください',rate_limit_exceeded:'TikTok側の回数制限に達しました。しばらく待ってください',forbidden_origin:'中継サーバーがこのページを許可していません（ALLOW_ORIGIN設定を確認）',not_configured:'中継サーバーのシークレットが未設定です',invalid_param:'送信内容が正しくありません',unaudited_client_can_only_post_to_private_accounts:'このアプリは未審査のため、投稿できるのは非公開アカウントのみです'};
+async function ttapi(path,body,opt={}){const w=ttw();if(!w)throw Object.assign(new Error('中継サーバーのURLが未設定です'),{jp:1});
+ const r=await fetch(w+path,{method:opt.method||'POST',headers:{Authorization:'Bearer '+(store.get('bs_tts','')||''),...(opt.headers||{}),...(opt.raw?{}:{'Content-Type':'application/json'})},body:opt.raw?body:JSON.stringify(body||{})}).catch(e=>{throw Object.assign(new Error('中継サーバーに接続できません（'+e.message+'）'),{jp:1})});
+ const ns=r.headers.get('X-BS-Session');if(ns)store.set('bs_tts',ns);const j=await r.json().catch(()=>null);const c=j&&j.error&&j.error.code;
+ if(!r.ok||(c&&c!=='ok')){const m=ttErr[c]||(j&&j.error&&j.error.message)||('HTTP '+r.status);if(c==='access_token_invalid'||c==='session_invalid')store.set('bs_tts','');throw Object.assign(new Error(m+(c?'（'+c+'）':'')),{jp:1,code:c})}return j}
+function ttui(){const on=!!store.get('bs_tts','');$('ttst').textContent=(ttw()?'中継サーバー: 設定済み':'中継サーバー: 未設定')+' ／ TikTok: '+(on?'ログイン済み':'未ログイン');$('ttw').value=ttw();$('ttout').hidden=!on;$('ttsync').hidden=!on;$('ttpost').hidden=!on;$('ttcon').hidden=on;$('ttcon2').hidden=!on}
+$('ttwsave').onclick=()=>{const v=$('ttw').value.trim().replace(/\/+$/,'');if(v&&!/^https:\/\/[^\s]+$/.test(v))return say('https:// で始まるURLを入れてください');store.set('bs_ttw',v);ttui();say(v?'中継サーバーのURLを保存しました':'URLを消しました')};
+const ttgo=m=>{if(!ttw())return($('ttmsg').textContent='先に「中継サーバーのURL」を保存してください（設定手順は画面下の説明を参照）');location.href=ttw()+'/auth/start?mode='+m};
+$('ttcon').onclick=()=>ttgo('analyze');$('ttcon2').onclick=()=>ttgo('post');
+$('ttout').onclick=async()=>{try{await ttapi('/api/logout')}catch(e){}store.set('bs_tts','');store.set('bs_tt',null);ttui();$('ttprof').textContent='';$('ttlist').innerHTML='';$('ttana').textContent='';$('ttplan').innerHTML='';$('ttmsg').textContent='連携を解除しました（TikTok側のアプリ許可も取り消しました）'};
+const jst=t=>new Date((t+9*3600)*1000);
+function ttAnalyze(vs,snaps){const o=[],pl=[],a=vs.filter(v=>v.view_count>0);if(!a.length)return{txt:'再生数のある公開動画がありません。',plans:[]};
+ const eng=v=>(v.like_count+v.comment_count+v.share_count)/v.view_count,avg=(x)=>x.reduce((p,q)=>p+q,0)/x.length,med=x=>{const s=x.slice().sort((p,q)=>p-q);return s[Math.floor(s.length/2)]};
+ const byV=a.slice().sort((p,q)=>q.view_count-p.view_count),byE=a.slice().sort((p,q)=>eng(q)-eng(p));
+ o.push(`【全体】公開動画 ${vs.length}本（再生数あり ${a.length}本）／ 合計再生 ${a.reduce((p,q)=>p+q.view_count,0)} ／ 平均 いいね率 ${(100*avg(a.map(v=>v.like_count/v.view_count))).toFixed(2)}% ・コメント率 ${(100*avg(a.map(v=>v.comment_count/v.view_count))).toFixed(2)}% ・シェア率 ${(100*avg(a.map(v=>v.share_count/v.view_count))).toFixed(2)}%`);
+ o.push('【再生数の上位】'+byV.slice(0,3).map(v=>`「${(v.title||v.video_description||'無題').slice(0,14)}」${v.view_count}回・${v.duration}秒`).join(' ／ '));
+ o.push('【反応率の上位】'+byE.slice(0,3).map(v=>`「${(v.title||v.video_description||'無題').slice(0,14)}」${(100*eng(v)).toFixed(1)}%`).join(' ／ '));
+ const topDur=Math.round(med(byV.slice(0,Math.min(3,byV.length)).map(v=>v.duration)));o.push(`【長さ】再生上位の動画の長さの中央値は約${topDur}秒`);
+ const blk=[[0,5,'深夜〜早朝（0〜5時）'],[6,11,'朝〜昼前（6〜11時）'],[12,17,'昼〜夕方（12〜17時）'],[18,23,'夜（18〜23時）']];let bestB=null;const bs=blk.map(([x,y,n])=>{const g=a.filter(v=>{const h=jst(v.create_time).getUTCHours();return h>=x&&h<=y});return{n,c:g.length,m:g.length?avg(g.map(v=>v.view_count)):0}});
+ const ok=bs.filter(b=>b.c>=2).sort((p,q)=>q.m-p.m);o.push('【投稿時間帯別の平均再生（日本時間）】'+bs.map(b=>`${b.n} ${b.c}本${b.c?'・平均'+Math.round(b.m):''}`).join(' ／ ')+(ok.length>1?`。2本以上ある中では「${ok[0].n}」が最高`:'。比較には各時間帯2本以上が必要です'));if(ok.length>1)bestB=ok[0].n;
+ const tg={};a.forEach((v,i)=>{((v.title||'')+' '+(v.video_description||'')).match(/#[^\s#]+/g)?.forEach(h=>{(tg[h]=tg[h]||[]).push(v.view_count)})});const tl=Object.entries(tg).filter(([,x])=>x.length>=2).map(([h,x])=>[h,avg(x),x.length]).sort((p,q)=>q[1]-p[1]).slice(0,5);
+ o.push('【ハッシュタグ別の平均再生（2本以上で使用）】'+(tl.length?tl.map(([h,m,c])=>`${h} ${Math.round(m)}（${c}本）`).join(' ／ '):'比較できるタグがありません'));
+ if(snaps.length>=2){const f=snaps[0],l=snaps[snaps.length-1];o.push(`【フォロワー推移】${f.d}: ${f.f} → ${l.d}: ${l.f}（${l.f-f.f>=0?'+':''}${l.f-f.f}人）。※この端末で「最新データを取得」した日の記録です`)}else o.push('【フォロワー推移】比較には2回以上の取得（別の日）が必要です。TikTokのAPIは過去の推移を返しません');
+ o.push('※視聴維持率・平均視聴時間・保存数は、TikTokのAPIでは取得できません。「成果の記録」に手入力してください。');o.push('※サンプルが少ないうちは偶然の影響が大きく、因果ではなく傾向の目安です。');
+ const angles=['続編：あの話の「その後」を語る','逆の視点：同じテーマを「やらなかった場合」から語る','数字で見せる：30日・90日後の変化に置き換える'];
+ byV.slice(0,3).forEach((v,i)=>{const base=(v.title||v.video_description||'').replace(/#[^\s#]+/g,'').trim().slice(0,24)||'人生を変えたい君へ。';const d=[45,60,75,90,120].reduce((p,q)=>Math.abs(q-topDur)<Math.abs(p-topDur)?q:p);pl.push({theme:base+'（'+angles[i].split('：')[0]+'）',tpl:tplKey(base),dur:d,why:`再生${v.view_count}回の「${base.slice(0,12)}」を${angles[i]}。長さは上位動画に合わせて${d}秒${bestB?'、投稿は'+bestB+'が候補':''}。${tl.length?'タグ候補: '+tl.slice(0,3).map(x=>x[0]).join(' '):''}`})});
+ return{txt:o.join('\n'),plans:pl}}
+function ttRender(d){const u=d.user||{};const n=nf;$('ttprof').innerHTML=u.display_name?`<b>${esc(u.display_name)}</b>${u.username?'（@'+esc(u.username)+'）':''}${u.is_verified?' ✔認証済み':''}<small>フォロワー ${n(u.follower_count)} ／ フォロー中 ${n(u.following_count)} ／ 総いいね ${n(u.likes_count)} ／ 動画 ${n(u.video_count)}本</small>${u.bio_description?`<small>${esc(u.bio_description).slice(0,120)}</small>`:''}`:'プロフィールを取得できませんでした';
+ $('ttlist').innerHTML=(d.videos||[]).slice(0,30).map(v=>`<li><b>${esc((v.title||v.video_description||'無題').slice(0,30))}</b><small>${esc(new Date(Number(v.create_time)*1000).toLocaleDateString('ja-JP'))} ／ ${nf(v.duration)}秒 ／ 再生 ${nf(v.view_count)} ・いいね ${nf(v.like_count)} ・コメント ${nf(v.comment_count)} ・シェア ${nf(v.share_count)}</small></li>`).join('')||'<li>公開動画がありません</li>';
+ const r=ttAnalyze(d.videos||[],store.get('bs_ttsnap',[]));$('ttana').textContent=r.txt;$('ttplan').innerHTML=r.plans.map((p,i)=>`<li><b>企画${i+1}：${esc(p.theme)}</b><small>${esc(p.why)}</small><button data-i="${i}">この企画で作る</button></li>`).join('');S.ttplans=r.plans}
+$('ttplan').onclick=e=>{const b=e.target.closest('button');if(!b)return;const p=S.ttplans[+b.dataset.i];$('th').value=p.theme.replace(/（[^）]*）$/,'');$('tpl').value=p.tpl;$('dur').value=String(p.dur);upd();window.scrollTo({top:0,behavior:'smooth'});say(`企画を反映しました（テンプレート ${TPL[p.tpl].n}、${p.dur}秒）。「動画を作る」を押してください`)};
+async function ttsync(){const m=$('ttmsg');m.textContent='取得中…';try{const me=await ttapi('/api/me'),u=(me.data&&me.data.user)||{};let vs=[],cur=0,more=true;for(let i=0;i<3&&more;i++){const r=await ttapi('/api/videos',{max_count:20,cursor:cur});const d=r.data||{};vs=vs.concat(d.videos||[]);cur=d.cursor;more=!!d.has_more}
+  const d={user:u,videos:vs,at:Date.now()};store.set('bs_tt',{user:u,videos:vs.map(v=>({...v,cover_image_url:undefined})),at:d.at});
+  if(u.follower_count!=null){const sn=store.get('bs_ttsnap',[]),day=new Date().toISOString().slice(0,10);if(sn.length&&sn[sn.length-1].d===day)sn[sn.length-1]={d:day,f:u.follower_count,l:u.likes_count,v:u.video_count};else sn.push({d:day,f:u.follower_count,l:u.likes_count,v:u.video_count});store.set('bs_ttsnap',sn.slice(-120))}
+  ttRender(d);m.textContent=`取得しました（${new Date().toLocaleString('ja-JP')}）。動画 ${vs.length}本`}catch(e){m.textContent='✖ '+jp(e);if(!store.get('bs_tts',''))ttui()}}
+$('ttsync').onclick=ttsync;
+$('ttup').onclick=async()=>{const m=$('ttpm');if(!S.gateState||S.gateState==='BLOCK'||(S.gateState==='REVIEW'&&!$('gack').checked))return(m.textContent='投稿前セキュリティゲートを通過していません。完成動画の下の検査結果を確認してください（BLOCKは送信できません。REVIEWはオーナー確認のチェックが必要です）');if(!S.blob)return(m.textContent='先に「動画を作る」で動画を作成してください');if(!$('ttc').checked)return(m.textContent='同意のチェックを入れてください（無断では送信しません）');
+ const b=$('ttup');b.disabled=true;try{m.textContent='TikTokに送信の準備をしています…';const i=await ttapi('/api/upload/init',{size:S.blob.size});m.textContent='動画を送信しています（'+(S.blob.size/1048576).toFixed(1)+'MB）…';
+  const w=ttw(),r=await fetch(w+'/api/upload/put?t='+encodeURIComponent(i.put),{method:'PUT',headers:{Authorization:'Bearer '+store.get('bs_tts',''),'X-Video-Type':S.blob.type||'video/mp4'},body:S.blob}).catch(e=>{throw Object.assign(new Error('送信に失敗しました（'+e.message+'）'),{jp:1})});const pj=await r.json().catch(()=>null);if(!r.ok||!pj||!pj.ok)throw Object.assign(new Error('TikTokへの動画送信に失敗しました（'+(pj&&pj.error&&pj.error.message||'HTTP '+r.status)+'）'),{jp:1});
+  let st='';for(let k=0;k<20;k++){await sleep(3000);const s=await ttapi('/api/status',{publish_id:i.publish_id});st=s.data&&s.data.status;m.textContent='TikTok側の処理状況: '+st;if(st==='SEND_TO_USER_INBOX'||st==='PUBLISH_COMPLETE'||st==='FAILED'){if(st==='FAILED')throw Object.assign(new Error('TikTok側で失敗しました（'+(s.data.fail_reason||'理由不明')+'）'),{jp:1});break}}
+  m.textContent=st==='SEND_TO_USER_INBOX'?'✔ 下書きとして送信されました。TikTokアプリの通知（受信トレイ）を開き、編集して自分で投稿してください。自動では投稿されません。':'状況: '+st+'。TikTokアプリの通知を確認してください'}
+ catch(e){m.textContent='✖ '+jp(e)}finally{b.disabled=false}};
+{const h=H0;if(h.startsWith('#tt=')){store.set('bs_tts',h.slice(4));$('tt').open=true;ttui();ttsync()}
+ else if(h.startsWith('#tterr=')){const c=decodeURIComponent(h.slice(7));$('tt').open=true;ttui();$('ttmsg').textContent='✖ ログインできませんでした（'+({access_denied:'許可がキャンセルされました',state_invalid:'認証の確認に失敗しました',state_expired:'時間切れです',invalid_grant:'認可コードが無効です'}[c]||c)+'）。もう一度お試しください'}
+ else{ttui();const c=store.get('bs_tt',null);if(c&&c.user)ttRender(c)}}
+
+addEventListener('error',e=>{LOG('JSエラー: '+e.message);xmsg('✖ 予期しないエラー：'+e.message,1)});
+addEventListener('unhandledrejection',e=>{const m=String(e.reason&&e.reason.message||e.reason);LOG('未処理エラー: '+m);xmsg('✖ 予期しないエラー：'+m,1)});
+/* ---------- 初期化 ---------- */
+const had=drestore();if(!had&&!S.imported)$('script').value=DEF.join('\n');
+{const pg=store.get('bs_prog',null);if(pg&&pg.st!=='done'){const t=new Date(pg.at).toLocaleString('ja-JP');$('prevn').textContent=(pg.st==='running'?'前回（'+t+'）の動画生成は途中で中断されました（画面が閉じた等）。':'前回（'+t+'）の動画生成は終了していません：'+pg.msg+'。')+'台本は保存済みで、変更されていません。'+($('prevn').textContent?'\n'+$('prevn').textContent:'')}}
+idbP('get').then(d=>{try{if(d&&d.script&&d.script!==$('script').value&&(d.at||0)>(store.get('bs_draft',{}).at||0)){snap('保存容量不足の間の退避',d);$('prevn').textContent='より新しい下書きが退避されていました。「↩ 前の下書きを復元」から戻せます'}}catch{}});
+upd();hist();{const M=model();draw(0,M.D,M.sc)}
+/* ---------- v6.9実験: ナレーション比較試験（A=現行／B=速度100%／C=数行まとめ生成＋短い感情指示）。生成済みの動画・既定の動作には影響しません ---------- */
+const GSHORT='低く落ち着いた男性が、視聴者にそっと語りかけるように。',gArc=p=>p<.34?'やさしく、穏やかに。':p<.67?'少しずつ熱を帯びて。':'力強く、背中を押すように。';
+const nabMsg=t=>{$('nabst').textContent=t};
+const nabMS=a=>{if(!a.length)return{m:0,s:0};const m=a.reduce((x,y)=>x+y,0)/a.length;return{m,s:Math.sqrt(a.reduce((x,y)=>x+(y-m)*(y-m),0)/a.length)}};
+const nabCh=x=>x.replace(/[、。！？!?\s]/g,'').length;
+function nabW(L){return L.map(x=>Math.max(4,nabCh(x))+(x.match(/、/g)||[]).length*1.5+(/[。！？!?]$/.test(x)?2:0))}
+function nabEn(buf){const ch=buf.getChannelData(0),fr=Math.floor(buf.sampleRate*.01),nf=Math.floor(ch.length/fr),e=new Float32Array(nf);let mx=0;for(let f=0;f<nf;f++){let q=0;for(let i=f*fr;i<(f+1)*fr;i++)q+=ch[i]*ch[i];e[f]=Math.sqrt(q/fr);if(e[f]>mx)mx=e[f]}return{e,mx,fr,nf}}
+/* 1本の音声の中の行の切れ目（秒）。conf: 0=無音を検出／1=緩めて検出／2=文字数比例（推定） */
+function nabSnap(buf,L){const n=L.length;if(n<2)return{cuts:[0,buf.duration],conf:[],gap:[]};const{e,mx,fr,nf}=nabEn(buf),sr=buf.sampleRate;
+ const th0=mx*.06;let f0=0,f1=nf-1;while(f0<nf&&e[f0]<th0)f0++;while(f1>0&&e[f1]<th0)f1--;
+ const w=nabW(L),sw=w.reduce((a,b)=>a+b,0),sp=(f1-f0+1)*fr/sr,t0=f0*fr/sr,exp=[];let acc=0;for(let i=0;i<n-1;i++){acc+=w[i];exp.push(t0+sp*acc/sw)}
+ const lv=[[.06,15],[.12,8]].map(([k,ml])=>{const th=mx*k,runs=[];let st=-1;for(let f=f0;f<=f1+1;f++){const z=f<=f1&&e[f]<th;if(z&&st<0)st=f;if(!z&&st>=0){if(f-st>=ml)runs.push({a:st,b:f});st=-1}}return runs}),win=Math.max(.6,sp/n*.45);
+ const cuts=[0],conf=[],gap=[];for(let i=0;i<n-1;i++){let best=null,cf=2,gp=0;
+  for(let li=0;li<lv.length&&best==null;li++){let bd=1e9;for(const r of lv[li]){const c=(r.a+r.b)/2*fr/sr,d=Math.abs(c-exp[i]);if(d<=win&&d<bd&&c>cuts[cuts.length-1]+.2){bd=d;best=c;cf=li;gp=(r.b-r.a)*fr/sr}}}
+  if(best==null){best=Math.max(exp[i],cuts[cuts.length-1]+.3);cf=2;gp=0}cuts.push(best);conf.push(cf);gap.push(gp)}
+ cuts.push(buf.duration);return{cuts,conf,gap}}
+function nabCat(bufs,gaps){const sr=bufs[0].sampleRate,g=gaps.map(x=>Math.round((x||0)*sr));let n=0;bufs.forEach((b,i)=>n+=b.length+g[i]);const o=new AudioBuffer({length:n,sampleRate:sr,numberOfChannels:1}),x=new Float32Array(n);let p=0;bufs.forEach((b,i)=>{x.set(b.getChannelData(0),p);p+=b.length+g[i]});o.copyToChannel(x,0);return o}
+/* パーツ（まとまり）群を1本の音声＋切れ目に組み立てる */
+function nabAsm(parts,Ls){const bufs=[],gaps=[],cuts=[0],conf=[],gp=[];let off=0;const sr=parts[0].buf.sampleRate;
+ parts.forEach((pt,pi)=>{const last=pi===parts.length-1,g=last?0:gapF(Ls[pt.i1-1],pt.i1-1,Ls.length)*.5;pt.cuts.slice(1,-1).forEach((c,k)=>{cuts.push(off+c);conf.push(pt.conf[k]);gp.push(pt.gap[k])});
+  off+=pt.buf.duration+g;if(!last){cuts.push(off-g/2);conf.push(pt.fixed?0:0);gp.push(g)}bufs.push(pt.buf);gaps.push(g)});
+ const buf=nabCat(bufs,gaps);cuts.push(buf.duration);return{buf,cuts,conf,gap:gp}}
+async function nabChunk(Ls,i0,i1,N,st0){const tx=$('gtag').checked,txt=Ls.slice(i0,i1).map(x=>tx?gtagify(x):x).join('\n'),style=GSHORT+gArc((st0+i0+(i1-i0)/2)/N),ck='C|'+$('gv').value+'|'+style+'|'+txt,hit=S.gc.get(ck);if(hit)return{b:hit,hit:1};
+ let last;for(let k=0;k<2;k++){try{const b=await gcall(txt,style,$('gv').value,gmods()[0]),v=vcheck(b,Ls.slice(i0,i1).join(''));if(!v.ok)throw Object.assign(new Error(v.why),{bad:1});S.gc.set(ck,b);return{b}}catch(e){last=e;if(e.gkey||e.gcap||e.gq||S.nabX)throw e;await sleep(1500*(k+1))}}throw last}
+/* 低精度のまとまりを、1行ずつ生成して置き換える（復旧）。1行=1回の呼び出し */
+async function nabFixPart(Ls,pt,N,st0){const tx=$('gtag').checked;const bufs=[],gaps=[];for(let i=pt.i0;i<pt.i1;i++){if(S.nabX)throw Object.assign(new Error('中止しました'),{cancel:1});const style=GSHORT+gArc((st0+i)/N),ck='C1|'+$('gv').value+'|'+style+'|'+tx+'|'+Ls[i],hit=S.gc.get(ck);let b=hit;if(!b){b=await gcall(tx?gtagify(Ls[i]):Ls[i],style,$('gv').value,gmods()[0]);const v=vcheck(b,Ls[i]);if(!v.ok)throw Object.assign(new Error(v.why),{bad:1});const tr=trimBuf(b);b=vcheck(tr,Ls[i]).ok?tr:b;S.gc.set(ck,b)}bufs.push(b);gaps.push(i<pt.i1-1?gapF(Ls[i],i,Ls.length):0)}
+ const buf=nabCat(bufs,gaps),cuts=[0];let t=0;bufs.forEach((b,k)=>{t+=b.duration+gaps[k];if(k<bufs.length-1)cuts.push(t-gaps[k]/2)});cuts.push(buf.duration);return{i0:pt.i0,i1:pt.i1,buf,cuts,conf:cuts.slice(1,-1).map(()=>0),gap:gaps.slice(0,-1),fixed:1}}
+/* 基本周波数（Hz）の中央値。自己相関。70〜300Hz */
+function nabF0(x,sr){if(sr>=40000){const y=new Float32Array(x.length>>1);for(let i=0;i<y.length;i++)y[i]=(x[2*i]+x[2*i+1])/2;x=y;sr/=2}
+ const hop=Math.floor(sr*.04),w=Math.floor(sr*.05),lo=Math.floor(sr/300),hi=Math.floor(sr/70),f=[];
+ for(let s=0;s+w+hi<x.length;s+=hop){let e0=0;for(let i=0;i<w;i+=2)e0+=x[s+i]*x[s+i];if(e0/(w/2)<2.5e-5)continue;let bl=0,bv=0;for(let l=lo;l<=hi;l++){let c=0;for(let i=0;i<w;i+=2)c+=x[s+i]*x[s+i+l];if(c>bv){bv=c;bl=l}}if(bl&&bv>.45*e0)f.push(sr/bl)}
+ if(f.length<3)return 0;f.sort((a,b)=>a-b);return f[f.length>>1]}
+const nabTrim=x=>{let mx=0;for(let i=0;i<x.length;i++){const v=Math.abs(x[i]);if(v>mx)mx=v}const th=mx*.04;let a=0,b=x.length-1;while(a<b&&Math.abs(x[a])<th)a++;while(b>a&&Math.abs(x[b])<th)b--;return x.subarray(a,b+1)};
+function nabStat(segs,Ls,sr,rt,pitchRt){const rate=[],rms=[],f0=[];segs.forEach((x0,i)=>{const x=nabTrim(x0);if(x.length<sr*.2)return;rate.push(nabCh(Ls[i])/(x.length/sr/rt));let q=0;for(let k=0;k<x.length;k++)q+=x[k]*x[k];rms.push(20*Math.log10(Math.sqrt(q/x.length)+1e-9));const f=nabF0(x,sr);if(f)f0.push(f*pitchRt)});
+ const r=nabMS(rate),d=nabMS(rms),f=nabMS(f0.map(v=>12*Math.log2(v/f0[0])));const fm=f0.length?f0.slice().sort((a,b)=>a-b)[f0.length>>1]:0;return{rate:r.m,rateCV:r.m?r.s/r.m*100:0,rms:d.m,rmsSD:d.s,f0:fm,f0SD:f.s}}
+function nabPlayStop(){if(S.nabCtx){try{S.nabCtx.close()}catch{}S.nabCtx=null}clearTimeout(S.nabTm)}
+async function nabPlay(w){nabPlayStop();const r=S.nab;if(!r||!r.M[w])return;const ctx=new AC();await ctx.resume();S.nabCtx=ctx;const t0=ctx.currentTime+.15,M=r.M[w],{m}=master(ctx,ctx.destination,t0,M.D);S.rateOv=w==='A'?r.rtA:1;try{narr(ctx,m,t0,M)}finally{S.rateOv=null}S.nabTm=setTimeout(nabPlayStop,(M.D+1.5)*1000);nabMsg(w+' を再生中（'+M.D.toFixed(1)+'秒）')}
+async function nabRun(){if(S.nabBusy)return;const gb=gblock();if(gb)return nabMsg('実行できません：'+gb);const L=lines();if(L.length<3)return nabMsg('台本が短すぎます（3行以上）');
+ const cnt=Math.min(6,L.length),pos=$('nabp').value,st=pos==='first'?0:pos==='last'?L.length-cnt:Math.floor((L.length-cnt)/2),Ls=L.slice(st,st+cnt),k=+$('nabk').value,N=L.length;
+ const roles=(S.rolesFor===$('script').value&&S.roles?S.roles:[]).slice(st,st+cnt),spans=[];for(let i=0;i<cnt;i+=k)spans.push([i,Math.min(cnt,i+k)]);
+ const need=cnt+spans.length,o0=gcount();if(o0.n+need>gcapv())return nabMsg('本日の残り回数（'+Math.max(0,gcapv()-o0.n)+'回）では足りません（必要 約'+need+'回）');
+ S.nabBusy=true;S.nabX=false;S.nab=null;$('nabgo').disabled=true;['nabA','nabB','nabC'].forEach(i=>$(i).disabled=true);$('nabfx').hidden=true;$('nabo').textContent='';nabPlayStop();
+ try{const rtA=(+$('spd').value||92)/100,res={st,cnt,Ls,N,spans,rtA,MD:gmods()[0]};
+  nabMsg('Aを生成中（1行ずつ。'+cnt+'回）…');const ta=performance.now(),a0=gcount().n,A=await genGemini(Ls,roles);res.A={calls:gcount().n-a0,sec:(performance.now()-ta)/1000,A};
+  nabMsg('Cを生成中（'+spans.length+'回）…');const tc=performance.now(),c0=gcount().n;S.gBud=spans.length+2;S.gcalls=0;S.w80=0;const parts=[];
+  for(const[i0,i1]of spans){if(S.nabX)throw Object.assign(new Error('中止しました'),{cancel:1});const{b}=await nabChunk(Ls,i0,i1,N,st),sn=nabSnap(b,Ls.slice(i0,i1));parts.push({i0,i1,buf:b,cuts:sn.cuts,conf:sn.conf,gap:sn.gap})}
+  res.parts=parts;res.C={calls:gcount().n-c0,sec:(performance.now()-tc)/1000};S.nab=res;nabBuild(res);nabReport(res);
+  ['nabA','nabB','nabC'].forEach(i=>$(i).disabled=false);nabMsg('生成完了。A・B・Cを順に聴き比べてください（A:'+res.A.calls+'回／C:'+res.C.calls+'回）')}
+ catch(e){nabMsg('中断：'+RD(String(e&&e.message||e)).slice(0,160)+((S.nab||{}).parts?'':'')+(e&&e.gq?'（無料枠の上限。課金はされません）':''))}
+ finally{S.nabBusy=false;$('nabgo').disabled=false}}
+function nabBuild(res){const{Ls,parts,A,rtA}=res;const M={};S.rateOv=rtA;try{M.A=model(A.A,Ls)}finally{S.rateOv=null}S.rateOv=1;try{M.B=model(A.A,Ls);const c=nabAsm(parts,Ls);res.Cm=c;M.C=model({mode:'single',buf:c.buf,cuts:c.cuts,src:'gemini'},Ls)}finally{S.rateOv=null}res.M=M}
+function nabReport(res){const{Ls,A,parts,Cm,rtA}=res,f1=(v,d=1)=>Number(v).toFixed(d),sB=nabStat(A.A.bufs.map(b=>b.getChannelData(0)),Ls,A.A.bufs[0].sampleRate,1,1),sA={...sB,rate:sB.rate*rtA,f0:sB.f0*rtA},sr=Cm.buf.sampleRate,seg=Ls.map((_,i)=>Cm.buf.getChannelData(0).subarray(Math.floor(Cm.cuts[i]*sr),Math.floor(Cm.cuts[i+1]*sr))),sC=nabStat(seg,Ls,sr,1,1);
+ const cf=[0,0,0];Cm.conf.forEach(c=>cf[c]++);const gA=nabMS(Ls.slice(0,-1).map((x,i)=>gapF(x,i,Ls.length)));const gC=nabMS(Cm.gap.filter(v=>v>0));
+ const speechA=A.A.bufs.reduce((q,b)=>q+nabTrim(b.getChannelData(0)).length/b.sampleRate,0),speechC=seg.reduce((q,x)=>q+nabTrim(x).length/sr,0),ratio=speechC/speechA,
+ warn=[];if(ratio<.8||ratio>1.3)warn.push('⚠ Cの話し言葉の長さがAの'+f1(ratio*100,0)+'%：台本の省略・追加の疑い（聴いて確認）');if(cf[2])warn.push('⚠ 字幕の切れ目 '+cf[2]+'か所が文字数比例の推定（精度低）→復旧ボタンで1行ずつ生成可');if(cf[1])warn.push('字幕の切れ目 '+cf[1]+'か所は無音を緩めて検出');
+ res.sum={A:sA,B:sB,C:sC,cf,ratio,callsA:A.calls,callsC:res.C.calls,secA:A.sec,secC:res.C.sec};
+ $('nabfx').hidden=!cf[2];
+ $('nabo').textContent=[`範囲：${res.st+1}〜${res.st+res.cnt}行目／声 ${$('gv').value}／モデル ${res.MD}／間のタグ ${$('gtag').checked?'オン（現行の既定。Aと同じ条件）':'オフ'}`,`Gemini呼び出し：A ${A.calls}回／B 追加0回（Aの音声を再利用）／C ${res.C.calls}回`,`生成時間：A ${f1(A.sec)}秒／C ${f1(res.C.sec)}秒`,`音声の長さ（再生時）：A ${f1(res.M.A.D)}秒／B ${f1(res.M.B.D)}秒／C ${f1(res.M.C.D)}秒`,
+ `話速（文字/秒、聞こえる速さ）：A ${f1(sA.rate)}／B ${f1(sB.rate)}／C ${f1(sC.rate)}`,`話速のばらつき（%、小さいほど一定）：A ${f1(sA.rateCV,0)}／B ${f1(sB.rateCV,0)}／C ${f1(sC.rateCV,0)}`,
+ `声の高さ（Hz、再生時）：A ${f1(sA.f0,0)}／B ${f1(sB.f0,0)}／C ${f1(sC.f0,0)}（Aは速度設定で ${f1(12*Math.log2(rtA),2)}半音ずれる）`,`行ごとの声の高さのばらつき（半音、声質の一貫性の目安）：A ${f1(sA.f0SD,2)}／B ${f1(sB.f0SD,2)}／C ${f1(sC.f0SD,2)}`,
+ `行ごとの音量のばらつき（dB）：A ${f1(sA.rmsSD,1)}／B ${f1(sB.rmsSD,1)}／C ${f1(sC.rmsSD,1)}`,`行間の無音（秒）：A/B 設定値 平均${f1(gA.m,2)}（一定）／C 自然な間 平均${f1(gC.m,2)}・ばらつき${f1(gC.s,2)}`,
+ `字幕の切れ目（C）：無音検出 ${cf[0]}／緩和検出 ${cf[1]}／推定 ${cf[2]}`].concat(warn).join('\n')}
+if(NABQ)setTimeout(()=>{let e=$('nab');while(e){if(e.tagName==='DETAILS')e.open=true;e=e.parentElement}$('nab').scrollIntoView({block:'start'})},500);
+$('nabgo').onclick=nabRun;$('nabx').onclick=()=>{S.nabX=true;nabMsg('中止を受け付けました（実行中の1回が終わると止まります）')};$('nabS').onclick=()=>{nabPlayStop();nabMsg('停止しました')};['A','B','C'].forEach(w=>{$('nab'+w).onclick=()=>nabPlay(w)});
+$('nabfx').onclick=async()=>{const r=S.nab;if(!r||S.nabBusy)return;S.nabBusy=true;S.nabX=false;$('nabfx').disabled=true;
+ try{const bad=r.parts.filter(p=>p.conf.some(c=>c===2));const n=bad.reduce((q,p)=>q+(p.i1-p.i0),0),o0=gcount();if(o0.n+n>gcapv())throw new Error('本日の残り回数では足りません（必要 約'+n+'回）');S.gBud=n+2;S.gcalls=0;S.w80=0;
+  for(const p of bad){nabMsg('復旧中：'+(p.i0+1)+'〜'+p.i1+'行目を1行ずつ生成…');const np=await nabFixPart(r.Ls,p,r.N,r.st);r.parts[r.parts.indexOf(p)]=np}
+  r.C.calls+=n;nabBuild(r);nabReport(r);nabMsg('復旧しました（追加'+n+'回）。Cをもう一度聴いてください')}
+ catch(e){nabMsg('復旧に失敗：'+RD(String(e&&e.message||e)).slice(0,140))}finally{S.nabBusy=false;$('nabfx').disabled=false}};
+$('nabsv').onclick=async()=>{const r=S.nab;if(!r)return nabMsg('先にA・B・Cを生成してください');const t=['【ナレーション比較試験】'+new Date().toLocaleString('ja-JP'),$('nabo').textContent,'選択：'+($('nabw').value||'未選択'),'メモ：'+($('nabm').value||'なし')].join('\n');
+ const a=store.get('bs_nab',[]);a.push({t:new Date().toISOString(),sum:r.sum&&{cf:r.sum.cf,callsA:r.sum.callsA,callsC:r.sum.callsC},pick:$('nabw').value,memo:$('nabm').value.slice(0,80)});store.set('bs_nab',a.slice(-20));
+ try{await navigator.clipboard.writeText(t);nabMsg('保存し、結果をコピーしました。チャットに貼り付けて共有してください')}catch{nabMsg('保存しました（コピーできませんでした。上の結果を長押しでコピーしてください）')}};
+
+</script></body></html>
