@@ -161,6 +161,21 @@ nav button{margin:0;border:0;border-radius:0;background:none;color:var(--mute);m
 <p><button id="nabsv">結果を保存してコピー</button><button id="nabfx" hidden>Cの低精度の部分を1行ずつ生成して復旧</button></p>
 </section>
 
+<section class="pn" id="nvb" style="display:none"><h2>声の比較試験 D・E・F（実験。通常の動画づくりの動作は変わりません）</h2>
+<p class="note">同じ台本・同じモデル・同じ生成方式・同じ感情指示・同じ音量で、声だけを変えて聴き比べます。D＝Algenib（低くかすれた声）、E＝Enceladus（息の多い柔らかい声）、F＝Alnilam（芯のある声）。男性かどうかは公式に記載がないため、聴いて確認してください。Geminiの無料枠の呼び出しを使います。無料枠の確認が未申告のときは実行できません。</p>
+<p class="note"><b>手順</b>：①上のGemini欄にAPIキーを入れる（このタブで入力済みなら不要）→ ②「無料枠・請求先の確認」のチェックをオン → ③「D・E・Fを生成する」→ ④D→E→Fの順に▶を押して聴く → ⑤点数を付けて「結果を保存してコピー」→ チャットに貼り付け。</p>
+<label for="nvp">試験する範囲</label><select id="nvp"><option value="all">全体（序盤→終盤の流れ）</option><option value="first">最初の6行</option><option value="mid">中盤の6行</option><option value="last">最後の6行</option></select>
+<label for="nvk">まとめる行数</label><select id="nvk"><option value="6">6行ずつ（全体で各声3回、計9回）</option><option value="3">3行ずつ（全体で各声6回、計18回）</option></select>
+<p><button class="pri" id="nvgo">D・E・Fを生成する</button><button id="nvx">中止</button></p>
+<p class="note" id="nvst">未実行</p>
+<p><button id="nvD" disabled>▶ D Algenib</button><button id="nvE" disabled>▶ E Enceladus</button><button id="nvF" disabled>▶ F Alnilam</button><button id="nvS">■ 停止</button></p>
+<pre id="nvo" class="note" style="white-space:pre-wrap;word-break:break-all"></pre>
+<label for="nvsD">D の点数（5点満点）</label><select id="nvsD"></select><label for="nvsE">E の点数</label><select id="nvsE"></select><label for="nvsF">F の点数</label><select id="nvsF"></select>
+<label for="nvw">いちばん良かったのは</label><select id="nvw"><option value="">未選択</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="なし">どれも採用できない</option></select>
+<input type="text" id="nvm" maxlength="80" placeholder="メモ（例：Eは優しいが弱い、Fは終盤が良い）">
+<p><button id="nvsv">結果を保存してコピー</button></p>
+</section>
+
 <section class="pn" id="p0">
 <h2>台本（通常は触らなくて大丈夫です）</h2>
 <button class="pri" id="gen">テーマから台本を新規生成（今の台本は退避されます）</button><button id="cpPrompt">外部AI用の依頼文をコピー</button>
@@ -1331,5 +1346,43 @@ $('nabfx').onclick=async()=>{const r=S.nab;if(!r||S.nabBusy)return;S.nabBusy=tru
 $('nabsv').onclick=async()=>{const r=S.nab;if(!r)return nabMsg('先にA・B・Cを生成してください');const t=['【ナレーション比較試験】'+new Date().toLocaleString('ja-JP'),$('nabo').textContent,'選択：'+($('nabw').value||'未選択'),'メモ：'+($('nabm').value||'なし')].join('\n');
  const a=store.get('bs_nab',[]);a.push({t:new Date().toISOString(),sum:r.sum&&{cf:r.sum.cf,callsA:r.sum.callsA,callsC:r.sum.callsC},pick:$('nabw').value,memo:$('nabm').value.slice(0,80)});store.set('bs_nab',a.slice(-20));
  try{await navigator.clipboard.writeText(t);nabMsg('保存し、結果をコピーしました。チャットに貼り付けて共有してください')}catch{nabMsg('保存しました（コピーできませんでした。上の結果を長押しでコピーしてください）')}};
+
+/* ---------- v6.9exp-2: 声の比較試験（D=Algenib／E=Enceladus／F=Alnilam）。台本・モデル・生成方式・感情指示・音量はすべて共通。変えるのは声だけ。通常の動画づくりには影響しません ---------- */
+const NVQ=/[#&]nab=2/.test(H0),NV=[['D','Algenib','深みのある落ち着いた男性'],['E','Enceladus','優しく寄り添う男性'],['F','Alnilam','力強く感情的な男性']],
+NVS='目の前にいる一人の人に、心から語りかける。序盤は温かく優しく、中盤は真剣に、終盤は力強く背中を押す。自然な日本語で、過剰な演技や機械的な読み上げを避ける。',NVT=-23,
+nvMsg=t=>{$('nvst').textContent=t},nvPh=p=>p<.34?'今は序盤。':p<.67?'今は中盤。':'今は終盤。';
+function nvNorm(buf){const x=buf.getChannelData(0),n=x.length;let pk=0,q=0,c=0;for(let i=0;i<n;i++){const a=Math.abs(x[i]);if(a>pk)pk=a}
+ const th=pk*.05;for(let i=0;i<n;i++)if(Math.abs(x[i])>=th){q+=x[i]*x[i];c++}
+ const rms=Math.sqrt(q/Math.max(1,c)),tg=Math.pow(10,NVT/20);let g=rms>0?tg/rms:1,lim=0;if(pk*g>.95){g=.95/pk;lim=1}
+ const o=new AudioBuffer({length:n,sampleRate:buf.sampleRate,numberOfChannels:1}),y=new Float32Array(n);for(let i=0;i<n;i++)y[i]=x[i]*g;o.copyToChannel(y,0);
+ return{buf:o,gdb:20*Math.log10(g),rmsdb:20*Math.log10(rms*g+1e-9),lim}}
+async function nvChunk(v,Ls,i0,i1,N,st0){const txt=Ls.slice(i0,i1).join('\n'),style=NVS+nvPh((st0+i0+(i1-i0)/2)/N),ck='V|'+v+'|'+style+'|'+txt,hit=S.gc.get(ck);if(hit)return hit;
+ let last;for(let k=0;k<2;k++){try{const b=await gcall(txt,style,v,gmods()[0]),vv=vcheck(b,txt.replace(/\n/g,''));if(!vv.ok)throw Object.assign(new Error(vv.why),{bad:1});S.gc.set(ck,b);return b}catch(e){last=e;if(e.gkey||e.gcap||e.gq||S.nvX)throw e;await sleep(1500*(k+1))}}throw last}
+function nvPlayStop(){if(S.nvCtx){try{S.nvCtx.close()}catch{}S.nvCtx=null}clearTimeout(S.nvTm)}
+async function nvPlay(w){nvPlayStop();const r=S.nv;if(!r||!r.M[w])return;const ctx=new AC();await ctx.resume();S.nvCtx=ctx;const t0=ctx.currentTime+.15,M=r.M[w],{m}=master(ctx,ctx.destination,t0,M.D);S.rateOv=1;try{narr(ctx,m,t0,M)}finally{S.rateOv=null}S.nvTm=setTimeout(nvPlayStop,(M.D+1.5)*1000);nvMsg(w+'（'+r.V[w]+'）を再生中（'+M.D.toFixed(1)+'秒）')}
+async function nvRun(){if(S.nvBusy)return;const gb=gblock();if(gb)return nvMsg('実行できません：'+gb);const L=lines();if(L.length<3)return nvMsg('台本が短すぎます（3行以上）');
+ const pos=$('nvp').value,k=+$('nvk').value;let st=0,cnt=L.length;if(pos!=='all'){cnt=Math.min(6,L.length);st=pos==='first'?0:pos==='last'?L.length-cnt:Math.floor((L.length-cnt)/2)}
+ const Ls=L.slice(st,st+cnt),N=L.length,spans=[];for(let i=0;i<cnt;i+=k)spans.push([i,Math.min(cnt,i+k)]);
+ const need=spans.length*NV.length,o0=gcount();if(o0.n+need>gcapv())return nvMsg('本日の残り回数（'+Math.max(0,gcapv()-o0.n)+'回）では足りません（必要 約'+need+'回）');
+ S.nvBusy=true;S.nvX=false;S.nv=null;$('nvgo').disabled=true;NV.forEach(v=>$('nv'+v[0]).disabled=true);$('nvo').textContent='';nvPlayStop();
+ try{const res={st,cnt,Ls,N,spans,MD:gmods()[0],V:{},M:{},sum:{}};S.gBud=need+3;S.gcalls=0;S.w80=0;
+  for(const[w,v]of NV){res.V[w]=v;const t0=performance.now(),c0=gcount().n,parts=[];
+   for(let si=0;si<spans.length;si++){if(S.nvX)throw Object.assign(new Error('中止しました'),{cancel:1});nvMsg(w+'（'+v+'）を生成中… '+(si+1)+'/'+spans.length);
+    const[i0,i1]=spans[si],b=await nvChunk(v,Ls,i0,i1,N,st),sn=nabSnap(b,Ls.slice(i0,i1));parts.push({i0,i1,buf:b,cuts:sn.cuts,conf:sn.conf,gap:sn.gap})}
+   const asm=nabAsm(parts,Ls),nm=nvNorm(asm.buf);S.rateOv=1;try{res.M[w]=model({mode:'single',buf:nm.buf,cuts:asm.cuts,src:'gemini'},Ls)}finally{S.rateOv=null}
+   const sr=nm.buf.sampleRate,seg=Ls.map((_,i)=>nm.buf.getChannelData(0).subarray(Math.floor(asm.cuts[i]*sr),Math.floor(asm.cuts[i+1]*sr))),sx=nabStat(seg,Ls,sr,1,1),cf=[0,0,0];asm.conf.forEach(c=>cf[c]++);
+   res.sum[w]={voice:v,calls:gcount().n-c0,sec:(performance.now()-t0)/1000,dur:res.M[w].D,rate:sx.rate,rateCV:sx.rateCV,f0:sx.f0,f0SD:sx.f0SD,rmsSD:sx.rmsSD,gdb:nm.gdb,rmsdb:nm.rmsdb,lim:nm.lim,cf}}
+  S.nv=res;nvReport(res);NV.forEach(v=>$('nv'+v[0]).disabled=false);nvMsg('生成完了。D→E→Fの順に聴き比べてください（呼び出し合計 '+NV.reduce((q,v)=>q+res.sum[v[0]].calls,0)+'回）')}
+ catch(e){nvMsg('中断：'+RD(String(e&&e.message||e)).slice(0,160)+(e&&e.gq?'（無料枠の上限。課金はされません）':''))}
+ finally{S.nvBusy=false;$('nvgo').disabled=false}}
+function nvReport(res){const f=(v,d=1)=>Number(v).toFixed(d),o=[`範囲：${res.st+1}〜${res.st+res.cnt}行目（全${res.N}行）／${res.spans.length}回ずつ生成／モデル ${res.MD}／速度100%／タグなし／同じ感情指示`,`音量：各音声の話している部分を ${NVT}dB に揃えています`];
+ NV.forEach(([w,v,d])=>{const s=res.sum[w];o.push(`${w} ${v}（${d}）：呼び出し${s.calls}回／生成${f(s.sec)}秒／長さ${f(s.dur)}秒／声の高さ${f(s.f0,0)}Hz／話速${f(s.rate)}字/秒（ばらつき${f(s.rateCV,0)}%）／行ごとの高さのばらつき${f(s.f0SD,2)}半音／音量補正${f(s.gdb,1)}dB${s.lim?'（ピーク制限あり）':''}`);
+  if(s.cf[2])o.push(`  ⚠ ${w}：字幕の切れ目 ${s.cf[2]}か所が推定（音声の聴取には影響なし）`)});$('nvo').textContent=o.join('\n')}
+(()=>{const sc=['1.0','1.5','2.0','2.5','3.0','3.5','4.0','4.5','5.0'];NV.forEach(([w])=>{$('nvs'+w).innerHTML='<option value="">未採点</option>'+sc.map(x=>'<option>'+x+'</option>').join('')})})();
+$('nvgo').onclick=nvRun;$('nvx').onclick=()=>{S.nvX=true;nvMsg('中止を受け付けました（実行中の1回が終わると止まります）')};$('nvS').onclick=()=>{nvPlayStop();nvMsg('停止しました')};NV.forEach(([w])=>{$('nv'+w).onclick=()=>nvPlay(w)});
+$('nvsv').onclick=async()=>{const r=S.nv;if(!r)return nvMsg('先に生成してください');const sc=NV.map(([w,v])=>w+'('+v+') '+($('nvs'+w).value||'未採点')+'点').join('／'),t=['【声の比較試験 D/E/F】'+new Date().toLocaleString('ja-JP'),$('nvo').textContent,'採点(5点満点)：'+sc,'いちばん良い：'+($('nvw').value||'未選択'),'メモ：'+($('nvm').value||'なし')].join('\n');
+ const a=store.get('bs_nv',[]);a.push({t:new Date().toISOString(),sc:NV.map(([w])=>$('nvs'+w).value),pick:$('nvw').value,memo:$('nvm').value.slice(0,80)});store.set('bs_nv',a.slice(-20));
+ try{await navigator.clipboard.writeText(t);nvMsg('保存し、結果をコピーしました。チャットに貼り付けて共有してください')}catch{nvMsg('保存しました（コピーできませんでした。上の結果を長押しでコピーしてください）')}};
+if(NVQ){$('nab').style.display='none';$('nvb').style.display='';setTimeout(()=>{let e=$('nvb');while(e){if(e.tagName==='DETAILS')e.open=true;e=e.parentElement}$('nvb').scrollIntoView({block:'start'})},500)}
 
 </script></body></html>
