@@ -352,8 +352,10 @@ G.BSInspect=inspect;if(typeof module!=='undefined')module.exports=inspect;
 })(typeof window!=='undefined'?window:globalThis);
 
 const PF={f:[],m:0,t0:0};
-function perfSummary(r){const f=PF.f.slice().sort((a,b)=>a-b),n=f.length,avg=f.reduce((q,v)=>q+v,0)/Math.max(1,n);return{frames:n,avgMs:+avg.toFixed(1),p95Ms:+(f[Math.floor(n*.95)]||0).toFixed(1),maxMs:+(f[n-1]||0).toFixed(1),totalSec:+((performance.now()-PF.t0)/1000).toFixed(1),heapMB:PF.m?+(PF.m/1048576).toFixed(0):null,deviceMemGB:navigator.deviceMemory||null,cores:navigator.hardwareConcurrency||null,res:CW+'x'+CH,dur:D,slow:(()=>{const k=Math.min(30,Math.floor(n/3));if(k<5)return null;const a=f.length?PF.f.slice(0,k).reduce((q,v)=>q+v,0)/k:0,b=PF.f.slice(-k).reduce((q,v)=>q+v,0)/k;return a>0?+(b/a).toFixed(2):null})()}}
-function perfText(){const q=S.perf;return q?'｜【計測】'+q.res+' '+q.dur+'秒: 描画 平均'+q.avgMs+'ms／95%点'+q.p95Ms+'ms／最大'+q.maxMs+'ms、全体'+q.totalSec+'秒、ヒープ最大'+(q.heapMB==null?'取得不可':q.heapMB+'MB')+'、端末メモリ'+(q.deviceMemGB==null?'取得不可':q.deviceMemGB+'GB')+'、コア'+(q.cores||'?')+(q.slow==null?'':'、後半/前半の描画時間比 '+q.slow+(q.slow>2?'（⚠ 発熱や負荷で遅くなった可能性）':'')):''}
+const memMon=()=>!!(typeof performance!=='undefined'&&performance.memory&&performance.memory.jsHeapSizeLimit>0);
+function memMonText(){return memMon()?'メモリ監視: 利用できます（ヒープ使用量が上限の85%を超えると安全に停止）。ただし、ヒープ以外の端末全体のメモリ不足は検知できません':'メモリ監視: この端末・ブラウザでは利用できません（使用量を取得できないため、メモリ不足の自動停止は働きません。ほかのアプリを閉じて、720で実行してください）'}
+function perfSummary(r){const f=PF.f.slice().sort((a,b)=>a-b),n=f.length,avg=f.reduce((q,v)=>q+v,0)/Math.max(1,n);return{frames:n,avgMs:+avg.toFixed(1),p95Ms:+(f[Math.floor(n*.95)]||0).toFixed(1),maxMs:+(f[n-1]||0).toFixed(1),totalSec:+((performance.now()-PF.t0)/1000).toFixed(1),heapMB:PF.m?+(PF.m/1048576).toFixed(0):null,deviceMemGB:navigator.deviceMemory||null,cores:navigator.hardwareConcurrency||null,res:CW+'x'+CH,dur:D,memMon:memMon(),slow:(()=>{const k=Math.min(30,Math.floor(n/3));if(k<5)return null;const a=f.length?PF.f.slice(0,k).reduce((q,v)=>q+v,0)/k:0,b=PF.f.slice(-k).reduce((q,v)=>q+v,0)/k;return a>0?+(b/a).toFixed(2):null})()}}
+function perfText(){const q=S.perf;return q?'｜【計測】'+q.res+' '+q.dur+'秒: 描画 平均'+q.avgMs+'ms／95%点'+q.p95Ms+'ms／最大'+q.maxMs+'ms、全体'+q.totalSec+'秒、ヒープ最大'+(q.heapMB==null?'取得不可（メモリ監視なし）':q.heapMB+'MB')+'、端末メモリ'+(q.deviceMemGB==null?'取得不可':q.deviceMemGB+'GB')+'、コア'+(q.cores||'?')+'、'+(q.memMon?'メモリ監視あり':'メモリ監視なし')+(q.slow==null?'':'、描画時間の後半/前半比 '+q.slow+'（端末温度の測定ではありません。比が2を超える場合は、負荷・他アプリ・発熱などで遅くなった可能性があります）'):''}
 async function sniff(blob){const u=new Uint8Array(await blob.slice(0,16).arrayBuffer());if(u[0]===0x1A&&u[1]===0x45&&u[2]===0xDF&&u[3]===0xA3)return'webm';if(u[4]===0x66&&u[5]===0x74&&u[6]===0x79&&u[7]===0x70)return'mp4';return'unknown'}
 function exportGuard(i){if(S.abort){const e=new Error('中止');e.code='ABORT';throw e}
  if(i%15===0&&performance.memory&&performance.memory.jsHeapSizeLimit&&performance.memory.usedJSHeapSize>.85*performance.memory.jsHeapSizeLimit){const e=new Error('メモリ不足');e.code='MEMORY';throw e}
@@ -420,7 +422,7 @@ function govTrim(o,keep){/* 1つ削る。削った内容を返す。物語の核
  if(o.tr==='leak'){o.tr='none';delete o.tw;return'ライトリーク'}if(o.cut&&o.cut.type!=='none'&&!core){o.cut={type:'none',off:0};return'J/Lカット'}
  if(o.spd==='ramp'){o.spd='';return'スピードランプ'}if(o.mask){o.mask=null;return'マスキング'}if(o.kin==='track'){o.kin='';return'文字の収束演出'}
  if(o.tr==='flash'){o.tr='dip';return'フラッシュ→暗転'}if(o.kin==='char'&&!core){o.kin='track';return'文字ごとの演出→収束'}return null}
-function govern(sc,log){const out=log||[],n=sc.length-1;if(!GOV.on)return out;
+function govern(sc,log){const out=log||[],n=sc.length-(sc.length&&sc[sc.length-1].role==='end'?1:0);if(!GOV.on)return out;
  for(let i=1;i<n;i++){const o=sc[i];
   if(o.mask&&o.mc){o.mask=null;out.push({id:o.id,rule:'競合',msg:'マッチカットとマスキングは同時に使えないため、マスキングを外しました（マッチカットはカメラ連続性を保つ必要があります）'})}
   if(o.mask&&(o.tr==='flash'||o.tr==='dip'||o.tr==='leak')){const w=o.tr;o.tr='none';delete o.tw;out.push({id:o.id,rule:'競合',msg:'マスキングと場面転換（'+w+'）が重なるため、転換効果を外しました'})}}
@@ -429,7 +431,7 @@ function govern(sc,log){const out=log||[],n=sc.length-1;if(!GOV.on)return out;
  if(n>=6){const cand=sc.slice(1,n);const quiet=cand.filter(o=>fxCost(o)<=1).length;if(quiet<Math.ceil(cand.length*.25)){const t=cand.filter(o=>o.role!=='turn'&&o.role!=='climax'&&o.role!=='hook'&&fxCost(o)>1).sort((a,b)=>fxCost(a)-fxCost(b))[0];if(t){let g=0;while(fxCost(t)>1&&g++<12){const r=govTrim(t);if(!r)break;out.push({id:t.id,rule:'メリハリ',msg:'静かな場面が少ないため、'+r+'を外して静の場面を作りました'})}}}}
  /* 色の統一: 場面ごとのグレードのばらつきを中央値±幅に収める */
  const med=a=>{const b=a.slice().sort((x,y)=>x-y);return b[b.length>>1]},sat=med(sc.slice(0,n).map(o=>o.g.sat)),con=med(sc.slice(0,n).map(o=>o.g.con)),vig=med(sc.slice(0,n).map(o=>o.g.vig));let cc=0;
- for(let i=0;i<n;i++){const g=sc[i].g,ns=Math.max(sat-.1,Math.min(sat+.1,g.sat)),nc=Math.max(con-.03,Math.min(con+.03,g.con)),nv=Math.max(vig-.1,Math.min(vig+.1,g.vig));if(ns!==g.sat||nc!==g.con||nv!==g.vig){g.sat=+ns.toFixed(3);g.con=+nc.toFixed(3);g.vig=+nv.toFixed(3);cc++}}
+ for(let i=0;i<n;i++){const g=sc[i].g,ns=Math.max(sat-.35,Math.min(sat+.35,g.sat)),nc=Math.max(con-.1,Math.min(con+.1,g.con)),nv=Math.max(vig-.25,Math.min(vig+.25,g.vig));if(ns!==g.sat||nc!==g.con||nv!==g.vig){g.sat=+ns.toFixed(3);g.con=+nc.toFixed(3);g.vig=+nv.toFixed(3);cc++}}
  if(cc)out.push({id:'全体',rule:'色の統一',msg:cc+'場面の彩度・コントラスト・周辺減光を全体の中央値の近くに寄せました'});return out}
 function planToBase(P,endHold){const n=P.scenes.length,total=P.scenes.reduce((q,s)=>q+s.dur,0),eh=endHold||1.8,Dn=Math.min(90,Math.max(3,Math.ceil(total+eh)));
  const sc=P.scenes.map((x,i)=>{const c=CAMP[x.camera]||CAMP['drift-lateral'],prev=P.scenes[i-1];let tr='none',tw;
@@ -494,7 +496,7 @@ async function sha256Hex(t){try{const b=await crypto.subtle.digest('SHA-256',new
 const CP_BUILD='cinematic-pro build 2026-11-27（git 30203ed 以降）';
 async function evidenceRecord(){const k=(S.cmp&&S.cmp.key)||{},res=(window.CP.lastBlind||[]),djt=S.dj||null,mats=[];
  S.clips.forEach((c,i)=>{if(c&&c.el)mats.push({scene:i+1,file:c.name,bytes:c.file?c.file.size:null,url:($('cu'+i)||{}).value||'',credit:($('cc'+i)||{}).value||'',license:($('cl'+i)||{}).value||''})});
- const E={recordedAt:new Date().toISOString(),app:{build:CP_BUILD,resolution:CW+'x'+CH,fps:FPS,seconds:D},device:{userAgent:navigator.userAgent,screen:screen.width+'x'+screen.height,dpr:devicePixelRatio,deviceMemoryGB:navigator.deviceMemory||null,cores:navigator.hardwareConcurrency||null},
+ const E={recordedAt:new Date().toISOString(),app:{build:CP_BUILD,resolution:CW+'x'+CH,fps:FPS,seconds:D},device:{memoryMonitor:memMon(),tempMeasured:false,userAgent:navigator.userAgent,screen:screen.width+'x'+screen.height,dpr:devicePixelRatio,deviceMemoryGB:navigator.deviceMemory||null,cores:navigator.hardwareConcurrency||null},
   script:S.ln.map(l=>l.toks.map(q=>q[0]).join('')),designJson:djt?{title:(window.LASTPLAN&&window.LASTPLAN.meta&&window.LASTPLAN.meta.title)||null,chars:djt.length,sha256:await sha256Hex(djt)}:null,
   materials:mats,narration:{file:S.narrFile?S.narrFile.name:null,mock:!!S.isMockNarr},bgm:S.bgm?{file:S.bgm.name,source:S.bgm.src,license:S.bgm.lic,bpm:S.bgm.bpm,beatConfidence:S.bgm.an&&S.bgm.an.conf}:null,
   videos:res.map(r=>({code:r.code,variant:k[r.code]||'（答え合わせ前）',bytes:r.blob.size,loudness:r.mix,audio:r.audio,perf:r.perf,autoAdjustments:r.gov}))};
@@ -503,7 +505,7 @@ function revealKey(){let k=S.cmp&&S.cmp.key;if(!k||!Object.keys(k).length){try{k
  $('revl').textContent=k?Object.keys(k).sort().map(c=>'動画'+c+' = '+({A:'A 基本',B:'B 高度',C:'C ディレクター最適化'})[k[c]]).join('\n'):'ブラインド書き出しの記録がありません（ページを開き直した場合は失われます）';
  if(k){S.cmp=S.cmp||{};S.cmp.key=k;evidenceRecord().then(E=>{const t=JSON.stringify(E,null,1),a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:'text/plain'}));a.download='evidence-'+Date.now()+'.txt';a.textContent='比較の記録（素材・台本・JSON・アプリ版・端末・音の検査）を保存';a.style.display='block';$('revl').appendChild(a);window.CP.lastEvidence=E})}
  return k}
-$('bBlind').onclick=()=>blindSet();$('bReveal').onclick=revealKey;$('bAbort').onclick=()=>{S.abort=true};try{blindRecover()}catch{}
+$('bBlind').onclick=()=>blindSet();$('bReveal').onclick=revealKey;$('bAbort').onclick=()=>{S.abort=true};try{const e=document.createElement('div');e.className='note'+(memMon()?'':' w');e.id='memst';e.textContent=memMonText()+'｜端末温度は測定できません（描画時間の変化のみ記録）';$('bBlind').parentNode.after(e)}catch{};try{blindRecover()}catch{}
 let DV=0;
 function applyDirector(){S.dj=null;const P=DIR.plan($('dsc').value,{variant:DV});if(!P.scenes.length){$('dirsum').textContent='台本が空です';return null}
  const b=planToBase(P);loadBase(b,'ディレクター案'+(DV?'（別案'+DV+'）':''));window.LASTPLAN=P;
@@ -579,5 +581,5 @@ $('bDJP').onclick=()=>{const t=BSDesign.requestPrompt($('dsc').value);$('djp').v
 $('bDJC').onclick=async()=>{const t=BSDesign.requestPrompt($('dsc').value);$('djp').value=t;$('djp').hidden=false;try{await navigator.clipboard.writeText(t);$('djs').textContent='依頼文をコピーしました。ChatGPT/Claudeに貼り付けてください'}catch{$('djp').select();$('djs').textContent='自動コピーできません。上の欄を長押しして全選択→コピーしてください'}};
 (function(){const o=$('implt'),L=BSDesign.IMPL;o.textContent=Object.keys(L).map(k=>(/^実装済み/.test(L[k])?'✔ ':'△ ')+k+'：'+L[k]).join('\n')+'\n※ 完成動画に反映されるのは✔の演出です。△は設計・近似のみ。'})();
 clipForm();ledger();renderFrame(1.5);
-window.CP={exportGuard,audioReport,evidenceRecord,blindRecover,blindList,CP_BUILD,intakeReport,blindSet,revealKey,perfSummary,PF,makeVariant,applyVariant,GOV,govern,fxCost,analyzeBgm,loadBgm,drawParallax,rateAt,mediaT,applyCuts,importDesign,exportOffline,S,renderFrame,capLayout,boxes,safeCheck,buildAudio,measure,alignNarr,mockNarr,segments,report,prep,exportVideo,useClip,sceneAt,camera,trans,LN0,SCN0,out,og,GL:!!GL,SAFE,N,FPS,D,ledger,stats};
+window.CP={memMon,memMonText,exportGuard,audioReport,evidenceRecord,blindRecover,blindList,CP_BUILD,intakeReport,blindSet,revealKey,perfSummary,PF,makeVariant,applyVariant,GOV,govern,fxCost,analyzeBgm,loadBgm,drawParallax,rateAt,mediaT,applyCuts,importDesign,exportOffline,S,renderFrame,capLayout,boxes,safeCheck,buildAudio,measure,alignNarr,mockNarr,segments,report,prep,exportVideo,useClip,sceneAt,camera,trans,LN0,SCN0,out,og,GL:!!GL,SAFE,N,FPS,D,ledger,stats};
 </script></body></html>

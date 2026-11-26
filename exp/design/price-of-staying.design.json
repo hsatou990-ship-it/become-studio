@@ -1,0 +1,17 @@
+{
+  "schema": "become.design/1",
+  "title": "THE PRICE OF STAYING THE SAME.",
+  "script": "変わるのが、怖いか。でも、時間は止まらない。その一歩が、未来を変える。今日から、始めよう。",
+  "audience": "変わりたいと思いながら行動できずにいる人",
+  "intent": "変化への恐怖から行動する勇気へ導く。冷たい色彩から暖かい色彩へ変化させる。",
+  "scenes": [
+    {"text": "変わるのが、怖いか。","dur": 3,"role": "hook","emotion": {"valence": -0.6,"arousal": 0.4},"camera": "push-in-slow","transition": "cut","speed": "normal","kinetic": "track","grade": "cold-teal","emphasis": ["怖い"],"search": {"queries": ["dark empty corridor","empty urban tunnel night"],"avoid": ["logo", "text"],"minHeight": 1080}},
+    {"text": "でも、時間は止まらない。","dur": 3.5,"role": "low","emotion": {"valence": -0.7,"arousal": 0.6},"camera": "static-hold","transition": "dip-black","speed": "normal","grade": "cold-teal","emphasis": ["時間"],"search": {"queries": ["analog clock dark room","clock hands close up"],"avoid": ["logo"],"minHeight": 1080},"sfx": ["riser"]},
+    {"text": "その一歩が、未来を変える。","dur": 3.5,"role": "turn","emotion": {"valence": 0.6,"arousal": 0.9},"camera": "push-in-fast","transition": "cut","speed": "speed-ramp","kinetic": "char","grade": "warm-gold","emphasis": ["一歩", "未来"],"search": {"queries": ["feet climbing concrete stairs","boots walking golden sunlight"],"avoid": ["logo"],"minHeight": 1080},"sfx": ["hit"],"fx": ["beat-sync-cut"]},
+    {"text": "今日から、始めよう。","dur": 3.5,"role": "ending","emotion": {"valence": 0.9,"arousal": 0.4},"camera": "pull-back-reveal","transition": "dissolve","speed": "normal","grade": "warm-gold","emphasis": ["今日"],"search": {"queries": ["golden sunrise mountain road","open road morning sunlight"],"avoid": ["logo", "text"],"minHeight": 1080},"sfx": ["shimmer"]}
+  ],
+  "bgm": {"mood": "cinematic-rise","bpm": 80},
+  "narration": {"voice": "低く深みのある自然な日本語男性音声","pace": "normal","tone": "序盤は静かに問いかけ、中盤は真剣に、終盤は優しく力強く語る"},
+  "ending": {"holdSec": 1.5,"text": "BEYOND."},
+  "qa": ["冒頭3秒で視聴者を引き込む","同じ素材を繰り返さない","字幕の視認性を確保する","ナレーションを音楽で遮らない","音割れがないこと","素材と音源の商用利用条件を確認する","実在人物に否定的な意味を付与しない","AI表示と投稿前の安全確認を行う"]
+}
