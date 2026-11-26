@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none';script-src 'unsafe-inline';style-src 'unsafe-inline';img-src blob: data:;media-src blob: data:;connect-src 'none';base-uri 'none';form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none';script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval';style-src 'unsafe-inline';img-src blob: data:;media-src blob: data:;connect-src 'none';base-uri 'none';form-action 'none'">
 <title>CINEMATIC PRO 15秒試作（実験ページ）</title>
 <style>
 :root{color-scheme:dark}body{margin:0;background:#0b0c10;color:#e8e6df;font:15px/1.6 system-ui,"Noto Sans JP",sans-serif;padding:12px 16px 60px}
@@ -14,7 +14,7 @@ label{display:block}small{color:#9aa0ad}
 <h1>CINEMATIC PRO 15秒試作（実験ページ・正式版とは別）</h1>
 <p class="note">このページは外部へ一切接続しません（通信遮断のCSP）。APIキーも使いません。素材はオーナーが自分で取得した動画ファイルを取り込みます。権利情報が揃っていない素材は使いません。未取込の場面は「模擬素材」で表示され、映像品質の評価対象になりません。</p>
 <canvas id="cv"></canvas>
-<p><button id="bPrep" class="p">① 音と編集を準備</button><button id="bPrev">② プレビュー再生</button><button id="bExp" class="p">③ 書き出し（15秒）</button><a id="dl" hidden style="display:inline-block;padding:8px 10px;border:1px solid #d4af37;border-radius:8px;color:#d4af37">完成動画を保存</a></p>
+<p><button id="bPrep" class="p">① 音と編集を準備</button><button id="bPrev">② プレビュー再生</button><button id="bExp" class="p">③ 書き出し（15秒）</button><button id="bExp2" class="p">③b H.264+AAC書き出し（実験・高速）</button><span id="rs" class="note"></span><a id="dl" hidden style="display:inline-block;padding:8px 10px;border:1px solid #d4af37;border-radius:8px;color:#d4af37">完成動画を保存</a></p>
 <p class="note" id="st">待機中</p>
 <h2>スタイルと字幕</h2>
 <p><label>制作スタイル <select id="sty"><option value="A">A 映画風モチベーション（実装）</option><option value="B" disabled>B 海外ドキュメンタリー風（設計候補）</option><option value="C" disabled>C 実写とモーショングラフィックス（設計候補）</option></select></label>
@@ -296,6 +296,17 @@ G.BSInspect=inspect;if(typeof module!=='undefined')module.exports=inspect;
 })(typeof window!=='undefined'?window:globalThis);
 
 async function sniff(blob){const u=new Uint8Array(await blob.slice(0,16).arrayBuffer());if(u[0]===0x1A&&u[1]===0x45&&u[2]===0xDF&&u[3]===0xA3)return'webm';if(u[4]===0x66&&u[5]===0x74&&u[6]===0x79&&u[7]===0x70)return'mp4';return'unknown'}
+async function exportOffline(){if(S.busy)return null;S.busy=true;const st=(m,c)=>say(m,c);
+ try{st('H.264+AAC書き出しの準備中…');if(!S.mix)await prep();
+  let M;try{M=await import('../mp4-lab/lib/mp4enc.js')}catch(e){S.busy=false;st('実験用エンコーダを読み込めませんでした: '+e.message+'。従来の③書き出しを使ってください','w');return null}
+  const clipsOn=S.clips.map((c,i)=>c&&c.el?i:-1).filter(i=>i>=0),seek=(el,t)=>new Promise(ok=>{let d=false;const f=()=>{if(!d){d=true;el.removeEventListener('seeked',f);ok()}};el.addEventListener('seeked',f);try{el.pause()}catch{}el.currentTime=t;setTimeout(f,1500)});
+  const r=await M.encodeMp4({canvas:out,fps:FPS,frames:Math.round(D*FPS),audio:S.mix,vBitrate:CW>=1080?10e6:5e6,
+   render:async(i,t)=>{const sc=sceneAt(t),c=S.clips[sc];if(c&&c.el&&c.el.duration){const q=(t-S.sc[sc].a)+c.meta.inp,d=c.el.duration;await seek(c.el,d>0?q%d:q)}renderFrame(t)},
+   progress:p=>st('H.264+AAC書き出し中 '+Math.round(p*100)+'%')});
+  S.busy=false;const blob=r.blob,rep=BSInspect(await blob.arrayBuffer()),v=await verifyBlob(blob);
+  window.CP.lastBlob=blob;const url=URL.createObjectURL(blob);$('dl').href=url;$('dl').download='CINEMATIC-PRO-A-15s-h264.mp4';$('dl').hidden=false;$('dl').textContent='H.264+AAC版を保存';
+  st('書き出し完了（所要 '+(r.T.total/1000).toFixed(1)+'秒＝動画の'+(r.T.total/1000/D).toFixed(2)+'倍）｜【実測】'+rep.tracks.map(t=>t.kind==='video'?t.codec+' '+t.width+'x'+t.height+' '+(t.fps||'?')+'fps':t.codec).join(' + ')+' '+(rep.duration||0).toFixed(1)+'秒｜'+(v.msg||'')+'｜TikTok推奨条件(H.264+AAC+1080x1920+30fps): '+(rep.allOk?'満たす':'満たさない→'+rep.checks.filter(x=>!x[1]).map(x=>x[0]).join('、'))+'（取り込み可否・Android再生は未確認）｜サイズ '+(blob.size/1048576).toFixed(1)+'MB',rep.allOk&&v.ok?'':'w');
+  return{blob,rep,v,T:r.T}}catch(e){S.busy=false;st('H.264+AAC書き出しに失敗しました: '+e.message+'。従来の③書き出しを使ってください','w');return null}}
 async function verifyBlob(blob){try{const ab=await blob.arrayBuffer(),ctx=new OfflineAudioContext(1,1,48000),b=await ctx.decodeAudioData(ab),x=b.getChannelData(0),sr=b.sampleRate,A=S.sc;
  const nw=S.ln.map(L=>rmsDb(x,L.t0*sr,(L.t0+L.d)*sr)),sil=rmsDb(x,(A[4].a-.12)*sr,(A[4].a+.12)*sr),nav=nw.reduce((q,v)=>q+v,0)/4,ok=!S.narr||(nav>-30&&nav-sil>12);
  return{ok:b.duration>14&&b.duration<16.5&&ok,dur:b.duration,narr:+nav.toFixed(1),sil:+sil.toFixed(1),msg:`書き出したファイルの長さ ${b.duration.toFixed(2)}秒／ナレーション区間 ${nav.toFixed(1)}dB／余韻の無音 ${sil.toFixed(1)}dB`+(ok?'':'（音声の確認が必要）')}}catch(e){return{ok:false,unverified:true,msg:'書き出し後の音声を自動検査できませんでした: '+e.message+'。再生して確認してください'}}}
@@ -313,7 +324,7 @@ $('bEv').onclick=()=>{const v=EVI.map((k,i)=>$('e'+i).value===''?null:clamp(+$('
 S.font=$('fnt').value;$('fnt').onchange=()=>{S.font=$('fnt').value;renderFrame(4.5)};
 $('narr').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const ab=await f.arrayBuffer(),b=await new OfflineAudioContext(1,1,48000).decodeAudioData(ab);S.narr=b;S.isMockNarr=false;S.mix=null;await prep();renderFrame(1.5)}catch(er){S.narr=null;$('nst').textContent='音声を読み込めませんでした: '+er.message}};
 $('bMock').onclick=async()=>{S.narr=mockNarr();S.isMockNarr=true;S.mix=null;await prep();renderFrame(1.5)};
-$('bPrep').onclick=async()=>{S.mix=null;await prep();renderFrame(4.5)};$('bPrev').onclick=preview;$('bExp').onclick=exportVideo;$('bRep').onclick=()=>{$('rep').textContent=JSON.stringify(report(),null,1)};
+$('bPrep').onclick=async()=>{S.mix=null;await prep();renderFrame(4.5)};$('bPrev').onclick=preview;$('bExp').onclick=exportVideo;$('bExp2').onclick=exportOffline;$('rs').textContent=' 現在の画面解像度 '+CW+'×'+CH+(CW<1080?'（1080×1920で出すには、このページのURL末尾に #res=1080 を付けて開き直してください）':'');$('bRep').onclick=()=>{$('rep').textContent=JSON.stringify(report(),null,1)};
 clipForm();ledger();renderFrame(1.5);
-window.CP={S,renderFrame,capLayout,boxes,safeCheck,buildAudio,measure,alignNarr,mockNarr,segments,report,prep,exportVideo,useClip,sceneAt,camera,trans,LN0,SCN0,out,og,GL:!!GL,SAFE,N,FPS,D,ledger,stats};
+window.CP={exportOffline,S,renderFrame,capLayout,boxes,safeCheck,buildAudio,measure,alignNarr,mockNarr,segments,report,prep,exportVideo,useClip,sceneAt,camera,trans,LN0,SCN0,out,og,GL:!!GL,SAFE,N,FPS,D,ledger,stats};
 </script></body></html>

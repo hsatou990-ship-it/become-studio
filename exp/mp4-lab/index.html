@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none';script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval';style-src 'unsafe-inline';img-src blob: data:;media-src blob:;connect-src 'self';worker-src 'none';base-uri 'none';form-action 'none'">
+<title>MP4 LAB（実験・本体に影響なし）</title>
+<style>body{font:15px/1.6 system-ui,sans-serif;background:#10131a;color:#e8eaf0;margin:0;padding:14px;max-width:640px;margin:auto}h1{font-size:18px}h2{font-size:15px;margin:18px 0 6px;color:#d4af37}button,input{font:inherit;padding:10px;border-radius:8px;border:1px solid #39435a;background:#1b2130;color:#e8eaf0;width:100%;margin:4px 0;box-sizing:border-box}pre{white-space:pre-wrap;background:#0b0e14;padding:10px;border-radius:8px;border:1px solid #2a3140;font-size:13px}.note{color:#9aa4b8;font-size:13px}a{color:#8ab4ff}video{width:100%;max-height:360px;background:#000}</style></head><body>
+<h1>MP4 LAB（実験）</h1>
+<p class="note">H.264＋AAC＋MP4をこの端末の中だけで作る隔離実験です（通信なし）。Mediabunny（MPL-2.0）とFFmpeg由来のAAC符号化（LGPL-2.1）を使用。AACの特許・商用条件は未確認のため、本体には採用しません。</p>
+<h2>テスト書き出し（映像1080×1920・30fps・合成映像と音）</h2>
+<input id="sec" type="number" value="3" min="1" max="15" step="1">
+<button id="go">書き出して解析する</button>
+<pre id="out">未実行</pre>
+<a id="dl" hidden>書き出したMP4を保存</a><video id="pv" controls playsinline hidden></video>
+<script src="lib/inspector.js"></script>
+<script type="module">
+import {encodeMp4,AacSync} from './lib/mp4enc.js';
+const $=i=>document.getElementById(i);
+window.MP4LAB={encodeMp4,AacSync};
+function drawTest(x,i,t,w,h){const g=x.createLinearGradient(0,0,w,h);g.addColorStop(0,'hsl('+((i*3)%360)+',55%,22%)');g.addColorStop(1,'#05070b');x.fillStyle=g;x.fillRect(0,0,w,h);x.fillStyle='#d4af37';x.fillRect(80+(i*9)%900,h*.5,120,6);x.fillStyle='#fff';x.font='bold 96px sans-serif';x.fillText('MP4 LAB',90,300);x.font='64px monospace';x.fillText(t.toFixed(2)+'s  #'+i,90,420)}
+function tone(sec){const sr=48000,ac=new OfflineAudioContext(2,sr*sec,sr),b=ac.createBuffer(2,sr*sec,sr);for(let c=0;c<2;c++){const d=b.getChannelData(c);for(let i=0;i<d.length;i++)d[i]=.3*Math.sin(2*Math.PI*(220+110*Math.floor(i/sr))*i/sr)}return b}
+window.MP4LAB.tone=tone;window.MP4LAB.drawTest=drawTest;
+$('go').onclick=async()=>{const sec=Math.max(1,Math.min(15,+$('sec').value||3));$('out').textContent='書き出し中…';
+ try{const cv=document.createElement('canvas');cv.width=1080;cv.height=1920;const r=await encodeMp4({canvas:cv,fps:30,frames:sec*30,render:async(i,t)=>drawTest(cv.getContext('2d'),i,t,1080,1920),audio:tone(sec),progress:p=>$('out').textContent='書き出し中 '+Math.round(p*100)+'%'});
+  window.LAST=r;const R=BSInspect(await r.blob.arrayBuffer());
+  const L=['【実測】所要 '+(r.T.total/1000).toFixed(2)+'秒（映像'+(r.T.video/1000).toFixed(2)+'秒・AAC'+(r.T.aacEncode/1000).toFixed(2)+'秒）= 動画の長さ'+sec+'秒の'+(r.T.total/1000/sec).toFixed(2)+'倍の時間','サイズ '+(r.blob.size/1048576).toFixed(2)+'MB','コンテナ '+R.container+(R.brand?'('+R.brand+')':'')];
+  R.tracks.forEach(t=>L.push((t.kind==='video'?'映像 ':'音声 ')+t.codec+(t.profile?' '+t.profile+' L'+t.level:'')+(t.width?' '+t.width+'x'+t.height+' '+t.fps+'fps':' '+t.sampleRate+'Hz')+' '+t.duration.toFixed(2)+'秒'));
+  R.checks.forEach(c=>L.push((c[1]?'OK ':'NG ')+c[0]+(c[2]?' '+c[2]:'')));L.push('','TikTok推奨条件: '+(R.allOk?'満たす【実測】（取り込み可否は未確認）':'満たさない項目あり'));$('out').textContent=L.join('\n');
+  const u=URL.createObjectURL(r.blob);$('dl').href=u;$('dl').download='mp4-lab-test.mp4';$('dl').hidden=false;$('pv').src=u;$('pv').hidden=false}
+ catch(e){$('out').textContent='失敗: '+e.message+'\nこの端末ではH.264の符号化が使えない可能性があります（export-labで能力検査をしてください）'}};
+</script></body></html>
