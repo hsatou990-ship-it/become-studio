@@ -53,6 +53,8 @@ label{display:block}small{color:#9aa0ad}
 <h2>ナレーション（外部音声の取り込み）</h2>
 <p class="note">目安の4文：①まだ、何も変えられていない。②そう思う夜が、君にもあるはずだ。③でも、その痛みは、止まれない証拠じゃない。④まだ、歩こうとしている証拠だ。 文のあいだは0.3秒以上あけてください。音声に合わせて字幕とカット位置が自動で調整されます。</p>
 <p><input type="file" id="narr" accept="audio/*"><button id="bMock">模擬ナレーション（試験用）</button></p>
+<p class="note"><b>ナレーションの音色</b>（試験用）：<label><input type="radio" name="voice" value="orig" checked> 原音（加工なし）</label> <label><input type="radio" name="voice" value="beta"> BEYOND. Cinematic Voice β</label> <button id="bVo">原音を試聴</button><button id="bVb">βを試聴</button></p>
+<p class="note" id="voicest">原音（加工なし）。βは、別途測定した処理Bの測定値に合わせた近似（元の処理Bとは別物・単一素材からの当てはめ）です。取り込んだ原音は上書きしません。</p>
 <p class="note" id="nst">ナレーション未取込（BGMのみ）。AI音声を使う場合は、投稿時にAI生成ラベルの表示が必要です。</p>
 <h2>映像素材（場面S1〜S4。権利情報の記入が必須）</h2>
 <div id="clips"></div>
@@ -193,6 +195,17 @@ function renderFrame(t){const i=sceneAt(t),c=camera(i,t),tr=trans(t),fr=Math.rou
 function noiseBuf(oc,sec,seed){const b=oc.createBuffer(1,Math.ceil(sec*oc.sampleRate),oc.sampleRate),d=b.getChannelData(0),r=mulberry(seed);for(let i=0;i<d.length;i++)d[i]=r()*2-1;return b}
 function rmsDb(x,a,b){let q=0,n=0;for(let i=Math.max(0,a|0);i<Math.min(x.length,b|0);i++){q+=x[i]*x[i];n++}return n?10*Math.log10(q/n+1e-12):-120}
 const BGM_DRONE=.5;
+const VOICE_B={id:'beyond-cinematic-voice-beta',name:'BEYOND. Cinematic Voice β',note:'処理Bの測定値に合わせた近似（元の処理Bとは別物）',hp:{f:72.6,q:.82},pk1:{f:377,q:1.2,g:-2.29},hs:{f:2122,g:.9},pk2:{f:2000,q:2.34,g:.64}};
+/* Web AudioのhighpassのQはdB指定。線形Q 0.82 は 20*log10(0.82)=-1.72dB */
+function voiceHpQdB(){return 20*Math.log10(VOICE_B.hp.q)}
+function voiceChain(ctx,src){const V=VOICE_B,mk=(t,f,q,g)=>{const x=ctx.createBiquadFilter();x.type=t;x.frequency.value=f;if(q!=null)x.Q.value=q;if(g!=null)x.gain.value=g;return x};
+ const a=mk('highpass',V.hp.f,voiceHpQdB()),b=mk('peaking',V.pk1.f,V.pk1.q,V.pk1.g),c=mk('highshelf',V.hs.f,null,V.hs.g),d=mk('peaking',V.pk2.f,V.pk2.q,V.pk2.g);src.connect(a);a.connect(b);b.connect(c);c.connect(d);return d}
+const VCACHE=new WeakMap();
+async function voiceBuf(nb){if(VCACHE.has(nb))return VCACHE.get(nb);const oc=new OfflineAudioContext(1,nb.length,nb.sampleRate),s=oc.createBufferSource();s.buffer=nb;voiceChain(oc,s).connect(oc.destination);s.start(0);const r=await oc.startRendering();VCACHE.set(nb,r);return r}
+function setVoice(v){if(v!=='orig'&&v!=='beta')return false;S.voice=v;S.mix=null;try{localStorage.setItem('cp_voice',v)}catch{}voiceUi();return true}
+function voiceUi(){try{const b=S.voice==='beta';document.querySelectorAll('input[name=voice]').forEach(r=>{r.checked=r.value===(b?'beta':'orig')});$('voicest').textContent=b?'BEYOND. Cinematic Voice β（試験用の近似。ハイパス72.6Hz／377Hz −2.29dB／高域+0.9dB／2000Hz +0.64dB／音量は従来どおり話者部分−18dBに自動調整）。元の処理Bとは別物です。原音は保持しており、いつでも切り替えられます':'原音（加工なし）。βは、別途測定した処理Bの測定値に合わせた近似（元の処理Bとは別物・単一素材からの当てはめ）です。取り込んだ原音は上書きしません。';if(S.narr&&S.mix===null&&S.warn)S.warn=S.warn.filter(w=>!/^音色/.test(w));ledger()}catch{}}
+let VPLAY=null;
+async function previewVoice(v){if(!S.narr){$('voicest').textContent='先にナレーション（外部音声または模擬）を取り込んでください';return false}try{if(VPLAY){try{VPLAY.stop()}catch{}}const ac=AC||(AC=new AudioContext({sampleRate:48000}));await ac.resume();const buf=v==='beta'?await voiceBuf(S.narr):S.narr,x=buf.getChannelData(0);let q=0,n=0;for(let i=0;i<x.length;i++)if(Math.abs(x[i])>.01){q+=x[i]*x[i];n++}const rms=Math.sqrt(q/Math.max(1,n)),g=ac.createGain();g.gain.value=Math.min(6,Math.pow(10,-18/20)/Math.max(rms,1e-5));const s=ac.createBufferSource();s.buffer=buf;s.connect(g);g.connect(ac.destination);s.start();VPLAY=s;$('voicest').textContent=(v==='beta'?'βを試聴中':'原音を試聴中')+'（どちらも話者部分−18dB相当に揃えています）';return true}catch(e){$('voicest').textContent='試聴できませんでした: '+e.message;return false}}
 async function buildAudio(){const sr=48000,oc=new OfflineAudioContext(2,D*sr,sr),A=S.sc,nA=A.length,EA=A[nA-1],HI=Math.max(1,A.findIndex(q=>q.sfx&&q.sfx.hit)),HA=A[HI],PA=A[nA-2],mx=oc.createDynamicsCompressor();mx.threshold.value=-6;mx.knee.value=3;mx.ratio.value=20;mx.attack.value=.002;mx.release.value=.12;mx.connect(oc.destination);
  const ef=bgmEff(),bed=oc.createGain();bed.connect(mx);bed.gain.setValueAtTime(1,0);if(S.narr)S.ln.forEach(L=>{bed.gain.setTargetAtTime(.38,Math.max(0,L.t0-.15),.08);bed.gain.setTargetAtTime(1,L.t0+L.d+.1,.25)});
  const lp=oc.createBiquadFilter();lp.type='lowpass';lp.frequency.value=170;const dg=oc.createGain(),te=EA.a-.2;lp.connect(dg);dg.connect(bed);
@@ -209,7 +222,7 @@ async function buildAudio(){const sr=48000,oc=new OfflineAudioContext(2,D*sr,sr)
   [880,1318.5].forEach(f=>{const o=oc.createOscillator();o.frequency.value=f;const q2=oc.createGain();q2.gain.setValueAtTime(.012,t+.1);q2.gain.exponentialRampToValueAtTime(.0005,t+1.8);o.connect(q2);q2.connect(bed);o.start(t+.1);o.stop(t+2)})});
  A.forEach(sc=>{if(!(sc.sfx&&sc.sfx.shimmer))return;const t=sc.a+.2;[220,329.6].forEach(f=>{const o=oc.createOscillator();o.frequency.value=f;const q=oc.createGain();q.gain.setValueAtTime(0,t);q.gain.linearRampToValueAtTime(.012,t+.5);q.gain.exponentialRampToValueAtTime(.0005,D-.05);o.connect(q);q.connect(bed);o.start(t);o.stop(D)})});
  if(ef==='builtin'&&S.base&&S.base.bpm&&A.some(q=>q.beat)){const bt=60/S.base.bpm;for(let t=bt;t<EA.a-.3;t+=bt){const o=oc.createOscillator();o.frequency.setValueAtTime(90,t);o.frequency.exponentialRampToValueAtTime(42,t+.12);const q=oc.createGain();q.gain.setValueAtTime(.11,t);q.gain.exponentialRampToValueAtTime(.001,t+.22);o.connect(q);q.connect(bed);o.start(t);o.stop(t+.25)}}
- if(S.narr){const nb=S.narr,x=nb.getChannelData(0);let act=[];for(let i=0;i<x.length;i++)if(Math.abs(x[i])>.01)act.push(x[i]);let q=0;act.forEach(v=>q+=v*v);const rms=Math.sqrt(q/Math.max(1,act.length)),fac=Math.min(6,Math.pow(10,-18/20)/Math.max(rms,1e-5));
+ if(S.narr){const nb=S.voice==='beta'?await voiceBuf(S.narr):S.narr,x=nb.getChannelData(0);let act=[];for(let i=0;i<x.length;i++)if(Math.abs(x[i])>.01)act.push(x[i]);let q=0;act.forEach(v=>q+=v*v);const rms=Math.sqrt(q/Math.max(1,act.length)),fac=Math.min(6,Math.pow(10,-18/20)/Math.max(rms,1e-5));
   const src=oc.createBufferSource();src.buffer=nb;const gn=oc.createGain();gn.gain.value=fac;src.connect(gn);gn.connect(mx);const o=S.off;src.start(Math.max(0,o),Math.max(0,-o))}
  const buf=await oc.startRendering();
  if(S.cmp&&S.cmp.on){const x=buf.getChannelData(0),y=buf.numberOfChannels>1?buf.getChannelData(1):null,e1=Math.floor(EA.a*sr),db=rmsDb(x,0,e1),g0=Math.pow(10,(CMP_TARGET_DB-db)/20);let pk=0;for(let i=0;i<x.length;i+=3)pk=Math.max(pk,Math.abs(x[i]),y?Math.abs(y[i]):0);const g=Math.min(g0,pk>0?.95/pk:g0);if(isFinite(g)&&g>0){for(let c=0;c<buf.numberOfChannels;c++){const d=buf.getChannelData(c);for(let i=0;i<d.length;i++)d[i]*=g}}S.mixInfo={before:+db.toFixed(1),after:+rmsDb(buf.getChannelData(0),0,e1).toFixed(1),gain:+g.toFixed(3),limited:g<g0}}else S.mixInfo=null;
@@ -252,7 +265,7 @@ async function useClip(i,fileOverride){const f=fileOverride||$('cf'+i).files[0],
  el.currentTime=meta.inp;S.clips[i]={el,meta,w,name:f.name,file:f};$('cm'+i).textContent='反映しました'+(w.length?'（注意: '+w.join('／')+'）':'');ledger();return true}
 function ledger(){const u=S.clips.map((c,i)=>c?`${S.sc[i].id}: ${c.meta.src}｜${c.meta.url}｜制作者 ${c.meta.by}｜${c.meta.lic}｜確認日 ${c.meta.at}｜クレジット案: Video by ${c.meta.by} (${c.meta.src.split('（')[0]})`:null).filter(Boolean);
  const m=S.clips.map((c,i)=>c?null:S.sc[i].id).filter(Boolean).concat([S.sc[S.sc.length-1].id]);
- $('ledger').textContent=(bgmEff()==='ext'?'BGM: '+S.bgm.name+'｜'+S.bgm.src+'｜'+S.bgm.lic+'｜オーナー権利確認済み\n':'')+(S.bgmMode==='external'&&!S.bgm?'BGM: 外部BGMが未取込（BGMなしと同じ扱い。内蔵BGMは流しません）\n':'')+(bgmEff()==='none'&&!(S.bgmMode==='external'&&!S.bgm)?'BGM: なし（内蔵BGMも使いません）。投稿時にTikTok内の楽曲を追加する場合は、アカウントの種別と楽曲の利用範囲（商用可否）を投稿前に確認してください\n':'')+(u.length?u.join('\n'):'（実素材なし）')+'\n模擬素材の場面: '+m.join(', ')+'\n権利条件や規約が変わったら、保存済みの動画も再審査してください。TikTok投稿時は、AI生成の音声・映像を含む場合にAI生成ラベルが必要です。'}
+ $('ledger').textContent=(S.voice==='beta'?'ナレーション音色: BEYOND. Cinematic Voice β（試験用の近似。元の処理Bとは別物）。原音は保持\n':'')+(bgmEff()==='ext'?'BGM: '+S.bgm.name+'｜'+S.bgm.src+'｜'+S.bgm.lic+'｜オーナー権利確認済み\n':'')+(S.bgmMode==='external'&&!S.bgm?'BGM: 外部BGMが未取込（BGMなしと同じ扱い。内蔵BGMは流しません）\n':'')+(bgmEff()==='none'&&!(S.bgmMode==='external'&&!S.bgm)?'BGM: なし（内蔵BGMも使いません）。投稿時にTikTok内の楽曲を追加する場合は、アカウントの種別と楽曲の利用範囲（商用可否）を投稿前に確認してください\n':'')+(u.length?u.join('\n'):'（実素材なし）')+'\n模擬素材の場面: '+m.join(', ')+'\n権利条件や規約が変わったら、保存済みの動画も再審査してください。TikTok投稿時は、AI生成の音声・映像を含む場合にAI生成ラベルが必要です。'}
 /* ---------- 再生・書き出し ---------- */
 function startScene(i){S.cur=i;const c=S.clips[i];if(c&&c.el){try{c.el.currentTime=c.meta.inp;c.el.play()}catch{}}S.clips.forEach((q,k)=>{if(q&&k!==i)try{q.el.pause()}catch{}})}
 function say(m,c){$('st').textContent=m;$('st').className='note '+(c||'')}
@@ -395,7 +408,7 @@ $('bPrep').onclick=async()=>{S.mix=null;await prep();renderFrame(4.5)};$('bPrev'
 
 /* ---------- 解像度切替時の制作データ保護（端末内のみ・APIキーは含まない） ---------- */
 function idbSess(){return new Promise((ok,ng)=>{const r=indexedDB.open('cp_session',1);r.onupgradeneeded=()=>r.result.createObjectStore('s',{keyPath:'k'});r.onsuccess=()=>ok(r.result);r.onerror=()=>ng(new Error('IndexedDBを開けません'))})}
-async function saveSession(){const rec={k:'last',at:Date.now(),dsc:$('dsc').value,plan:S.base.sc!==SCN0&&!S.dj,dj:S.dj||null,dv:DV,font:S.font,narr:S.narrFile||null,bgm:S.bgmFile?{file:S.bgmFile,src:S.bgm.src,lic:S.bgm.lic}:null,mockNarr:!!S.isMockNarr,bgmMode:S.bgmMode||null,
+async function saveSession(){const rec={k:'last',at:Date.now(),dsc:$('dsc').value,plan:S.base.sc!==SCN0&&!S.dj,dj:S.dj||null,dv:DV,font:S.font,narr:S.narrFile||null,bgm:S.bgmFile?{file:S.bgmFile,src:S.bgm.src,lic:S.bgm.lic}:null,mockNarr:!!S.isMockNarr,bgmMode:S.bgmMode||null,voice:S.voice||null,
   clips:S.clips.map((c,i)=>c&&c.file?{i,file:c.file,src:c.meta.src,url:c.meta.url,by:c.meta.by,lic:c.meta.lic,inp:c.meta.inp}:null).filter(Boolean)};
  const db=await idbSess();await new Promise((ok,ng)=>{const t=db.transaction('s','readwrite');t.objectStore('s').put(rec);t.oncomplete=ok;t.onerror=()=>ng(new Error('保存に失敗（容量不足の可能性）'));t.onabort=t.onerror})}
 async function restoreSession(){let rec=null;try{const db=await idbSess();rec=await new Promise((ok,ng)=>{const q=db.transaction('s').objectStore('s').get('last');q.onsuccess=()=>ok(q.result);q.onerror=()=>ng(q.error)})}catch{}
@@ -404,6 +417,7 @@ async function restoreSession(){let rec=null;try{const db=await idbSess();rec=aw
  for(const c of rec.clips){if(c.i>=S.clips.length)continue;$('cs'+c.i).value=c.src;$('cu'+c.i).value=c.url;$('cc'+c.i).value=c.by;$('cl'+c.i).value=c.lic;$('ck'+c.i).checked=true;$('ci'+c.i).value=c.inp;await useClip(c.i,c.file)}
  if(rec.bgm){try{$('bgs').value=rec.bgm.src;$('bgl').value=rec.bgm.lic;$('bgk').checked=true;await loadBgm(rec.bgm.file)}catch{}}
  if(rec.bgmMode){try{setBgmMode(rec.bgmMode)}catch{}}
+ if(rec.voice){try{setVoice(rec.voice)}catch{}}
  if(rec.narr){try{const b=await new OfflineAudioContext(1,1,48000).decodeAudioData(await rec.narr.arrayBuffer());S.narr=b;S.narrFile=rec.narr;S.isMockNarr=false;S.mix=null;await prep()}catch{}}
  else if(rec.mockNarr){S.narr=mockNarr();S.isMockNarr=true;S.mix=null;await prep()}
  try{const db=await idbSess();db.transaction('s','readwrite').objectStore('s').delete('last')}catch{}
@@ -502,7 +516,7 @@ async function evidenceRecord(){const k=(S.cmp&&S.cmp.key)||{},res=(window.CP.la
  S.clips.forEach((c,i)=>{if(c&&c.el)mats.push({scene:i+1,file:c.name,bytes:c.file?c.file.size:null,url:($('cu'+i)||{}).value||'',credit:($('cc'+i)||{}).value||'',license:($('cl'+i)||{}).value||''})});
  const E={recordedAt:new Date().toISOString(),app:{build:CP_BUILD,resolution:CW+'x'+CH,fps:FPS,seconds:D},device:{memoryMonitor:memMon(),tempMeasured:false,userAgent:navigator.userAgent,screen:screen.width+'x'+screen.height,dpr:devicePixelRatio,deviceMemoryGB:navigator.deviceMemory||null,cores:navigator.hardwareConcurrency||null},
   script:S.ln.map(l=>l.toks.map(q=>q[0]).join('')),designJson:djt?{title:(window.LASTPLAN&&window.LASTPLAN.meta&&window.LASTPLAN.meta.title)||null,chars:djt.length,sha256:await sha256Hex(djt)}:null,
-  materials:mats,narration:{file:S.narrFile?S.narrFile.name:null,mock:!!S.isMockNarr},bgmMode:bgmEff(),bgm:bgmEff()==='ext'?{file:S.bgm.name,source:S.bgm.src,license:S.bgm.lic,bpm:S.bgm.bpm,beatConfidence:S.bgm.an&&S.bgm.an.conf}:null,
+  materials:mats,narration:{file:S.narrFile?S.narrFile.name:null,mock:!!S.isMockNarr,voice:S.voice==='beta'?{id:VOICE_B.id,name:VOICE_B.name,note:VOICE_B.note,params:{hp:VOICE_B.hp,hpQdB:+voiceHpQdB().toFixed(2),pk1:VOICE_B.pk1,hs:VOICE_B.hs,pk2:VOICE_B.pk2}}:{id:'original',name:'原音（加工なし）'}},bgmMode:bgmEff(),bgm:bgmEff()==='ext'?{file:S.bgm.name,source:S.bgm.src,license:S.bgm.lic,bpm:S.bgm.bpm,beatConfidence:S.bgm.an&&S.bgm.an.conf}:null,
   videos:res.map(r=>({code:r.code,variant:k[r.code]||'（答え合わせ前）',bytes:r.blob.size,loudness:r.mix,audio:r.audio,perf:r.perf,autoAdjustments:r.gov}))};
  return E}
 function revealKey(){let k=S.cmp&&S.cmp.key;if(!k||!Object.keys(k).length){try{k=JSON.parse(sessionStorage.getItem('cpKey')||'null')}catch{}}
@@ -518,6 +532,8 @@ function applyDirector(){S.dj=null;const P=DIR.plan($('dsc').value,{variant:DV})
 $('bDir').onclick=()=>{DV=0;applyDirector()};$('bDirV').onclick=()=>{DV++;applyDirector()};
 $('bDirA').onclick=()=>{S.dj=null;loadBase({sc:SCN0,ln:LN0,D:15},'標準A案（15秒・固定5場面）')};
 try{const sv=localStorage.getItem('cp_bgmmode');if(sv&&!/restore=1/.test(location.hash))setBgmMode(sv)}catch{}
+try{const sv=localStorage.getItem('cp_voice');if(sv&&!/restore=1/.test(location.hash))setVoice(sv)}catch{}
+document.querySelectorAll('input[name=voice]').forEach(r=>{r.onchange=()=>{if(r.checked)setVoice(r.value)}});$('bVo').onclick=()=>previewVoice('orig');$('bVb').onclick=()=>previewVoice('beta');
 if(/restore=1/.test(location.hash))restoreSession().then(()=>{history.replaceState(null,'',location.pathname+location.search+'#res='+RES)});
 
 
@@ -592,5 +608,5 @@ $('bDJP').onclick=()=>{const t=BSDesign.requestPrompt($('dsc').value);$('djp').v
 $('bDJC').onclick=async()=>{const t=BSDesign.requestPrompt($('dsc').value);$('djp').value=t;$('djp').hidden=false;try{await navigator.clipboard.writeText(t);$('djs').textContent='依頼文をコピーしました。ChatGPT/Claudeに貼り付けてください'}catch{$('djp').select();$('djs').textContent='自動コピーできません。上の欄を長押しして全選択→コピーしてください'}};
 (function(){const o=$('implt'),L=BSDesign.IMPL;o.textContent=Object.keys(L).map(k=>(/^実装済み/.test(L[k])?'✔ ':'△ ')+k+'：'+L[k]).join('\n')+'\n※ 完成動画に反映されるのは✔の演出です。△は設計・近似のみ。'})();
 clipForm();ledger();renderFrame(1.5);
-window.CP={bgmEff,beatOn,setBgmMode,memMon,memMonText,exportGuard,audioReport,evidenceRecord,blindRecover,blindList,CP_BUILD,intakeReport,blindSet,revealKey,perfSummary,PF,makeVariant,applyVariant,GOV,govern,fxCost,analyzeBgm,loadBgm,drawParallax,rateAt,mediaT,applyCuts,importDesign,exportOffline,S,renderFrame,capLayout,boxes,safeCheck,buildAudio,measure,alignNarr,mockNarr,segments,report,prep,exportVideo,useClip,sceneAt,camera,trans,LN0,SCN0,out,og,GL:!!GL,SAFE,N,FPS,D,ledger,stats};
+window.CP={setVoice,voiceBuf,voiceHpQdB,VOICE_B,previewVoice,bgmEff,beatOn,setBgmMode,memMon,memMonText,exportGuard,audioReport,evidenceRecord,blindRecover,blindList,CP_BUILD,intakeReport,blindSet,revealKey,perfSummary,PF,makeVariant,applyVariant,GOV,govern,fxCost,analyzeBgm,loadBgm,drawParallax,rateAt,mediaT,applyCuts,importDesign,exportOffline,S,renderFrame,capLayout,boxes,safeCheck,buildAudio,measure,alignNarr,mockNarr,segments,report,prep,exportVideo,useClip,sceneAt,camera,trans,LN0,SCN0,out,og,GL:!!GL,SAFE,N,FPS,D,ledger,stats};
 </script></body></html>
