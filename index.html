@@ -17,7 +17,7 @@ header span{color:var(--mute);font-size:12px}#ep{margin-left:auto;color:var(--g2
 canvas{height:40vh;aspect-ratio:9/16;max-width:92%;border:1px solid #3a3322;border-radius:6px;box-shadow:0 0 60px #c9a45c22,0 20px 50px #000}
 .bar{display:flex;gap:8px;padding:0 16px;align-items:center}.bar #clock{margin-left:auto;color:var(--mute);font-variant-numeric:tabular-nums}
 #st{position:sticky;top:4px;z-index:20;margin:8px 16px;white-space:pre-line;padding:8px 12px;border-left:2px solid var(--gold);background:var(--pn);color:var(--g2);font-size:13px}
-[hidden]{display:none!important}.pn{padding:4px 0}main{padding:0 16px}.lead{font:800 19px/1.6 var(--serif);color:var(--g2);margin:14px 0 4px}#hero{padding-bottom:6px}#mk{display:block;width:100%;min-height:68px;margin:14px 0 8px;font:800 22px var(--serif);letter-spacing:.25em;border-radius:14px;box-shadow:0 0 40px #c9a45c33}#mkstop{width:100%}#ms li{padding:8px 12px;margin:6px 0;font-size:13px}#result{border-top:1px solid #3a3322;margin-top:14px}#dl{font-size:20px;padding:20px;border-radius:14px;box-shadow:0 0 40px #c9a45c44}#share{width:100%;min-height:56px}#adv>summary{font-size:15px;min-height:44px;display:flex;align-items:center}#adv h2{margin-top:22px;padding-top:10px;border-top:1px solid var(--ln)}
+[hidden]{display:none!important}.pn{padding:4px 0}main{padding:0 16px}.lead{font:800 19px/1.6 var(--serif);color:var(--g2);margin:14px 0 4px}#hero{padding-bottom:6px}#mk{display:block;width:100%;min-height:68px;margin:14px 0 8px;font:800 22px var(--serif);letter-spacing:.25em;border-radius:14px;box-shadow:0 0 40px #c9a45c33}#mkstop{width:100%}#sv{font-size:11px;color:#8fbf8f;margin-left:8px}#sv.bad{color:#ff9a8a;font-weight:700}#a3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}#a3 button{margin:0;min-height:48px;font-size:13px}#scsum{margin:6px 0}#svw{color:#ff9a8a;font-weight:700;font-size:13px}#snapp,#fitp{border:1px solid #3a3322;border-radius:10px;padding:8px;margin:8px 0}#fitp{border:2px solid #e0b860}#fitp button,#snapp button{display:block;width:100%;min-height:48px;margin:6px 0;text-align:left}#ms li{padding:8px 12px;margin:6px 0;font-size:13px}#result{border-top:1px solid #3a3322;margin-top:14px}#dl{font-size:20px;padding:20px;border-radius:14px;box-shadow:0 0 40px #c9a45c44}#share{width:100%;min-height:56px}#adv>summary{font-size:15px;min-height:44px;display:flex;align-items:center}#adv h2{margin-top:22px;padding-top:10px;border-top:1px solid var(--ln)}
 h2{font:800 17px var(--serif);color:var(--gold);margin:18px 0 8px}
 label{display:block;color:var(--mute);font-size:13px;margin:12px 0 4px}
 input,textarea,select,button{font:inherit;color:var(--ink);background:var(--pn);border:1px solid var(--ln);border-radius:10px;padding:12px;min-height:48px}
@@ -37,18 +37,22 @@ nav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:re
 nav button{margin:0;border:0;border-radius:0;background:none;color:var(--mute);min-height:58px;font-size:12px;padding:6px 2px}#info,#vs,#vf,#vi{white-space:pre-line}nav button.on{color:var(--gold);box-shadow:inset 0 2px 0 var(--gold)}
 @media (prefers-reduced-motion:reduce){button:active{transform:none}}
 </style></head><body>
-<header><span class="logo">BECOME.</span><span>STUDIO v6.4</span><span id="ep">EP.001</span></header>
+<header><span class="logo">BECOME.</span><span>STUDIO v6.7</span><span id="ep">EP.001</span><span id="sv" role="status"></span></header>
 <p id="st" role="status">準備完了。テーマを確認して「動画を作る」を押してください。</p>
 <main>
 <section id="hero">
-<p class="lead">スタイルとテーマを選んで、ボタンを1回。ナレーション・字幕・映像・BGMは全自動で入ります。</p>
+<p class="lead">台本はあなたの許可なく書き換わりません。スタイルとテーマを確認して、ボタンを1回。</p>
 <label for="vs5">① 動画スタイル</label><select id="vs5"><option value="mg">図解モーショングラフィックス</option><option value="real">実写モチベーション</option><option value="cinema">ダークシネマ</option><option value="psych">心理学アニメーション</option><option value="story">ストーリー</option></select>
 <p class="note" id="vs5n"></p>
 <label for="th">② テーマ</label><input type="text" id="th" value="人生を変えたい君へ。" maxlength="60" autocomplete="off">
-<button class="pri" id="mk">③ 動画を作る</button>
+<p class="note" id="scsum"></p><p id="svw" hidden></p>
+<button class="pri" id="mk">▶ 現在の台本で動画を作る</button>
+<div id="a3"><button id="remk">🔁 同じ台本で作り直す</button><button id="edsc">✏ 台本を編集する</button><button id="rsd">↩ 前の下書きを復元</button></div>
+<div id="snapp" hidden></div>
+<div id="fitp" hidden><b id="fitt"></b><p class="note" id="fitm"></p><button id="fit1"></button><button id="fit2">✂ 台本を自分で短くする（生成を止めて台本欄へ）</button><button id="fit3">■ 生成を中止する（台本はそのまま）</button></div>
 <button id="mkstop" hidden>■ 中止する</button>
 <ul id="ms"><li id="ms0">○ 台本をつくる</li><li id="ms1">○ ナレーションを生成</li><li id="ms2">○ 尺と字幕を合わせる</li><li id="ms3">○ 動画を書き出す（テスト→本番）</li><li id="ms4">○ 投稿文をつくる</li></ul>
-<p class="note" id="vnote"></p><p class="note" id="jobn" style="color:#e0b860;font-weight:700"></p><progress id="pg" max="1" value="0"></progress><div id="xp" class="note">進捗 0% / 残り --</div>
+<p class="note" id="prevn" style="color:#e0b860"></p><p class="note" id="vnote"></p><p class="note" id="jobn" style="color:#e0b860;font-weight:700"></p><progress id="pg" max="1" value="0"></progress><div id="xp" class="note">進捗 0% / 残り --</div>
 <p class="note">初回だけ、音声エンジンの取得に数分かかります（2回目以降は短縮されます）。作成中は画面を消さず、このページを開いたままにしてください。</p>
 </section>
 <section id="result" hidden>
@@ -139,8 +143,7 @@ nav button{margin:0;border:0;border-radius:0;background:none;color:var(--mute);m
 
 <section class="pn" id="p0">
 <h2>台本（通常は触らなくて大丈夫です）</h2>
-<div class="ck"><input type="checkbox" id="autos" checked><span>テーマから台本を新規生成する（オフなら下の台本を使う）</span></div>
-<button class="pri" id="gen">台本を自動生成</button><button id="cpPrompt">外部AI用の依頼文をコピー</button>
+<button class="pri" id="gen">テーマから台本を新規生成（今の台本は退避されます）</button><button id="cpPrompt">外部AI用の依頼文をコピー</button>
 <p class="note">自動生成は端末内のテンプレート組み立てです（AIモデルではありません・無料・通信なし）。ChatGPT、Gemini、Claudeの無料版で作った台本は、下欄に貼り付けて使えます。</p>
 <label>台本（1行 = 1シーン）</label>
 <textarea id="script"></textarea>
@@ -221,7 +224,7 @@ Android ChromeのMediaRecorderはMP4またはWebMを出力します。このア�
 const $=i=>document.getElementById(i),cv=$('cv'),g=cv.getContext('2d');
 const FONT='"Shippori Mincho B1","Noto Serif JP","Noto Serif CJK JP","Hiragino Mincho ProN",serif';
 const S={ph:[0,1],after:0,pend:0,xbusy:false,t3ok:null,part:null,keep:false,busy:false,fin:null,tag:'',act:null,cand:null,tts:null,photos:[],ep:1,ac:null,raf:0,mr:null,wl:null,url:null,blob:null,name:'',mode:'',last:-1,mic:null};
-const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch{return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}};
+const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch{return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){store.err=String(e&&e.name||e);return false}}};
 const rnd=a=>a[Math.floor(Math.random()*a.length)],shuf=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(p=>p[1]);
 const say=m=>{$('st').textContent=m;const x=$('xs');if(x&&!S.xbusy)x.textContent=m},fmt=s=>Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -272,17 +275,50 @@ function model(A=S.act,L=lines()){
   return{sc,D,A,note:A.cache.cuts?'字幕の切替は音声の無音区間から自動検出（'+A.cache.found+'箇所検出）':'無音の区切りが足りません（'+A.cache.found+'箇所）。文字数比例で配分しています。行の間に無音を入れて再生成してください'}}
  if(A&&A.mode==='clips'){let t=0,miss=0;sc=L.map((s,i)=>{const b=A.bufs[i];if(!b)miss++;const dur=b?b.duration/rt:Math.max(1.2,s.length*.15/rt),d=.15+dur+(i<n-1?gapF(s,i,n):1);const o={s,i,t0:t,d,au:b?{buf:b,start:t+.15}:null};t+=d;return o});return{sc,D:t,A,miss}}
  D=+$('dur').value;const w=L.map(x=>Math.max(x.length,8)+6),sum=w.reduce((a,b)=>a+b,0);let t=0;sc=L.map((s,i)=>{const d=D*w[i]/sum,o={s,i,t0:t,d};t+=d;return o});return{sc,D,A:null}}
+/* ---------- v6.7: 台本の完全保護（自動保存・退避・復元）。APIキーは対象外（ホワイトリスト方式） ---------- */
+const DK=['th','script','dur','vs5','tpl','bgs','res','vo','pre','spd','nv','gap','vol','rvl','bgm','sfx','deep','rev','gon','srcn'];
+const SN=(()=>{const a=store.get('bs_snap',[]);return Array.isArray(a)?a:[]})();
+let saveT=null,lastSave=null,saveBad=false,idbOk=null;
+const hhmm=t=>new Date(t).toLocaleTimeString('ja-JP');
+function dgather(){const d={v:1,ep:S.ep,at:Date.now()};DK.forEach(k=>{const e=$(k);if(e)d[k]=e.type==='checkbox'?e.checked:e.value});return d}
+const idbP=(m,v)=>new Promise(r=>{try{const q=indexedDB.open('bs_safe',1);q.onupgradeneeded=()=>q.result.createObjectStore('d');q.onerror=()=>r(null);q.onsuccess=()=>{try{const db=q.result,tx=db.transaction('d',m==='get'?'readonly':'readwrite'),o=tx.objectStore('d'),rq=m==='get'?o.get('draft'):m==='put'?o.put(v,'draft'):o.delete('draft');rq.onsuccess=()=>{r(m==='get'?rq.result||null:true);db.close()};rq.onerror=()=>{r(null);db.close()}}catch{r(null)}}}catch{r(null)}});
+function sv(){const e=$('sv'),w=$('svw');if(saveBad){e.textContent='⚠ 保存できません';e.className='bad';w.hidden=false;w.textContent='⚠ 自動保存に失敗しました（端末の保存容量不足の可能性）。いまの台本は画面を開いている間は残りますが、念のため台本欄の「台本をコピー」で控えてください。退避は別の領域に試みています。'}else{e.className='';w.hidden=true;e.textContent=lastSave?'保存 '+hhmm(lastSave):''}}
+function dsave(now){clearTimeout(saveT);const run=()=>{const d=dgather();let ok=store.set('bs_draft',d);if(ok){try{const b=JSON.parse(localStorage.getItem('bs_draft')||'null');ok=!!b&&b.script===d.script&&b.th===d.th}catch{ok=false}}
+ if(ok){saveBad=false;lastSave=new Date();if(idbOk)idbP('del');try{sessionStorage.removeItem('bs_draft2')}catch{}}
+ else{saveBad=true;LOG('自動保存に失敗: '+(store.err||'検証不一致'));try{sessionStorage.setItem('bs_draft2',JSON.stringify(d))}catch{}idbP('put',d).then(r=>{idbOk=!!r;LOG('別領域への退避: '+(r?'成功':'失敗'))})}
+ sv()};if(now)run();else saveT=setTimeout(run,400)}
+function snap(why,src){const d=src||{th:$('th').value,script:$('script').value,ep:S.ep};if(!d.script||!String(d.script).trim())return false;if(SN[0]&&SN[0].script===d.script)return false;SN.unshift({at:Date.now(),why,th:d.th||'',script:d.script,ep:d.ep||1});if(SN.length>8)SN.length=8;let n=SN.length,ok=false;while(n>0&&!(ok=store.set('bs_snap',SN.slice(0,n))))n=n>2?n-2:0;if(!ok){LOG('退避の保存に失敗（画面を開いている間は復元できます）');$('prevn').textContent='⚠ 前の下書きの退避を端末に保存できませんでした（画面を閉じるまでは復元できます）'}return true}
+function rsRender(){const e=$('snapp');if(!SN.length){e.innerHTML='<p class="note">退避された下書きはまだありません</p>';return}e.innerHTML='<p class="note">タップすると、その下書きに戻します（いまの台本も退避されます）</p>'+SN.map((x,i)=>`<button data-i="${i}">${esc(hhmm(x.at))}｜${esc(x.why)}｜${String(x.script).split('\n').filter(l=>l.trim()).length}行｜${esc(String(x.th).slice(0,14))}</button>`).join('')}
+function tab(){const d=$('adv');if(d)d.open=true}
+$('rsd').onclick=()=>{const e=$('snapp');if(e.hidden){rsRender();e.hidden=false}else e.hidden=true};
+$('snapp').onclick=ev=>{const b=ev.target.closest('button');if(!b)return;const x=SN[+b.dataset.i];if(!x)return;snap('復元の前');$('th').value=x.th;$('script').value=x.script;S.ep=x.ep||S.ep;S.rolesFor=null;upd();dsave(true);$('snapp').hidden=true;say('前の下書きを復元しました（'+hhmm(x.at)+'）')};
+$('edsc').onclick=()=>{tab(0);setTimeout(()=>{const e=$('script');e.scrollIntoView({block:'center'});e.focus()},50)};
+function drestore(){let d=store.get('bs_draft',null),from='';try{const s2=JSON.parse(sessionStorage.getItem('bs_draft2')||'null');if(s2&&(!d||(s2.at||0)>(d.at||0))){d=s2;from='（保存容量不足のため、一時領域から）'}}catch{}
+ if(!d){const c=store.get('bs_cur',null);if(c&&c.script!=null)d={th:c.th,script:c.script,ep:c.ep}}
+ if(!d)return false;const sk=new Set(S.impSkip||[]);
+ if(d.vs5&&VSTY[d.vs5]&&!sk.has('vs5')){$('vs5').value=d.vs5;applyStyle()}
+ DK.forEach(k=>{if(k==='vs5'||sk.has(k)||d[k]===undefined)return;const e=$(k);if(!e)return;if(e.type==='checkbox')e.checked=!!d[k];else{if(e.tagName==='SELECT'&&![...e.options].some(o=>o.value===String(d[k]))){if(k==='dur'&&+d[k]>0)e.add(new Option(d[k]+'秒',d[k]));else return}e.value=d[k]}});
+ if(!sk.has('script')&&d.ep)S.ep=d.ep;['spd','nv','gap','vol','rvl'].forEach(k=>$(k).dispatchEvent(new Event('input')));
+ if(d.at)$('prevn').textContent='前回の自動保存（'+new Date(d.at).toLocaleString('ja-JP')+'）から台本と設定を復元しました'+from;return true}
+function pstate(st,msg){store.set('bs_prog',{at:Date.now(),st,msg:String(msg||'').slice(0,120)})}
+function fitAsk(D,tg){return new Promise(res=>{const need=Math.ceil(D+1),o=[...$('dur').options].map(x=>+x.value).filter(v=>v>=need).sort((a,b)=>a-b),nd=o.length?o[0]:Math.ceil(need/15)*15;
+ $('fitt').textContent=`内容が設定時間に収まりません（音声 ${fmt(D)}／設定 ${tg}秒）`;$('fitm').textContent='文章は1行も省略していません。どうするか選んでください（選ぶまで動画は作りません）。';$('fit1').textContent=`⏱ 動画時間を${nd}秒に延長して続ける`;
+ $('fitp').hidden=false;$('fitp').scrollIntoView({block:'center'});xmsg('設定時間に収まりません。画面の3つから選んでください',1);
+ S.fitRes=v=>{S.fitRes=null;$('fitp').hidden=true;if(v==='ext'){if(![...$('dur').options].some(x=>+x.value===nd))$('dur').add(new Option(nd+'秒',String(nd)));$('dur').value=String(nd);upd();dsave(true)}res(v)};
+ $('fit1').onclick=()=>S.fitRes&&S.fitRes('ext');$('fit2').onclick=()=>S.fitRes&&S.fitRes('edit');$('fit3').onclick=()=>S.fitRes&&S.fitRes('abort')})}
+['pagehide','visibilitychange'].forEach(ev=>addEventListener(ev,()=>{if(ev==='pagehide'||document.visibilityState==='hidden')dsave(true)}));
+DK.forEach(k=>{const e=$(k);if(e)['input','change'].forEach(ev=>e.addEventListener(ev,()=>dsave()))});
 function upd(){const M=model(),n=lines().length,D=M.D,tg=+$('dur').value;let m=n?`${n}シーン / 合計 ${fmt(D)}${M.A?'（ナレーション同期）':'（音声なし・文字数比例）'}`:'台本が空です';
  if(M.A&&D>tg+.5){const cut=Math.ceil((D-tg)/(D/n));m+=`\n⚠ 目標${tg}秒を${(D-tg).toFixed(1)}秒超過。音声は切断しません。対策：台本を約${cut}行減らす、読み上げ速度を上げる、間を短くする、または動画時間を${Math.ceil(D/15)*15}秒以上に変更`}
  if(M.miss)m+=`\n⚠ 音声が未生成の行が${M.miss}行あります（推定時間で表示）`;
  if(M.A&&M.A.mode==='clips'&&M.A.bufs.length!==n)m+=`\n⚠ 音声${M.A.bufs.length}件と台本${n}行が不一致です`;
  if(M.note)m+='\n'+M.note;
- $('info').textContent=m;$('vi').textContent=M.A?m:'';store.set('bs_cur',{th:$('th').value,script:$('script').value,ep:S.ep});$('ep').textContent='EP.'+pad3(S.ep)}
-$('split').onclick=()=>{const out=[];PL().forEach(it=>{let first=true;const push=x=>{out.push(x+(first&&it.ts?' // '+it.ts:''));first=false};it.t.split(/(?<=[。！？!?])/).forEach(p=>{p=p.trim();if(!p)return;if(p.length>26){let cur='';p.split(/(?<=、)/).forEach(x=>{if((cur+x).length>26&&cur){push(cur);cur=''}cur+=x});if(cur)push(cur)}else push(p)})});$('script').value=out.join('\n');upd();say('シーンを分割しました')};
+ $('info').textContent=m;$('vi').textContent=M.A?m:'';dsave();$('scsum').textContent=n?`台本 ${n}行／約${fmt(D)}（設定 ${tg}秒）｜${lines()[0].slice(0,18)}…`:'台本が空です。「台本を編集する」か、台本欄で新規生成してください';$('ep').textContent='EP.'+pad3(S.ep)}
+$('split').onclick=()=>{snap('シーン分割の前');const out=[];PL().forEach(it=>{let first=true;const push=x=>{out.push(x+(first&&it.ts?' // '+it.ts:''));first=false};it.t.split(/(?<=[。！？!?])/).forEach(p=>{p=p.trim();if(!p)return;if(p.length>26){let cur='';p.split(/(?<=、)/).forEach(x=>{if((cur+x).length>26&&cur){push(cur);cur=''}cur+=x});if(cur)push(cur)}else push(p)})});$('script').value=out.join('\n');upd();say('シーンを分割しました')};
 async function copy(txt,msg){try{await navigator.clipboard.writeText(txt);say(msg||'コピーしました')}catch{say('コピーできません。テキストを長押しして手動でコピーしてください')}}
 $('cpScript').onclick=()=>copy($('script').value,'台本をコピーしました');
 $('cpPrompt').onclick=()=>copy(`あなたは自己啓発ショート動画の脚本家です。テーマ「${$('th').value}」で、約${model().D.toFixed(0)}秒（15〜18行）のナレーション台本を書いてください。条件：1行=1シーン、1行は最大24文字、冒頭は問いかけ、最後は短い名言で締める、顔出しなし、番号や記号を付けない、台本のみ出力。`,'依頼文をコピーしました。外部AIに貼り付け、出てきた台本を下欄へ貼ってください');
-$('gen').onclick=gen;$('script').oninput=upd;$('th').oninput=upd;$('dur').onchange=upd;$('deep').onchange=upd;
+$('gen').onclick=()=>{snap('新規生成の前');gen();dsave(true)};$('script').oninput=upd;$('th').oninput=upd;$('dur').onchange=upd;$('deep').onchange=upd;
 
 /* ---------- 映像 ---------- */
 const rng=n=>{const x=Math.sin(n*127.1+311.7)*43758.5453;return x-Math.floor(x)};
@@ -667,10 +703,10 @@ $('cc').onclick=()=>copy($('cap').value);$('ct').onclick=()=>copy($('tags').valu
 
 /* ---------- 履歴・再利用 ---------- */
 function hist(){const h=store.get('bs_hist',[]);$('hl').innerHTML=h.length?h.map((x,i)=>`<li><b>EP.${pad3(x.ep)} ${esc(x.th)}</b><small>${esc(x.d)} / ${x.script.split('\n').filter(Boolean).length}シーン</small><button data-a="load" data-i="${i}">開く</button><button data-a="next" data-i="${i}">次回作に再利用</button><button data-a="del" data-i="${i}">削除</button></li>`).join(''):'<li>まだ保存がありません</li>'}
-$('save').onclick=()=>{const h=store.get('bs_hist',[]);h.unshift({ep:S.ep,th:$('th').value,script:$('script').value,d:new Date().toLocaleString('ja-JP')});store.set('bs_hist',h.slice(0,30));hist();say('保存しました')};
+$('save').onclick=()=>{const h=store.get('bs_hist',[]);h.unshift({ep:S.ep,th:$('th').value,script:$('script').value,d:new Date().toLocaleString('ja-JP')});const okh=store.set('bs_hist',h.slice(0,30));hist();say(okh?'保存しました':'⚠ 保存できませんでした（端末の保存容量不足）。台本をコピーして控えてください')};
 $('hl').onclick=e=>{const b=e.target.closest('button');if(!b)return;const h=store.get('bs_hist',[]),i=+b.dataset.i,x=h[i];if(!x)return;
  if(b.dataset.a==='del'){h.splice(i,1);store.set('bs_hist',h);hist()}
- else{$('th').value=x.th;let L=x.script.split('\n').filter(Boolean);
+ else{snap('履歴を開く前');$('th').value=x.th;let L=x.script.split('\n').filter(Boolean);
   if(b.dataset.a==='next'){S.ep=Math.max(...h.map(v=>v.ep))+1;L[0]=rnd(P.hook.filter(v=>v!==L[0]));L[L.length-1]=rnd(P.close.filter(v=>v!==L[L.length-1]));$('bgs').value=rnd(ST);say(`EP.${pad3(S.ep)}として複製しました。冒頭と結びを差し替え、背景も変更済みです。中盤を書き換えて仕上げてください`)}else{S.ep=x.ep;say('台本を開きました')}
   $('script').value=L.join('\n');upd();tab(0)}};
 
@@ -688,7 +724,7 @@ async function loadK(){if(S.tts)return S.tts;if(!('DecompressionStream'in window
  const mod=await Promise.race([import(KJ),tmo(60000)]);S.tts=await Promise.race([mod.KokoroJP.load(),tmo(600000)]);return S.tts}
 /* ---------- v2.2 audio guard ---------- */
 const AC=window.AudioContext||window.webkitAudioContext,LG=[];
-function LOG(m){LG.push(new Date().toLocaleTimeString('ja-JP')+' '+m);if(LG.length>80)LG.shift();const e=$('lg');if(e)e.textContent=LG.join('\n')}
+function LOG(m){m=String(m).replace(/AIza[0-9A-Za-z_-]{20,}/g,'[KEY]').replace(/\b(sk|xi)[-_][0-9A-Za-z_-]{16,}/g,'[KEY]');try{for(const k of ['bs_gk','bs_xk','bs_tts']){const v=store.get(k,'');if(v&&String(v).length>=12)m=m.split(String(v)).join('[KEY]')}}catch{}LG.push(new Date().toLocaleTimeString('ja-JP')+' '+m);if(LG.length>80)LG.shift();const e=$('lg');if(e)e.textContent=LG.join('\n')}
 const db=x=>(20*Math.log10(x+1e-9)).toFixed(1),NMIN=.02;
 function bstats(b){let nan=0,pk=0,q=0,n=0;for(let c=0;c<b.numberOfChannels;c++){const d=b.getChannelData(c);for(let i=0;i<d.length;i++){const v=d[i];if(v!==v){nan++;continue}const a=Math.abs(v);if(a>pk)pk=a;q+=v*v;n++}}return{dur:b.duration,sr:b.sampleRate,nan,pk,rms:Math.sqrt(q/Math.max(1,n))}}
 const sfmt=t=>`${t.dur.toFixed(2)}秒 ${t.sr}Hz ピーク${db(t.pk)}dB RMS${db(t.rms)}dB NaN${t.nan}`;
@@ -769,29 +805,27 @@ const MS=['台本をつくる','ナレーションを生成','尺と字幕を合
 function ms(i,c,t){const e=$('ms'+i);if(e)e.textContent=c+' '+MS[i]+(t?'：'+t:'')}
 const ckc=()=>{if(S.cancel)throw Object.assign(new Error('中止しました'),{cancel:1,jp:1})};
 const sleep=t=>new Promise(r=>setTimeout(r,t));
-function fitTarget(){const tg=+$('dur').value,A=S.act;if(!A||A.mode!=='clips')return{cut:0};let L=lines(),bufs=A.bufs.slice(),cut=0;const th=$('th').value.trim(),D=()=>model({...A,bufs},L).D;
- while(D()>tg+1&&L.length>8){let bi=-1,bd=-1;for(let i=1;i<L.length-1;i++){if(L[i]===th||!bufs[i])continue;const d=bufs[i].duration;if(d>bd){bd=d;bi=i}}if(bi<0)break;L.splice(bi,1);bufs.splice(bi,1);cut++}
- if(cut){$('script').value=L.join('\n');S.act={...A,bufs};S.cand=S.act}return{cut}}
 async function makeVideo(){
  if(S.xbusy)return xmsg('処理中です。完了までお待ちください');
- S.xbusy=true;S.cancel=false;S.nline=null;const b=$('mk');b.disabled=true;b.textContent='作成中…';$('mkstop').hidden=false;$('result').hidden=true;$('gate').hidden=true;$('gack').checked=false;S.gackAt=null;S.gateState=null;stopAll();
+ S.xbusy=true;S.cancel=false;S.nline=null;snap('動画生成の開始前');dsave(true);pstate('running','動画生成中');const b=$('mk');b.disabled=true;$('remk').disabled=true;b.textContent='作成中…';$('mkstop').hidden=false;$('result').hidden=true;$('gate').hidden=true;$('gack').checked=false;S.gackAt=null;S.gateState=null;stopAll();
  MS.forEach((_,i)=>ms(i,'○'));S.ph=[0,1];S.after=0;S.pend=0;prog(0,null);xmsg('処理中：ボタンを受け付けました。台本をつくっています…');
  let cur=0,tk=null;
  try{await sleep(60);
   if(!$('th').value.trim())throw JE('テーマが空です。テーマを入力してください（例：人生を変えたい君へ。）');
   if(!window.MediaRecorder||!document.createElement('canvas').captureStream)throw JE('このブラウザは動画の録画に対応していません。Android版のChromeで開いてください');
   ms(0,'▶');const imp=$('eng').value==='import'&&S.act;
-  if(!imp){$('eng').value='kokoro';$('vo').value='jm_kumo';S.tplKey=tplKey($('th').value);S.tpl=TPL[S.tplKey];S.tplStyle=S.tpl.sty;if($('autos').checked)gen();S.act=null;S.cand=null;S.gDone=false}
-  if(!lines().length)throw JE('台本が空です');if(!imp){const nt=PL().map(x=>x.t+(x.ts?' // '+x.ts:'')).join('\n');if($('script').value!==nt){$('script').value=nt;S.rolesFor=null;LOG('台本の改行を整えました（'+lines().length+'行）')}}{const pb=gateItems().filter(x=>x.s==='BLOCK'&&'FGI'.includes(x.k));if(pb.length)throw JE('制作前の検査でBLOCKになりました（'+pb.map(x=>x.k+'：'+x.n).join('、')+'）。音声の生成は行っていません。\n'+pb[0].m)}ms(0,'✔',lines().length+'行／'+$('vs5').selectedOptions[0].textContent);ckc();
+  if(!imp){if($('eng').value==='import')$('eng').value='kokoro';S.tplKey=tplKey($('th').value);S.tpl=TPL[S.tplKey];S.tplStyle=S.tpl.sty;S.act=null;S.cand=null;S.gDone=false}
+  if(!lines().length)throw JE('台本が空です。「✏ 台本を編集する」で台本を入れるか、台本欄の「テーマから台本を新規生成」を押してください');{const pb=gateItems().filter(x=>x.s==='BLOCK'&&'FGI'.includes(x.k));if(pb.length)throw JE('制作前の検査でBLOCKになりました（'+pb.map(x=>x.k+'：'+x.n).join('、')+'）。音声の生成は行っていません。\n'+pb[0].m)}ms(0,'✔',lines().length+'行／'+$('vs5').selectedOptions[0].textContent);ckc();
   cur=1;ms(1,'▶','準備中');
   if(imp)ms(1,'✔','取り込み音声を使用');
   else{const tN=Date.now();let lT=null;S.onNar=(i,n)=>{ckc();if(lT==null)lT=Date.now();S.nline=i;S.nN=n};
    tk=setInterval(()=>{const el=(Date.now()-tN)/1000;if(S.nline==null){prog(.02+.08*(1-Math.exp(-el/120)),null);ms(1,'▶','音声エンジンを準備中（初回のみ数分）経過 '+fmt(el))}
     else{const i=S.nline,n=S.nN,avg=i>0?(Date.now()-lT)/1000/i:4;prog(.10+.35*i/n,(n-i)*avg+estD(lines())+14);ms(1,'▶',`${i+1}/${n}行目を生成中`)}},500);
    await narrate();clearInterval(tk);tk=null;ms(1,'✔',S.act.bufs.length+'行 生成完了（'+(ENG[S.act.src]||'')+'）'+(S.xFall&&S.act.src!=='eleven'?'／ElevenLabs不使用：'+S.xFall:'')+(S.gFall&&S.act.src==='kokoro'?'／Gemini不使用：'+S.gFall:''))}
-  ckc();cur=2;ms(2,'▶');const tg=+$('dur').value,f=fitTarget();upd();let M=model();
+  ckc();cur=2;ms(2,'▶');let tg=+$('dur').value;upd();let M=model();
   if(!M.A)throw JE('ナレーション音声がありません。BGMのみの動画は作りません');if(M.miss)throw JE('未生成の行があります');const bad=chkM(M);if(bad)throw JE(bad);
-  ms(2,'✔',`合計 ${fmt(M.D)}（目標 ${fmt(tg)}）`+(f.cut?`／長すぎたため ${f.cut}行を省略`:'')+(M.D>tg+1?'／目標より長いまま続行':''));
+  if(M.D>tg+1){const ch=await fitAsk(M.D,tg);ckc();if(ch==='abort')throw JE('生成を中止しました。台本は1行も変更していません');if(ch==='edit'){tab(0);setTimeout(()=>{$('script').scrollIntoView({block:'center'});$('script').focus()},50);throw JE('台本を短くしてから、もう一度「現在の台本で動画を作る」を押してください。台本は変更していません')}tg=+$('dur').value;M=model()}
+  ms(2,'✔',`合計 ${fmt(M.D)}（目標 ${fmt(tg)}）`+(M.D>tg+1?'／目標より長いまま続行':''));
   cur=3;ms(3,'▶','準備');const vk=S.act.vk,pre=!!vk&&S.t3ok!==vk;
   if(pre){ms(3,'▶','5秒テスト');S.ph=[.45,.5];S.after=2;S.pend=M.D+6;xmsg('5秒テスト（720p・ナレーション付き）を作っています…');if(S.act.src==='kokoro'&&!S.tclip)await ensureVoice();const t=await t3();ckc();if(!t.ok)throw JE('5秒テストが失敗したため、本番の書き出しを中止しました。'+t.msg);S.t3ok=vk;S.pend=0}
   let r=null,ok=false;
@@ -800,11 +834,11 @@ async function makeVideo(){
    ckc();if(r&&(r.ok||r.unverified)){ok=true;break}LOG('本番書き出し失敗('+k+'): '+(r&&r.msg));if(k<2)xmsg('書き出しに失敗したため、自動で1回だけやり直します…',1)}
   if(!ok){if(r&&r.err)throw r.err;throw JE(r&&r.msg?r.msg.split('\n').filter(Boolean).slice(-1)[0]:'書き出しに失敗しました')}
   ms(3,'✔','完成'+(r.unverified?'（音声は未検査）':''));S.lastV=r;recVid(M);gateRender();cur=4;ms(4,'▶');$('gp').onclick();ms(4,'✔');
-  prog(1,0);$('result').hidden=false;$('result').scrollIntoView({behavior:'smooth',block:'start'});
+  pstate('done','完成');prog(1,0);$('result').hidden=false;$('result').scrollIntoView({behavior:'smooth',block:'start'});
   xmsg(r.unverified?'⚠ 音声の自動検査ができませんでした。上の動画を再生して、声が入っているか耳で確認してから保存してください':'✔ 完成しました。動画を再生して確認し、「完成動画を保存」を押してください',r.unverified);
- }catch(e){LOG('作成失敗: '+String(e&&e.stack||e).slice(0,300));const m=e&&e.cancel?'中止しました':jp(e);ms(cur,'✖',m.split('\n')[0]);xmsg('✖ '+m,1)}
- finally{if(tk)clearInterval(tk);S.onNar=null;S.xbusy=false;S.ph=[0,1];S.after=0;S.pend=0;b.disabled=false;b.textContent='③ 動画を作る';$('mkstop').hidden=true}}
-$('mk').onclick=()=>makeVideo();$('mkstop').onclick=()=>{S.cancel=true;xmsg('中止しています…',1);stopAll()};
+ }catch(e){LOG('作成失敗: '+String(e&&e.stack||e).slice(0,300));const m=e&&e.cancel?'中止しました':jp(e);ms(cur,'✖',m.split('\n')[0]);pstate(e&&e.cancel?'cancel':'failed',MS[cur]+'：'+m.split('\n')[0]);xmsg('✖ '+m+'（台本はそのまま残っています）',1)}
+ finally{if(tk)clearInterval(tk);S.onNar=null;S.xbusy=false;S.ph=[0,1];S.after=0;S.pend=0;b.disabled=false;$('remk').disabled=false;b.textContent='▶ 現在の台本で動画を作る';$('mkstop').hidden=true;$('fitp').hidden=true;S.fitRes=null;dsave(true)}}
+$('mk').onclick=()=>makeVideo();$('remk').onclick=()=>{if(S.xbusy)return;snap('作り直しの前');S.act=null;S.cand=null;S.t3ok=null;S.gDone=false;makeVideo()};$('mkstop').onclick=()=>{S.cancel=true;S.fitRes&&S.fitRes('abort');xmsg('中止しています…',1);stopAll()};
 
 /* ---------- v4.0: Gemini TTS（第一候補）・テンプレート・競合研究・成果分析 ---------- */
 const GM=['gemini-3.8-flash-tts','gemini-3.8-flash-lite-tts','gemini-3.1-flash-tts-preview'],GURL='https://generativelanguage.googleapis.com/v1beta/interactions';
@@ -975,9 +1009,10 @@ $('brand').value=store.get('bs_brand','BEYOND.');$('handle').value=store.get('bs
 $('vs5').onchange=applyStyle;
 /* 制作指示リンク: #s=スタイル&t=テーマ&x=台本(改行区切り)&d=秒 を読み込む（自動で動画作成は始めない） */
 function jobImport(){try{const h=location.hash.replace(/^#/,'');if(!/(^|&)(t|x)=/.test(h))return;if(SGR.inj.test(decodeURIComponent(h.replace(/\+/g,' ')))){$('jobn').textContent='✖ 制作指示リンクに、命令や認証情報を思わせる語が含まれていたため、読み込みを停止しました（安全のため）';history.replaceState(null,'',location.pathname+location.search);return}const q=new URLSearchParams(h),st=q.get('s'),t=(q.get('t')||'').slice(0,60),x=(q.get('x')||'').replace(/\r/g,'').trim().slice(0,3000),d=q.get('d');
- if(st&&VSTY[st]){$('vs5').value=st;applyStyle()}if(t)$('th').value=t;if(d&&[...$('dur').options].some(o=>o.value===d))$('dur').value=d;
- if(x){$('script').value=x;$('autos').checked=false}else $('autos').checked=true;S.rolesFor=null;upd();
- $('jobn').textContent='✔ 制作指示を読み込みました（'+(t||'テーマ未指定')+'／'+(VSTY[st]?$('vs5').selectedOptions[0].textContent:'スタイルは現在の選択')+(x?'／台本'+x.split('\n').filter(Boolean).length+'行':'')+'）。内容を確認して「③ 動画を作る」を押してください';
+ {const od=store.get('bs_draft',null)||store.get('bs_cur',null);if(od&&od.script)snap('起動リンク取り込み前',od)}S.imported=true;S.impSkip=[];
+ if(st&&VSTY[st]){$('vs5').value=st;applyStyle();S.impSkip.push('vs5','tpl','bgs')}if(t){$('th').value=t;S.impSkip.push('th')}if(d&&[...$('dur').options].some(o=>o.value===d)){$('dur').value=d;S.impSkip.push('dur')}
+ if(x){$('script').value=x;S.impSkip.push('script')}S.rolesFor=null;upd();
+ $('jobn').textContent='✔ 制作指示を読み込みました（'+(t||'テーマ未指定')+'／'+(VSTY[st]?$('vs5').selectedOptions[0].textContent:'スタイルは現在の選択')+(x?'／台本'+x.split('\n').filter(Boolean).length+'行':'')+'）。内容を確認して「▶ 現在の台本で動画を作る」を押してください'+(x?'（以前の下書きは「↩ 前の下書きを復元」で戻せます）':'。台本は受け取っていないため、現在の台本をそのまま使います');
  history.replaceState(null,'',location.pathname+location.search)}catch(e){$('jobn').textContent='制作指示リンクを読み込めませんでした：'+e.message}}
 jobImport();{const k=store.get('bs_vs5','mg');if(VSTY[k])$('vs5').value=k;applyStyle()}
 /* ---------- v6.0: ElevenLabs（有料）ナレーション＋クレジット管理 ---------- */
@@ -1171,6 +1206,8 @@ $('ttup').onclick=async()=>{const m=$('ttpm');if(!S.gateState||S.gateState==='BL
 addEventListener('error',e=>{LOG('JSエラー: '+e.message);xmsg('✖ 予期しないエラー：'+e.message,1)});
 addEventListener('unhandledrejection',e=>{const m=String(e.reason&&e.reason.message||e.reason);LOG('未処理エラー: '+m);xmsg('✖ 予期しないエラー：'+m,1)});
 /* ---------- 初期化 ---------- */
-const cur=store.get('bs_cur',null);if(cur){$('th').value=cur.th;$('script').value=cur.script;S.ep=cur.ep||1}else $('script').value=DEF.join('\n');
+const had=drestore();if(!had&&!S.imported)$('script').value=DEF.join('\n');
+{const pg=store.get('bs_prog',null);if(pg&&pg.st!=='done'){const t=new Date(pg.at).toLocaleString('ja-JP');$('prevn').textContent=(pg.st==='running'?'前回（'+t+'）の動画生成は途中で中断されました（画面が閉じた等）。':'前回（'+t+'）の動画生成は終了していません：'+pg.msg+'。')+'台本は保存済みで、変更されていません。'+($('prevn').textContent?'\n'+$('prevn').textContent:'')}}
+idbP('get').then(d=>{try{if(d&&d.script&&d.script!==$('script').value&&(d.at||0)>(store.get('bs_draft',{}).at||0)){snap('保存容量不足の間の退避',d);$('prevn').textContent='より新しい下書きが退避されていました。「↩ 前の下書きを復元」から戻せます'}}catch{}});
 upd();hist();{const M=model();draw(0,M.D,M.sc)}
 </script></body></html>
