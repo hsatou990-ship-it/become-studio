@@ -39,6 +39,7 @@ label{display:block}small{color:#9aa0ad}
 <div id="bgst" class="note"></div>
 <h2>演出ライブラリの実装状況</h2>
 <div id="implt" class="note"></div>
+<div id="govt" class="note" style="white-space:pre-wrap"></div>
 <h2>スタイルと字幕</h2>
 <p><label>制作スタイル <select id="sty"><option value="A">A 映画風モチベーション（実装）</option><option value="B" disabled>B 海外ドキュメンタリー風（設計候補）</option><option value="C" disabled>C 実写とモーショングラフィックス（設計候補）</option></select></label>
 <label>字幕の書体 <select id="fnt"><option value="serif">明朝体</option><option value="gothic">ゴシック体</option></select></label></p>
@@ -83,7 +84,7 @@ const S={base:{sc:SCN0,ln:LN0,D:15},sc:JSON.parse(JSON.stringify(SCN0)),ln:JSON.
 /* 速度再マップ（スローモーション/スピードランプ）とJ・Lカット */
 const RAMP0=2.2,RAMP1=.3;
 function rateAt(i,u){const k=S.sc[i]&&S.sc[i].spd;return k==='slow'?.5:k==='ramp'?RAMP1+(RAMP0-RAMP1)*(1-u)*(1-u):1}
-function mediaT(i,t){const s=S.sc[i],d=s.b-s.a,e=Math.max(0,t-s.a),u=Math.min(1,e/d);return s.spd==='slow'?.5*e:s.spd==='ramp'?d*(RAMP1*u+(RAMP0-RAMP1)*(1-Math.pow(1-u,3))/3):e}
+function mediaT(i,t){const s=S.sc[i],d=s.b-s.a,e=Math.max(0,t-s.a),u=Math.min(1,e/d);return s.spd==='slow'?.5*e:s.spd==='ramp'?d*(RAMP1*u+(RAMP0-RAMP1)*(1-Math.pow(1-u,3))/3)+Math.max(0,e-d)*RAMP1:e}
 function applyCuts(){const A=S.sc,n=A.length-1;for(let i=1;i<n;i++){const c=A[i].cut;if(!c||c.type==='none')continue;let a=A[i].a+(c.type==='j-cut'?-c.off:c.off);a=Math.max(A[i-1].a+1,Math.min(A[i+1].a-1,a));A[i].a=a;A[i-1].b=a}
  const bp=S.base&&S.base.bpm;if(bp||S.bgm)for(let i=1;i<n;i++){if(!A[i].beat)continue;let a;if(S.bgm){a=S.bgm.beats.reduce((q,b)=>Math.abs(b-A[i].a)<Math.abs(q-A[i].a)?b:q,1e9)}else{const bt=60/bp,k=Math.round(A[i].a/bt);a=k*bt}if(Math.abs(a-A[i].a)>.3)continue;const c=Math.max(A[i-1].a+1,Math.min(A[i+1].a-1,a));A[i].a=c;A[i-1].b=c}}
 const sceneAt=t=>{const n=S.sc.length;for(let i=0;i<n;i++)if(t>=S.sc[i].a&&t<S.sc[i].b)return i;return n-1};
@@ -169,7 +170,7 @@ function drawParallax(s,t,c){const n=s.px;cg.save();for(let L=0;L<n;L++){const d
   for(let k=0;k<34;k++){const q=PXP[L*34+k];let x=(q.x*CW*1.3-c.px*CW*(7*d+1)-(c.z-1)*(q.x-.5)*CW*d*2+t*q.v*18*d)%(CW*1.3),y=(q.y*CH-t*q.v*(10+30*d)*1)%CH;if(x<0)x+=CW*1.3;if(y<0)y+=CH;x-=CW*.15;cg.beginPath();cg.arc(x,y,sz*(.5+q.r),0,Math.PI*2);cg.fill()}}cg.restore()}
 function renderFrame(t){const i=sceneAt(t),c=camera(i,t),tr=trans(t),fr=Math.round(t*FPS);cg.setTransform(1,0,0,1,0,0);cg.fillStyle='#000';cg.fillRect(0,0,CW,CH);
  const sI=S.sc[i],mk=sI.mask;let mu=-1;if(mk&&i>0)mu=(t-sI.a)/mk.dur;
- if(mu>=0&&mu<1){const pc=camera(i-1,t),ps=srcFor(i-1,t,1);if(ps)drawCover(cg,ps,pc);const e=ease(mu);cg.save();cg.beginPath();
+ if(mu>=0&&mu<1){const pc=camera(i-1,t),pS=S.sc[i-1],ov=Math.max(0,(t-pS.a)/(pS.b-pS.a)-1)*.5;pc.z+=(pS.z[1]-pS.z[0])*ov;pc.px+=(pS.p[2]-pS.p[0])*ov;pc.py+=(pS.p[3]-pS.p[1])*ov;const ps=srcFor(i-1,t,1);if(ps)drawCover(cg,ps,pc);const e=ease(mu);cg.save();cg.beginPath();
   if(mk.type==='iris'){cg.arc(CW/2,CH/2,e*Math.hypot(CW,CH)/2,0,Math.PI*2)}else if(mk.type==='slit'){const h=e*CH;cg.rect(0,(CH-h)/2,CW,h)}else{const h=e*CH;cg.rect(0,CH-h,CW,h)}
   cg.clip();const src=srcFor(i,t,c.u);if(src)drawCover(cg,src,c);cg.restore()}
  else{const src=srcFor(i,t,c.u);if(src)drawCover(cg,src,c)}
@@ -349,7 +350,7 @@ async function exportOffline(){if(S.busy)return null;S.busy=true;const st=(m,c)=
   let M;try{M=await import('../mp4-lab/lib/mp4enc.js')}catch(e){S.busy=false;st('実験用エンコーダを読み込めませんでした: '+e.message+'。従来の③書き出しを使ってください','w');return null}
   const clipsOn=S.clips.map((c,i)=>c&&c.el?i:-1).filter(i=>i>=0),seek=(el,t)=>new Promise(ok=>{let d=false;const f=()=>{if(!d){d=true;el.removeEventListener('seeked',f);ok()}};el.addEventListener('seeked',f);try{el.pause()}catch{}el.currentTime=t;setTimeout(f,1500)});
   const r=await M.encodeMp4({canvas:out,fps:FPS,frames:Math.round(D*FPS),audio:S.mix,vBitrate:CW>=1080?10e6:5e6,
-   render:async(i,t)=>{const sc=sceneAt(t),c=S.clips[sc];if(c&&c.el&&c.el.duration){const q=mediaT(sc,t)+c.meta.inp,d=c.el.duration;await seek(c.el,d>0?q%d:q)}renderFrame(t)},
+   render:async(i,t)=>{const sc=sceneAt(t),c=S.clips[sc],mk=S.sc[sc].mask;if(mk&&sc>0&&t-S.sc[sc].a<mk.dur){const pc=S.clips[sc-1];if(pc&&pc.el&&pc.el.duration){const q=mediaT(sc-1,t)+pc.meta.inp,d=pc.el.duration;await seek(pc.el,d>0?q%d:q)}}if(c&&c.el&&c.el.duration){const q=mediaT(sc,t)+c.meta.inp,d=c.el.duration;await seek(c.el,d>0?q%d:q)}renderFrame(t)},
    progress:p=>st('H.264+AAC書き出し中 '+Math.round(p*100)+'%')});
   S.busy=false;const blob=r.blob,rep=BSInspect(await blob.arrayBuffer()),v=await verifyBlob(blob);
   window.CP.lastBlob=blob;const url=URL.createObjectURL(blob);$('dl').href=url;$('dl').download='CINEMATIC-PRO-A-15s-h264.mp4';$('dl').hidden=false;$('dl').textContent='H.264+AAC版を保存';
@@ -397,6 +398,26 @@ function chunk(t,emph){const out=[];let rest=t;const em=(emph||[]).filter(e=>e&&
  const cut=(str,flag)=>{if(!str)return;if(flag){out.push([str,1]);return}let q=str;while(q.length>8){let k=q.slice(0,8).lastIndexOf('、');if(k<2)k=6;out.push([q.slice(0,k+(q[k]==='、'?1:0))]);q=q.slice(k+(q[k]==='、'?1:0))}if(q)out.push([q])};
  let pos=0;const hits=em.map(e=>[t.indexOf(e),e]).sort((a,b)=>a[0]-b[0]).filter((h,i,arr)=>i===0||h[0]>=arr[i-1][0]+arr[i-1][1].length);
  for(const [i,e] of hits){cut(t.slice(pos,i));cut(e,1);pos=i+e.length}cut(t.slice(pos));return out.length?out:[[t]]}
+/* ---------- 演出の統合制御: 競合防止・過剰演出の自動抑制・静と動・色の統一（理由を残す） ---------- */
+const GOV={on:true,budget:5,heavy:4,maxRun:2};
+function fxCost(o){let c=0;if(o.kin==='char')c+=2;else if(o.kin==='track')c+=1;if(o.mask)c+=2;c+=o.px||0;if(o.spd==='ramp')c+=2;else if(o.spd==='slow')c+=1;if(o.beat)c+=1;if(o.mc)c+=1;if(o.tr==='flash')c+=2;else if(o.tr==='leak')c+=1;if(o.cut&&o.cut.type!=='none')c+=1;return c}
+function govTrim(o,keep){/* 1つ削る。削った内容を返す。物語の核（転換・山場）の文字演出は残す */
+ const core=o.role==='turn'||o.role==='climax';
+ if(o.px>1){o.px--;return'パララックスを'+(o.px+1)+'層→'+o.px+'層'}if(o.beat){o.beat=false;return'拍吸着'}if(o.px===1){o.px=0;return'パララックス'}
+ if(o.tr==='leak'){o.tr='none';delete o.tw;return'ライトリーク'}if(o.cut&&o.cut.type!=='none'&&!core){o.cut={type:'none',off:0};return'J/Lカット'}
+ if(o.spd==='ramp'&&!core){o.spd='';return'スピードランプ'}if(o.mask&&!core){o.mask=null;return'マスキング'}if(o.kin==='track'){o.kin='';return'文字の収束演出'}
+ if(o.tr==='flash'&&!core){o.tr='dip';return'フラッシュ→暗転'}if(o.kin==='char'&&!core){o.kin='track';return'文字ごとの演出→収束'}return null}
+function govern(sc,log){const out=log||[],n=sc.length-1;if(!GOV.on)return out;
+ for(let i=1;i<n;i++){const o=sc[i];
+  if(o.mask&&o.mc){o.mask=null;out.push({id:o.id,rule:'競合',msg:'マッチカットとマスキングは同時に使えないため、マスキングを外しました（マッチカットはカメラ連続性を保つ必要があります）'})}
+  if(o.mask&&(o.tr==='flash'||o.tr==='dip'||o.tr==='leak')){const w=o.tr;o.tr='none';delete o.tw;out.push({id:o.id,rule:'競合',msg:'マスキングと場面転換（'+w+'）が重なるため、転換効果を外しました'})}}
+ for(let i=1;i<n;i++){const o=sc[i];let g=0;while(fxCost(o)>GOV.budget&&g++<12){const r=govTrim(o);if(!r)break;out.push({id:o.id,rule:'過剰抑制',msg:'1場面の演出量が上限'+GOV.budget+'を超えたため、'+r+'を外しました'})}}
+ let run=0;for(let i=1;i<n;i++){const o=sc[i];if(fxCost(o)>=GOV.heavy){run++;if(run>GOV.maxRun){const r=govTrim(o);if(r){out.push({id:o.id,rule:'メリハリ',msg:'強い演出が'+(GOV.maxRun+1)+'場面続くため、'+r+'を外して間を作りました'});run=fxCost(o)>=GOV.heavy?run:0}}}else run=0}
+ if(n>=6){const cand=sc.slice(1,n);const quiet=cand.filter(o=>fxCost(o)<=1).length;if(quiet<Math.ceil(cand.length*.25)){const t=cand.filter(o=>o.role!=='turn'&&o.role!=='climax'&&o.role!=='hook'&&fxCost(o)>1).sort((a,b)=>fxCost(a)-fxCost(b))[0];if(t){let g=0;while(fxCost(t)>1&&g++<12){const r=govTrim(t);if(!r)break;out.push({id:t.id,rule:'メリハリ',msg:'静かな場面が少ないため、'+r+'を外して静の場面を作りました'})}}}}
+ /* 色の統一: 場面ごとのグレードのばらつきを中央値±幅に収める */
+ const med=a=>{const b=a.slice().sort((x,y)=>x-y);return b[b.length>>1]},sat=med(sc.slice(0,n).map(o=>o.g.sat)),con=med(sc.slice(0,n).map(o=>o.g.con)),vig=med(sc.slice(0,n).map(o=>o.g.vig));let cc=0;
+ for(let i=0;i<n;i++){const g=sc[i].g,ns=Math.max(sat-.1,Math.min(sat+.1,g.sat)),nc=Math.max(con-.03,Math.min(con+.03,g.con)),nv=Math.max(vig-.1,Math.min(vig+.1,g.vig));if(ns!==g.sat||nc!==g.con||nv!==g.vig){g.sat=+ns.toFixed(3);g.con=+nc.toFixed(3);g.vig=+nv.toFixed(3);cc++}}
+ if(cc)out.push({id:'全体',rule:'色の統一',msg:cc+'場面の彩度・コントラスト・周辺減光を全体の中央値の近くに寄せました'});return out}
 function planToBase(P,endHold){const n=P.scenes.length,total=P.scenes.reduce((q,s)=>q+s.dur,0),eh=endHold||1.8,Dn=Math.min(90,Math.max(3,Math.ceil(total+eh)));
  const sc=P.scenes.map((x,i)=>{const c=CAMP[x.camera]||CAMP['drift-lateral'],prev=P.scenes[i-1];let tr='none',tw;
   if(i>0){if(x.transition==='flash-white')tr='flash';else if(x.transition==='dip-black')tr='dip';else if(x.transition==='dissolve'){tr='dip';tw=.18}else if(prev&&prev.role==='turn')tr='leak'}
@@ -405,12 +426,13 @@ function planToBase(P,endHold){const n=P.scenes.length,total=P.scenes.reduce((q,
   const dj=P.meta.source==='design-json';if(dj){if(x.transition==='cut')tr='none';for(const k of Object.keys(sfx))delete sfx[k];Object.assign(sfx,x.sfx||{})}
   const o={id:'S'+(i+1),name:ROLEJ[x.role]||x.role,a:x.start,b:+(P.scenes[i+1]?P.scenes[i+1].start:x.start+x.dur).toFixed(2),spd:x.speed==='slow-motion'?'slow':x.speed==='speed-ramp'?'ramp':'',mask:(x.mask&&x.mask.type!=='none'&&i>0)?{type:x.mask.type,dur:x.mask.dur}:null,mc:!!x.matchCut&&i>0,px:x.parallax||0,kin:(x.kinetic&&x.kinetic!=='none')?x.kinetic:(dj?'':(x.role==='turn'||x.role==='climax')?'char':''),beat:!!x.beat,cut:x.cut||(dj?{type:'none',off:0}:x.role==='turn'?{type:'j-cut',off:.3}:{type:'none',off:0}),q:x.queries||[],mock,z:c.z.slice(),p:c.p.slice(),g:JSON.parse(JSON.stringify(GRP[x.grade==='cold-teal'?'cold-teal':x.grade==='warm-gold'?'warm-gold':'muted-neutral'])),tr,sfx,role:x.role,dir:{camera:x.camera,transition:x.transition,speed:x.speed,emphasis:x.emphasis,fx:x.fx||[]}};if(tw)o.tw=tw;return o});
  sc.forEach((o,i)=>{if(o.mc){const q=sc[i-1];o.z[0]=q.z[1];o.p[0]=q.p[2];o.p[1]=q.p[3];o.tr='none';delete o.tw}});
- sc[n-1].b=+total.toFixed(2);sc.push({id:'END',name:'余韻',a:+total.toFixed(2),b:Dn,mock:'black',z:[1,1.04],p:[0,0,0,0],g:{sat:1,con:1,gain:[1,1,1],lift:[0,0,0],vig:.3},tr:'endfade',sfx:{shimmer:1},role:'end'});
+ const gv=govern(sc);sc[n-1].b=+total.toFixed(2);sc.push({id:'END',name:'余韻',a:+total.toFixed(2),b:Dn,mock:'black',z:[1,1.04],p:[0,0,0,0],g:{sat:1,con:1,gain:[1,1,1],lift:[0,0,0],vig:.3},tr:'endfade',sfx:{shimmer:1},role:'end'});
  const ln=P.scenes.map((x,i)=>({t0:+(x.start+(i===0?.5:.3)).toFixed(2),d:+Math.max(1,x.dur-.7).toFixed(2),toks:chunk(x.text,x.emphasis)}));
- return{sc,ln,D:Dn,bpm:(P.meta.bgm&&P.meta.bgm.bpm)||0}}
-function loadBase(base,label){S.base={sc:base.sc,ln:base.ln,D:base.D,bpm:base.bpm||0};S.sc=JSON.parse(JSON.stringify(base.sc));S.ln=JSON.parse(JSON.stringify(base.ln));applyCuts();D=base.D;N=D*FPS;S.clips=S.sc.slice(0,S.sc.length-1).map(()=>null);S.narr=null;S.isMockNarr=false;S.mix=null;S.aligned=false;S.off=0;S.warn=S.warn.filter(w=>/^WebGL/.test(w));
- clipForm();ledger();renderFrame(Math.min(1.5,D-.1));try{$('nst').textContent='ナレーション未取込（BGMのみ）。台本が変わったため、ナレーションは取り込み直してください。'}catch{}
+ return{sc,ln,D:Dn,bpm:(P.meta.bgm&&P.meta.bgm.bpm)||0,gov:gv}}
+function loadBase(base,label){S.base={sc:base.sc,ln:base.ln,D:base.D,bpm:base.bpm||0,gov:base.gov||[]};S.sc=JSON.parse(JSON.stringify(base.sc));S.ln=JSON.parse(JSON.stringify(base.ln));applyCuts();D=base.D;N=D*FPS;S.clips=S.sc.slice(0,S.sc.length-1).map(()=>null);S.narr=null;S.isMockNarr=false;S.mix=null;S.aligned=false;S.off=0;S.warn=S.warn.filter(w=>/^WebGL/.test(w));
+ clipForm();ledger();govShow();renderFrame(Math.min(1.5,D-.1));try{$('nst').textContent='ナレーション未取込（BGMのみ）。台本が変わったため、ナレーションは取り込み直してください。'}catch{}
  const L=S.ln.map((l,i)=>(i+1)+'. '+l.toks.map(k=>k[0]).join('')).join('　');try{$('dirsum').textContent=label+'｜'+(S.sc.length-1)+'場面＋余韻・全体'+D+'秒｜字幕: '+L}catch{}}
+function govShow(){try{const g=(S.base&&S.base.gov)||[];$('govt').textContent=GOV.on?(g.length?'演出の自動調整（理由）:\n'+g.map(x=>'・'+x.id+'［'+x.rule+'］'+x.msg).join('\n'):'演出の自動調整: 競合・過剰・偏りは検出されませんでした'):'演出の自動調整: オフ'}catch{}}
 let DV=0;
 function applyDirector(){S.dj=null;const P=DIR.plan($('dsc').value,{variant:DV});if(!P.scenes.length){$('dirsum').textContent='台本が空です';return null}
  const b=planToBase(P);loadBase(b,'ディレクター案'+(DV?'（別案'+DV+'）':''));window.LASTPLAN=P;
@@ -459,5 +481,5 @@ $('bDJP').onclick=()=>{const t=BSDesign.requestPrompt($('dsc').value);$('djp').v
 $('bDJC').onclick=async()=>{const t=BSDesign.requestPrompt($('dsc').value);$('djp').value=t;$('djp').hidden=false;try{await navigator.clipboard.writeText(t);$('djs').textContent='依頼文をコピーしました。ChatGPT/Claudeに貼り付けてください'}catch{$('djp').select();$('djs').textContent='自動コピーできません。上の欄を長押しして全選択→コピーしてください'}};
 (function(){const o=$('implt'),L=BSDesign.IMPL;o.textContent=Object.keys(L).map(k=>(/^実装済み/.test(L[k])?'✔ ':'△ ')+k+'：'+L[k]).join('\n')+'\n※ 完成動画に反映されるのは✔の演出です。△は設計・近似のみ。'})();
 clipForm();ledger();renderFrame(1.5);
-window.CP={analyzeBgm,loadBgm,drawParallax,rateAt,mediaT,applyCuts,importDesign,exportOffline,S,renderFrame,capLayout,boxes,safeCheck,buildAudio,measure,alignNarr,mockNarr,segments,report,prep,exportVideo,useClip,sceneAt,camera,trans,LN0,SCN0,out,og,GL:!!GL,SAFE,N,FPS,D,ledger,stats};
+window.CP={GOV,govern,fxCost,analyzeBgm,loadBgm,drawParallax,rateAt,mediaT,applyCuts,importDesign,exportOffline,S,renderFrame,capLayout,boxes,safeCheck,buildAudio,measure,alignNarr,mockNarr,segments,report,prep,exportVideo,useClip,sceneAt,camera,trans,LN0,SCN0,out,og,GL:!!GL,SAFE,N,FPS,D,ledger,stats};
 </script></body></html>
