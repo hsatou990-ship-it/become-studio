@@ -55,7 +55,7 @@ label{display:block}small{color:#9aa0ad}
 <p><input type="file" id="narr" accept="audio/*"><button id="bMock">模擬ナレーション（試験用）</button></p>
 <p class="note"><b>ナレーションの音色</b>（試験用）：<label><input type="radio" name="voice" value="orig" checked> 原音（加工なし）</label> <label><input type="radio" name="voice" value="beta"> BEYOND. Cinematic Voice β</label> <button id="bVo">原音を試聴</button><button id="bVb">βを試聴</button></p>
 <p class="note" id="voicest">原音（加工なし）。βは、別途測定した処理Bの測定値に合わせた近似（元の処理Bとは別物・単一素材からの当てはめ）です。取り込んだ原音は上書きしません。</p>
-<p><label>尺の管理 <select id="syncm"><option value="keep">設計尺を下回らない（既定）</option><option value="fit">音声に合わせて短縮を許可</option></select></label> <span class="note">音声は伸縮しません。足りない分は、文のあいだの間・終わりの余韻・ロゴ表示で調整します。</span></p>
+<p><label>尺の管理 <select id="syncm"><option value="keep">設計尺を下回らない（既定）</option><option value="fit">音声に合わせて短縮を許可</option><option value="legacy">従来（尺固定・従来の配置）</option></select></label> <span class="note">音声は伸縮しません。足りない分は、文のあいだの間・終わりの余韻・ロゴ表示で調整します。</span></p>
 <p class="note" id="nst">ナレーション未取込（BGMのみ）。AI音声を使う場合は、投稿時にAI生成ラベルの表示が必要です。</p>
 <pre class="note" id="syncrep">ナレーション未取込（尺の管理は取り込み後に表示）</pre>
 <details><summary>発話区間の手動修正（検出がずれた・失敗したとき）</summary><div id="syncman"></div></details>
@@ -284,6 +284,13 @@ function validManual(m,n,dur){if(!m||m.length!==n)return null;let prev=-1;for(co
 function alignNarr(buf){S.warn=S.warn.filter(w=>!/^ナレーション/.test(w));S.sc=JSON.parse(JSON.stringify(S.base.sc));S.ln=JSON.parse(JSON.stringify(S.base.ln));D=S.base.D;N=D*FPS;S.off=0;S.aligned=false;S.place=null;S.sync=null;const n=S.ln.length,ex=segmentsEx(buf,n),man=validManual(S.manual,n,buf.duration);let seg=ex.seg;const manual=!!man;if(manual)seg=man;
  const conf=syncConf(ex.info,n,manual),lines=S.ln.map(l=>l.toks.map(k=>k[0]).join(''));
  if(seg.length!==n){S.warn.push('ナレーションを'+n+'つの文として検出できませんでした（検出 '+seg.length+'）。標準のタイミングで表示します。文のあいだを0.3秒以上あけるか、「発話区間の手動修正」で時刻を入力してください');S.sync={ok:false,mode:S.syncMode||'keep',info:ex.info,conf,manual,detected:ex.seg.map(g=>({s:+g.s.toFixed(2),e:+g.e.toFixed(2)})),content:{verified:false,note:'内容の一致は確認していません'}};syncUi();return false}
+ if((S.syncMode||'keep')==='legacy'){S.off=.6-seg[0].s;seg.forEach((g,i)=>{S.ln[i].t0=g.s+S.off;S.ln[i].d=g.e-g.s});const L=S.ln,A=S.sc;
+  for(let k=1;k<n;k++)A[k].a=Math.max(k===1?1.8:A[k-1].a+1.6,L[k].t0-(k===1?.4:k===2?.3:.2));
+  A[n].a=Math.max(A[n-1].a+1.6,L[n-1].t0+L[n-1].d+.7);
+  const lim=D-1.4;if(A[n].a>lim){A[n].a=lim;S.warn.push('ナレーションが長く、'+D+'秒の終わりの余韻が短くなります（最後の文の終わり '+(L[n-1].t0+L[n-1].d).toFixed(1)+'秒）')}
+  for(let i=0;i<n;i++)A[i].b=A[i+1].a;A[n].b=D;
+  if(conf.level==='low')S.warn.push('ナレーションの発話区間の検出精度が低い可能性があります（'+conf.reasons.join('／')+'）。字幕・カットのずれを確認してください');
+  applyCuts();S.aligned=true;S.sync={ok:true,mode:'legacy',manual,info:ex.info,conf,content:contentCheck(seg,lines),spans:seg.map((g,i)=>({line:i+1,s:+g.s.toFixed(2),e:+g.e.toFixed(2)})),D0:S.base.D,D:D,extended:false,addedPause:0,afterglow:+(A[n].a-(L[n-1].t0+L[n-1].d)).toFixed(2),logoHold:+(D-A[n].a).toFixed(2),residualToLogo:0,pieces:1,stretch:1};syncUi();return true}
  const eh=S.base.sc[n].b-S.base.sc[n].a,pl=planSync({seg,mode:S.syncMode||'keep',D0:S.base.D,Eh:eh,audioDur:buf.duration}),L=S.ln,A=S.sc;
  S.off=pl.off;pl.L.forEach((q,i)=>{L[i].t0=q.t0;L[i].d=q.d});for(let k=1;k<n;k++)A[k].a=pl.A[k];A[n].a=pl.endA;D=pl.D;N=D*FPS;for(let i=0;i<n;i++)A[i].b=A[i+1].a;A[n].b=D;S.place=pl.place;S.warn.push(...pl.warn);
  const cc=contentCheck(seg,lines);
@@ -293,7 +300,7 @@ function alignNarr(buf){S.warn=S.warn.filter(w=>!/^ナレーション/.test(w));
  applyCuts();S.aligned=true;
  S.sync={ok:true,mode:pl.mode,manual,info:ex.info,conf,content:cc,spans:seg.map((g,i)=>({line:i+1,s:+g.s.toFixed(2),e:+g.e.toFixed(2)})),D0:S.base.D,D:pl.D,extended:pl.ext,addedPause:+pl.sumAdd.toFixed(2),afterglow:+pl.afterglow.toFixed(2),logoHold:+pl.Eh.toFixed(2),residualToLogo:+pl.resid.toFixed(2),pieces:pl.place.length,stretch:1};syncUi();return true}
 function syncUi(){try{const y=S.sync,t=$('syncrep');if(!y){t.textContent='ナレーション未取込（尺の管理は取り込み後に表示）';$('syncman').innerHTML='';return}
- const cl={high:'高',mid:'中',low:'低',manual:'手動入力'}[y.conf.level];let h='尺の管理: '+(y.mode==='keep'?'設計尺を下回らない':'音声に合わせて短縮を許可');
+ const cl={high:'高',mid:'中',low:'低',manual:'手動入力'}[y.conf.level];let h='尺の管理: '+(y.mode==='keep'?'設計尺を下回らない':y.mode==='legacy'?'従来（尺固定）':'音声に合わせて短縮を許可');
  if(y.ok){h+='｜設計尺 '+y.D0+'秒 → 最終 '+y.D+'秒'+(y.extended?'（延長）':'')+'\n音声の伸縮: なし（話速そのまま）｜文のあいだに追加した間: '+y.addedPause+'秒｜終わりの余韻: '+y.afterglow+'秒｜ロゴ表示: '+y.logoHold+'秒'+(y.residualToLogo>.5?'（うち余り '+y.residualToLogo+'秒）':'');
   h+='\n発話区間（推定。無音検出）: '+y.spans.map(q=>q.line+') '+q.s+'〜'+q.e+'秒').join('　');
   h+='\n検出の確度: '+cl+(y.conf.reasons.length?'（'+y.conf.reasons.join('／')+'）':'')+'\n内容の一致（読み抜け・誤読）: 未確認。無音検出では確定できません'+(y.content.outliers.length?'｜速度の偏りの疑い: 第'+y.content.outliers.map(q=>q.line).join('・')+'文（聴取で確認）':'')}
@@ -302,7 +309,7 @@ function syncUi(){try{const y=S.sync,t=$('syncrep');if(!y){t.textContent='ナレ
  const cur=y.ok?y.spans:(y.detected||[]);$('syncman').innerHTML=S.ln.map((l,i)=>{const c=cur[i]||{s:'',e:''};return `<div>文${i+1}「${l.toks.map(k=>k[0]).join('')}」 開始<input type="number" step="0.01" min="0" id="msS${i}" value="${c.s}" style="width:74px">秒 終了<input type="number" step="0.01" min="0" id="msE${i}" value="${c.e}" style="width:74px">秒（音声ファイル内の時刻）</div>`}).join('')+'<div><button id="msA">手動値を反映</button><button id="msR">自動検出に戻す</button><span id="msM" class="note"></span></div>';
  $('msA').onclick=async()=>{const m=S.ln.map((_,i)=>({s:parseFloat($('msS'+i).value),e:parseFloat($('msE'+i).value)})),v=validManual(m,S.ln.length,S.narr?S.narr.duration:0);if(!v){$('msM').textContent='入力が正しくありません（開始＜終了、前の文の終了以降、音声の長さ以内、各0.2秒より長く）';return}S.manual=v;S.mix=null;await prep();renderFrame(Math.min(1.5,D-.1))};
  $('msR').onclick=async()=>{S.manual=null;S.mix=null;await prep();renderFrame(Math.min(1.5,D-.1))}}catch{}}
-function setSyncMode(m){if(m!=='keep'&&m!=='fit')return false;S.syncMode=m;try{localStorage.setItem('cp_syncmode',m);$('syncm').value=m}catch{}S.mix=null;if(S.narr&&S.aligned!==undefined){try{alignNarr(S.narr);renderFrame(Math.min(1.5,D-.1))}catch{}}return true}
+function setSyncMode(m){if(m!=='keep'&&m!=='fit'&&m!=='legacy')return false;S.syncMode=m;try{localStorage.setItem('cp_syncmode',m);$('syncm').value=m}catch{}S.mix=null;if(S.narr&&S.aligned!==undefined){try{alignNarr(S.narr);renderFrame(Math.min(1.5,D-.1))}catch{}}return true}
 function mockNarr(offs=[]){const sr=48000,b=new AudioBuffer({length:S.base.D*sr,sampleRate:sr,numberOfChannels:1}),x=b.getChannelData(0),r=mulberry(21);
  S.base.ln.forEach((L,i)=>{const t0=L.t0+(offs[i]||0),d=L.d;const a=Math.round(t0*sr),n=Math.round(d*sr);for(let j=0;j<n&&a+j<x.length;j++){const t=j/sr,syl=.5+.5*Math.sin(2*Math.PI*4.2*t),env=Math.min(1,t/.03,(d-t)/.05)*(.35+.65*syl),f0=118+10*Math.sin(2*Math.PI*.7*t);let v=0;for(let h=1;h<=6;h++)v+=Math.sin(2*Math.PI*f0*h*t)/h;x[a+j]=.18*env*v+.01*(r()*2-1)*env}});return b}
 /* ---------- 素材の取り込みとライセンス記録 ---------- */
@@ -596,7 +603,7 @@ $('bDirA').onclick=()=>{S.dj=null;loadBase({sc:SCN0,ln:LN0,D:15},'標準A案（1
 try{const sv=localStorage.getItem('cp_bgmmode');if(sv&&!/restore=1/.test(location.hash))setBgmMode(sv)}catch{}
 try{const sv=localStorage.getItem('cp_voice');if(sv&&!/restore=1/.test(location.hash))setVoice(sv)}catch{}
 document.querySelectorAll('input[name=voice]').forEach(r=>{r.onchange=()=>{if(r.checked)setVoice(r.value)}});$('bVo').onclick=()=>previewVoice('orig');$('bVb').onclick=()=>previewVoice('beta');
-try{const sv=localStorage.getItem('cp_syncmode');if(sv&&!/restore=1/.test(location.hash)){S.syncMode=sv==='fit'?'fit':'keep';$('syncm').value=S.syncMode}}catch{}
+try{const sv=localStorage.getItem('cp_syncmode');if(sv&&!/restore=1/.test(location.hash)){S.syncMode=(sv==='fit'||sv==='legacy')?sv:'keep';$('syncm').value=S.syncMode}}catch{}
 $('syncm').onchange=()=>setSyncMode($('syncm').value);
 if(/restore=1/.test(location.hash))restoreSession().then(()=>{history.replaceState(null,'',location.pathname+location.search+'#res='+RES)});
 
