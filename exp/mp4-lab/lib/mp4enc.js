@@ -1,16 +1,5 @@
-/* BECOME. STUDIO experimental H.264+AAC+MP4 encoder (Mediabunny + libavcodec AAC via WASM). Isolated; not used by the main app. */
+/* BECOME. STUDIO experimental H.264+AAC+MP4 encoder (Mediabunny). 音声は端末標準のAAC符号化のみ。WASM版AACは商用条件・特許が未確認のため削除済み（自動フォールバックなし）。 */
 import {Output,Mp4OutputFormat,BufferTarget,CanvasSource,EncodedAudioPacketSource,EncodedPacket} from './mediabunny/src/index.js';
-import createModule from './aac.js';
-export class AacSync{
- async init(ch,sr,br){const m=this.m=await createModule();const w=(n,r,a)=>m.cwrap(n,r,a);
-  this.f={init:w('init_encoder','number',['number','number','number']),fs:w('get_encoder_frame_size','number',['number']),ed:w('get_encoder_extradata','number',['number']),es:w('get_encoder_extradata_size','number',['number']),inp:w('get_encode_input_ptr','number',['number','number']),send:w('send_frame','number',['number','number']),recv:w('receive_packet','number',['number']),flush:w('flush_encoder_start',null,['number']),data:w('get_encoded_data','number',['number']),pts:w('get_encoded_pts','number',['number']),dur:w('get_encoded_duration','number',['number'])};
-  this.ctx=this.f.init(ch,sr,br);if(!this.ctx)throw new Error('AAC符号化器を初期化できません');this.ch=ch;this.sr=sr;this.fsz=this.f.fs(this.ctx);
-  const p=this.f.ed(this.ctx);this.desc=m.HEAPU8.slice(p,p+this.f.es(this.ctx));return this}
- drain(out){let n;while((n=this.f.recv(this.ctx))>0){const p=this.f.data(this.ctx);out.push({d:this.m.HEAPU8.slice(p,p+n),pts:Number(this.f.pts(this.ctx)),dur:this.f.dur(this.ctx)})}}
- encodeAll(buf){const ch=this.ch,len=buf.length,fs=this.fsz,out=[],chd=[];for(let c=0;c<ch;c++)chd.push(buf.getChannelData(Math.min(c,buf.numberOfChannels-1)));
-  const fr=new Float32Array(fs*ch);for(let s=0;s<len;s+=fs){fr.fill(0);const n=Math.min(fs,len-s);for(let i=0;i<n;i++)for(let c=0;c<ch;c++)fr[i*ch+c]=chd[c][s+i];
-   const b=new Uint8Array(fr.buffer.slice(0));const ptr=this.f.inp(this.ctx,b.length);this.m.HEAPU8.set(b,ptr);if(this.f.send(this.ctx,BigInt(s))<0)throw new Error('AAC符号化に失敗');this.drain(out)}
-  this.f.flush(this.ctx);this.drain(out);return out}}
 /* 端末標準のAAC符号化（OSが許諾を持つ実装）を優先。使えなければnull。 */
 export async function nativeAac(audio,br){
  if(typeof AudioEncoder==='undefined'||typeof AudioData==='undefined')return null;
@@ -26,15 +15,15 @@ export async function nativeAac(audio,br){
   const ad=new AudioData({format:'f32-planar',sampleRate:sr,numberOfFrames:n,numberOfChannels:2,timestamp:Math.round(s/sr*1e6),data:pl});enc.encode(ad);ad.close();if(err)throw err}
  await enc.flush();enc.close();if(err)throw err;
  if(!pk.length||!desc)return null;return{pk,desc,kind:'native'}}
-export async function encodeMp4({canvas,fps,frames,render,audio,vBitrate=8e6,aBitrate=128e3,progress,audioMode='auto'}){
+export async function aacAvailable(sampleRate=48000){if(typeof AudioEncoder==='undefined'||typeof AudioData==='undefined')return false;try{return !!(await AudioEncoder.isConfigSupported({codec:'mp4a.40.2',sampleRate,numberOfChannels:2,bitrate:128e3})).supported}catch{return false}}
+export const NO_AAC_MESSAGE='この端末（ブラウザ）には標準のAAC符号化がないため、H.264+AAC書き出しは使えません。従来の「③書き出し」を使ってください。';
+export async function encodeMp4({canvas,fps,frames,render,audio,vBitrate=8e6,aBitrate=128e3,progress}){
  const T={};const t0=performance.now();
+ let A=null;
+ if(audio){const ta=performance.now();A=await nativeAac(audio,aBitrate);if(!A){const e=new Error(NO_AAC_MESSAGE);e.code='NO_NATIVE_AAC';throw e}T.aacKind='native';T.aacEncode=performance.now()-ta}
  const out=new Output({format:new Mp4OutputFormat({fastStart:'in-memory'}),target:new BufferTarget()});
  const vs=new CanvasSource(canvas,{codec:'avc',bitrate:vBitrate,keyFrameInterval:1});out.addVideoTrack(vs,{frameRate:fps});
- let as=null,A=null;
- if(audio){const ta=performance.now();
-  if(audioMode!=='wasm'){try{A=await nativeAac(audio,aBitrate)}catch(e){T.nativeError=String(e&&e.message||e);A=null}}
-  if(!A){const enc=await new AacSync().init(2,audio.sampleRate,aBitrate);const pk=enc.encodeAll(audio);A={pk:pk.map(p=>({d:p.d,t:p.pts/audio.sampleRate,dur:p.dur/audio.sampleRate})),desc:enc.desc,kind:'wasm'}}
-  T.aacKind=A.kind;T.aacEncode=performance.now()-ta;as=new EncodedAudioPacketSource('aac');out.addAudioTrack(as)}
+ let as=null;if(A){as=new EncodedAudioPacketSource('aac');out.addAudioTrack(as)}
  await out.start();
  if(as){let first=true;for(const p of A.pk){await as.add(new EncodedPacket(p.d,'key',p.t,p.dur),first?{decoderConfig:{codec:'mp4a.40.2',numberOfChannels:2,sampleRate:audio.sampleRate,description:A.desc}}:undefined);first=false}}
  const tv=performance.now();

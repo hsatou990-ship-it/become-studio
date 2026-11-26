@@ -1,6 +1,5 @@
 Mediabunny v1.66.4 (MPL-2.0) https://github.com/Vanilagy/mediabunny commit b5cbd7e8fcacdfdf505854184704be7c504b6f35
- - lib/mediabunny/ : JavaScript emitted unmodified by the TypeScript compiler from the upstream source (src/ and shared/).
-@mediabunny/aac-encoder v1.66.4 (MPL-2.0): lib/aac.js is the prebuilt upstream build/aac.js (libavcodec native AAC encoder compiled to WASM; FFmpeg is LGPL-2.1, see LICENSE-ffmpeg-*).
-Upstream source for both is available at the URL above. Only the file-extension of relative import specifiers in lib/mediabunny/ was rewritten (added ".js") so browsers can load them; no logic changed.
-AAC patent/commercial-use status: NOT CONFIRMED by the BECOME. STUDIO team. Do not adopt in the main app until confirmed.
-Also: lib/mediabunny/src/node.js replaced with a browser stub (fs = null), as upstream does for browser builds.
+ - lib/mediabunny/ : JavaScript emitted by the TypeScript compiler from the upstream source (src/ and shared/).
+   Only the file-extension of relative import specifiers was rewritten (added ".js") so browsers can load them; lib/mediabunny/src/node.js was replaced with a browser stub (fs = null), as upstream does for browser builds. No other logic was changed.
+Upstream source: URL above.
+Audio: only the device's built-in AAC encoder (WebCodecs AudioEncoder) is used. A WASM AAC encoder (libavcodec) that had been published here was REMOVED because its patent/commercial-use status could not be confirmed.
