@@ -34,6 +34,7 @@ label{display:block}small{color:#9aa0ad}
 <textarea id="dj" placeholder="ここにAIが出力したJSONを貼り付け" style="width:100%;min-height:90px;box-sizing:border-box;background:#1b2130;color:#e8eaf0;border:1px solid #39435a;border-radius:8px;padding:8px;font-size:12px"></textarea>
 <p><button id="bDJ" class="p">JSONを検証して反映</button></p>
 <div id="djs" class="note"></div>
+<div id="djr" class="note" style="white-space:pre-wrap"></div>
 <h2>BGM（自分の音源）の取り込みと拍の分析</h2>
 <p class="note">オーナーが権利を持つ、または商用利用できると確認した音源を取り込みます。波形から拍・テンポ・盛り上がりを検出し、「拍同期カット」の吸着と、BGMの自動調整（ナレーション中は下げる）に使います。音源の権利確認が無いと使いません。検出結果は目安で、拍が外れることがあります【推測】。</p>
 <p><input type="file" id="bgf" accept="audio/*"></p>
@@ -518,15 +519,30 @@ async function loadBgm(file,notes){const st=$('bgst');
 $('bBgm').onclick=()=>{const f=$('bgf').files[0];if(!f){$('bgst').textContent='音源ファイルを選んでください';return}loadBgm(f)};
 $('bBgmX').onclick=()=>{S.bgm=null;S.bgmFile=null;S.mix=null;$('bgst').textContent='BGMを外しました（自前合成のドローンに戻ります）'};
 /* ---------- 外部AIの設計JSON取り込み ---------- */
+/* 取り込み報告: 仕様適合・未対応・競合・自動調整・描画反映を、JSONごとに機械的にまとめる */
+function intakeReport(R){const P=R.plan,A=S.sc,rep={conform:{ok:R.ok,errors:R.errors.length,warnings:R.warnings.slice()},unsupported:[],conflicts:[],adjusted:[],scenes:[],render:[]};
+ P.scenes.forEach((x,i)=>{const o=A[i],req=[];if(x.kinetic&&x.kinetic!=='none')req.push('kinetic:'+x.kinetic);if(x.mask&&x.mask.type!=='none'&&i>0)req.push('mask:'+x.mask.type);if(x.matchCut&&i>0)req.push('matchCut');if(x.parallax)req.push('parallax:'+x.parallax);if(x.speed&&x.speed!=='normal')req.push(x.speed);if(x.cut&&x.cut.type&&x.cut.type!=='none')req.push(x.cut.type);if((x.fx||[]).includes('beat-sync-cut'))req.push('beat');
+  const app=[];if(o.kin)app.push('kinetic:'+o.kin);if(o.mask)app.push('mask:'+o.mask.type);if(o.mc)app.push('matchCut');if(o.px)app.push('parallax:'+o.px);if(o.spd)app.push(o.spd==='slow'?'slow-motion':'speed-ramp');if(o.cut&&o.cut.type!=='none')app.push(o.cut.type);if(o.beat)app.push('beat');
+  if((x.fx||[]).includes('live-anim-fusion'))rep.unsupported.push('場面'+(i+1)+': live-anim-fusion（設計のみ・描画には反映されません）');
+  rep.scenes.push({id:o.id,requested:req,applied:app,cost:fxCost(o)})});
+ (S.base.gov||[]).forEach(g=>{(g.rule==='競合'?rep.conflicts:rep.adjusted).push(g.id+'［'+g.rule+'］'+g.msg)});
+ try{P.scenes.forEach((x,i)=>{const o=A[i],t=(o.a+Math.min(o.b,o.a+1.2))/2;renderFrame(t);const d=og.getImageData(0,0,CW,CH).data;let l=0,n=0;for(let k=0;k<d.length;k+=256){l+=d[k]+d[k+1]+d[k+2];n++}rep.render.push({id:o.id,luma:+(l/n/765).toFixed(3),ok:l/n>3})})}catch(e){rep.render.push({id:'error',ok:false,msg:String(e)})}
+ return rep}
+function intakeText(r){const L=[];L.push('【取り込み報告】仕様適合: '+(r.conform.ok?'適合':'不適合')+'（警告'+r.conform.warnings.length+'件）');
+ L.push('未対応の演出: '+(r.unsupported.length?r.unsupported.join('／'):'なし'));L.push('演出の競合: '+(r.conflicts.length?r.conflicts.join('／'):'なし'));
+ L.push('自動調整による変更: '+(r.adjusted.length?r.adjusted.join('／'):'なし'));
+ L.push('描画への反映（指定→反映）:');r.scenes.forEach(s=>{const lost=s.requested.filter(q=>!s.applied.includes(q)),extra=s.applied.filter(q=>!s.requested.includes(q));L.push(' '+s.id+': '+(s.requested.join(',')||'指定なし')+' → '+(s.applied.join(',')||'なし')+(lost.length?'｜外れた: '+lost.join(','):'')+(extra.length?'｜追加: '+extra.join(','):''))});
+ L.push('描画確認: '+(r.render.every(x=>x.ok)?'全場面で映像が描画されました':'⚠ 描画に問題があります: '+r.render.filter(x=>!x.ok).map(x=>x.id).join(',')));
+ L.push('※ 実素材での見た目・Androidでの負荷は別途確認が必要です（この報告は機械検査のみ）');return L.join('\n')}
 function importDesign(){const R=BSDesign.validate($('dj').value);const o=$('djs');
- if(!R.ok){o.className='note w';o.textContent='取り込めません（反映していません）:\n・'+R.errors.join('\n・');return null}
+ if(!R.ok){o.className='note w';o.textContent='取り込めません（反映していません）:\n・'+R.errors.join('\n・');if($('djr').textContent)$('djr').textContent='（下は直前に取り込んだJSONの報告です。今回のJSONは反映されていません）\n'+$('djr').textContent.replace(/^（下は直前[^\n]*\n/,'');return null}
  const b=planToBase(R.plan,R.plan.meta.ending.holdSec);S.dj=$('dj').value;DV=0;loadBase(b,'設計JSON取込「'+(R.plan.meta.title||'無題')+'」');window.LASTPLAN=R.plan;
  const q=R.plan.scenes.map((x,i)=>(i+1)+'. 検索語: '+(x.queries.join(' / ')||'（なし）')).join('\n');
- o.className='note';o.textContent='反映しました（'+R.plan.scenes.length+'場面・'+R.plan.meta.totalSec+'秒）。素材検索語:\n'+q+(R.warnings.length?'\n⚠ '+R.warnings.join('\n⚠ '):'');return R}
+ o.className='note';o.textContent='反映しました（'+R.plan.scenes.length+'場面・'+R.plan.meta.totalSec+'秒）。素材検索語:\n'+q+(R.warnings.length?'\n⚠ '+R.warnings.join('\n⚠ '):'');try{const r=intakeReport(R);window.CP.lastIntake=r;$('djr').textContent=intakeText(r)}catch(e){$('djr').textContent='取り込み報告を作れませんでした: '+e.message}return R}
 $('bDJ').onclick=importDesign;
 $('bDJP').onclick=()=>{const t=BSDesign.requestPrompt($('dsc').value);$('djp').value=t;$('djp').hidden=false};
 $('bDJC').onclick=async()=>{const t=BSDesign.requestPrompt($('dsc').value);$('djp').value=t;$('djp').hidden=false;try{await navigator.clipboard.writeText(t);$('djs').textContent='依頼文をコピーしました。ChatGPT/Claudeに貼り付けてください'}catch{$('djp').select();$('djs').textContent='自動コピーできません。上の欄を長押しして全選択→コピーしてください'}};
 (function(){const o=$('implt'),L=BSDesign.IMPL;o.textContent=Object.keys(L).map(k=>(/^実装済み/.test(L[k])?'✔ ':'△ ')+k+'：'+L[k]).join('\n')+'\n※ 完成動画に反映されるのは✔の演出です。△は設計・近似のみ。'})();
 clipForm();ledger();renderFrame(1.5);
-window.CP={blindSet,revealKey,perfSummary,PF,makeVariant,applyVariant,GOV,govern,fxCost,analyzeBgm,loadBgm,drawParallax,rateAt,mediaT,applyCuts,importDesign,exportOffline,S,renderFrame,capLayout,boxes,safeCheck,buildAudio,measure,alignNarr,mockNarr,segments,report,prep,exportVideo,useClip,sceneAt,camera,trans,LN0,SCN0,out,og,GL:!!GL,SAFE,N,FPS,D,ledger,stats};
+window.CP={intakeReport,blindSet,revealKey,perfSummary,PF,makeVariant,applyVariant,GOV,govern,fxCost,analyzeBgm,loadBgm,drawParallax,rateAt,mediaT,applyCuts,importDesign,exportOffline,S,renderFrame,capLayout,boxes,safeCheck,buildAudio,measure,alignNarr,mockNarr,segments,report,prep,exportVideo,useClip,sceneAt,camera,trans,LN0,SCN0,out,og,GL:!!GL,SAFE,N,FPS,D,ledger,stats};
 </script></body></html>
