@@ -31,12 +31,15 @@ scenes[] の各場面:
 | transition | 任意（既定 cut） | cut / dissolve / dip-black / flash-white（この場面の頭の切替） |
 | speed | 任意（既定 normal） | normal / slow-motion / speed-ramp |
 | kinetic | 任意（既定 none。fx に kinetic-typography があれば char） | none / char / track。char=1文字ずつ弾むように出現し強調語は拡大から収束、track=字間が広がりから収束。冒頭・転換・山場に限る |
+| mask | 任意 | {type: none / iris / slit / wipe-up, dur: 0.3〜1.5秒（既定0.7）}。場面の頭で前の場面からマスクで開く（2場面目以降。山場・転換に限る）。fx に mask-reveal があれば iris |
+| matchCut | 任意 | true で、その場面の開始カメラ位置・拡大を前の場面の終わりに連続させる（つなぎはカット）。fx に match-cut でも可。被写体の位置合わせは未実装 |
+| parallax | 任意 | {layers: 1〜3}。前景の光の粒を奥行きごとに別速度で重ねる。fx に parallax-layers があれば2層 |
 | grade | 任意（既定 muted-neutral） | cold-teal / warm-gold / muted-neutral |
 | cut | 任意 | {type: none / j-cut / l-cut, offset: 0.1〜1秒（既定0.3）}。j-cut=映像が声より先に切替、l-cut=映像が遅れて切替 |
 | emphasis | 任意 | text の一部をそのまま抜き出した文字列。4個以内・各20字以内 |
 | search | 任意 | {queries: 英語の検索語 4個以内・各40字以内, avoid: 避ける語 4個以内, minHeight: 360〜4320（既定1080）} |
 | sfx | 任意 | riser / sub / hit / whoosh / shimmer の配列 |
-| fx | 任意 | kinetic-typography / parallax-layers / mask-reveal / match-cut / beat-sync-cut / live-anim-fusion の配列（4個以内）。完成動画に反映されるのは kinetic-typography と beat-sync-cut のみ（下記）。他は設計メモ扱いで警告が出る |
+| fx | 任意 | kinetic-typography / parallax-layers / mask-reveal / match-cut / beat-sync-cut / live-anim-fusion の配列（4個以内）。live-anim-fusion 以外は完成動画に反映される（match-cut はカメラ連続のみの部分実装）。live-anim-fusion は設計メモ扱いで警告が出る |
 | notes | 任意 | 300字以内の演出メモ |
 
 ## 2. 全体の制限
@@ -57,13 +60,13 @@ scenes[] の各場面:
 - l-cut: 実装済み（映像が遅れて切替）
 - parallax-drift(カメラ): 近似のみ（平行移動。多層視差ではない）
 - kinetic-typography: 実装済み（char=1文字ずつ出現＋強調語の拡大から収束 / track=字間が広がりから収束。fx に指定すると char）
-- parallax-layers: 設計のみ
-- mask-reveal: 設計のみ
-- match-cut: 設計のみ（映像の中身の照合が必要）
-- beat-sync-cut: 実装済み（bgm.bpm が必要。その場面の開始を拍に最大0.3秒吸着、BGMに拍の低音を追加、切替で軽いズーム。bpm が無いと警告して無効）
+- parallax-layers: 実装済み（前景の光の粒を1〜3層、奥行きごとに速度を変えて重ねる。映像そのものの多層分離ではない）
+- mask-reveal: 実装済み（場面の頭で前の場面からマスク形状で開く。iris=円 / slit=横スリット / wipe-up=下から上）
+- match-cut: 部分実装（その場面の開始カメラ位置・拡大を前の場面の終わりに連続させ、つなぎはカット。被写体の位置合わせ・形状一致は未実装）
+- beat-sync-cut: 実装済み（bgm.bpm、またはBGM取り込みで検出した拍が必要。場面の切替を拍に最大0.3秒吸着、切替で軽いズーム。bpm指定のみの場合はBGMに拍の低音も追加。どちらも無い場合は警告して無効）
 - live-anim-fusion: 設計のみ
 
-fx のうち完成動画に反映されるのは kinetic-typography と beat-sync-cut のみ。その他（parallax-layers / mask-reveal / match-cut / live-anim-fusion）は設計のみで、反映されず警告が出る。既存のJSON（kinetic・beat-sync-cut を使わないもの）は変更なしで同じように取り込める（互換）。
+fx のうち完成動画に反映されないのは live-anim-fusion のみ（警告が出る）。既存のJSON（新しい項目を使わないもの）は変更なしで同じように取り込める（互換）。
 
 ## 4. 検証器の仕様（exp/design/design.js の BSDesign.validate）
 - 入力はJSON文字列かオブジェクト。```json の囲みと先頭のBOMは除去される。
@@ -253,7 +256,7 @@ fx のうち完成動画に反映されるのは kinetic-typography と beat-syn
 }
 ```
 
-## 6b. キネティックと拍同期を使うサンプル（sample2.design.json。検証済み）
+## 6b. 新しい演出（kinetic・拍同期・mask・matchCut・parallax）を使うサンプル（sample2.design.json。検証済み）
 ```json
 {
  "schema": "become.design/1",
@@ -387,7 +390,14 @@ fx のうち完成動画に反映されるのは kinetic-typography と beat-syn
    ],
    "fx": [
     "beat-sync-cut"
-   ]
+   ],
+   "mask": {
+    "type": "iris",
+    "dur": 0.8
+   },
+   "parallax": {
+    "layers": 2
+   }
   },
   {
    "text": "君の朝が、始まる",
@@ -412,7 +422,8 @@ fx のうち完成動画に反映されるのは kinetic-typography と beat-syn
    },
    "sfx": [
     "shimmer"
-   ]
+   ],
+   "matchCut": true
   }
  ],
  "bgm": {
@@ -440,6 +451,8 @@ fx のうち完成動画に反映されるのは kinetic-typography と beat-syn
 - 冒頭（hook）で引きを作り、中盤に低点（low）、転換（turn）、上昇（rise）、余韻のある結び（ending）で感情を変化させる。
 - speed-ramp・slow-motion・j-cut・l-cut は山場・転換・結びに限り、1動画で多用しない。
 - 同じ camera・transition を連続させない。
+- mask は山場・転換に限り1〜2か所。matchCut は前後の場面の構図が似ている場合に使う。parallax は静かな場面の空気感づけに（多用しない）。
+- BGM はJSONに書かず、CINEMATIC PRO の「BGM（自分の音源）」で取り込む（権利確認が必要）。取り込むと波形から拍・テンポ・盛り上がりを検出し、beat-sync-cut の吸着先になる。
 - kinetic は冒頭・転換・山場に限り、全場面には使わない（読みづらくなる）。beat-sync-cut は感情の高まる2〜3か所に限る。bpm は BGM の雰囲気に合わせて 60〜120 程度。
 - search.queries は英語で具体的に（被写体・場所・光・動き）。ロゴ・実在人物・著作物の指名は避ける。
 - 実装済み・設計のみの区別、素材の権利確認、オーナーの最終承認は維持される。

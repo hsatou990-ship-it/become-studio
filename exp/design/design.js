@@ -11,6 +11,7 @@ const ENUM={
  grade:['cold-teal','warm-gold','muted-neutral'],
  cut:['none','j-cut','l-cut'],
  kinetic:['none','char','track'],
+ mask:['none','iris','slit','wipe-up'],
  sfx:['riser','sub','hit','whoosh','shimmer'],
  bgmMood:['dark-ambient','cinematic-rise','calm-piano','tense-pulse','warm-strings','silence'],
  pace:['slow','normal','fast'],
@@ -21,8 +22,8 @@ const IMPL={
  'color-grade':'実装済み','camera-moves(8種)':'実装済み','transition(dip/flash/leak/endfade)':'実装済み','caption-emphasis':'実装済み','sfx(5種)':'実装済み',
  'speed-ramp':'実装済み（クリップ再生速度と模擬素材の時間を再マップ）','slow-motion':'実装済み（0.5倍）','j-cut':'実装済み（映像がナレーションより先に切替）','l-cut':'実装済み（映像が遅れて切替）',
  'parallax-drift(カメラ)':'近似のみ（平行移動。多層視差ではない）',
- 'kinetic-typography':'実装済み（char=1文字ずつ弾むように出現・強調語は拡大から収束 / track=字間が広がりから収束。fxに指定するとchar）','parallax-layers':'設計のみ','mask-reveal':'設計のみ','match-cut':'設計のみ（映像の中身の照合が必要）','beat-sync-cut':'実装済み（bgm.bpmが必要。場面の切替を拍に最大0.3秒吸着、BGMに拍の低音を追加、切替で軽いズーム）','live-anim-fusion':'設計のみ'};
-const FXLIVE=['kinetic-typography','beat-sync-cut'];
+ 'kinetic-typography':'実装済み（char=1文字ずつ弾むように出現・強調語は拡大から収束 / track=字間が広がりから収束。fxに指定するとchar）','parallax-layers':'実装済み（前景の光の粒を1〜3層、奥行きごとに速度を変えて重ねる。映像そのものの多層分離ではない）','mask-reveal':'実装済み（場面の頭で、前の場面からマスク形状で開く。iris=円 / slit=横スリット / wipe-up=下から上）','match-cut':'部分実装（その場面の開始カメラ位置・拡大を前の場面の終わりに連続させ、つなぎはカット。被写体の位置合わせ・形状一致は未実装）','beat-sync-cut':'実装済み（bgm.bpm、またはBGM取り込みで検出した拍が必要。場面の切替を拍に最大0.3秒吸着、切替で軽いズーム。bpm指定のみの場合はBGMに拍の低音も追加）','live-anim-fusion':'設計のみ'};
+const FXLIVE=['kinetic-typography','beat-sync-cut','mask-reveal','match-cut','parallax-layers'];
 const LIM={scenes:40,total:90,text:80,dur:[1.2,8],queries:4,q:40,emph:4,qa:10,qaLen:100,title:60,long:2000,mid:300};
 const isObj=v=>v&&typeof v==='object'&&!Array.isArray(v);
 const clean=s=>String(s).replace(/[\u0000-\u001f\u007f<>]/g,'').trim();
@@ -60,8 +61,12 @@ function validate(input){
   const fx=arr(s.fx,P+'fx',4,0,30);const fxOk=[];fx.forEach(f=>{if(!ENUM.fx.includes(f)){err.push(P+'fx に未対応の値: '+f)}else{fxOk.push(f);if(!FXLIVE.includes(f))warn.push(P+'fx「'+f+'」は設計のみのため、完成動画には反映されません')}});
   const kinetic=en(s.kinetic,ENUM.kinetic,P+'kinetic',fxOk.includes('kinetic-typography')?'char':'none');
   const beat=fxOk.includes('beat-sync-cut');
+  let mask={type:'none',dur:.7};if(s.mask!=null){if(!isObj(s.mask))err.push(P+'mask はオブジェクトにしてください');else{mask.type=en(s.mask.type,ENUM.mask,P+'mask.type','none');mask.dur=num(s.mask.dur,.3,1.5,P+'mask.dur',.7)}}else if(fxOk.includes('mask-reveal'))mask.type='iris';
+  if(mask.type!=='none'&&i===0)warn.push(P+'mask は最初の場面では使えないため無視します');
+  const matchCut=fxOk.includes('match-cut')||s.matchCut===true;if(s.matchCut!=null&&typeof s.matchCut!=='boolean')err.push(P+'matchCut は true/false にしてください');
+  let parallax=0;if(s.parallax!=null){if(!isObj(s.parallax))err.push(P+'parallax はオブジェクトにしてください');else parallax=num(s.parallax.layers,1,3,P+'parallax.layers',2)}else if(fxOk.includes('parallax-layers'))parallax=2;
   const start=num(s.start,0,90,P+'start',null);const st0=start==null?t:start;
-  scenes.push({i,text,role,emotion:{v:emo.v,a:emo.a},start:+st0.toFixed(2),dur:dur||0,camera,transition,speed,grade,emphasis:emphasis.filter(e=>text.includes(e)),concepts:[],sfx,queries,avoid,minHeight,cut,fx:fxOk,kinetic,beat,notes:str(s.notes,LIM.mid,P+'notes')});
+  scenes.push({i,text,role,emotion:{v:emo.v,a:emo.a},start:+st0.toFixed(2),dur:dur||0,camera,transition,speed,grade,emphasis:emphasis.filter(e=>text.includes(e)),concepts:[],sfx,queries,avoid,minHeight,cut,fx:fxOk,kinetic,beat,mask,matchCut,parallax,notes:str(s.notes,LIM.mid,P+'notes')});
   t=st0+(dur||0)});
  for(let i=1;i<scenes.length;i++){if(scenes[i].start<scenes[i-1].start+scenes[i-1].dur-.05)err.push('scenes['+i+'] の開始が前の場面と重なっています');}
  const total=scenes.length?scenes[scenes.length-1].start+scenes[scenes.length-1].dur:0;
@@ -71,7 +76,7 @@ function validate(input){
  const ending=isObj(d.ending)?{holdSec:num(d.ending.holdSec,.5,4,'ending.holdSec',1.8),text:str(d.ending.text,LIM.text,'ending.text')}:{holdSec:1.8,text:''};
  const qa=Array.isArray(d.qa)?d.qa.slice(0,LIM.qa).map(x=>clean(String(x)).slice(0,LIM.qaLen)):[];
  const palette=isObj(d.color)?{mood:str(d.color.mood,LIM.mid,'color.mood')}:null;
- if(scenes.some(x=>x.beat)&&!(bgm&&bgm.bpm)){warn.push('beat-sync-cut には bgm.bpm が必要です。bpm が無いため拍への吸着は行いません');scenes.forEach(x=>{x.beat=false})}
+ if(scenes.some(x=>x.beat)&&!(bgm&&bgm.bpm))warn.push('beat-sync-cut: bgm.bpm が無いため、BGMを取り込んで拍を検出した場合のみ拍に吸着します（取り込まなければ無効）');
  const known=['schema','title','script','audience','intent','scenes','bgm','narration','ending','qa','color'];
  Object.keys(d).forEach(k=>{if(!known.includes(k))warn.push('未対応の項目 "'+k.slice(0,30)+'" は無視します')});
  if(err.length)return{ok:false,errors:err.slice(0,30),warnings:warn.slice(0,30),plan:null};
@@ -83,7 +88,7 @@ function requestPrompt(script){
   scenes:[{text:'誰も見ていない朝',dur:2.6,role:'hook',emotion:{valence:-.2,arousal:.3},camera:'push-in-slow',transition:'cut',speed:'normal',grade:'cold-teal',emphasis:['誰も'],search:{queries:['dark room desk dawn','lonely person window'],avoid:['logo','text'],minHeight:1080},sfx:['riser']},
    {text:'それでも一歩だけ前へ',dur:3.4,role:'turn',emotion:{valence:.4,arousal:.7},camera:'push-in-fast',transition:'flash-white',speed:'speed-ramp',grade:'warm-gold',cut:{type:'j-cut',offset:.3},emphasis:['一歩'],search:{queries:['walking forward sunrise']},sfx:['hit']}],
   bgm:{mood:'cinematic-rise',bpm:72},narration:{voice:'低く落ち着いた女性',pace:'slow',tone:'優しく力強い'},ending:{holdSec:1.8,text:''},qa:['各場面の字幕は80字以内','全体90秒以内']};
- return '次の台本を、縦型(1080x1920)のモチベーション動画の編集設計として、JSON「だけ」で出力してください（説明文・コードブロック記号は不要）。\n\n【ルール】\n- schema は "'+SCHEMA+'" 固定。\n- scenes は1〜'+LIM.scenes+'件、各 dur は'+LIM.dur[0]+'〜'+LIM.dur[1]+'秒、合計'+LIM.total+'秒以内。text は'+LIM.text+'字以内（字幕兼ナレーション）。\n- role: '+ENUM.role.join(' | ')+'\n- camera: '+ENUM.camera.join(' | ')+'\n- transition: '+ENUM.transition.join(' | ')+'\n- speed: '+ENUM.speed.join(' | ')+'（speed-ramp＝加速から減速、slow-motion＝0.5倍。山場・転換・結びに限って使い、多用しない）\n- grade: '+ENUM.grade.join(' | ')+'\n- cut.type: '+ENUM.cut.join(' | ')+'（j-cut＝映像が声より先に切替、l-cut＝映像が遅れて切替。offset は0.1〜1秒）\n- sfx: '+ENUM.sfx.join(' | ')+' の配列\n- emphasis は text の一部をそのまま抜き出す（最大'+LIM.emph+'個）。\n- search.queries は素材検索用の英語キーワード（最大'+LIM.queries+'個）。著作物・ロゴ・実在人物の指名は避ける。\n- 感情は emotion.valence(-1〜1) と arousal(0〜1)。物語として感情が変化し、冒頭に引きがあり、結びに余韻があること。\n- kinetic は '+ENUM.kinetic.join(' | ')+'（char=1文字ずつ弾む出現、track=字間が広がりから収束。冒頭・転換・山場に限る）。fx は '+ENUM.fx.join(' | ')+' が使えます。反映されるのは kinetic-typography と beat-sync-cut（bgm.bpm 必須）のみで、他は設計メモ扱いです。\n- 1つの場面に演出を詰め込みすぎず、意味に応じて使い分けてください。\n\n【出力例の形】\n'+JSON.stringify(ex,null,1)+'\n\n【台本】\n'+(script||'（ここに台本）');
+ return '次の台本を、縦型(1080x1920)のモチベーション動画の編集設計として、JSON「だけ」で出力してください（説明文・コードブロック記号は不要）。\n\n【ルール】\n- schema は "'+SCHEMA+'" 固定。\n- scenes は1〜'+LIM.scenes+'件、各 dur は'+LIM.dur[0]+'〜'+LIM.dur[1]+'秒、合計'+LIM.total+'秒以内。text は'+LIM.text+'字以内（字幕兼ナレーション）。\n- role: '+ENUM.role.join(' | ')+'\n- camera: '+ENUM.camera.join(' | ')+'\n- transition: '+ENUM.transition.join(' | ')+'\n- speed: '+ENUM.speed.join(' | ')+'（speed-ramp＝加速から減速、slow-motion＝0.5倍。山場・転換・結びに限って使い、多用しない）\n- grade: '+ENUM.grade.join(' | ')+'\n- cut.type: '+ENUM.cut.join(' | ')+'（j-cut＝映像が声より先に切替、l-cut＝映像が遅れて切替。offset は0.1〜1秒）\n- sfx: '+ENUM.sfx.join(' | ')+' の配列\n- emphasis は text の一部をそのまま抜き出す（最大'+LIM.emph+'個）。\n- search.queries は素材検索用の英語キーワード（最大'+LIM.queries+'個）。著作物・ロゴ・実在人物の指名は避ける。\n- 感情は emotion.valence(-1〜1) と arousal(0〜1)。物語として感情が変化し、冒頭に引きがあり、結びに余韻があること。\n- mask は {type: '+ENUM.mask.join(' | ')+', dur: 0.3〜1.5秒}（場面の頭で前の場面からマスクで開く。2場面目以降。山場・転換に限る）。matchCut は true で前の場面の終わりとカメラ位置を連続させる。parallax は {layers: 1〜3}（前景の光の粒の層）。kinetic は '+ENUM.kinetic.join(' | ')+'（char=1文字ずつ弾む出現、track=字間が広がりから収束。冒頭・転換・山場に限る）。fx は '+ENUM.fx.join(' | ')+' が使えます。反映されるのは kinetic-typography・beat-sync-cut（bgm.bpm、またはBGM取り込み時の検出拍が必要）・mask-reveal・match-cut（カメラ連続のみ）・parallax-layers で、live-anim-fusion は設計メモ扱いです。\n- 1つの場面に演出を詰め込みすぎず、意味に応じて使い分けてください。\n\n【出力例の形】\n'+JSON.stringify(ex,null,1)+'\n\n【台本】\n'+(script||'（ここに台本）');
 }
 G.BSDesign={SCHEMA,ENUM,IMPL,LIM,validate,requestPrompt};
 if(typeof module!=='undefined')module.exports=G.BSDesign;

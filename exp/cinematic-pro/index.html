@@ -31,6 +31,12 @@ label{display:block}small{color:#9aa0ad}
 <textarea id="dj" placeholder="ここにAIが出力したJSONを貼り付け" style="width:100%;min-height:90px;box-sizing:border-box;background:#1b2130;color:#e8eaf0;border:1px solid #39435a;border-radius:8px;padding:8px;font-size:12px"></textarea>
 <p><button id="bDJ" class="p">JSONを検証して反映</button></p>
 <div id="djs" class="note"></div>
+<h2>BGM（自分の音源）の取り込みと拍の分析</h2>
+<p class="note">オーナーが権利を持つ、または商用利用できると確認した音源を取り込みます。波形から拍・テンポ・盛り上がりを検出し、「拍同期カット」の吸着と、BGMの自動調整（ナレーション中は下げる）に使います。音源の権利確認が無いと使いません。検出結果は目安で、拍が外れることがあります【推測】。</p>
+<p><input type="file" id="bgf" accept="audio/*"></p>
+<p><input type="text" id="bgs" placeholder="入手元（URLまたは制作者）" style="width:100%;box-sizing:border-box"><input type="text" id="bgl" placeholder="ライセンス名・条件（例：Pixabay Content License）" style="width:100%;box-sizing:border-box"><label><input type="checkbox" id="bgk"> 商用利用・動画への使用・表示義務を確認しました</label></p>
+<p><button id="bBgm" class="p">BGMを取り込んで分析</button> <button id="bBgmX">BGMを外す</button></p>
+<div id="bgst" class="note"></div>
 <h2>演出ライブラリの実装状況</h2>
 <div id="implt" class="note"></div>
 <h2>スタイルと字幕</h2>
@@ -79,7 +85,7 @@ const RAMP0=2.2,RAMP1=.3;
 function rateAt(i,u){const k=S.sc[i]&&S.sc[i].spd;return k==='slow'?.5:k==='ramp'?RAMP1+(RAMP0-RAMP1)*(1-u)*(1-u):1}
 function mediaT(i,t){const s=S.sc[i],d=s.b-s.a,e=Math.max(0,t-s.a),u=Math.min(1,e/d);return s.spd==='slow'?.5*e:s.spd==='ramp'?d*(RAMP1*u+(RAMP0-RAMP1)*(1-Math.pow(1-u,3))/3):e}
 function applyCuts(){const A=S.sc,n=A.length-1;for(let i=1;i<n;i++){const c=A[i].cut;if(!c||c.type==='none')continue;let a=A[i].a+(c.type==='j-cut'?-c.off:c.off);a=Math.max(A[i-1].a+1,Math.min(A[i+1].a-1,a));A[i].a=a;A[i-1].b=a}
- const bp=S.base&&S.base.bpm;if(bp)for(let i=1;i<n;i++){if(!A[i].beat)continue;const bt=60/bp,k=Math.round(A[i].a/bt),a=k*bt;if(Math.abs(a-A[i].a)>.3)continue;const c=Math.max(A[i-1].a+1,Math.min(A[i+1].a-1,a));A[i].a=c;A[i-1].b=c}}
+ const bp=S.base&&S.base.bpm;if(bp||S.bgm)for(let i=1;i<n;i++){if(!A[i].beat)continue;let a;if(S.bgm){a=S.bgm.beats.reduce((q,b)=>Math.abs(b-A[i].a)<Math.abs(q-A[i].a)?b:q,1e9)}else{const bt=60/bp,k=Math.round(A[i].a/bt);a=k*bt}if(Math.abs(a-A[i].a)>.3)continue;const c=Math.max(A[i-1].a+1,Math.min(A[i+1].a-1,a));A[i].a=c;A[i-1].b=c}}
 const sceneAt=t=>{const n=S.sc.length;for(let i=0;i<n;i++)if(t>=S.sc[i].a&&t<S.sc[i].b)return i;return n-1};
 function mulberry(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 /* ---------- 模擬素材（実写ではない。試験用） ---------- */
@@ -108,7 +114,7 @@ function paintMock(k,t,u){const g=mg;g.globalCompositeOperation='source-over';g.
  return mc}
 function lerpc(a,b,u){const f=s=>[1,3,5].map(i=>parseInt(s.substr(i,2),16)),A=f(a),B=f(b);return'rgb('+A.map((v,i)=>Math.round(lerp(v,B[i],u))).join(',')+')'}
 /* ---------- カメラ・場面転換 ---------- */
-function camera(i,t){const s=S.sc[i],u=clamp((t-s.a)/(s.b-s.a)),e=ease(u),pn=(s.beat&&S.base&&S.base.bpm)?.03*Math.exp(-Math.max(0,t-s.a)*7):0;return{z:lerp(s.z[0],s.z[1],e)+pn,px:lerp(s.p[0],s.p[2],e)+.0018*Math.sin(t*1.3+1)+.001*Math.sin(t*2.9),py:lerp(s.p[1],s.p[3],e)+.0014*Math.sin(t*1.1)+.0008*Math.sin(t*3.3+2),u}}
+function camera(i,t){const s=S.sc[i],u=clamp((t-s.a)/(s.b-s.a)),e=ease(u),pn=(s.beat&&(S.bgm||(S.base&&S.base.bpm)))?.03*Math.exp(-Math.max(0,t-s.a)*7):0;return{z:lerp(s.z[0],s.z[1],e)+pn,px:lerp(s.p[0],s.p[2],e)+.0018*Math.sin(t*1.3+1)+.001*Math.sin(t*2.9),py:lerp(s.p[1],s.p[3],e)+.0014*Math.sin(t*1.1)+.0008*Math.sin(t*3.3+2),u}}
 function trans(t){const A=S.sc;let fade=0,flash=0,lk=0,lx=0;
  A.forEach((s,k)=>{if(k===0)return;
   if(s.tr==='dip')fade=Math.max(fade,clamp(1-Math.abs(t-s.a)/(s.tw||.1)));
@@ -157,8 +163,18 @@ if(GL){try{const vs=`attribute vec2 p;varying vec2 v;void main(){v=(p+1.)*.5;gl_
 const noise=document.createElement('canvas');noise.width=noise.height=256;{const g=noise.getContext('2d'),d=g.createImageData(256,256),r=mulberry(3);for(let i=0;i<d.data.length;i+=4){const v=r()*255;d.data[i]=d.data[i+1]=d.data[i+2]=v;d.data[i+3]=255}g.putImageData(d,0,0)}
 function drawCover(g,src,c){const sw=src.videoWidth||src.width,sh=src.videoHeight||src.height;if(!sw||!sh)return;const k=Math.max(CW/sw,CH/sh)*c.z,dw=sw*k,dh=sh*k;g.drawImage(src,(CW-dw)/2+c.px*CW,(CH-dh)/2+c.py*CW,dw,dh)}
 function srcFor(i,t,u){const c=S.clips[i];if(c&&c.el&&c.el.videoWidth&&c.el.readyState>=2){if(!S.busy)try{c.el.playbackRate=rateAt(i,u)}catch{}return c.el}return paintMock(S.sc[i].mock,S.sc[i].a+mediaT(i,t),u)}
+/* 多層パララックス: 前景の光の粒を奥行きごとに別の速度で動かす（映像そのものの層分離ではない） */
+const PXR=mulberry(77),PXP=Array.from({length:3*34},(_,k)=>({x:PXR(),y:PXR(),r:PXR(),v:.4+PXR()}));
+function drawParallax(s,t,c){const n=s.px;cg.save();for(let L=0;L<n;L++){const d=(L+1)/n,sz=(1.6+5.5*d)*CW/1080*(CH>1500?1:1);cg.fillStyle=`rgba(255,238,205,${.16+.2*d})`;
+  for(let k=0;k<34;k++){const q=PXP[L*34+k];let x=(q.x*CW*1.3-c.px*CW*(7*d+1)-(c.z-1)*(q.x-.5)*CW*d*2+t*q.v*18*d)%(CW*1.3),y=(q.y*CH-t*q.v*(10+30*d)*1)%CH;if(x<0)x+=CW*1.3;if(y<0)y+=CH;x-=CW*.15;cg.beginPath();cg.arc(x,y,sz*(.5+q.r),0,Math.PI*2);cg.fill()}}cg.restore()}
 function renderFrame(t){const i=sceneAt(t),c=camera(i,t),tr=trans(t),fr=Math.round(t*FPS);cg.setTransform(1,0,0,1,0,0);cg.fillStyle='#000';cg.fillRect(0,0,CW,CH);
- const src=srcFor(i,t,c.u);if(src)drawCover(cg,src,c);const g=S.sc[i].g;
+ const sI=S.sc[i],mk=sI.mask;let mu=-1;if(mk&&i>0)mu=(t-sI.a)/mk.dur;
+ if(mu>=0&&mu<1){const pc=camera(i-1,t),ps=srcFor(i-1,t,1);if(ps)drawCover(cg,ps,pc);const e=ease(mu);cg.save();cg.beginPath();
+  if(mk.type==='iris'){cg.arc(CW/2,CH/2,e*Math.hypot(CW,CH)/2,0,Math.PI*2)}else if(mk.type==='slit'){const h=e*CH;cg.rect(0,(CH-h)/2,CW,h)}else{const h=e*CH;cg.rect(0,CH-h,CW,h)}
+  cg.clip();const src=srcFor(i,t,c.u);if(src)drawCover(cg,src,c);cg.restore()}
+ else{const src=srcFor(i,t,c.u);if(src)drawCover(cg,src,c)}
+ if(sI.px)drawParallax(sI,t,c);
+ const g=S.sc[i].g;
  if(GL){GL.bindTexture(GL.TEXTURE_2D,GT);GL.texImage2D(GL.TEXTURE_2D,0,GL.RGBA,GL.RGBA,GL.UNSIGNED_BYTE,cam);GL.uniform1i(GU.t,0);GL.uniform1f(GU.uF,fr%997);GL.uniform1f(GU.uFade,tr.fade);GL.uniform1f(GU.uFlash,tr.flash);GL.uniform1f(GU.uLk,tr.lk);GL.uniform1f(GU.uLx,tr.lx);GL.uniform1f(GU.uGrain,i===4?.03:.07);GL.uniform1f(GU.uVig,g.vig);GL.uniform1f(GU.uSat,g.sat);GL.uniform1f(GU.uCon,g.con);GL.uniform3fv(GU.uLift,g.lift);GL.uniform3fv(GU.uGain,g.gain);GL.drawArrays(GL.TRIANGLE_STRIP,0,4);og.setTransform(1,0,0,1,0,0);og.globalAlpha=1;og.drawImage(glc,0,0)}
  else{og.setTransform(1,0,0,1,0,0);og.globalAlpha=1;og.filter=`contrast(${g.con}) saturate(${g.sat}) brightness(${(g.gain[0]+g.gain[1]+g.gain[2])/3})`;og.drawImage(cam,0,0);og.filter='none';
   const vg=og.createRadialGradient(CW/2,CH/2,CW*.3,CW/2,CH/2,CH*.62);vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,`rgba(0,0,0,${g.vig})`);og.fillStyle=vg;og.fillRect(0,0,CW,CH);
@@ -176,6 +192,7 @@ async function buildAudio(){const sr=48000,oc=new OfflineAudioContext(2,D*sr,sr)
  [55,55.35].forEach(f=>{const o=oc.createOscillator();o.type='sawtooth';o.frequency.value=f;const q=oc.createGain();q.gain.value=.5;o.connect(q);q.connect(lp);o.start(0);o.stop(te+.1)});
  {const o=oc.createOscillator();o.frequency.value=27.5;const q=oc.createGain();q.gain.value=.7;o.connect(q);q.connect(dg);o.start(0);o.stop(te+.1)}
  dg.gain.setValueAtTime(0,0);dg.gain.linearRampToValueAtTime(.05*BGM_DRONE*2,1.2);dg.gain.linearRampToValueAtTime(.075*BGM_DRONE*2,Math.max(1.3,HA.a));dg.gain.linearRampToValueAtTime(.1*BGM_DRONE*2,Math.max(1.3,HA.a,PA.a));dg.gain.linearRampToValueAtTime(0,te);
+ if(S.bgm){dg.gain.cancelScheduledValues(0);dg.gain.setValueAtTime(0,0);const bs=oc.createBufferSource();bs.buffer=S.bgm.buf;const bg=oc.createGain(),ta=EA.a-.15;bg.gain.setValueAtTime(0,0);bg.gain.linearRampToValueAtTime(S.bgm.gain,.6);bg.gain.setValueAtTime(S.bgm.gain,Math.max(1,ta-.9));bg.gain.linearRampToValueAtTime(0,ta);bs.connect(bg);bg.connect(bed);bs.start(0);bs.stop(ta+.05)}
  A.forEach((sc,k)=>{if(!(sc.sfx&&sc.sfx.riser)||k+1>=nA)return;const r0=sc.a,r1=A[k+1].a,ns=oc.createBufferSource();ns.buffer=noiseBuf(oc,Math.max(4,r1-r0+.5),5+k);{const bp=oc.createBiquadFilter();bp.type='bandpass';bp.Q.value=1.2;bp.frequency.setValueAtTime(300,r0);bp.frequency.exponentialRampToValueAtTime(3500,r1);const q=oc.createGain();q.gain.setValueAtTime(0,r0);q.gain.linearRampToValueAtTime(.05,r1-.05);q.gain.setValueAtTime(0,r1);ns.connect(bp);bp.connect(q);q.connect(bed);ns.start(r0,0,r1-r0+.1);ns.stop(r1+.05)}});
  A.forEach(sc=>{if(!(sc.sfx&&sc.sfx.hit))return;const t=sc.a,o=oc.createOscillator();o.frequency.setValueAtTime(95,t);o.frequency.exponentialRampToValueAtTime(34,t+.5);const q=oc.createGain();q.gain.setValueAtTime(.4,t);q.gain.exponentialRampToValueAtTime(.001,t+.9);o.connect(q);q.connect(bed);o.start(t);o.stop(t+1);
   const n2=oc.createBufferSource();n2.buffer=noiseBuf(oc,.3,9);const f=oc.createBiquadFilter();f.type='lowpass';f.frequency.value=1200;const q2=oc.createGain();q2.gain.setValueAtTime(.16,t);q2.gain.exponentialRampToValueAtTime(.001,t+.2);n2.connect(f);f.connect(q2);q2.connect(bed);n2.start(t)});
@@ -183,7 +200,7 @@ async function buildAudio(){const sr=48000,oc=new OfflineAudioContext(2,D*sr,sr)
  A.forEach(sc=>{if(!(sc.sfx&&sc.sfx.whoosh))return;const t=sc.a-.1,n2=oc.createBufferSource();n2.buffer=noiseBuf(oc,.5,11);const bp=oc.createBiquadFilter();bp.type='bandpass';bp.Q.value=.9;bp.frequency.setValueAtTime(3000,t);bp.frequency.exponentialRampToValueAtTime(400,t+.4);const q=oc.createGain();q.gain.setValueAtTime(.06,t);q.gain.linearRampToValueAtTime(0,t+.45);n2.connect(bp);bp.connect(q);q.connect(bed);n2.start(t);
   [880,1318.5].forEach(f=>{const o=oc.createOscillator();o.frequency.value=f;const q2=oc.createGain();q2.gain.setValueAtTime(.012,t+.1);q2.gain.exponentialRampToValueAtTime(.0005,t+1.8);o.connect(q2);q2.connect(bed);o.start(t+.1);o.stop(t+2)})});
  A.forEach(sc=>{if(!(sc.sfx&&sc.sfx.shimmer))return;const t=sc.a+.2;[220,329.6].forEach(f=>{const o=oc.createOscillator();o.frequency.value=f;const q=oc.createGain();q.gain.setValueAtTime(0,t);q.gain.linearRampToValueAtTime(.012,t+.5);q.gain.exponentialRampToValueAtTime(.0005,D-.05);o.connect(q);q.connect(bed);o.start(t);o.stop(D)})});
- if(S.base&&S.base.bpm&&A.some(q=>q.beat)){const bt=60/S.base.bpm;for(let t=bt;t<EA.a-.3;t+=bt){const o=oc.createOscillator();o.frequency.setValueAtTime(90,t);o.frequency.exponentialRampToValueAtTime(42,t+.12);const q=oc.createGain();q.gain.setValueAtTime(.11,t);q.gain.exponentialRampToValueAtTime(.001,t+.22);o.connect(q);q.connect(bed);o.start(t);o.stop(t+.25)}}
+ if(!S.bgm&&S.base&&S.base.bpm&&A.some(q=>q.beat)){const bt=60/S.base.bpm;for(let t=bt;t<EA.a-.3;t+=bt){const o=oc.createOscillator();o.frequency.setValueAtTime(90,t);o.frequency.exponentialRampToValueAtTime(42,t+.12);const q=oc.createGain();q.gain.setValueAtTime(.11,t);q.gain.exponentialRampToValueAtTime(.001,t+.22);o.connect(q);q.connect(bed);o.start(t);o.stop(t+.25)}}
  if(S.narr){const nb=S.narr,x=nb.getChannelData(0);let act=[];for(let i=0;i<x.length;i++)if(Math.abs(x[i])>.01)act.push(x[i]);let q=0;act.forEach(v=>q+=v*v);const rms=Math.sqrt(q/Math.max(1,act.length)),fac=Math.min(6,Math.pow(10,-18/20)/Math.max(rms,1e-5));
   const src=oc.createBufferSource();src.buffer=nb;const gn=oc.createGain();gn.gain.value=fac;src.connect(gn);gn.connect(mx);const o=S.off;src.start(Math.max(0,o),Math.max(0,-o))}
  const buf=await oc.startRendering();S.mix=buf;return buf}
@@ -224,7 +241,7 @@ async function useClip(i,fileOverride){const f=fileOverride||$('cf'+i).files[0],
  el.currentTime=meta.inp;S.clips[i]={el,meta,w,name:f.name,file:f};$('cm'+i).textContent='反映しました'+(w.length?'（注意: '+w.join('／')+'）':'');ledger();return true}
 function ledger(){const u=S.clips.map((c,i)=>c?`${S.sc[i].id}: ${c.meta.src}｜${c.meta.url}｜制作者 ${c.meta.by}｜${c.meta.lic}｜確認日 ${c.meta.at}｜クレジット案: Video by ${c.meta.by} (${c.meta.src.split('（')[0]})`:null).filter(Boolean);
  const m=S.clips.map((c,i)=>c?null:S.sc[i].id).filter(Boolean).concat([S.sc[S.sc.length-1].id]);
- $('ledger').textContent=(u.length?u.join('\n'):'（実素材なし）')+'\n模擬素材の場面: '+m.join(', ')+'\n権利条件や規約が変わったら、保存済みの動画も再審査してください。TikTok投稿時は、AI生成の音声・映像を含む場合にAI生成ラベルが必要です。'}
+ $('ledger').textContent=(S.bgm?'BGM: '+S.bgm.name+'｜'+S.bgm.src+'｜'+S.bgm.lic+'｜オーナー権利確認済み\n':'')+(u.length?u.join('\n'):'（実素材なし）')+'\n模擬素材の場面: '+m.join(', ')+'\n権利条件や規約が変わったら、保存済みの動画も再審査してください。TikTok投稿時は、AI生成の音声・映像を含む場合にAI生成ラベルが必要です。'}
 /* ---------- 再生・書き出し ---------- */
 function startScene(i){S.cur=i;const c=S.clips[i];if(c&&c.el){try{c.el.currentTime=c.meta.inp;c.el.play()}catch{}}S.clips.forEach((q,k)=>{if(q&&k!==i)try{q.el.pause()}catch{}})}
 function say(m,c){$('st').textContent=m;$('st').className='note '+(c||'')}
@@ -359,13 +376,14 @@ $('bPrep').onclick=async()=>{S.mix=null;await prep();renderFrame(4.5)};$('bPrev'
 
 /* ---------- 解像度切替時の制作データ保護（端末内のみ・APIキーは含まない） ---------- */
 function idbSess(){return new Promise((ok,ng)=>{const r=indexedDB.open('cp_session',1);r.onupgradeneeded=()=>r.result.createObjectStore('s',{keyPath:'k'});r.onsuccess=()=>ok(r.result);r.onerror=()=>ng(new Error('IndexedDBを開けません'))})}
-async function saveSession(){const rec={k:'last',at:Date.now(),dsc:$('dsc').value,plan:S.base.sc!==SCN0&&!S.dj,dj:S.dj||null,dv:DV,font:S.font,narr:S.narrFile||null,mockNarr:!!S.isMockNarr,
+async function saveSession(){const rec={k:'last',at:Date.now(),dsc:$('dsc').value,plan:S.base.sc!==SCN0&&!S.dj,dj:S.dj||null,dv:DV,font:S.font,narr:S.narrFile||null,bgm:S.bgmFile?{file:S.bgmFile,src:S.bgm.src,lic:S.bgm.lic}:null,mockNarr:!!S.isMockNarr,
   clips:S.clips.map((c,i)=>c&&c.file?{i,file:c.file,src:c.meta.src,url:c.meta.url,by:c.meta.by,lic:c.meta.lic,inp:c.meta.inp}:null).filter(Boolean)};
  const db=await idbSess();await new Promise((ok,ng)=>{const t=db.transaction('s','readwrite');t.objectStore('s').put(rec);t.oncomplete=ok;t.onerror=()=>ng(new Error('保存に失敗（容量不足の可能性）'));t.onabort=t.onerror})}
 async function restoreSession(){let rec=null;try{const db=await idbSess();rec=await new Promise((ok,ng)=>{const q=db.transaction('s').objectStore('s').get('last');q.onsuccess=()=>ok(q.result);q.onerror=()=>ng(q.error)})}catch{}
  if(!rec||Date.now()-rec.at>10*60*1000)return false;
  $('dsc').value=rec.dsc;DV=rec.dv||0;if(rec.font){S.font=rec.font;try{$('fnt').value=rec.font}catch{}}if(rec.dj){$('dj').value=rec.dj;importDesign()}else if(rec.plan)applyDirector();
  for(const c of rec.clips){if(c.i>=S.clips.length)continue;$('cs'+c.i).value=c.src;$('cu'+c.i).value=c.url;$('cc'+c.i).value=c.by;$('cl'+c.i).value=c.lic;$('ck'+c.i).checked=true;$('ci'+c.i).value=c.inp;await useClip(c.i,c.file)}
+ if(rec.bgm){try{$('bgs').value=rec.bgm.src;$('bgl').value=rec.bgm.lic;$('bgk').checked=true;await loadBgm(rec.bgm.file)}catch{}}
  if(rec.narr){try{const b=await new OfflineAudioContext(1,1,48000).decodeAudioData(await rec.narr.arrayBuffer());S.narr=b;S.narrFile=rec.narr;S.isMockNarr=false;S.mix=null;await prep()}catch{}}
  else if(rec.mockNarr){S.narr=mockNarr();S.isMockNarr=true;S.mix=null;await prep()}
  try{const db=await idbSess();db.transaction('s','readwrite').objectStore('s').delete('last')}catch{}
@@ -385,7 +403,8 @@ function planToBase(P,endHold){const n=P.scenes.length,total=P.scenes.reduce((q,
   const nxt=P.scenes[i+1],sfx={};if(x.role==='turn')sfx.hit=1;if(nxt&&nxt.role==='turn')sfx.riser=1;if(tr==='dip')sfx.sub=1;if(tr==='leak')sfx.whoosh=1;
   let mock=null;for(const k of x.concepts)if(MOCKC[k]){mock=MOCKC[k];break}if(!mock)mock=x.emotion.v<-.25?'rain':x.emotion.v>.4?'road':'dawn';
   const dj=P.meta.source==='design-json';if(dj){if(x.transition==='cut')tr='none';for(const k of Object.keys(sfx))delete sfx[k];Object.assign(sfx,x.sfx||{})}
-  const o={id:'S'+(i+1),name:ROLEJ[x.role]||x.role,a:x.start,b:+(P.scenes[i+1]?P.scenes[i+1].start:x.start+x.dur).toFixed(2),spd:x.speed==='slow-motion'?'slow':x.speed==='speed-ramp'?'ramp':'',kin:(x.kinetic&&x.kinetic!=='none')?x.kinetic:(dj?'':(x.role==='turn'||x.role==='climax')?'char':''),beat:!!x.beat,cut:x.cut||(dj?{type:'none',off:0}:x.role==='turn'?{type:'j-cut',off:.3}:{type:'none',off:0}),q:x.queries||[],mock,z:c.z.slice(),p:c.p.slice(),g:JSON.parse(JSON.stringify(GRP[x.grade==='cold-teal'?'cold-teal':x.grade==='warm-gold'?'warm-gold':'muted-neutral'])),tr,sfx,role:x.role,dir:{camera:x.camera,transition:x.transition,speed:x.speed,emphasis:x.emphasis,fx:x.fx||[]}};if(tw)o.tw=tw;return o});
+  const o={id:'S'+(i+1),name:ROLEJ[x.role]||x.role,a:x.start,b:+(P.scenes[i+1]?P.scenes[i+1].start:x.start+x.dur).toFixed(2),spd:x.speed==='slow-motion'?'slow':x.speed==='speed-ramp'?'ramp':'',mask:(x.mask&&x.mask.type!=='none'&&i>0)?{type:x.mask.type,dur:x.mask.dur}:null,mc:!!x.matchCut&&i>0,px:x.parallax||0,kin:(x.kinetic&&x.kinetic!=='none')?x.kinetic:(dj?'':(x.role==='turn'||x.role==='climax')?'char':''),beat:!!x.beat,cut:x.cut||(dj?{type:'none',off:0}:x.role==='turn'?{type:'j-cut',off:.3}:{type:'none',off:0}),q:x.queries||[],mock,z:c.z.slice(),p:c.p.slice(),g:JSON.parse(JSON.stringify(GRP[x.grade==='cold-teal'?'cold-teal':x.grade==='warm-gold'?'warm-gold':'muted-neutral'])),tr,sfx,role:x.role,dir:{camera:x.camera,transition:x.transition,speed:x.speed,emphasis:x.emphasis,fx:x.fx||[]}};if(tw)o.tw=tw;return o});
+ sc.forEach((o,i)=>{if(o.mc){const q=sc[i-1];o.z[0]=q.z[1];o.p[0]=q.p[2];o.p[1]=q.p[3];o.tr='none';delete o.tw}});
  sc[n-1].b=+total.toFixed(2);sc.push({id:'END',name:'余韻',a:+total.toFixed(2),b:Dn,mock:'black',z:[1,1.04],p:[0,0,0,0],g:{sat:1,con:1,gain:[1,1,1],lift:[0,0,0],vig:.3},tr:'endfade',sfx:{shimmer:1},role:'end'});
  const ln=P.scenes.map((x,i)=>({t0:+(x.start+(i===0?.5:.3)).toFixed(2),d:+Math.max(1,x.dur-.7).toFixed(2),toks:chunk(x.text,x.emphasis)}));
  return{sc,ln,D:Dn,bpm:(P.meta.bgm&&P.meta.bgm.bpm)||0}}
@@ -402,6 +421,33 @@ $('bDirA').onclick=()=>{S.dj=null;loadBase({sc:SCN0,ln:LN0,D:15},'標準A案（1
 if(/restore=1/.test(location.hash))restoreSession().then(()=>{history.replaceState(null,'',location.pathname+location.search+'#res='+RES)});
 
 
+
+/* ---------- BGMの波形分析（テンポ・拍・盛り上がり） ---------- */
+function analyzeBgm(buf){const sr=buf.sampleRate,ch=buf.getChannelData(0),hop=Math.round(sr*.01),n=Math.floor(ch.length/hop);
+ const e=new Float32Array(n);let lp=0;const a=1-Math.exp(-2*Math.PI*180/sr);let tot=new Float32Array(n);
+ for(let i=0;i<n;i++){let q=0,q2=0;for(let j=0;j<hop;j++){const v=ch[i*hop+j];lp+=a*(v-lp);q+=lp*lp;q2+=v*v}e[i]=Math.sqrt(q/hop);tot[i]=Math.sqrt(q2/hop)}
+ const on=new Float32Array(n);for(let i=1;i<n;i++)on[i]=Math.max(0,e[i]-e[i-1]);
+ const mean=on.reduce((q,v)=>q+v,0)/n;for(let i=0;i<n;i++)on[i]=Math.max(0,on[i]-mean);
+ const lagMin=Math.round(60/180/.01),lagMax=Math.round(60/60/.01);let best=-1,bl=0;const span=Math.min(n,3000);
+ for(let L=lagMin;L<=lagMax;L++){let c=0;for(let i=0;i+L<span;i++)c+=on[i]*on[i+L];const bpm=6000/L,w=bpm>=80&&bpm<=160?1:.8;c*=w;if(c>best){best=c;bl=L}}
+ let bpm=6000/bl,bestS=-1,bestPh=0,bestB=bpm;
+ /* 細かい探索: テンポを0.1BPM刻み、位相を10ms刻みで、拍の位置の立ち上がりの合計が最大になる組を選ぶ */
+ for(let bb=bpm-3;bb<=bpm+3;bb+=.1){const per=6000/bb,np=Math.ceil(per);for(let o=0;o<np;o++){let c=0;for(let k=0;o+k*per<n-1;k++){const x=o+k*per,i=Math.round(x);c+=on[i]+.5*(on[i-1]||0)+.5*(on[i+1]||0)}if(c>bestS){bestS=c;bestPh=o;bestB=bb}}}
+ bpm=bestB;const ph=bestPh;const beats=[];const per2=6000/bpm;for(let k=0;ph+k*per2<n;k++)beats.push(+((ph+k*per2)*.01).toFixed(3));
+ const sec=Math.floor(n/100),en=[];for(let k=0;k<sec;k++){let q=0;for(let i=k*100;i<(k+1)*100;i++)q+=tot[i]*tot[i];en.push(Math.sqrt(q/100))}
+ const mx=Math.max(...en,1e-9),curve=en.map(v=>+(v/mx).toFixed(2));let peak=0,ps=-1;for(let k=1;k<curve.length;k++){const sl=curve[k]-curve[k-1];if(sl>ps){ps=sl;peak=k}}
+ let q=0,m=0;for(let i=0;i<ch.length;i+=7){q+=ch[i]*ch[i];m++}const rms=Math.sqrt(q/Math.max(1,m));
+ return{bpm:+bpm.toFixed(1),phase:+(ph*.01).toFixed(2),beats,curve,buildAt:peak,rms,dur:buf.duration}}
+async function loadBgm(file,notes){const st=$('bgst');
+ if(!$('bgk').checked||!$('bgs').value.trim()||!$('bgl').value.trim()){st.className='note w';st.textContent='入手元・ライセンス・権利確認のチェックが揃わないため使いません';return false}
+ try{const ab=await file.arrayBuffer();const buf=await new OfflineAudioContext(1,1,48000).decodeAudioData(ab);const an=analyzeBgm(buf);
+  S.bgm={buf,beats:an.beats,bpm:an.bpm,an,name:file.name,src:$('bgs').value.trim(),lic:$('bgl').value.trim(),gain:Math.min(1.5,Math.pow(10,-26/20)/Math.max(an.rms,1e-4)*1)};S.bgmFile=file;
+  S.base&&(S.base.bpm=S.base.bpm||0);S.mix=null;S.sc=JSON.parse(JSON.stringify(S.sc));
+  if(S.aligned&&S.narr)alignNarr(S.narr);else{S.sc=JSON.parse(JSON.stringify(S.base.sc));applyCuts()}
+  clipForm();ledger();st.className='note';st.textContent='取り込みました: '+file.name+'｜テンポ約 '+an.bpm+' BPM｜最初の拍 '+an.phase+'秒｜盛り上がり（音量が最も急に上がる点）約 '+an.buildAt+'秒｜長さ '+an.dur.toFixed(1)+'秒'+(an.dur<D?'｜⚠ 動画('+D+'秒)より短いため、終わりは無音になります':'')+'｜検出は目安です【推測】';return true}
+ catch(e){S.bgm=null;st.className='note w';st.textContent='この端末では読み込めない音源です: '+e.message;return false}}
+$('bBgm').onclick=()=>{const f=$('bgf').files[0];if(!f){$('bgst').textContent='音源ファイルを選んでください';return}loadBgm(f)};
+$('bBgmX').onclick=()=>{S.bgm=null;S.bgmFile=null;S.mix=null;$('bgst').textContent='BGMを外しました（自前合成のドローンに戻ります）'};
 /* ---------- 外部AIの設計JSON取り込み ---------- */
 function importDesign(){const R=BSDesign.validate($('dj').value);const o=$('djs');
  if(!R.ok){o.className='note w';o.textContent='取り込めません（反映していません）:\n・'+R.errors.join('\n・');return null}
@@ -413,5 +459,5 @@ $('bDJP').onclick=()=>{const t=BSDesign.requestPrompt($('dsc').value);$('djp').v
 $('bDJC').onclick=async()=>{const t=BSDesign.requestPrompt($('dsc').value);$('djp').value=t;$('djp').hidden=false;try{await navigator.clipboard.writeText(t);$('djs').textContent='依頼文をコピーしました。ChatGPT/Claudeに貼り付けてください'}catch{$('djp').select();$('djs').textContent='自動コピーできません。上の欄を長押しして全選択→コピーしてください'}};
 (function(){const o=$('implt'),L=BSDesign.IMPL;o.textContent=Object.keys(L).map(k=>(/^実装済み/.test(L[k])?'✔ ':'△ ')+k+'：'+L[k]).join('\n')+'\n※ 完成動画に反映されるのは✔の演出です。△は設計・近似のみ。'})();
 clipForm();ledger();renderFrame(1.5);
-window.CP={rateAt,mediaT,applyCuts,importDesign,exportOffline,S,renderFrame,capLayout,boxes,safeCheck,buildAudio,measure,alignNarr,mockNarr,segments,report,prep,exportVideo,useClip,sceneAt,camera,trans,LN0,SCN0,out,og,GL:!!GL,SAFE,N,FPS,D,ledger,stats};
+window.CP={analyzeBgm,loadBgm,drawParallax,rateAt,mediaT,applyCuts,importDesign,exportOffline,S,renderFrame,capLayout,boxes,safeCheck,buildAudio,measure,alignNarr,mockNarr,segments,report,prep,exportVideo,useClip,sceneAt,camera,trans,LN0,SCN0,out,og,GL:!!GL,SAFE,N,FPS,D,ledger,stats};
 </script></body></html>

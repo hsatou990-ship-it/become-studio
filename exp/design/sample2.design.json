@@ -130,7 +130,14 @@
    ],
    "fx": [
     "beat-sync-cut"
-   ]
+   ],
+   "mask": {
+    "type": "iris",
+    "dur": 0.8
+   },
+   "parallax": {
+    "layers": 2
+   }
   },
   {
    "text": "君の朝が、始まる",
@@ -155,7 +162,8 @@
    },
    "sfx": [
     "shimmer"
-   ]
+   ],
+   "matchCut": true
   }
  ],
  "bgm": {
