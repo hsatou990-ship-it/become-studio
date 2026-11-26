@@ -37,7 +37,7 @@ nav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:re
 nav button{margin:0;border:0;border-radius:0;background:none;color:var(--mute);min-height:58px;font-size:12px;padding:6px 2px}#info,#vs,#vf,#vi{white-space:pre-line}nav button.on{color:var(--gold);box-shadow:inset 0 2px 0 var(--gold)}
 @media (prefers-reduced-motion:reduce){button:active{transform:none}}
 </style></head><body>
-<header><span class="logo">BECOME.</span><span>STUDIO v6.1</span><span id="ep">EP.001</span></header>
+<header><span class="logo">BECOME.</span><span>STUDIO v6.2</span><span id="ep">EP.001</span></header>
 <p id="st" role="status">準備完了。テーマを確認して「動画を作る」を押してください。</p>
 <main>
 <section id="hero">
@@ -48,7 +48,7 @@ nav button{margin:0;border:0;border-radius:0;background:none;color:var(--mute);m
 <button class="pri" id="mk">③ 動画を作る</button>
 <button id="mkstop" hidden>■ 中止する</button>
 <ul id="ms"><li id="ms0">○ 台本をつくる</li><li id="ms1">○ ナレーションを生成</li><li id="ms2">○ 尺と字幕を合わせる</li><li id="ms3">○ 動画を書き出す（テスト→本番）</li><li id="ms4">○ 投稿文をつくる</li></ul>
-<p class="note" id="vnote"></p><progress id="pg" max="1" value="0"></progress><div id="xp" class="note">進捗 0% / 残り --</div>
+<p class="note" id="vnote"></p><p class="note" id="jobn" style="color:#e0b860;font-weight:700"></p><progress id="pg" max="1" value="0"></progress><div id="xp" class="note">進捗 0% / 残り --</div>
 <p class="note">初回だけ、音声エンジンの取得に数分かかります（2回目以降は短縮されます）。作成中は画面を消さず、このページを開いたままにしてください。</p>
 </section>
 <section id="result" hidden>
@@ -790,7 +790,14 @@ function gui_keep(){}
 gui();
 const VSTY={mg:{tpl:'cinema',bgs:'mg',acc:null,n:'図解・矢印・数字・人物がアニメーションする黒背景の映像。心理や自己啓発の解説向け。'},real:{tpl:'growth',bgs:'real',acc:null,n:'写真を追加すると実写の映像になります。写真が無い場合は、夕景のシルエット映像で代替します（実写の動画素材は使いません）。'},cinema:{tpl:'cinema',bgs:'auto',acc:null,n:'予告編のように重厚な、夜景・光の筋・星空などのダークシネマ。'},psych:{tpl:'psych',bgs:'mg',acc:'#b79cff',n:'心理学の用語を図解で見せる、紫アクセントのアニメーション。'},story:{tpl:'growth',bgs:'auto',acc:null,n:'1日目から積み上げる成長ドキュメンタリー調のストーリー。'}};
 function applyStyle(){const k=$('vs5').value,v=VSTY[k]||VSTY.mg;$('tpl').value=v.tpl;$('bgs').value=v.bgs;S.acc=v.acc;S.tplKey=null;$('vs5n').textContent=v.n;store.set('bs_vs5',k)}
-$('vs5').onchange=applyStyle;{const k=store.get('bs_vs5','mg');if(VSTY[k])$('vs5').value=k;applyStyle()}
+$('vs5').onchange=applyStyle;
+/* 制作指示リンク: #s=スタイル&t=テーマ&x=台本(改行区切り)&d=秒 を読み込む（自動で動画作成は始めない） */
+function jobImport(){try{const h=location.hash.replace(/^#/,'');if(!/(^|&)(t|x)=/.test(h))return;const q=new URLSearchParams(h),st=q.get('s'),t=(q.get('t')||'').slice(0,60),x=(q.get('x')||'').replace(/\r/g,'').trim().slice(0,3000),d=q.get('d');
+ if(st&&VSTY[st]){$('vs5').value=st;applyStyle()}if(t)$('th').value=t;if(d&&[...$('dur').options].some(o=>o.value===d))$('dur').value=d;
+ if(x){$('script').value=x;$('autos').checked=false}else $('autos').checked=true;S.rolesFor=null;upd();
+ $('jobn').textContent='✔ 制作指示を読み込みました（'+(t||'テーマ未指定')+'／'+(VSTY[st]?$('vs5').selectedOptions[0].textContent:'スタイルは現在の選択')+(x?'／台本'+x.split('\n').filter(Boolean).length+'行':'')+'）。内容を確認して「③ 動画を作る」を押してください';
+ history.replaceState(null,'',location.pathname+location.search)}catch(e){$('jobn').textContent='制作指示リンクを読み込めませんでした：'+e.message}}
+jobImport();{const k=store.get('bs_vs5','mg');if(VSTY[k])$('vs5').value=k;applyStyle()}
 /* ---------- v6.0: ElevenLabs（有料）ナレーション＋クレジット管理 ---------- */
 const XB='https://api.elevenlabs.io',ENG={eleven:'ElevenLabs',gemini:'Gemini',kokoro:'Kokoro'};
 const xkey=()=>store.get('bs_xk','')||'',xvoice=()=>store.get('bs_xv','')||'';
