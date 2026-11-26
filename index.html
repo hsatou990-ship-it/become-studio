@@ -37,7 +37,7 @@ nav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:re
 nav button{margin:0;border:0;border-radius:0;background:none;color:var(--mute);min-height:58px;font-size:12px;padding:6px 2px}#info,#vs,#vf,#vi{white-space:pre-line}nav button.on{color:var(--gold);box-shadow:inset 0 2px 0 var(--gold)}
 @media (prefers-reduced-motion:reduce){button:active{transform:none}}
 </style></head><body>
-<header><span class="logo">BECOME.</span><span>STUDIO v4.0</span><span id="ep">EP.001</span></header>
+<header><span class="logo">BECOME.</span><span>STUDIO v5.0</span><span id="ep">EP.001</span></header>
 <p id="st" role="status">準備完了。テーマを確認して「動画を作る」を押してください。</p>
 <main>
 <section id="hero">
@@ -63,6 +63,20 @@ nav button{margin:0;border:0;border-radius:0;background:none;color:var(--mute);m
 </section>
 <div class="stage"><canvas id="cv" width="540" height="960"></canvas></div>
 <div class="bar"><span id="clock">0:00</span></div>
+<details id="tt"><summary>TikTokアカウント連携（分析・企画・下書き送信）</summary>
+<p class="note">TikTok公式のログイン（OAuth 2.0）を使います。パスワードはこのアプリに入力しません。連携後に取得するのは、プロフィール、フォロワー数、公開動画の再生・いいね・コメント・シェア数です。自動投稿はしません。</p>
+<p class="note" id="ttst"></p>
+<label for="ttw">中継サーバーのURL（Cloudflare Workers・設定後に入力）</label><input type="text" id="ttw" placeholder="https://…workers.dev"><button id="ttwsave">URLを保存</button>
+<p><button class="pri" id="ttcon">TikTokでログイン（連携を許可）</button><button id="ttcon2">下書き送信の権限も許可して再ログイン</button><button id="ttsync" hidden>最新データを取得</button><button id="ttout" hidden>連携を解除</button></p>
+<p class="note" id="ttmsg"></p><div id="ttprof" style="padding:8px 0"></div>
+<h2>投稿データの分析</h2><pre id="ttana" class="note" style="white-space:pre-wrap;font-size:12px;margin:4px 0"></pre>
+<h2>次回動画の企画提案</h2><ul id="ttplan"></ul>
+<h2>公開動画一覧</h2><ul id="ttlist"></ul>
+<div id="ttpost" hidden><h2>TikTokの下書きに送る</h2>
+<p class="note">作成した動画を、TikTokアプリの下書き（受信トレイ）に送ります。公開はTikTokアプリであなた自身が行います。必要な権限（video.upload）はTikTokの審査対象で、未承認の間は使えない場合があります。</p>
+<div class="ck"><input type="checkbox" id="ttc"><span>この動画をTikTokの下書きとして送信することに同意します</span></div>
+<button class="pri" id="ttup">下書きに送る</button><p class="note" id="ttpm"></p></div>
+</details>
 <details id="lab"><summary>競合研究（参考動画の制作手法を分析）</summary>
 <p class="note">他人の動画・台本・音声は転載しません。分析するのは「長さ・切り替えの速さ・間・音量の推移」などの数値だけで、動画ファイルはこの端末の中だけで処理します（外部送信なし）。</p>
 <label for="cu">参考にするTikTokのURL（任意）</label><input type="text" id="cu" placeholder="https://www.tiktok.com/…"><button id="cfetch">URLから公開情報を取得</button>
@@ -173,6 +187,7 @@ Android ChromeのMediaRecorderはMP4またはWebMを出力します。このア�
 </section>
 </details>
 </main>
+<footer style="padding:18px 16px 30px;color:var(--mute);font-size:12px;text-align:center"><a href="privacy.html" style="color:var(--g2)">プライバシーポリシー</a> ／ <a href="terms.html" style="color:var(--g2)">利用規約</a><br>BECOME. STUDIO — 自己啓発ショート動画の制作ツール</footer>
 <script>
 'use strict';
 const $=i=>document.getElementById(i),cv=$('cv'),g=cv.getContext('2d');
@@ -662,6 +677,54 @@ $('cfetch').onclick=async()=>{const u=$('cu').value.trim();if(!/^https?:\/\/(www
 $('canal').onclick=async()=>{const f=$('cf').files[0],man={views:num('c_v'),likes:num('c_l'),comm:num('c_c'),saves:num('c_s')};if(!f){if(!man.views)return($('cout').textContent='動画ファイルを選ぶか、数値を入力してください');return($('cout').textContent='【公開数値（ご自身で入力した値）】\n・再生 '+man.views+' ／ いいね率 '+(man.likes!=null?(100*man.likes/man.views).toFixed(2)+'%':'—')+' ／ 保存率 '+(man.saves!=null?(100*man.saves/man.views).toFixed(2)+'%':'—')+'\n映像と音声の分析には、動画ファイルが必要です。')}
  $('canal').disabled=true;try{S.ref=await analyzeVideo(f);S.refMan=man;$('cout').textContent=report(S.ref,man);$('capply').hidden=false}catch(e){$('cout').textContent='✖ 分析できませんでした：'+jp(e)}finally{$('canal').disabled=false}};
 $('capply').onclick=()=>{const R=S.ref;if(!R)return;const d=[45,60,75,90,120].reduce((p,q)=>Math.abs(q-R.dur)<Math.abs(p-R.dur)?q:p);$('dur').value=String(d);let t=`長さ ${d}秒`;if(R.au&&!R.au.err&&R.au.pauses>2){const gp=Math.min(1.2,Math.max(.3,R.au.pMed));$('gap').value=Math.round(gp*100);$('gap').oninput();t+=`、文の間 ${gp.toFixed(1)}秒`}upd();store.set('bs_ref',{d,t});say('参考動画の「長さ・間」の傾向だけを、次の動画の設定に反映しました（'+t+'）。台本・映像・音声は一切コピーしません')};
+
+/* ---------- v5.0: TikTokアカウント連携（Login Kit / Display API / Content Posting API 下書き送信） ---------- */
+const ttw=()=>String(store.get('bs_ttw','')||'').replace(/\/+$/,'');
+const ttErr={access_token_invalid:'ログインの有効期限が切れました。もう一度ログインしてください',scope_not_authorized:'この操作に必要な権限が許可されていません。権限付きで再ログインしてください',session_invalid:'ログインが必要です。「TikTokでログイン」を押してください',rate_limit_exceeded:'TikTok側の回数制限に達しました。しばらく待ってください',forbidden_origin:'中継サーバーがこのページを許可していません（ALLOW_ORIGIN設定を確認）',not_configured:'中継サーバーのシークレットが未設定です',invalid_param:'送信内容が正しくありません',unaudited_client_can_only_post_to_private_accounts:'このアプリは未審査のため、投稿できるのは非公開アカウントのみです'};
+async function ttapi(path,body,opt={}){const w=ttw();if(!w)throw Object.assign(new Error('中継サーバーのURLが未設定です'),{jp:1});
+ const r=await fetch(w+path,{method:opt.method||'POST',headers:{Authorization:'Bearer '+(store.get('bs_tts','')||''),...(opt.headers||{}),...(opt.raw?{}:{'Content-Type':'application/json'})},body:opt.raw?body:JSON.stringify(body||{})}).catch(e=>{throw Object.assign(new Error('中継サーバーに接続できません（'+e.message+'）'),{jp:1})});
+ const ns=r.headers.get('X-BS-Session');if(ns)store.set('bs_tts',ns);const j=await r.json().catch(()=>null);const c=j&&j.error&&j.error.code;
+ if(!r.ok||(c&&c!=='ok')){const m=ttErr[c]||(j&&j.error&&j.error.message)||('HTTP '+r.status);if(c==='access_token_invalid'||c==='session_invalid')store.set('bs_tts','');throw Object.assign(new Error(m+(c?'（'+c+'）':'')),{jp:1,code:c})}return j}
+function ttui(){const on=!!store.get('bs_tts','');$('ttst').textContent=(ttw()?'中継サーバー: 設定済み':'中継サーバー: 未設定')+' ／ TikTok: '+(on?'ログイン済み':'未ログイン');$('ttw').value=ttw();$('ttout').hidden=!on;$('ttsync').hidden=!on;$('ttpost').hidden=!on;$('ttcon').hidden=on;$('ttcon2').hidden=!on}
+$('ttwsave').onclick=()=>{const v=$('ttw').value.trim().replace(/\/+$/,'');if(v&&!/^https:\/\/[^\s]+$/.test(v))return say('https:// で始まるURLを入れてください');store.set('bs_ttw',v);ttui();say(v?'中継サーバーのURLを保存しました':'URLを消しました')};
+const ttgo=m=>{if(!ttw())return($('ttmsg').textContent='先に「中継サーバーのURL」を保存してください（設定手順は画面下の説明を参照）');location.href=ttw()+'/auth/start?mode='+m};
+$('ttcon').onclick=()=>ttgo('analyze');$('ttcon2').onclick=()=>ttgo('post');
+$('ttout').onclick=async()=>{try{await ttapi('/api/logout')}catch(e){}store.set('bs_tts','');store.set('bs_tt',null);ttui();$('ttprof').textContent='';$('ttlist').innerHTML='';$('ttana').textContent='';$('ttplan').innerHTML='';$('ttmsg').textContent='連携を解除しました（TikTok側のアプリ許可も取り消しました）'};
+const jst=t=>new Date((t+9*3600)*1000);
+function ttAnalyze(vs,snaps){const o=[],pl=[],a=vs.filter(v=>v.view_count>0);if(!a.length)return{txt:'再生数のある公開動画がありません。',plans:[]};
+ const eng=v=>(v.like_count+v.comment_count+v.share_count)/v.view_count,avg=(x)=>x.reduce((p,q)=>p+q,0)/x.length,med=x=>{const s=x.slice().sort((p,q)=>p-q);return s[Math.floor(s.length/2)]};
+ const byV=a.slice().sort((p,q)=>q.view_count-p.view_count),byE=a.slice().sort((p,q)=>eng(q)-eng(p));
+ o.push(`【全体】公開動画 ${vs.length}本（再生数あり ${a.length}本）／ 合計再生 ${a.reduce((p,q)=>p+q.view_count,0)} ／ 平均 いいね率 ${(100*avg(a.map(v=>v.like_count/v.view_count))).toFixed(2)}% ・コメント率 ${(100*avg(a.map(v=>v.comment_count/v.view_count))).toFixed(2)}% ・シェア率 ${(100*avg(a.map(v=>v.share_count/v.view_count))).toFixed(2)}%`);
+ o.push('【再生数の上位】'+byV.slice(0,3).map(v=>`「${(v.title||v.video_description||'無題').slice(0,14)}」${v.view_count}回・${v.duration}秒`).join(' ／ '));
+ o.push('【反応率の上位】'+byE.slice(0,3).map(v=>`「${(v.title||v.video_description||'無題').slice(0,14)}」${(100*eng(v)).toFixed(1)}%`).join(' ／ '));
+ const topDur=Math.round(med(byV.slice(0,Math.min(3,byV.length)).map(v=>v.duration)));o.push(`【長さ】再生上位の動画の長さの中央値は約${topDur}秒`);
+ const blk=[[0,5,'深夜〜早朝（0〜5時）'],[6,11,'朝〜昼前（6〜11時）'],[12,17,'昼〜夕方（12〜17時）'],[18,23,'夜（18〜23時）']];let bestB=null;const bs=blk.map(([x,y,n])=>{const g=a.filter(v=>{const h=jst(v.create_time).getUTCHours();return h>=x&&h<=y});return{n,c:g.length,m:g.length?avg(g.map(v=>v.view_count)):0}});
+ const ok=bs.filter(b=>b.c>=2).sort((p,q)=>q.m-p.m);o.push('【投稿時間帯別の平均再生（日本時間）】'+bs.map(b=>`${b.n} ${b.c}本${b.c?'・平均'+Math.round(b.m):''}`).join(' ／ ')+(ok.length>1?`。2本以上ある中では「${ok[0].n}」が最高`:'。比較には各時間帯2本以上が必要です'));if(ok.length>1)bestB=ok[0].n;
+ const tg={};a.forEach((v,i)=>{((v.title||'')+' '+(v.video_description||'')).match(/#[^\s#]+/g)?.forEach(h=>{(tg[h]=tg[h]||[]).push(v.view_count)})});const tl=Object.entries(tg).filter(([,x])=>x.length>=2).map(([h,x])=>[h,avg(x),x.length]).sort((p,q)=>q[1]-p[1]).slice(0,5);
+ o.push('【ハッシュタグ別の平均再生（2本以上で使用）】'+(tl.length?tl.map(([h,m,c])=>`${h} ${Math.round(m)}（${c}本）`).join(' ／ '):'比較できるタグがありません'));
+ if(snaps.length>=2){const f=snaps[0],l=snaps[snaps.length-1];o.push(`【フォロワー推移】${f.d}: ${f.f} → ${l.d}: ${l.f}（${l.f-f.f>=0?'+':''}${l.f-f.f}人）。※この端末で「最新データを取得」した日の記録です`)}else o.push('【フォロワー推移】比較には2回以上の取得（別の日）が必要です。TikTokのAPIは過去の推移を返しません');
+ o.push('※視聴維持率・平均視聴時間・保存数は、TikTokのAPIでは取得できません。「成果の記録」に手入力してください。');o.push('※サンプルが少ないうちは偶然の影響が大きく、因果ではなく傾向の目安です。');
+ const angles=['続編：あの話の「その後」を語る','逆の視点：同じテーマを「やらなかった場合」から語る','数字で見せる：30日・90日後の変化に置き換える'];
+ byV.slice(0,3).forEach((v,i)=>{const base=(v.title||v.video_description||'').replace(/#[^\s#]+/g,'').trim().slice(0,24)||'人生を変えたい君へ。';const d=[45,60,75,90,120].reduce((p,q)=>Math.abs(q-topDur)<Math.abs(p-topDur)?q:p);pl.push({theme:base+'（'+angles[i].split('：')[0]+'）',tpl:tplKey(base),dur:d,why:`再生${v.view_count}回の「${base.slice(0,12)}」を${angles[i]}。長さは上位動画に合わせて${d}秒${bestB?'、投稿は'+bestB+'が候補':''}。${tl.length?'タグ候補: '+tl.slice(0,3).map(x=>x[0]).join(' '):''}`})});
+ return{txt:o.join('\n'),plans:pl}}
+function ttRender(d){const u=d.user||{};const n=x=>x==null?'—':x;$('ttprof').innerHTML=u.display_name?`<b>${esc(u.display_name)}</b>${u.username?'（@'+esc(u.username)+'）':''}${u.is_verified?' ✔認証済み':''}<small>フォロワー ${n(u.follower_count)} ／ フォロー中 ${n(u.following_count)} ／ 総いいね ${n(u.likes_count)} ／ 動画 ${n(u.video_count)}本</small>${u.bio_description?`<small>${esc(u.bio_description).slice(0,120)}</small>`:''}`:'プロフィールを取得できませんでした';
+ $('ttlist').innerHTML=(d.videos||[]).slice(0,30).map(v=>`<li><b>${esc((v.title||v.video_description||'無題').slice(0,30))}</b><small>${new Date(v.create_time*1000).toLocaleDateString('ja-JP')} ／ ${v.duration}秒 ／ 再生 ${v.view_count} ・いいね ${v.like_count} ・コメント ${v.comment_count} ・シェア ${v.share_count}</small></li>`).join('')||'<li>公開動画がありません</li>';
+ const r=ttAnalyze(d.videos||[],store.get('bs_ttsnap',[]));$('ttana').textContent=r.txt;$('ttplan').innerHTML=r.plans.map((p,i)=>`<li><b>企画${i+1}：${esc(p.theme)}</b><small>${esc(p.why)}</small><button data-i="${i}">この企画で作る</button></li>`).join('');S.ttplans=r.plans}
+$('ttplan').onclick=e=>{const b=e.target.closest('button');if(!b)return;const p=S.ttplans[+b.dataset.i];$('th').value=p.theme.replace(/（[^）]*）$/,'');$('tpl').value=p.tpl;$('dur').value=String(p.dur);upd();window.scrollTo({top:0,behavior:'smooth'});say(`企画を反映しました（テンプレート ${TPL[p.tpl].n}、${p.dur}秒）。「動画を作る」を押してください`)};
+async function ttsync(){const m=$('ttmsg');m.textContent='取得中…';try{const me=await ttapi('/api/me'),u=(me.data&&me.data.user)||{};let vs=[],cur=0,more=true;for(let i=0;i<3&&more;i++){const r=await ttapi('/api/videos',{max_count:20,cursor:cur});const d=r.data||{};vs=vs.concat(d.videos||[]);cur=d.cursor;more=!!d.has_more}
+  const d={user:u,videos:vs,at:Date.now()};store.set('bs_tt',{user:u,videos:vs.map(v=>({...v,cover_image_url:undefined})),at:d.at});
+  if(u.follower_count!=null){const sn=store.get('bs_ttsnap',[]),day=new Date().toISOString().slice(0,10);if(sn.length&&sn[sn.length-1].d===day)sn[sn.length-1]={d:day,f:u.follower_count,l:u.likes_count,v:u.video_count};else sn.push({d:day,f:u.follower_count,l:u.likes_count,v:u.video_count});store.set('bs_ttsnap',sn.slice(-120))}
+  ttRender(d);m.textContent=`取得しました（${new Date().toLocaleString('ja-JP')}）。動画 ${vs.length}本`}catch(e){m.textContent='✖ '+jp(e);if(!store.get('bs_tts',''))ttui()}}
+$('ttsync').onclick=ttsync;
+$('ttup').onclick=async()=>{const m=$('ttpm');if(!S.blob)return(m.textContent='先に「動画を作る」で動画を作成してください');if(!$('ttc').checked)return(m.textContent='同意のチェックを入れてください（無断では送信しません）');
+ const b=$('ttup');b.disabled=true;try{m.textContent='TikTokに送信の準備をしています…';const i=await ttapi('/api/upload/init',{size:S.blob.size});m.textContent='動画を送信しています（'+(S.blob.size/1048576).toFixed(1)+'MB）…';
+  const w=ttw(),r=await fetch(w+'/api/upload/put?t='+encodeURIComponent(i.put),{method:'PUT',headers:{Authorization:'Bearer '+store.get('bs_tts',''),'X-Video-Type':S.blob.type||'video/mp4'},body:S.blob}).catch(e=>{throw Object.assign(new Error('送信に失敗しました（'+e.message+'）'),{jp:1})});const pj=await r.json().catch(()=>null);if(!r.ok||!pj||!pj.ok)throw Object.assign(new Error('TikTokへの動画送信に失敗しました（'+(pj&&pj.error&&pj.error.message||'HTTP '+r.status)+'）'),{jp:1});
+  let st='';for(let k=0;k<20;k++){await sleep(3000);const s=await ttapi('/api/status',{publish_id:i.publish_id});st=s.data&&s.data.status;m.textContent='TikTok側の処理状況: '+st;if(st==='SEND_TO_USER_INBOX'||st==='PUBLISH_COMPLETE'||st==='FAILED'){if(st==='FAILED')throw Object.assign(new Error('TikTok側で失敗しました（'+(s.data.fail_reason||'理由不明')+'）'),{jp:1});break}}
+  m.textContent=st==='SEND_TO_USER_INBOX'?'✔ 下書きとして送信されました。TikTokアプリの通知（受信トレイ）を開き、編集して自分で投稿してください。自動では投稿されません。':'状況: '+st+'。TikTokアプリの通知を確認してください'}
+ catch(e){m.textContent='✖ '+jp(e)}finally{b.disabled=false}};
+{const h=location.hash;if(h.startsWith('#tt=')){store.set('bs_tts',h.slice(4));history.replaceState(null,'',location.pathname+location.search);$('tt').open=true;ttui();ttsync()}
+ else if(h.startsWith('#tterr=')){const c=decodeURIComponent(h.slice(7));history.replaceState(null,'',location.pathname+location.search);$('tt').open=true;ttui();$('ttmsg').textContent='✖ ログインできませんでした（'+({access_denied:'許可がキャンセルされました',state_invalid:'認証の確認に失敗しました',state_expired:'時間切れです',invalid_grant:'認可コードが無効です'}[c]||c)+'）。もう一度お試しください'}
+ else{ttui();const c=store.get('bs_tt',null);if(c&&c.user)ttRender(c)}}
 
 addEventListener('error',e=>{LOG('JSエラー: '+e.message);xmsg('✖ 予期しないエラー：'+e.message,1)});
 addEventListener('unhandledrejection',e=>{const m=String(e.reason&&e.reason.message||e.reason);LOG('未処理エラー: '+m);xmsg('✖ 予期しないエラー：'+m,1)});

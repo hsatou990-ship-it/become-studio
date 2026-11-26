@@ -1,0 +1,4 @@
+name = "become-studio-tiktok"
+main = "worker.js"
+compatibility_date = "2026-01-01"
+# シークレット（TIKTOK_CLIENT_KEY / TIKTOK_CLIENT_SECRET / SESSION_KEY）はダッシュボードで登録します。ファイルには書きません。
