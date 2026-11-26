@@ -70,6 +70,10 @@ async function visualEval(blob){const v=document.createElement('video');v.muted=
  return{lum:+lum.toFixed(3),contrast:+con.toFixed(3),sat:+sat.toFixed(3),motion:+mot.toFixed(3),score:sc,note:'輝度・コントラスト・彩度・動きの簡易指標です【推測】。美しさの判定ではありません'}}
 function credit(c){const T=TERMS[c.provider];return'Video by '+(c.creator||'(作者名不明)')+' from '+T.name+' ('+c.page+')'}
 function ledgerEntry(c,note){const T=TERMS[c.provider];return{provider:c.provider,id:c.id,pageUrl:c.page,creator:c.creator||'',creatorUrl:c.creatorUrl||'',license:T.license,licenseUrl:T.url,termsCheckedOn:T.checked,fetchedAt:new Date().toISOString(),credit:credit(c),query:c.q,visual:note||null,ownerConfirmed:true,note:'権利と内容はオーナーが確認済み。TikTok投稿は別途オーナー承認'}}
+// ---- 試作ページとの受け渡し箱（同一オリジンのIndexedDB 'cp_stock'。キー類は保存しない）
+function idb(){return new Promise((ok,ng)=>{const r=indexedDB.open('cp_stock',1);r.onupgradeneeded=()=>r.result.createObjectStore('clips',{keyPath:'key'});r.onsuccess=()=>ok(r.result);r.onerror=()=>ng(new Error('IndexedDBを開けません'))})}
+async function inboxPut(c,blob,le){if(navigator.storage&&navigator.storage.estimate){const e=await navigator.storage.estimate();if(e.quota&&e.usage&&e.quota-e.usage<blob.size*2)throw new Error('端末の空き容量が足りません')}
+ const db=await idb();return new Promise((ok,ng)=>{const t=db.transaction('clips','readwrite');t.objectStore('clips').put({key:c.provider+':'+c.id,blob:blob,w:c.fw||c.w,h:c.fh||c.h,dur:c.dur,at:Date.now(),meta:{src:c.provider==='pexels'?'Pexels（検索連携）':'Pixabay（検索連携）',url:c.page,by:c.creator||'',lic:le.license,credit:le.credit,checked:le.termsCheckedOn,ownerConfirmed:le.ownerConfirmed===true}});t.oncomplete=()=>ok();t.onerror=()=>ng(new Error('保存に失敗しました（容量不足の可能性）'));t.onabort=t.onerror})}
 // ---- UI
 const esc=s=>String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 let LINES=[],QS=[];
@@ -89,9 +93,10 @@ $('bs').onclick=()=>runSearch();
 $('res').onclick=async e=>{const a=e.target.dataset&&e.target.dataset.a;if(!a)return;const [i,j]=a.split(',').map(Number),x=window.LAST[i].L[j],c=x.c;if(!$('ck'+i+'_'+j).checked){$('st').innerHTML='<span class="ng">先に権利確認のチェックを入れてください（自動採用はしません）</span>';return}
  $('st').textContent='取り込み中…';try{const r=await fetch(c.file);if(!r.ok)throw new Error('HTTP '+r.status);const b=await r.blob();if(b.size>60*1048576)throw new Error('60MB超のため中止');
   let vis=null;try{vis=await visualEval(b)}catch(er){vis={note:'映像解析不可: '+er.message}}
-  const L=ls('ss_ledger',[]);L.push(ledgerEntry(c,vis));lw('ss_ledger',L);const U=used();U.push(c.provider+':'+c.id);lw('ss_used',U);
+  const le=ledgerEntry(c,vis);let inbox='';try{await inboxPut(c,b,le);inbox='　<span class="ok">試作ページの受け渡し箱へ保存しました（再ダウンロード不要）</span>'}catch(er){inbox='　<span class="ng">受け渡し箱へ保存できませんでした（'+esc(clean(er.message))+'）。下の「端末へ保存」を使ってください</span>'}
+  const L=ls('ss_ledger',[]);L.push(le);lw('ss_ledger',L);const U=used();U.push(c.provider+':'+c.id);lw('ss_used',U);
   const url=URL.createObjectURL(b),n=c.provider+'-'+c.id+'.mp4';
-  $('st').innerHTML='<span class="ok">取り込み完了</span> '+(b.size/1048576).toFixed(1)+'MB'+(vis.score!=null?'／映像指標 '+vis.score+'点【推測】':'')+'<br><a download="'+n+'" href="'+url+'">動画を端末へ保存</a><pre>'+esc('出所: '+TERMS[c.provider].name+'\nURL: '+c.page+'\n作者: '+(c.creator||'')+'\nライセンス: '+TERMS[c.provider].license+' '+TERMS[c.provider].url+'\n確認: '+TERMS[c.provider].checked+' オーナー確認済み\nクレジット: '+credit(c))+'</pre><span class="note">上の5項目を試作ページの権利欄へ貼り付けて使います。</span>';renderLed()}
+  $('st').innerHTML='<span class="ok">取り込み完了</span> '+(b.size/1048576).toFixed(1)+'MB'+(vis.score!=null?'／映像指標 '+vis.score+'点【推測】':'')+inbox+'<br><a download="'+n+'" href="'+url+'">動画を端末へ保存</a><pre>'+esc('出所: '+TERMS[c.provider].name+'\nURL: '+c.page+'\n作者: '+(c.creator||'')+'\nライセンス: '+TERMS[c.provider].license+' '+TERMS[c.provider].url+'\n確認: '+TERMS[c.provider].checked+' オーナー確認済み\nクレジット: '+credit(c))+'</pre><span class="note">上の5項目を試作ページの権利欄へ貼り付けて使います。</span>';renderLed()}
  catch(er){$('st').innerHTML='<span class="ng">取り込みできませんでした: '+esc(clean(er.message))+'。動画配信元がブラウザからの取得を許可していない可能性があります【未確認】。「元ページで確認」から手動保存し、試作ページで取り込んでください（権利欄の記入は必要です）。</span>'}};
 function renderLed(){const L=ls('ss_ledger',[]);$('led').innerHTML=L.length?L.map(l=>esc(l.provider+':'+l.id+' ／ '+l.credit)).join('<br>'):'なし'}
 $('bx').onclick=()=>{const b=new Blob([JSON.stringify(ls('ss_ledger',[]),null,1)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='license-ledger.json';a.click()};
