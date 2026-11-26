@@ -1,0 +1,23 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none';script-src 'self' 'unsafe-inline';style-src 'unsafe-inline';img-src blob: data:;media-src blob:;connect-src 'none';base-uri 'none';form-action 'none'">
+<title>映像の簡易分析（実験）</title>
+<style>body{margin:0;background:#0f131c;color:#e8eaf0;font:14px/1.6 system-ui,sans-serif;padding:14px}h1{font-size:18px}.note{color:#aab3c8;font-size:12px;white-space:pre-wrap}.w{color:#ffb454}button,input{font:inherit}button{background:#2a3350;color:#fff;border:0;border-radius:8px;padding:8px 12px}.card{background:#171d2b;border:1px solid #2b3550;border-radius:10px;padding:10px;margin:8px 0}canvas{width:90px;border-radius:6px;float:right;margin-left:8px}</style></head><body>
+<h1>映像の簡易分析（実験・モデル不要）</h1>
+<p class="note">動画を端末内だけで分析します（通信なし・AIモデルなし）。鮮明さ・明るさ・動き・シーン変化・重複・代表フレーム・縦型適合を数値化します。数値は目安であり、美しさ・感情・台本との意味一致・権利の確認には使えません。</p>
+<p><input id="f" type="file" accept="video/*" multiple> <button id="go">分析する</button></p>
+<div id="o"></div><div id="dup" class="note"></div>
+<script src="vision.js"></script>
+<script>
+const $=id=>document.getElementById(id),R=[];
+$('go').onclick=async()=>{const fs=[...$('f').files];$('o').textContent='';R.length=0;$('dup').textContent='';
+ for(const f of fs){const card=document.createElement('div');card.className='card';card.textContent=f.name+' を分析中…';$('o').appendChild(card);
+  const el=document.createElement('video');el.muted=true;el.playsInline=true;el.preload='auto';const u=URL.createObjectURL(f);el.src=u;
+  try{await new Promise((ok,ng)=>{el.onloadedmetadata=ok;el.onerror=()=>ng(new Error('この端末では読み込めない形式です'));setTimeout(()=>ng(new Error('読み込みがタイムアウトしました')),15000)});
+   const an=await BSVision.sampleVideo(el,{step:.5,max:60});an.name=f.name;R.push(an);const sc=BSVision.score(an);
+   card.textContent='';const cv=document.createElement('canvas');cv.width=BSVision.W;cv.height=BSVision.H;card.appendChild(cv);
+   if(an.rep){await new Promise(ok=>{const d=()=>{el.removeEventListener('seeked',d);ok()};el.addEventListener('seeked',d);el.currentTime=an.rep.t;setTimeout(ok,1500)});const g=cv.getContext('2d'),vw=el.videoWidth,vh=el.videoHeight,s=Math.max(cv.width/vw,cv.height/vh);g.drawImage(el,(cv.width-vw*s)/2,(cv.height-vh*s)/2,vw*s,vh*s)}
+   const t=document.createElement('div');t.textContent=f.name+'｜'+an.meta.width+'×'+an.meta.height+'｜'+an.meta.duration.toFixed(1)+'秒\n簡易総合 '+sc.total+'/100（鮮明 '+sc.sharp+'・露出 '+sc.exposure+'・コントラスト '+sc.contrast+'・解像度 '+sc.res+'・縦型適合 '+sc.vertical+'・安定 '+sc.steady+'）\n動き量 '+an.motion.toFixed(1)+'｜シーン変化 '+(an.sceneCuts.length?an.sceneCuts.map(c=>c.t+'秒').join(', '):'なし')+'｜代表フレーム '+(an.rep?an.rep.t+'秒':'—')+'｜重心 ('+an.centroid.x+', '+an.centroid.y+')';t.style.whiteSpace='pre-wrap';card.appendChild(t);
+  }catch(e){card.textContent=f.name+': '+e.message;card.className='card w'}URL.revokeObjectURL(u)}
+ const L=[];for(let i=0;i<R.length;i++)for(let j=i+1;j<R.length;j++){const d=BSVision.similarity(R[i],R[j]),r=BSVision.matchRatio(R[i],R[j]);L.push(R[i].name+' ⇔ '+R[j].name+'：最小距離 '+d+'/64・近いフレームの割合 '+Math.round(r*100)+'%'+(r>=.5?' → 重複の疑い':r>0?'（一部が似ている）':''))}
+ $('dup').textContent=L.length?'重複チェック（距離が小さいほど似ている。割合50%以上で疑い。平坦な映像は判定対象外）:\n'+L.join('\n'):'';};
+</script></body></html>
