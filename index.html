@@ -37,20 +37,22 @@ nav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:re
 nav button{margin:0;border:0;border-radius:0;background:none;color:var(--mute);min-height:58px;font-size:12px;padding:6px 2px}#info,#vs,#vf,#vi{white-space:pre-line}nav button.on{color:var(--gold);box-shadow:inset 0 2px 0 var(--gold)}
 @media (prefers-reduced-motion:reduce){button:active{transform:none}}
 </style></head><body>
-<header><span class="logo">BECOME.</span><span>STUDIO v6.0</span><span id="ep">EP.001</span></header>
+<header><span class="logo">BECOME.</span><span>STUDIO v6.1</span><span id="ep">EP.001</span></header>
 <p id="st" role="status">準備完了。テーマを確認して「動画を作る」を押してください。</p>
 <main>
 <section id="hero">
-<p class="lead">テーマを入れて、ボタンを1回。あとは全自動です。</p>
-<label for="th">① テーマ</label><input type="text" id="th" value="人生を変えたい君へ。" maxlength="60" autocomplete="off">
-<button class="pri" id="mk">② 動画を作る</button>
+<p class="lead">スタイルとテーマを選んで、ボタンを1回。ナレーション・字幕・映像・BGMは全自動で入ります。</p>
+<label for="vs5">① 動画スタイル</label><select id="vs5"><option value="mg">図解モーショングラフィックス</option><option value="real">実写モチベーション</option><option value="cinema">ダークシネマ</option><option value="psych">心理学アニメーション</option><option value="story">ストーリー</option></select>
+<p class="note" id="vs5n"></p>
+<label for="th">② テーマ</label><input type="text" id="th" value="人生を変えたい君へ。" maxlength="60" autocomplete="off">
+<button class="pri" id="mk">③ 動画を作る</button>
 <button id="mkstop" hidden>■ 中止する</button>
 <ul id="ms"><li id="ms0">○ 台本をつくる</li><li id="ms1">○ ナレーションを生成</li><li id="ms2">○ 尺と字幕を合わせる</li><li id="ms3">○ 動画を書き出す（テスト→本番）</li><li id="ms4">○ 投稿文をつくる</li></ul>
-<progress id="pg" max="1" value="0"></progress><div id="xp" class="note">進捗 0% / 残り --</div>
+<p class="note" id="vnote"></p><progress id="pg" max="1" value="0"></progress><div id="xp" class="note">進捗 0% / 残り --</div>
 <p class="note">初回だけ、音声エンジンの取得に数分かかります（2回目以降は短縮されます）。作成中は画面を消さず、このページを開いたままにしてください。</p>
 </section>
 <section id="result" hidden>
-<h2>③ 完成。保存してTikTokへ</h2>
+<h2>④ 完成。保存してTikTokへ</h2>
 <video id="rv" controls playsinline preload="metadata"></video>
 <a class="dl" id="dl" hidden>完成動画を保存</a>
 <button id="share" hidden>共有（TikTok等へ）</button>
@@ -96,9 +98,9 @@ nav button{margin:0;border:0;border-radius:0;background:none;color:var(--mute);m
 <ul id="atb"></ul>
 </details>
 <details id="adv"><summary>詳細設定（通常は触らなくて大丈夫です）</summary>
-<section class="pn" id="pgx">
-<h2>ElevenLabs ナレーション（有料・最優先で使用）</h2>
-<div class="ck"><input type="checkbox" id="xon" checked><span>ElevenLabsの声を使う（キー未設定・残り不足・上限超過のときは使わず、Gemini→無料Kokoroへ切替。追加課金はしません）</span></div>
+<details><summary>ElevenLabs（有料・将来用。通常は使いません）</summary><section class="pn" id="pgx">
+<h2>ElevenLabs ナレーション（有料）</h2>
+<div class="ck"><input type="checkbox" id="xon"><span>ElevenLabsの声を使う（キー未設定・残り不足・上限超過のときは使わず、Gemini→無料Kokoroへ切替。追加課金はしません）</span></div>
 <label for="xk">ElevenLabs APIキー（この端末の中だけに保存。公開ソースには入りません）</label><input type="password" id="xk" autocomplete="off" placeholder="ここに貼り付けて「キーを保存」">
 <p><button class="pri" id="xsave">キーを保存</button><button id="xcheck">契約と残りを確認</button><button id="xclr">キーを消す</button></p>
 <p><button id="xfind">日本語の男性の声を探す</button></p>
@@ -110,7 +112,7 @@ nav button{margin:0;border:0;border-radius:0;background:none;color:var(--mute);m
 <p><button id="xtest">ElevenLabsで試し聞き</button></p>
 <p class="note" id="xst" style="white-space:pre-wrap"></p>
 <p class="note">生成の前に、契約の残りクレジットを毎回確認し、足りなければ何も生成せず止まります。同じ台本の再生成は端末内に保存した音声を使うため、追加消費しません。ElevenLabs側の設定画面で「上限を超えた分の従量課金」はオフのままにしてください。</p>
-</section>
+</section></details>
 <section class="pn" id="pg0">
 <h2>AIナレーション（Gemini・第一候補）</h2>
 <div class="ck"><input type="checkbox" id="gon" checked><span>Geminiの声を使う（キー未設定・上限到達・失敗のときは、自動で無料のKokoroへ切り替え）</span></div>
@@ -118,6 +120,7 @@ nav button{margin:0;border:0;border-radius:0;background:none;color:var(--mute);m
 <label for="gv">声</label><select id="gv"><option value="Charon">Charon（落ち着いた解説調）</option><option value="Orus">Orus（芯のある声）</option><option value="Algenib">Algenib（かすれた低音）</option><option value="Alnilam">Alnilam（力強い声）</option><option value="Rasalgethi">Rasalgethi（解説調）</option><option value="Iapetus">Iapetus（明瞭な声）</option><option value="Fenrir">Fenrir（熱のある声）</option><option value="Puck">Puck（明るい声）</option></select>
 <label for="gpx">中継サーバーのURL（任意・上級者向け。入れるとAPIキーは端末に不要）</label><input type="text" id="gpx" placeholder="未使用なら空のまま">
 <div class="ck"><input type="checkbox" id="gtag"><span>文中の読点に短い間のタグを入れる（実験的。タグが読み上げられたらオフ）</span></div>
+<label for="gcap">1日のGemini呼び出し自主上限（回。超えると自動でKokoroへ。課金防止用）</label><input type="number" id="gcap" min="5" max="500" step="5">
 <p><button class="pri" id="gsave">キーを保存</button><button id="gtest">Geminiで試し聞き</button><button id="gclr">キーを消す</button></p>
 <p class="note" id="gst"></p>
 <p class="note">キーは Google AI Studio（aistudio.google.com）で無料で発行できます。請求先（クレジットカード）を登録しないプロジェクトのキーを使うと、無料枠の上限を超えても課金されません。無料枠では入力内容がGoogleの製品改善に使われる場合があります（公式の料金ページの記載）。</p>
@@ -172,7 +175,7 @@ Kokoro-82M：モデルの重みはApache-2.0。モデルカードに商用デプ
 <label>動画時間（ナレーション取込時は音声の長さが優先）</label>
 <select id="dur"><option value="45">45秒</option><option value="60">60秒</option><option value="75" selected>75秒</option><option value="90">90秒</option><option value="120">120秒</option></select>
 <label>映像スタイル</label>
-<select id="bgs"><option value="mg" selected>モーショングラフィックス（黒背景・白い人物・図解）</option><option value="auto">自動（3シーンごとに切替）</option><option value="mountain">山と太陽</option><option value="rays">光の筋</option><option value="city">夜の街</option><option value="stars">星空</option><option value="rain">雨と光</option></select>
+<select id="bgs"><option value="real">実写モチベーション風（写真があれば実写／無ければ夕景シルエット）</option><option value="mg" selected>モーショングラフィックス（黒背景・白い人物・図解）</option><option value="auto">自動（3シーンごとに切替）</option><option value="mountain">山と太陽</option><option value="rays">光の筋</option><option value="city">夜の街</option><option value="stars">星空</option><option value="rain">雨と光</option></select>
 <label>背景写真（任意・複数可。無ければ生成アニメ）</label><input type="file" id="imgs" accept="image/*" multiple>
 <h2>BGM・効果音</h2>
 <div class="ck"><input type="checkbox" id="bgm" checked><span>オリジナル合成BGM（重低音パッドと鼓動）</span></div>
@@ -284,7 +287,7 @@ function bg(sty,t,u,k){
 function wrap(s,max){const o=[];let l='';for(const ch of s){if(g.measureText(l+ch).width>max&&l){o.push(l);l=''}l+=ch}if(l)o.push(l);return o}
 /* ---------- v6.0: モーショングラフィックス映像（黒背景・白い人物・図解・キネティック字幕） ---------- */
 const mcl=(x,a=0,b=1)=>Math.max(a,Math.min(b,x)),mea=x=>1-Math.pow(1-mcl(x),3),mei=x=>{x=mcl(x);return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2},mbk=x=>{x=mcl(x);const a=1.70158,b=a+1;return 1+b*Math.pow(x-1,3)+a*Math.pow(x-1,2)};
-const MGF='"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans CJK JP",sans-serif',WH='#f5f1ea',GD='#e0b860',R2D=Math.PI/180;
+const MGF='"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans CJK JP",sans-serif',WH='#f5f1ea';let GD='#e0b860',R2D=Math.PI/180;
 const lmb=(x,y,a1,l1,a2,l2)=>{const ax=x+Math.sin(a1*R2D)*l1,ay=y+Math.cos(a1*R2D)*l1,a=a1+a2;return[[x,y],[ax,ay],[ax+Math.sin(a*R2D)*l2,ay+Math.cos(a*R2D)*l2]]};
 /* --- 人物（関節を持つ白いマネキン）--- */
 function mgPose(n,ph){const w=Math.sin(ph),c=Math.cos(ph);
@@ -304,7 +307,7 @@ function mgFig(x,gy,s,dir,pn,ph,al,col){const P=mgPose(pn,ph),tl=120*s,r=31*s;g.
  const nk=[px+Math.sin(P.sp*R2D)*tl,py-Math.cos(P.sp*R2D)*tl],sh=[px+(nk[0]-px)*.9,py+(nk[1]-py)*.9];
  const lg=(a,sx,sy)=>lmb(sx,sy,a[0],85*s,a[1],85*s),ar=(a,sx,sy)=>lmb(sx,sy,a[0],68*s,a[1],62*s);
  const draw=(pts,w,c)=>{g.strokeStyle=c;g.lineWidth=w;g.beginPath();g.moveTo(pts[0][0],pts[0][1]);for(let i=1;i<pts.length;i++)g.lineTo(pts[i][0],pts[i][1]);g.stroke()};
- const back='#a9a49a',front=col||WH;
+ const back=col||'#a9a49a',front=col||WH;
  if(P.seat){g.fillStyle='#2a2a2a';g.strokeStyle='#555';g.lineWidth=2;g.beginPath();g.roundRect(px-44*s,py+14*s,96*s,fd-14*s+ (gy-py-fd) ,6);g.fill();g.stroke()}
  draw(lg(P.L2,px,py),25*s,back);draw(ar(P.A2,sh[0],sh[1]),19*s,back);
  draw([[px,py],nk],47*s,front);
@@ -398,7 +401,7 @@ function mgTrans(lt,k,c){const a=.34;if(lt>a)return;const q=lt/a,m=k%3;g.save();
  else if(m===1){g.strokeStyle=`rgba(224,184,96,${.8*(1-q)})`;g.lineWidth=8;g.beginPath();g.arc(360,470,40+q*700,0,7);g.stroke()}
  else{g.fillStyle=`rgba(255,255,255,${.22*(1-q)})`;g.fillRect(0,0,720,1280);const y=1280-q*1500;g.fillStyle=`rgba(224,184,96,${.9*(1-q)})`;g.fillRect(0,y,720,6)}
  g.restore()}
-function drawMG(t,D,sc){const W=cv.width;g.save();g.setTransform(W/720,0,0,W/720,0,0);
+function drawMG(t,D,sc){const W=cv.width;GD=S.acc||'#e0b860';g.save();g.setTransform(W/720,0,0,W/720,0,0);
  const c=sc.find(x=>t<x.t0+x.d)||sc[sc.length-1]||{s:'',t0:0,d:D,i:0},k=c.i,lt=Math.max(0,t-c.t0),K=mgKit(c,k,sc.length);
  if(K.big&&(K.big.u==='%'||K.big.u==='％'))S.mgPct=mcl(K.big.n/100);
  g.fillStyle='#000';g.fillRect(0,0,720,1280);mgBg(K.bg,t,k);
@@ -412,7 +415,33 @@ function drawMG(t,D,sc){const W=cv.width;g.save();g.setTransform(W/720,0,0,W/720
  for(let j=0;j<46;j++){g.fillStyle='rgba(255,255,255,.045)';g.fillRect(Math.random()*720,Math.random()*1280,2,2)}
  g.restore();return k}
 
+/* ---------- v6.1: 実写モチベーション風（写真があれば実写、無ければ夕景のシルエット映像） ---------- */
+const RPAL=[['#0d1020','#6b2f3c','#f2a65a'],['#071522','#1f4d63','#f0c27a'],['#150d1c','#7a3a2a','#ffd08a'],['#0a0f14','#2d3e4a','#e8b36a']];
+function drawReal(t,D,sc){const W=cv.width;g.save();g.setTransform(W/720,0,0,W/720,0,0);
+ const c=sc.find(x=>t<x.t0+x.d)||sc[sc.length-1]||{s:'',t0:0,d:D,i:0},k=c.i,lt=Math.max(0,t-c.t0),u=mcl(lt/c.d),K=mgKit(c,k,sc.length),pal=RPAL[k%4];
+ g.fillStyle='#000';g.fillRect(0,0,720,1280);
+ if(S.photos.length){const im=S.photos[k%S.photos.length],dir=k%2?1:-1,z=Math.max(720/im.width,1280/im.height)*(1.06+u*.12);g.save();g.translate(dir*(u-.5)*40,0);g.drawImage(im,(720-im.width*z)/2,(1280-im.height*z)/2,im.width*z,im.height*z);g.restore();
+  g.fillStyle='rgba(255,140,60,.10)';g.fillRect(0,0,720,1280);const tg=g.createLinearGradient(0,0,0,1280);tg.addColorStop(0,'rgba(10,40,60,.35)');tg.addColorStop(.6,'rgba(0,0,0,.05)');tg.addColorStop(1,'rgba(0,0,0,.6)');g.fillStyle=tg;g.fillRect(0,0,720,1280)}
+ else{const sk=g.createLinearGradient(0,0,0,800);sk.addColorStop(0,pal[0]);sk.addColorStop(.6,pal[1]);sk.addColorStop(1,pal[2]);g.fillStyle=sk;g.fillRect(0,0,720,1280);
+  const sx=360+Math.sin(k*1.7)*120,sy=560-u*40;const sg=g.createRadialGradient(sx,sy,10,sx,sy,420);sg.addColorStop(0,'rgba(255,240,200,.95)');sg.addColorStop(.12,'rgba(255,200,120,.55)');sg.addColorStop(1,'rgba(255,160,80,0)');g.fillStyle=sg;g.fillRect(0,0,720,1280);
+  for(let L=0;L<3;L++){const col=['#2a2230','#1a1622','#0c0a10'][L],amp=[90,70,50][L],base=[690,730,770][L],sp=[6,14,26][L];g.fillStyle=col;g.beginPath();g.moveTo(0,1280);for(let x=0;x<=720;x+=20){const y=base-amp*(Math.sin((x+t*sp+k*90+L*200)*.012)*.5+Math.sin((x+t*sp*.7+L*77)*.031)*.3+.4);g.lineTo(x,y)}g.lineTo(720,1280);g.fill();
+   const fg=g.createLinearGradient(0,base-90,0,base+30);fg.addColorStop(0,'rgba(255,200,150,0)');fg.addColorStop(1,`rgba(255,190,130,${.16-L*.04})`);g.fillStyle=fg;g.fillRect(0,base-90,720,120)}
+  g.fillStyle='#050408';g.fillRect(0,800,720,480);
+  const fx=K.pose==='walk'||K.pose==='run'?200+u*320:360,gy=800;
+  mgFig(fx,gy,1.25,1,K.pose==='sit'||K.pose==='sitUp'?'stand':K.pose,lt*5.4,1,'#050408');
+  const rg=g.createLinearGradient(0,800,0,900);rg.addColorStop(0,'rgba(255,190,130,.25)');rg.addColorStop(1,'rgba(255,190,130,0)');g.fillStyle=rg;g.fillRect(0,800,720,100);
+  g.strokeStyle='rgba(255,230,190,.35)';g.lineWidth=3;g.beginPath();g.moveTo(sx-260,sy);g.lineTo(sx+260,sy);g.stroke();
+  for(let j=0;j<50;j++){g.fillStyle=`rgba(255,220,170,${.1+.2*rng(j)})`;g.beginPath();g.arc((rng(j+4)*720+t*(8+j%5*4))%720,(rng(j+60)*900-t*(6+j%4*3)+3600)%900+100,1+rng(j)*2,0,7);g.fill()}}
+ const fl=mcl((.3-lt)/.3);if(fl>0){g.fillStyle=`rgba(255,235,200,${.5*fl})`;g.fillRect(0,0,720,1280)}
+ g.fillStyle='rgba(0,0,0,.9)';g.fillRect(0,0,720,150);g.fillRect(0,1130,720,150);
+ const v=g.createRadialGradient(360,640,240,360,640,860);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(0,0,0,.6)');g.fillStyle=v;g.fillRect(0,0,720,1280);
+ const gd=GD;GD='#f2c880';mgCap(c,lt,k,sc);GD=gd;
+ g.save();g.globalAlpha=.85;g.fillStyle='#f2c880';g.font=`800 22px ${MGF}`;g.textAlign='center';g.textBaseline='middle';g.fillText('B E C O M E .',360,86);g.restore();
+ for(let j=0;j<40;j++){g.fillStyle='rgba(255,255,255,.04)';g.fillRect(Math.random()*720,Math.random()*1280,2,2)}
+ g.restore();return k}
+
 function draw(t,D,sc){
+ if($('bgs').value==='real')return drawReal(t,D,sc);
  if($('bgs').value==='mg'&&!S.photos.length)return drawMG(t,D,sc);
  const W=cv.width;g.save();g.setTransform(W/720,0,0,W/720,0,0);
  const c=sc.find(x=>t<x.t0+x.d)||sc[sc.length-1]||{s:'',t0:0,d:D,i:0},k=c.i,lt=t-c.t0,u=Math.min(1,Math.max(0,lt/c.d));
@@ -680,16 +709,16 @@ async function makeVideo(){
 $('mk').onclick=()=>makeVideo();$('mkstop').onclick=()=>{S.cancel=true;xmsg('中止しています…',1);stopAll()};
 
 /* ---------- v4.0: Gemini TTS（第一候補）・テンプレート・競合研究・成果分析 ---------- */
-const GM=['gemini-3.8-flash-tts','gemini-3.8-flash-lite-tts'],GURL='https://generativelanguage.googleapis.com/v1beta/interactions';
-const GBASE='日本人の落ち着いた低音の男性ナレーター。映画の予告編のように重厚で、人間らしい感情と自然な抑揚を込め、ゆっくりと、息づかいと間を大切に語る。機械的な棒読みは絶対にしない。';
-const GR={hook:'静かに、問いかけるように。語尾に余韻を残す。',pain:'重く、胸に刺さるように。やや苦しげに、低く沈める。',truth:'確信を込めて、力強く。一語一語を噛みしめる。',act:'背中を押すように、熱を帯びて、力強く。',proof:'静かな確信とあたたかさをもって、穏やかに。',close:'低く、重く、余韻を残して。最後の一言を噛みしめるように締める。',story:'目の前の情景を思い出すように、淡々と、感情をにじませて。',psych:'知的で落ち着いた口調で、大切な言葉をはっきり強調する。'};
+const GM=['gemini-3.8-flash-tts','gemini-3.8-flash-lite-tts','gemini-3.1-flash-tts-preview'],GURL='https://generativelanguage.googleapis.com/v1beta/interactions';
+const GBASE='30代後半の日本人男性ナレーター。声は低く、胸に響く落ち着いたバリトン。映画やドキュメンタリーの語りのように、重厚で知的。感情を内に秘め、語尾は強めすぎず余韻を残す。文の頭は静かに入り、大事な言葉の前で一拍おき、そこだけ少し強める。息づかいが聞こえる自然な間をとり、ゆっくりめのテンポで語る。アナウンサー調や機械的な棒読み、抑揚のない一本調子は絶対にしない。';
+const GR={hook:'ほとんど囁くほど静かに、自分自身に問いかけるように。問いの語尾は少し上げずに沈め、長めの間を置く。',pain:'重く、胸に刺さるように。やや苦しげに、声を落として低く沈め、言葉と言葉の間をわずかに引き伸ばす。',truth:'確信を込めて、力強く。一語一語を噛みしめる。',act:'背中を押すように、熱を帯びて、力強く。',proof:'静かな確信とあたたかさをもって、穏やかに。',close:'一段と低く、ゆっくり。最後の一言の前で深く息をつくような間を置き、噛みしめるように、余韻を残して締める。',story:'目の前の情景を思い出すように、淡々と、感情をにじませて。',psych:'知的で落ち着いた口調で、大切な言葉をはっきり強調する。'};
 const gkey=()=>store.get('bs_gk','')||'';
 const gcount=()=>{const d=new Date().toISOString().slice(0,10),o=store.get('bs_gc',null);return o&&o.d===d?o:{d,n:0}};
 const gbump=()=>{const o=gcount();o.n++;store.set('bs_gc',o)};
 S.gc=new Map();S.gWait=25000;
-const gtagify=t=>t.replace(/、/g,'、<short pause>');
+const gtagify=t=>t.replace(/、/g,'、<short pause>').replace(/([。！？])(?=.)/g,'$1<long pause>');
 async function gcall(text,style,voice,model){
- const px=$('gpx').value.trim(),key=gkey();if(!px&&!key)throw Object.assign(new Error('APIキー未設定'),{gkey:1});
+ const px=$('gpx').value.trim(),key=gkey();if(!px&&!key)throw Object.assign(new Error('APIキー未設定'),{gkey:1});const cap=+store.get('bs_gcap',60)||60;if(gcount().n>=cap)throw Object.assign(new Error('本日の自主上限（'+cap+'回）に達しました'),{gq:1,gcap:1});
  const body={model,input:[{type:'user_input',content:[{type:'text',text,annotations:[{type:'speech_metadata',style}]}]}],response_format:{type:'audio'},generation_config:{speech_config:[{voice}]}};
  const ctl=new AbortController(),tm=setTimeout(()=>ctl.abort(),90000);let r;
  try{r=await fetch(px||GURL,{method:'POST',headers:{'Content-Type':'application/json',...(px?{}:{'x-goog-api-key':key})},body:JSON.stringify(body),signal:ctl.signal})}
@@ -748,17 +777,20 @@ function genScript(t,tg,key){const T=TPL[key||'cinema'],c={},seq=T.seq,pool={};
  return L}
 function gen(){const t=$('th').value.trim()||'人生を変えたい君へ。',k=S.tplKey||tplKey(t);S.tplKey=k;S.tpl=TPL[k];S.tplStyle=S.tpl.sty;const pr=genScript(t,+$('dur').value,k);$('script').value=pr.map(p=>p[0]).join('\n');S.roles=pr.map(p=>p[1]);S.rolesFor=$('script').value;upd();say('台本を生成しました（'+S.tpl.n+'）。')}
 /* --- Gemini設定UI --- */
-function gui(){const k=gkey(),c=gcount();$('gst').textContent=`APIキー: ${k?'この端末に保存済み':'未設定'} ／ 本日のGemini呼び出し: ${c.n}回（無料枠の上限数は公式ページに記載がなく、確認できません）`;$('gk').value=''}
+function gui(){const k=gkey(),c=gcount();{const e=$('vnote');if(e)e.textContent=(k||$('gpx').value.trim())?'ナレーション：Gemini（無料枠）。失敗時は自動でKokoroへ切替':'ナレーション：Gemini未設定のため、いまは無料のKokoroで作ります（Geminiのキーを入れると自然な声になります）'}$('gst').textContent=`APIキー: ${k?'この端末に保存済み':'未設定'} ／ 本日のGemini呼び出し: ${c.n}回（無料枠の上限数は公式ページに記載がなく、確認できません）`;$('gk').value=''}
 $('gsave').onclick=()=>{const v=$('gk').value.trim();if(!v)return say('キーが空です');if(/\s/.test(v)||v.length<20)return say('キーの形式が正しくありません。コピーし直してください');store.set('bs_gk',v);gui();say('キーをこの端末に保存しました')};
 $('gclr').onclick=()=>{store.set('bs_gk','');gui();say('キーを消しました')};
 ['gon','gtag'].forEach(i=>$(i).onchange=()=>store.set('bs_'+i,$(i).checked));$('gv').onchange=()=>store.set('bs_gv',$('gv').value);$('gpx').onchange=()=>store.set('bs_gpx',$('gpx').value.trim());
-{const a=store.get('bs_gon',true);$('gon').checked=!!a;$('gtag').checked=!!store.get('bs_gtag',false);const v=store.get('bs_gv','Charon');if([...$('gv').options].some(o=>o.value===v))$('gv').value=v;$('gpx').value=store.get('bs_gpx','')}
+$('gcap').value=store.get('bs_gcap',60);$('gcap').onchange=()=>store.set('bs_gcap',+$('gcap').value||60);{const a=store.get('bs_gon',true);$('gon').checked=!!a;$('gtag').checked=!!store.get('bs_gtag',true);const v=store.get('bs_gv','Charon');if([...$('gv').options].some(o=>o.value===v))$('gv').value=v;$('gpx').value=store.get('bs_gpx','')}
 $('gtest').onclick=async()=>{const b=$('gtest');b.disabled=true;$('gst').textContent='Geminiに依頼中…（無料枠を1回分使います）';
  try{const tx='理想を語るな。理想になれ。',buf=await gcall($('gtag').checked?gtagify(tx):tx,GBASE+' '+GR.close,$('gv').value,GM[0]),v=vcheck(buf,tx);if(!v.ok)throw Object.assign(new Error(v.why),{bad:1});
   $('gst').textContent=`✔ 生成成功：${sfmt(v.s)}。これから再生します。声が聞こえるか、男性の声か、棒読みでないかを耳で確認してください`;gui_keep();listen(model({mode:'clips',bufs:[buf]},[tx]),'Geminiテスト')}
  catch(e){LOG('gtest失敗: '+e.message);$('gst').textContent='✖ '+gmsg(e)+'\n詳細: '+String(e.message).slice(0,200)}finally{b.disabled=false}};
 function gui_keep(){}
 gui();
+const VSTY={mg:{tpl:'cinema',bgs:'mg',acc:null,n:'図解・矢印・数字・人物がアニメーションする黒背景の映像。心理や自己啓発の解説向け。'},real:{tpl:'growth',bgs:'real',acc:null,n:'写真を追加すると実写の映像になります。写真が無い場合は、夕景のシルエット映像で代替します（実写の動画素材は使いません）。'},cinema:{tpl:'cinema',bgs:'auto',acc:null,n:'予告編のように重厚な、夜景・光の筋・星空などのダークシネマ。'},psych:{tpl:'psych',bgs:'mg',acc:'#b79cff',n:'心理学の用語を図解で見せる、紫アクセントのアニメーション。'},story:{tpl:'growth',bgs:'auto',acc:null,n:'1日目から積み上げる成長ドキュメンタリー調のストーリー。'}};
+function applyStyle(){const k=$('vs5').value,v=VSTY[k]||VSTY.mg;$('tpl').value=v.tpl;$('bgs').value=v.bgs;S.acc=v.acc;S.tplKey=null;$('vs5n').textContent=v.n;store.set('bs_vs5',k)}
+$('vs5').onchange=applyStyle;{const k=store.get('bs_vs5','mg');if(VSTY[k])$('vs5').value=k;applyStyle()}
 /* ---------- v6.0: ElevenLabs（有料）ナレーション＋クレジット管理 ---------- */
 const XB='https://api.elevenlabs.io',ENG={eleven:'ElevenLabs',gemini:'Gemini',kokoro:'Kokoro'};
 const xkey=()=>store.get('bs_xk','')||'',xvoice=()=>store.get('bs_xv','')||'';
@@ -805,7 +837,7 @@ function xui(){const k=xkey(),mu=xmonth(),h=xhist()[0];$('xst').textContent=`API
 $('xsave').onclick=async()=>{const v=$('xk').value.trim();if(!v)return say('キーが空です');if(/\s/.test(v)||v.length<20)return say('キーの形式が正しくありません。コピーし直してください');store.set('bs_xk',v);xui();await xcheck()};
 $('xclr').onclick=()=>{store.set('bs_xk','');store.set('bs_xv','');xui();say('ElevenLabsのキーと声の選択を消しました')};
 $('xon').onchange=()=>store.set('bs_xon',$('xon').checked);$('xmodel').onchange=()=>store.set('bs_xmodel',$('xmodel').value);$('xcap').onchange=()=>store.set('bs_xcap',+$('xcap').value||1500);$('xmcap').onchange=()=>store.set('bs_xmcap',+$('xmcap').value||20000);
-{$('xon').checked=!!store.get('bs_xon',true);const m=store.get('bs_xmodel','eleven_multilingual_v2');if([...$('xmodel').options].some(o=>o.value===m))$('xmodel').value=m;$('xcap').value=store.get('bs_xcap',1500);$('xmcap').value=store.get('bs_xmcap',20000)}
+{$('xon').checked=!!store.get('bs_xon',false);const m=store.get('bs_xmodel','eleven_multilingual_v2');if([...$('xmodel').options].some(o=>o.value===m))$('xmodel').value=m;$('xcap').value=store.get('bs_xcap',1500);$('xmcap').value=store.get('bs_xmcap',20000)}
 async function xcheck(){const b=$('xcheck');b.disabled=true;$('xst').textContent='契約情報を確認しています…（クレジットは消費しません）';
  try{const s=await xsub();let w='';if(s.ext!==0&&s.ext!=null)w='\n⚠ 上限超過の従量課金が有効になっています（追加枠 '+(s.ext==='unlimited'||s.ext<0?'無制限':s.ext)+'）。ElevenLabsの設定で無効にしてください。このアプリは残りを超える生成を行いません';
   $('xst').textContent=`✔ プラン ${s.tier}（${s.status}）／今月の使用 ${s.used} / ${s.limit}／残り ${s.left}${w}`}
