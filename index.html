@@ -147,6 +147,20 @@ nav button{margin:0;border:0;border-radius:0;background:none;color:var(--mute);m
 <label for="tpl">演出テンプレート</label><select id="tpl"><option value="auto">自動（テーマから選択）</option><option value="cinema">ダークシネマ</option><option value="psych">心理学ストーリー</option><option value="growth">努力・成長ドキュメンタリー</option></select>
 </section>
 
+<section class="pn" id="nab"><h2>ナレーション比較試験（実験。通常の動画づくりの動作は変わりません）</h2>
+<p class="note">同じ台本の6行を、A（現行：1行ずつ生成、速度は上の設定値）、B（Aと同じ音声を速度100%で再生）、C（数行ずつまとめて生成＋短い感情指示、速度100%）で聴き比べます。同じ声・同じモデルです。Geminiの無料枠の呼び出しを使います（目安：Aが6回、Cが2回、Bは追加なし）。無料枠の確認が未申告のときは実行できません。</p>
+<p class="note"><b>手順</b>：①上のGemini欄にAPIキーを入れる（このタブで入力済みなら不要）→ ②「無料枠・請求先の確認」のチェックをオン → ③下の「A・B・Cを生成する」→ ④A→B→Cの順に▶を押して聴く → ⑤いちばん自然なものを選んで「結果を保存してコピー」→ チャットに貼り付け。</p>
+<label for="nabp">試験する範囲</label><select id="nabp"><option value="first">最初の6行（序盤）</option><option value="mid">中盤の6行</option><option value="last">最後の6行（終盤）</option></select>
+<label for="nabk">Cでまとめる行数</label><select id="nabk"><option value="3">3行ずつ</option><option value="4">4行ずつ</option><option value="6">6行（1回）</option></select>
+<p><button class="pri" id="nabgo">A・B・Cを生成する</button><button id="nabx">中止</button></p>
+<p class="note" id="nabst">未実行</p>
+<p><button id="nabA" disabled>▶ A 現行</button><button id="nabB" disabled>▶ B 速度100%</button><button id="nabC" disabled>▶ C 一括</button><button id="nabS">■ 停止</button></p>
+<pre id="nabo" class="note" style="white-space:pre-wrap;word-break:break-all"></pre>
+<label for="nabw">いちばん自然に聞こえたのは</label><select id="nabw"><option value="">未選択</option><option value="A">A</option><option value="B">B</option><option value="C">C</option></select>
+<input type="text" id="nabm" maxlength="80" placeholder="メモ（例：Cは中盤が良い、Aはこもる）">
+<p><button id="nabsv">結果を保存してコピー</button><button id="nabfx" hidden>Cの低精度の部分を1行ずつ生成して復旧</button></p>
+</section>
+
 <section class="pn" id="p0">
 <h2>台本（通常は触らなくて大丈夫です）</h2>
 <button class="pri" id="gen">テーマから台本を新規生成（今の台本は退避されます）</button><button id="cpPrompt">外部AI用の依頼文をコピー</button>
@@ -230,7 +244,7 @@ Android ChromeのMediaRecorderはMP4またはWebMを出力します。このア�
 const $=i=>document.getElementById(i),cv=$('cv'),g=cv.getContext('2d');
 const FONT='"Shippori Mincho B1","Noto Serif JP","Noto Serif CJK JP","Hiragino Mincho ProN",serif';
 const S={ph:[0,1],after:0,pend:0,xbusy:false,t3ok:null,part:null,keep:false,busy:false,fin:null,tag:'',act:null,cand:null,tts:null,photos:[],ep:1,ac:null,raf:0,mr:null,wl:null,url:null,blob:null,name:'',mode:'',last:-1,mic:null};
-const H0=location.hash;if(/^#(tt|tterr)=/.test(H0))history.replaceState(null,'',location.pathname+location.search);
+const H0=location.hash,NABQ=/[#&]nab=1/.test(location.hash);if(/^#(tt|tterr)=/.test(H0))history.replaceState(null,'',location.pathname+location.search);
 const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch{return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){store.err=String(e&&e.name||e);return false}}};
 const rnd=a=>a[Math.floor(Math.random()*a.length)],shuf=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(p=>p[1]);
 const say=m=>{m=RD(m);$('st').textContent=m;const x=$('xs');if(x&&!S.xbusy)x.textContent=m},fmt=s=>Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');
@@ -261,7 +275,7 @@ function PL(){const raw=$('script').value;if(PLm&&PLm.raw===raw)return PLm.items
   const parts=l.length>45?l.split(/(?<=[。！？!?])/).map(x=>x.trim()).filter(Boolean):[l];parts.forEach((q,j)=>{const r=j?{tg:{},bad:[]}:parseTag(ts,q);items.push({t:q,ts:j?'':ts,tg:r.tg,bad:r.bad})})});
  PLm={raw,items};return items}
 const lines=()=>PL().map(x=>x.t);
-const rate=()=>(+$('spd').value||92)/100;
+const rate=()=>S.rateOv!=null?S.rateOv:(+$('spd').value||92)/100;
 function dtct(buf,n){const ch=buf.getChannelData(0),sr=buf.sampleRate,fr=Math.floor(sr*.01),nf=Math.floor(ch.length/fr),e=new Float32Array(nf);let mx=0;
  for(let f=0;f<nf;f++){let q=0;for(let i=f*fr;i<(f+1)*fr;i++)q+=ch[i]*ch[i];e[f]=Math.sqrt(q/fr);if(e[f]>mx)mx=e[f]}
  if(n<2)return{cuts:[0,buf.duration],found:0};
@@ -276,7 +290,7 @@ function model(A=S.act,L=lines()){
  const rt=rate(),LEAD=.3,n=L.length;let sc=[],D;
  if(!n)return{sc:[],D:+$('dur').value,A:null};
  if(A&&A.mode==='single'){
-  if(!A.cache||A.cache.n!==n){const r=dtct(A.buf,n);A.cache={n,cuts:r.cuts,found:r.found}}
+  if(A.cuts&&A.cuts.length===n+1)A.cache={n,cuts:A.cuts,found:n-1,given:1};else if(!A.cache||A.cache.n!==n){const r=dtct(A.buf,n);A.cache={n,cuts:r.cuts,found:r.found}}
   const cuts=A.cache.cuts||propCuts(L,A.buf.duration);D=LEAD+A.buf.duration/rt+1;
   sc=L.map((s,i)=>{const a=i?LEAD+cuts[i]/rt:0,b=i<n-1?LEAD+cuts[i+1]/rt:D;return{s,i,t0:a,d:b-a,au:i?null:{buf:A.buf,start:LEAD}}});
   return{sc,D,A,note:A.cache.cuts?'字幕の切替は音声の無音区間から自動検出（'+A.cache.found+'箇所検出）':'無音の区切りが足りません（'+A.cache.found+'箇所）。文字数比例で配分しています。行の間に無音を入れて再生成してください'}}
@@ -1245,4 +1259,77 @@ const had=drestore();if(!had&&!S.imported)$('script').value=DEF.join('\n');
 {const pg=store.get('bs_prog',null);if(pg&&pg.st!=='done'){const t=new Date(pg.at).toLocaleString('ja-JP');$('prevn').textContent=(pg.st==='running'?'前回（'+t+'）の動画生成は途中で中断されました（画面が閉じた等）。':'前回（'+t+'）の動画生成は終了していません：'+pg.msg+'。')+'台本は保存済みで、変更されていません。'+($('prevn').textContent?'\n'+$('prevn').textContent:'')}}
 idbP('get').then(d=>{try{if(d&&d.script&&d.script!==$('script').value&&(d.at||0)>(store.get('bs_draft',{}).at||0)){snap('保存容量不足の間の退避',d);$('prevn').textContent='より新しい下書きが退避されていました。「↩ 前の下書きを復元」から戻せます'}}catch{}});
 upd();hist();{const M=model();draw(0,M.D,M.sc)}
+/* ---------- v6.9実験: ナレーション比較試験（A=現行／B=速度100%／C=数行まとめ生成＋短い感情指示）。生成済みの動画・既定の動作には影響しません ---------- */
+const GSHORT='低く落ち着いた男性が、視聴者にそっと語りかけるように。',gArc=p=>p<.34?'やさしく、穏やかに。':p<.67?'少しずつ熱を帯びて。':'力強く、背中を押すように。';
+const nabMsg=t=>{$('nabst').textContent=t};
+const nabMS=a=>{if(!a.length)return{m:0,s:0};const m=a.reduce((x,y)=>x+y,0)/a.length;return{m,s:Math.sqrt(a.reduce((x,y)=>x+(y-m)*(y-m),0)/a.length)}};
+const nabCh=x=>x.replace(/[、。！？!?\s]/g,'').length;
+function nabW(L){return L.map(x=>Math.max(4,nabCh(x))+(x.match(/、/g)||[]).length*1.5+(/[。！？!?]$/.test(x)?2:0))}
+function nabEn(buf){const ch=buf.getChannelData(0),fr=Math.floor(buf.sampleRate*.01),nf=Math.floor(ch.length/fr),e=new Float32Array(nf);let mx=0;for(let f=0;f<nf;f++){let q=0;for(let i=f*fr;i<(f+1)*fr;i++)q+=ch[i]*ch[i];e[f]=Math.sqrt(q/fr);if(e[f]>mx)mx=e[f]}return{e,mx,fr,nf}}
+/* 1本の音声の中の行の切れ目（秒）。conf: 0=無音を検出／1=緩めて検出／2=文字数比例（推定） */
+function nabSnap(buf,L){const n=L.length;if(n<2)return{cuts:[0,buf.duration],conf:[],gap:[]};const{e,mx,fr,nf}=nabEn(buf),sr=buf.sampleRate;
+ const th0=mx*.06;let f0=0,f1=nf-1;while(f0<nf&&e[f0]<th0)f0++;while(f1>0&&e[f1]<th0)f1--;
+ const w=nabW(L),sw=w.reduce((a,b)=>a+b,0),sp=(f1-f0+1)*fr/sr,t0=f0*fr/sr,exp=[];let acc=0;for(let i=0;i<n-1;i++){acc+=w[i];exp.push(t0+sp*acc/sw)}
+ const lv=[[.06,15],[.12,8]].map(([k,ml])=>{const th=mx*k,runs=[];let st=-1;for(let f=f0;f<=f1+1;f++){const z=f<=f1&&e[f]<th;if(z&&st<0)st=f;if(!z&&st>=0){if(f-st>=ml)runs.push({a:st,b:f});st=-1}}return runs}),win=Math.max(.6,sp/n*.45);
+ const cuts=[0],conf=[],gap=[];for(let i=0;i<n-1;i++){let best=null,cf=2,gp=0;
+  for(let li=0;li<lv.length&&best==null;li++){let bd=1e9;for(const r of lv[li]){const c=(r.a+r.b)/2*fr/sr,d=Math.abs(c-exp[i]);if(d<=win&&d<bd&&c>cuts[cuts.length-1]+.2){bd=d;best=c;cf=li;gp=(r.b-r.a)*fr/sr}}}
+  if(best==null){best=Math.max(exp[i],cuts[cuts.length-1]+.3);cf=2;gp=0}cuts.push(best);conf.push(cf);gap.push(gp)}
+ cuts.push(buf.duration);return{cuts,conf,gap}}
+function nabCat(bufs,gaps){const sr=bufs[0].sampleRate,g=gaps.map(x=>Math.round((x||0)*sr));let n=0;bufs.forEach((b,i)=>n+=b.length+g[i]);const o=new AudioBuffer({length:n,sampleRate:sr,numberOfChannels:1}),x=new Float32Array(n);let p=0;bufs.forEach((b,i)=>{x.set(b.getChannelData(0),p);p+=b.length+g[i]});o.copyToChannel(x,0);return o}
+/* パーツ（まとまり）群を1本の音声＋切れ目に組み立てる */
+function nabAsm(parts,Ls){const bufs=[],gaps=[],cuts=[0],conf=[],gp=[];let off=0;const sr=parts[0].buf.sampleRate;
+ parts.forEach((pt,pi)=>{const last=pi===parts.length-1,g=last?0:gapF(Ls[pt.i1-1],pt.i1-1,Ls.length)*.5;pt.cuts.slice(1,-1).forEach((c,k)=>{cuts.push(off+c);conf.push(pt.conf[k]);gp.push(pt.gap[k])});
+  off+=pt.buf.duration+g;if(!last){cuts.push(off-g/2);conf.push(pt.fixed?0:0);gp.push(g)}bufs.push(pt.buf);gaps.push(g)});
+ const buf=nabCat(bufs,gaps);cuts.push(buf.duration);return{buf,cuts,conf,gap:gp}}
+async function nabChunk(Ls,i0,i1,N,st0){const tx=$('gtag').checked,txt=Ls.slice(i0,i1).map(x=>tx?gtagify(x):x).join('\n'),style=GSHORT+gArc((st0+i0+(i1-i0)/2)/N),ck='C|'+$('gv').value+'|'+style+'|'+txt,hit=S.gc.get(ck);if(hit)return{b:hit,hit:1};
+ let last;for(let k=0;k<2;k++){try{const b=await gcall(txt,style,$('gv').value,gmods()[0]),v=vcheck(b,Ls.slice(i0,i1).join(''));if(!v.ok)throw Object.assign(new Error(v.why),{bad:1});S.gc.set(ck,b);return{b}}catch(e){last=e;if(e.gkey||e.gcap||e.gq||S.nabX)throw e;await sleep(1500*(k+1))}}throw last}
+/* 低精度のまとまりを、1行ずつ生成して置き換える（復旧）。1行=1回の呼び出し */
+async function nabFixPart(Ls,pt,N,st0){const tx=$('gtag').checked;const bufs=[],gaps=[];for(let i=pt.i0;i<pt.i1;i++){if(S.nabX)throw Object.assign(new Error('中止しました'),{cancel:1});const style=GSHORT+gArc((st0+i)/N),ck='C1|'+$('gv').value+'|'+style+'|'+tx+'|'+Ls[i],hit=S.gc.get(ck);let b=hit;if(!b){b=await gcall(tx?gtagify(Ls[i]):Ls[i],style,$('gv').value,gmods()[0]);const v=vcheck(b,Ls[i]);if(!v.ok)throw Object.assign(new Error(v.why),{bad:1});const tr=trimBuf(b);b=vcheck(tr,Ls[i]).ok?tr:b;S.gc.set(ck,b)}bufs.push(b);gaps.push(i<pt.i1-1?gapF(Ls[i],i,Ls.length):0)}
+ const buf=nabCat(bufs,gaps),cuts=[0];let t=0;bufs.forEach((b,k)=>{t+=b.duration+gaps[k];if(k<bufs.length-1)cuts.push(t-gaps[k]/2)});cuts.push(buf.duration);return{i0:pt.i0,i1:pt.i1,buf,cuts,conf:cuts.slice(1,-1).map(()=>0),gap:gaps.slice(0,-1),fixed:1}}
+/* 基本周波数（Hz）の中央値。自己相関。70〜300Hz */
+function nabF0(x,sr){if(sr>=40000){const y=new Float32Array(x.length>>1);for(let i=0;i<y.length;i++)y[i]=(x[2*i]+x[2*i+1])/2;x=y;sr/=2}
+ const hop=Math.floor(sr*.04),w=Math.floor(sr*.05),lo=Math.floor(sr/300),hi=Math.floor(sr/70),f=[];
+ for(let s=0;s+w+hi<x.length;s+=hop){let e0=0;for(let i=0;i<w;i+=2)e0+=x[s+i]*x[s+i];if(e0/(w/2)<2.5e-5)continue;let bl=0,bv=0;for(let l=lo;l<=hi;l++){let c=0;for(let i=0;i<w;i+=2)c+=x[s+i]*x[s+i+l];if(c>bv){bv=c;bl=l}}if(bl&&bv>.45*e0)f.push(sr/bl)}
+ if(f.length<3)return 0;f.sort((a,b)=>a-b);return f[f.length>>1]}
+const nabTrim=x=>{let mx=0;for(let i=0;i<x.length;i++){const v=Math.abs(x[i]);if(v>mx)mx=v}const th=mx*.04;let a=0,b=x.length-1;while(a<b&&Math.abs(x[a])<th)a++;while(b>a&&Math.abs(x[b])<th)b--;return x.subarray(a,b+1)};
+function nabStat(segs,Ls,sr,rt,pitchRt){const rate=[],rms=[],f0=[];segs.forEach((x0,i)=>{const x=nabTrim(x0);if(x.length<sr*.2)return;rate.push(nabCh(Ls[i])/(x.length/sr/rt));let q=0;for(let k=0;k<x.length;k++)q+=x[k]*x[k];rms.push(20*Math.log10(Math.sqrt(q/x.length)+1e-9));const f=nabF0(x,sr);if(f)f0.push(f*pitchRt)});
+ const r=nabMS(rate),d=nabMS(rms),f=nabMS(f0.map(v=>12*Math.log2(v/f0[0])));const fm=f0.length?f0.slice().sort((a,b)=>a-b)[f0.length>>1]:0;return{rate:r.m,rateCV:r.m?r.s/r.m*100:0,rms:d.m,rmsSD:d.s,f0:fm,f0SD:f.s}}
+function nabPlayStop(){if(S.nabCtx){try{S.nabCtx.close()}catch{}S.nabCtx=null}clearTimeout(S.nabTm)}
+async function nabPlay(w){nabPlayStop();const r=S.nab;if(!r||!r.M[w])return;const ctx=new AC();await ctx.resume();S.nabCtx=ctx;const t0=ctx.currentTime+.15,M=r.M[w],{m}=master(ctx,ctx.destination,t0,M.D);S.rateOv=w==='A'?r.rtA:1;try{narr(ctx,m,t0,M)}finally{S.rateOv=null}S.nabTm=setTimeout(nabPlayStop,(M.D+1.5)*1000);nabMsg(w+' を再生中（'+M.D.toFixed(1)+'秒）')}
+async function nabRun(){if(S.nabBusy)return;const gb=gblock();if(gb)return nabMsg('実行できません：'+gb);const L=lines();if(L.length<3)return nabMsg('台本が短すぎます（3行以上）');
+ const cnt=Math.min(6,L.length),pos=$('nabp').value,st=pos==='first'?0:pos==='last'?L.length-cnt:Math.floor((L.length-cnt)/2),Ls=L.slice(st,st+cnt),k=+$('nabk').value,N=L.length;
+ const roles=(S.rolesFor===$('script').value&&S.roles?S.roles:[]).slice(st,st+cnt),spans=[];for(let i=0;i<cnt;i+=k)spans.push([i,Math.min(cnt,i+k)]);
+ const need=cnt+spans.length,o0=gcount();if(o0.n+need>gcapv())return nabMsg('本日の残り回数（'+Math.max(0,gcapv()-o0.n)+'回）では足りません（必要 約'+need+'回）');
+ S.nabBusy=true;S.nabX=false;S.nab=null;$('nabgo').disabled=true;['nabA','nabB','nabC'].forEach(i=>$(i).disabled=true);$('nabfx').hidden=true;$('nabo').textContent='';nabPlayStop();
+ try{const rtA=(+$('spd').value||92)/100,res={st,cnt,Ls,N,spans,rtA,MD:gmods()[0]};
+  nabMsg('Aを生成中（1行ずつ。'+cnt+'回）…');const ta=performance.now(),a0=gcount().n,A=await genGemini(Ls,roles);res.A={calls:gcount().n-a0,sec:(performance.now()-ta)/1000,A};
+  nabMsg('Cを生成中（'+spans.length+'回）…');const tc=performance.now(),c0=gcount().n;S.gBud=spans.length+2;S.gcalls=0;S.w80=0;const parts=[];
+  for(const[i0,i1]of spans){if(S.nabX)throw Object.assign(new Error('中止しました'),{cancel:1});const{b}=await nabChunk(Ls,i0,i1,N,st),sn=nabSnap(b,Ls.slice(i0,i1));parts.push({i0,i1,buf:b,cuts:sn.cuts,conf:sn.conf,gap:sn.gap})}
+  res.parts=parts;res.C={calls:gcount().n-c0,sec:(performance.now()-tc)/1000};S.nab=res;nabBuild(res);nabReport(res);
+  ['nabA','nabB','nabC'].forEach(i=>$(i).disabled=false);nabMsg('生成完了。A・B・Cを順に聴き比べてください（A:'+res.A.calls+'回／C:'+res.C.calls+'回）')}
+ catch(e){nabMsg('中断：'+RD(String(e&&e.message||e)).slice(0,160)+((S.nab||{}).parts?'':'')+(e&&e.gq?'（無料枠の上限。課金はされません）':''))}
+ finally{S.nabBusy=false;$('nabgo').disabled=false}}
+function nabBuild(res){const{Ls,parts,A,rtA}=res;const M={};S.rateOv=rtA;try{M.A=model(A.A,Ls)}finally{S.rateOv=null}S.rateOv=1;try{M.B=model(A.A,Ls);const c=nabAsm(parts,Ls);res.Cm=c;M.C=model({mode:'single',buf:c.buf,cuts:c.cuts,src:'gemini'},Ls)}finally{S.rateOv=null}res.M=M}
+function nabReport(res){const{Ls,A,parts,Cm,rtA}=res,f1=(v,d=1)=>Number(v).toFixed(d),sB=nabStat(A.A.bufs.map(b=>b.getChannelData(0)),Ls,A.A.bufs[0].sampleRate,1,1),sA={...sB,rate:sB.rate*rtA,f0:sB.f0*rtA},sr=Cm.buf.sampleRate,seg=Ls.map((_,i)=>Cm.buf.getChannelData(0).subarray(Math.floor(Cm.cuts[i]*sr),Math.floor(Cm.cuts[i+1]*sr))),sC=nabStat(seg,Ls,sr,1,1);
+ const cf=[0,0,0];Cm.conf.forEach(c=>cf[c]++);const gA=nabMS(Ls.slice(0,-1).map((x,i)=>gapF(x,i,Ls.length)));const gC=nabMS(Cm.gap.filter(v=>v>0));
+ const speechA=A.A.bufs.reduce((q,b)=>q+nabTrim(b.getChannelData(0)).length/b.sampleRate,0),speechC=seg.reduce((q,x)=>q+nabTrim(x).length/sr,0),ratio=speechC/speechA,
+ warn=[];if(ratio<.8||ratio>1.3)warn.push('⚠ Cの話し言葉の長さがAの'+f1(ratio*100,0)+'%：台本の省略・追加の疑い（聴いて確認）');if(cf[2])warn.push('⚠ 字幕の切れ目 '+cf[2]+'か所が文字数比例の推定（精度低）→復旧ボタンで1行ずつ生成可');if(cf[1])warn.push('字幕の切れ目 '+cf[1]+'か所は無音を緩めて検出');
+ res.sum={A:sA,B:sB,C:sC,cf,ratio,callsA:A.calls,callsC:res.C.calls,secA:A.sec,secC:res.C.sec};
+ $('nabfx').hidden=!cf[2];
+ $('nabo').textContent=[`範囲：${res.st+1}〜${res.st+res.cnt}行目／声 ${$('gv').value}／モデル ${res.MD}／間のタグ ${$('gtag').checked?'オン（現行の既定。Aと同じ条件）':'オフ'}`,`Gemini呼び出し：A ${A.calls}回／B 追加0回（Aの音声を再利用）／C ${res.C.calls}回`,`生成時間：A ${f1(A.sec)}秒／C ${f1(res.C.sec)}秒`,`音声の長さ（再生時）：A ${f1(res.M.A.D)}秒／B ${f1(res.M.B.D)}秒／C ${f1(res.M.C.D)}秒`,
+ `話速（文字/秒、聞こえる速さ）：A ${f1(sA.rate)}／B ${f1(sB.rate)}／C ${f1(sC.rate)}`,`話速のばらつき（%、小さいほど一定）：A ${f1(sA.rateCV,0)}／B ${f1(sB.rateCV,0)}／C ${f1(sC.rateCV,0)}`,
+ `声の高さ（Hz、再生時）：A ${f1(sA.f0,0)}／B ${f1(sB.f0,0)}／C ${f1(sC.f0,0)}（Aは速度設定で ${f1(12*Math.log2(rtA),2)}半音ずれる）`,`行ごとの声の高さのばらつき（半音、声質の一貫性の目安）：A ${f1(sA.f0SD,2)}／B ${f1(sB.f0SD,2)}／C ${f1(sC.f0SD,2)}`,
+ `行ごとの音量のばらつき（dB）：A ${f1(sA.rmsSD,1)}／B ${f1(sB.rmsSD,1)}／C ${f1(sC.rmsSD,1)}`,`行間の無音（秒）：A/B 設定値 平均${f1(gA.m,2)}（一定）／C 自然な間 平均${f1(gC.m,2)}・ばらつき${f1(gC.s,2)}`,
+ `字幕の切れ目（C）：無音検出 ${cf[0]}／緩和検出 ${cf[1]}／推定 ${cf[2]}`].concat(warn).join('\n')}
+if(NABQ)setTimeout(()=>{let e=$('nab');while(e){if(e.tagName==='DETAILS')e.open=true;e=e.parentElement}$('nab').scrollIntoView({block:'start'})},500);
+$('nabgo').onclick=nabRun;$('nabx').onclick=()=>{S.nabX=true;nabMsg('中止を受け付けました（実行中の1回が終わると止まります）')};$('nabS').onclick=()=>{nabPlayStop();nabMsg('停止しました')};['A','B','C'].forEach(w=>{$('nab'+w).onclick=()=>nabPlay(w)});
+$('nabfx').onclick=async()=>{const r=S.nab;if(!r||S.nabBusy)return;S.nabBusy=true;S.nabX=false;$('nabfx').disabled=true;
+ try{const bad=r.parts.filter(p=>p.conf.some(c=>c===2));const n=bad.reduce((q,p)=>q+(p.i1-p.i0),0),o0=gcount();if(o0.n+n>gcapv())throw new Error('本日の残り回数では足りません（必要 約'+n+'回）');S.gBud=n+2;S.gcalls=0;S.w80=0;
+  for(const p of bad){nabMsg('復旧中：'+(p.i0+1)+'〜'+p.i1+'行目を1行ずつ生成…');const np=await nabFixPart(r.Ls,p,r.N,r.st);r.parts[r.parts.indexOf(p)]=np}
+  r.C.calls+=n;nabBuild(r);nabReport(r);nabMsg('復旧しました（追加'+n+'回）。Cをもう一度聴いてください')}
+ catch(e){nabMsg('復旧に失敗：'+RD(String(e&&e.message||e)).slice(0,140))}finally{S.nabBusy=false;$('nabfx').disabled=false}};
+$('nabsv').onclick=async()=>{const r=S.nab;if(!r)return nabMsg('先にA・B・Cを生成してください');const t=['【ナレーション比較試験】'+new Date().toLocaleString('ja-JP'),$('nabo').textContent,'選択：'+($('nabw').value||'未選択'),'メモ：'+($('nabm').value||'なし')].join('\n');
+ const a=store.get('bs_nab',[]);a.push({t:new Date().toISOString(),sum:r.sum&&{cf:r.sum.cf,callsA:r.sum.callsA,callsC:r.sum.callsC},pick:$('nabw').value,memo:$('nabm').value.slice(0,80)});store.set('bs_nab',a.slice(-20));
+ try{await navigator.clipboard.writeText(t);nabMsg('保存し、結果をコピーしました。チャットに貼り付けて共有してください')}catch{nabMsg('保存しました（コピーできませんでした。上の結果を長押しでコピーしてください）')}};
+
 </script></body></html>
