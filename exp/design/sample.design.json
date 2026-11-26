@@ -1,0 +1,171 @@
+{
+ "schema": "become.design/1",
+ "title": "夜明け前の一歩",
+ "script": "誰も見ていない朝。何度も失敗して、心が折れそうになる。それでも一歩だけ前へ。景色が変わり始める。",
+ "audience": "20〜30代・努力が報われず悩む人",
+ "intent": "孤独を否定せず、小さな一歩で希望を見せる",
+ "scenes": [
+  {
+   "text": "誰も見ていない朝",
+   "dur": 3,
+   "role": "hook",
+   "emotion": {
+    "valence": -0.2,
+    "arousal": 0.3
+   },
+   "camera": "push-in-slow",
+   "transition": "cut",
+   "speed": "normal",
+   "grade": "cold-teal",
+   "emphasis": [
+    "誰も"
+   ],
+   "search": {
+    "queries": [
+     "dark room dawn window",
+     "lonely desk night"
+    ],
+    "avoid": [
+     "logo",
+     "text"
+    ],
+    "minHeight": 1080
+   },
+   "sfx": [
+    "riser"
+   ]
+  },
+  {
+   "text": "何度も失敗して",
+   "dur": 3.2,
+   "role": "low",
+   "emotion": {
+    "valence": -0.8,
+    "arousal": 0.4
+   },
+   "camera": "static-hold",
+   "transition": "dip-black",
+   "speed": "normal",
+   "grade": "cold-teal",
+   "emphasis": [
+    "失敗"
+   ],
+   "search": {
+    "queries": [
+     "rain window night"
+    ]
+   }
+  },
+  {
+   "text": "心が折れそうになる",
+   "dur": 3.2,
+   "role": "low",
+   "emotion": {
+    "valence": -0.9,
+    "arousal": 0.5
+   },
+   "camera": "handheld-sway",
+   "transition": "cut",
+   "speed": "slow-motion",
+   "grade": "cold-teal",
+   "search": {
+    "queries": [
+     "person sitting alone dark"
+    ]
+   }
+  },
+  {
+   "text": "それでも一歩だけ前へ",
+   "dur": 3.4,
+   "role": "turn",
+   "emotion": {
+    "valence": 0.4,
+    "arousal": 0.8
+   },
+   "camera": "push-in-fast",
+   "transition": "flash-white",
+   "speed": "speed-ramp",
+   "grade": "warm-gold",
+   "cut": {
+    "type": "j-cut",
+    "offset": 0.3
+   },
+   "emphasis": [
+    "一歩"
+   ],
+   "search": {
+    "queries": [
+     "feet walking forward",
+     "stairs climbing sunrise"
+    ]
+   },
+   "sfx": [
+    "hit"
+   ]
+  },
+  {
+   "text": "景色が変わり始める",
+   "dur": 3.6,
+   "role": "rise",
+   "emotion": {
+    "valence": 0.7,
+    "arousal": 0.6
+   },
+   "camera": "pull-back-reveal",
+   "transition": "dissolve",
+   "speed": "normal",
+   "grade": "warm-gold",
+   "search": {
+    "queries": [
+     "sunrise mountain road"
+    ]
+   },
+   "sfx": [
+    "whoosh"
+   ]
+  },
+  {
+   "text": "君の朝が、始まる",
+   "dur": 3.2,
+   "role": "ending",
+   "emotion": {
+    "valence": 0.8,
+    "arousal": 0.3
+   },
+   "camera": "static-hold",
+   "transition": "dip-black",
+   "speed": "slow-motion",
+   "grade": "warm-gold",
+   "cut": {
+    "type": "l-cut",
+    "offset": 0.3
+   },
+   "search": {
+    "queries": [
+     "golden light city morning"
+    ]
+   },
+   "sfx": [
+    "shimmer"
+   ]
+  }
+ ],
+ "bgm": {
+  "mood": "cinematic-rise",
+  "bpm": 72
+ },
+ "narration": {
+  "voice": "低く落ち着いた声",
+  "pace": "slow",
+  "tone": "優しく力強い"
+ },
+ "ending": {
+  "holdSec": 1.8,
+  "text": ""
+ },
+ "qa": [
+  "全場面80字以内",
+  "合計90秒以内",
+  "人物の顔が識別できる素材は孤独の場面で避ける"
+ ]
+}
