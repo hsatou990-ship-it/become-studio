@@ -21,7 +21,7 @@ window.MP4LAB.tone=tone;window.MP4LAB.drawTest=drawTest;
 $('go').onclick=async()=>{const sec=Math.max(1,Math.min(15,+$('sec').value||3));$('out').textContent='書き出し中…';
  try{const cv=document.createElement('canvas');cv.width=1080;cv.height=1920;const r=await encodeMp4({canvas:cv,fps:30,frames:sec*30,render:async(i,t)=>drawTest(cv.getContext('2d'),i,t,1080,1920),audio:tone(sec),progress:p=>$('out').textContent='書き出し中 '+Math.round(p*100)+'%'});
   window.LAST=r;const R=BSInspect(await r.blob.arrayBuffer());
-  const L=['【実測】所要 '+(r.T.total/1000).toFixed(2)+'秒（映像'+(r.T.video/1000).toFixed(2)+'秒・AAC'+(r.T.aacEncode/1000).toFixed(2)+'秒）= 動画の長さ'+sec+'秒の'+(r.T.total/1000/sec).toFixed(2)+'倍の時間','サイズ '+(r.blob.size/1048576).toFixed(2)+'MB','コンテナ '+R.container+(R.brand?'('+R.brand+')':'')];
+  const L=['【実測】所要 '+(r.T.total/1000).toFixed(2)+'秒（映像'+(r.T.video/1000).toFixed(2)+'秒・AAC'+(r.T.aacEncode/1000).toFixed(2)+'秒）= 動画の長さ'+sec+'秒の'+(r.T.total/1000/sec).toFixed(2)+'倍の時間','音声符号化 '+(r.T.aacKind==='native'?'端末標準AAC':'WASM版AAC（特許・商用条件は未確認）')+(r.T.nativeError?'（標準AAC失敗: '+r.T.nativeError+'）':'')+'　サイズ '+(r.blob.size/1048576).toFixed(2)+'MB','コンテナ '+R.container+(R.brand?'('+R.brand+')':'')];
   R.tracks.forEach(t=>L.push((t.kind==='video'?'映像 ':'音声 ')+t.codec+(t.profile?' '+t.profile+' L'+t.level:'')+(t.width?' '+t.width+'x'+t.height+' '+t.fps+'fps':' '+t.sampleRate+'Hz')+' '+t.duration.toFixed(2)+'秒'));
   R.checks.forEach(c=>L.push((c[1]?'OK ':'NG ')+c[0]+(c[2]?' '+c[2]:'')));L.push('','TikTok推奨条件: '+(R.allOk?'満たす【実測】（取り込み可否は未確認）':'満たさない項目あり'));$('out').textContent=L.join('\n');
   const u=URL.createObjectURL(r.blob);$('dl').href=u;$('dl').download='mp4-lab-test.mp4';$('dl').hidden=false;$('pv').src=u;$('pv').hidden=false}

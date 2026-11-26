@@ -14,7 +14,7 @@ label{display:block}small{color:#9aa0ad}
 <h1>CINEMATIC PRO 15秒試作（実験ページ・正式版とは別）</h1>
 <p class="note">このページは外部へ一切接続しません（通信遮断のCSP）。APIキーも使いません。素材はオーナーが自分で取得した動画ファイルを取り込みます。権利情報が揃っていない素材は使いません。未取込の場面は「模擬素材」で表示され、映像品質の評価対象になりません。</p>
 <canvas id="cv"></canvas>
-<p><button id="bPrep" class="p">① 音と編集を準備</button><button id="bPrev">② プレビュー再生</button><button id="bExp" class="p">③ 書き出し（15秒）</button><button id="bExp2" class="p">③b H.264+AAC書き出し（実験・高速）</button><span id="rs" class="note"></span><a id="dl" hidden style="display:inline-block;padding:8px 10px;border:1px solid #d4af37;border-radius:8px;color:#d4af37">完成動画を保存</a></p>
+<p><button id="bPrep" class="p">① 音と編集を準備</button><button id="bPrev">② プレビュー再生</button><button id="bExp" class="p">③ 書き出し（15秒）</button><button id="bExp2" class="p">③b 高互換MP4書き出し（実験・H.264+AAC）</button><select id="resSel"><option value="720">720×1280（軽い）</option><option value="1080">1080×1920（TikTok推奨）</option></select><span id="rs" class="note"></span><a id="dl" hidden style="display:inline-block;padding:8px 10px;border:1px solid #d4af37;border-radius:8px;color:#d4af37">完成動画を保存</a></p>
 <p class="note" id="st">待機中</p>
 <h2>スタイルと字幕</h2>
 <p><label>制作スタイル <select id="sty"><option value="A">A 映画風モチベーション（実装）</option><option value="B" disabled>B 海外ドキュメンタリー風（設計候補）</option><option value="C" disabled>C 実写とモーショングラフィックス（設計候補）</option></select></label>
@@ -305,7 +305,7 @@ async function exportOffline(){if(S.busy)return null;S.busy=true;const st=(m,c)=
    progress:p=>st('H.264+AAC書き出し中 '+Math.round(p*100)+'%')});
   S.busy=false;const blob=r.blob,rep=BSInspect(await blob.arrayBuffer()),v=await verifyBlob(blob);
   window.CP.lastBlob=blob;const url=URL.createObjectURL(blob);$('dl').href=url;$('dl').download='CINEMATIC-PRO-A-15s-h264.mp4';$('dl').hidden=false;$('dl').textContent='H.264+AAC版を保存';
-  st('書き出し完了（所要 '+(r.T.total/1000).toFixed(1)+'秒＝動画の'+(r.T.total/1000/D).toFixed(2)+'倍）｜【実測】'+rep.tracks.map(t=>t.kind==='video'?t.codec+' '+t.width+'x'+t.height+' '+(t.fps||'?')+'fps':t.codec).join(' + ')+' '+(rep.duration||0).toFixed(1)+'秒｜'+(v.msg||'')+'｜TikTok推奨条件(H.264+AAC+1080x1920+30fps): '+(rep.allOk?'満たす':'満たさない→'+rep.checks.filter(x=>!x[1]).map(x=>x[0]).join('、'))+'（取り込み可否・Android再生は未確認）｜サイズ '+(blob.size/1048576).toFixed(1)+'MB',rep.allOk&&v.ok?'':'w');
+  st('書き出し完了（音声符号化: '+(r.T.aacKind==='native'?'端末標準AAC':'WASM版AAC（特許・商用条件は未確認）')+'／所要 '+(r.T.total/1000).toFixed(1)+'秒＝動画の'+(r.T.total/1000/D).toFixed(2)+'倍）｜【実測】'+rep.tracks.map(t=>t.kind==='video'?t.codec+' '+t.width+'x'+t.height+' '+(t.fps||'?')+'fps':t.codec).join(' + ')+' '+(rep.duration||0).toFixed(1)+'秒｜'+(v.msg||'')+'｜TikTok推奨条件(H.264+AAC+1080x1920+30fps): '+(rep.allOk?'満たす':'満たさない→'+rep.checks.filter(x=>!x[1]).map(x=>x[0]).join('、'))+'（取り込み可否・Android再生は未確認）｜サイズ '+(blob.size/1048576).toFixed(1)+'MB',rep.allOk&&v.ok?'':'w');
   return{blob,rep,v,T:r.T}}catch(e){S.busy=false;st('H.264+AAC書き出しに失敗しました: '+e.message+'。従来の③書き出しを使ってください','w');return null}}
 async function verifyBlob(blob){try{const ab=await blob.arrayBuffer(),ctx=new OfflineAudioContext(1,1,48000),b=await ctx.decodeAudioData(ab),x=b.getChannelData(0),sr=b.sampleRate,A=S.sc;
  const nw=S.ln.map(L=>rmsDb(x,L.t0*sr,(L.t0+L.d)*sr)),sil=rmsDb(x,(A[4].a-.12)*sr,(A[4].a+.12)*sr),nav=nw.reduce((q,v)=>q+v,0)/4,ok=!S.narr||(nav>-30&&nav-sil>12);
@@ -324,7 +324,7 @@ $('bEv').onclick=()=>{const v=EVI.map((k,i)=>$('e'+i).value===''?null:clamp(+$('
 S.font=$('fnt').value;$('fnt').onchange=()=>{S.font=$('fnt').value;renderFrame(4.5)};
 $('narr').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const ab=await f.arrayBuffer(),b=await new OfflineAudioContext(1,1,48000).decodeAudioData(ab);S.narr=b;S.isMockNarr=false;S.mix=null;await prep();renderFrame(1.5)}catch(er){S.narr=null;$('nst').textContent='音声を読み込めませんでした: '+er.message}};
 $('bMock').onclick=async()=>{S.narr=mockNarr();S.isMockNarr=true;S.mix=null;await prep();renderFrame(1.5)};
-$('bPrep').onclick=async()=>{S.mix=null;await prep();renderFrame(4.5)};$('bPrev').onclick=preview;$('bExp').onclick=exportVideo;$('bExp2').onclick=exportOffline;$('rs').textContent=' 現在の画面解像度 '+CW+'×'+CH+(CW<1080?'（1080×1920で出すには、このページのURL末尾に #res=1080 を付けて開き直してください）':'');$('bRep').onclick=()=>{$('rep').textContent=JSON.stringify(report(),null,1)};
+$('bPrep').onclick=async()=>{S.mix=null;await prep();renderFrame(4.5)};$('bPrev').onclick=preview;$('bExp').onclick=exportVideo;$('bExp2').onclick=exportOffline;$('resSel').value=CW>=1080?'1080':'720';$('resSel').onchange=()=>{if(S.busy){$('resSel').value=CW>=1080?'1080':'720';return}location.hash='res='+$('resSel').value;location.reload()};$('rs').textContent=' 現在 '+CW+'×'+CH+'（切り替えるとページを再読み込みし、素材と準備は最初からになります）';$('bRep').onclick=()=>{$('rep').textContent=JSON.stringify(report(),null,1)};
 clipForm();ledger();renderFrame(1.5);
 window.CP={exportOffline,S,renderFrame,capLayout,boxes,safeCheck,buildAudio,measure,alignNarr,mockNarr,segments,report,prep,exportVideo,useClip,sceneAt,camera,trans,LN0,SCN0,out,og,GL:!!GL,SAFE,N,FPS,D,ledger,stats};
 </script></body></html>
