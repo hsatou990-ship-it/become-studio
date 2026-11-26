@@ -37,7 +37,7 @@ nav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:re
 nav button{margin:0;border:0;border-radius:0;background:none;color:var(--mute);min-height:58px;font-size:12px;padding:6px 2px}#info,#vs,#vf,#vi{white-space:pre-line}nav button.on{color:var(--gold);box-shadow:inset 0 2px 0 var(--gold)}
 @media (prefers-reduced-motion:reduce){button:active{transform:none}}
 </style></head><body>
-<header><span class="logo">BECOME.</span><span>STUDIO v6.2</span><span id="ep">EP.001</span></header>
+<header><span class="logo">BECOME.</span><span>STUDIO v6.3</span><span id="ep">EP.001</span></header>
 <p id="st" role="status">準備完了。テーマを確認して「動画を作る」を押してください。</p>
 <main>
 <section id="hero">
@@ -98,6 +98,9 @@ nav button{margin:0;border:0;border-radius:0;background:none;color:var(--mute);m
 <ul id="atb"></ul>
 </details>
 <details id="adv"><summary>詳細設定（通常は触らなくて大丈夫です）</summary>
+<section class="pn" id="pgb"><h2>ブランド表示（動画に入る名前）</h2>
+<label for="brand">ブランド名</label><input type="text" id="brand" maxlength="16">
+<label for="handle">アカウント名（終わりの数秒に表示）</label><input type="text" id="handle" maxlength="24"></section>
 <details><summary>ElevenLabs（有料・将来用。通常は使いません）</summary><section class="pn" id="pgx">
 <h2>ElevenLabs ナレーション（有料）</h2>
 <div class="ck"><input type="checkbox" id="xon"><span>ElevenLabsの声を使う（キー未設定・残り不足・上限超過のときは使わず、Gemini→無料Kokoroへ切替。追加課金はしません）</span></div>
@@ -360,14 +363,18 @@ const MGK=[
  [/タイマー|朝|2分|分/,{icon:'clock',pose:'stand',bg:'grid'}],
  [/結果|証拠|事実|裏切らな/,{icon:'check',pose:'stand',bg:'grid'}]];
 const MGU={'分':'clock','秒':'clock','時間':'clock','日':'calendar','年':'calendar','回':'target','ページ':'book','ミリ':'target','%':'donut','％':'donut','つ':'target','本':'book'};
-function mgKit(c,k,n){S.kits=S.kits||new Map();const key=c.s+'|'+k;if(S.kits.has(key))return S.kits.get(key);const role=S.rolesFor===$('script').value?(S.roles||[])[k]:null;let K={icon:null,chart:null,pose:'stand',bg:'grid',big:null,kw:[],side:k%2?1:-1,stairs:0};
+function mgKit(c,k,n,prev){S.kits=S.kits||new Map();const key=c.s+'|'+k;if(S.kits.has(key))return S.kits.get(key);const role=S.rolesFor===$('script').value?(S.roles||[])[k]:null;let K={icon:null,chart:null,pose:'stand',bg:'grid',big:null,kw:[],side:k%2?1:-1,stairs:0};
  const m=c.s.match(/(\d+)\s*(分|時間|秒|日|年|回|ページ|ミリ|%|％|つ|本)/);
  for(const[r,v]of MGK){const q=c.s.match(r);if(q){K={...K,...v};K.kw.push(q[0]);break}}
  if(m){K.big={n:+m[1],u:m[2]};K.icon=MGU[m[2]]||'target';K.kw.push(m[0]);if(m[2]==='%'||m[2]==='％')K.icon='donut'}
  if(!K.icon&&!K.chart){const f={hook:{icon:'q',pose:'stand',bg:'rays'},pain:{icon:'loop',pose:'slump',bg:'dots'},truth:{icon:'bulb',pose:'think',bg:'rays'},act:{icon:'stairs',pose:'walk',bg:'rays',stairs:1},proof:{icon:'check',pose:'stand',bg:'grid'},close:{icon:'sunrise',pose:'up',bg:'rays'},story:{chart:'line',pose:'walk',bg:'grid'},psych:{icon:'brain',pose:'think',bg:'grid'}}[role]||(k===0?{icon:'q',pose:'stand',bg:'rays'}:k===n-1?{icon:'sunrise',pose:'up',bg:'rays'}:{chart:'line',pose:'walk',bg:'grid'});K={...K,...f}}
  if(k===0&&/[？?]$/.test(c.s)){K.icon='q';K.chart=null;K.pose='stand';K.hook=1}
  if(k===n-1){K.icon='sunrise';K.chart=null;K.pose='up';K.close=1;K.big=null}
- K.kw=K.kw.concat((c.s.match(/\d+|[ぁ-んァ-ヶー一-龠]{0,0}/g)||[]).filter(Boolean));S.kits.set(key,K);return K}
+ K.kw=K.kw.concat((c.s.match(/\d+|[ぁ-んァ-ヶー一-龠]{0,0}/g)||[]).filter(Boolean));
+ if(prev&&!K.hook&&!K.close&&!K.big){const same=(K.icon&&K.icon===prev.icon)||(K.chart&&K.chart===prev.chart);if(same){const P=['bulb','eye','target','book','mountain','brain','loop','hourglass','check','clock','calendar','stairs','phone'].filter(x=>x!==prev.icon&&x!==K.icon);K.icon=P[(k*3+1)%P.length];K.chart=null}
+  if(K.pose===prev.pose&&K.bg===prev.bg){K.bg=['grid','rays','dots'].filter(x=>x!==prev.bg)[k%2]}
+  if(K.side===prev.side&&k%2===0)K.side=-K.side}
+ S.kits.set(key,K);return K}
 /* --- 背景効果 --- */
 function mgBg(kind,t,k){const gr=g.createRadialGradient(360,520,40,360,520,820);gr.addColorStop(0,'#101010');gr.addColorStop(1,'#000');g.fillStyle=gr;g.fillRect(0,0,720,1280);
  if(kind==='grid'){g.strokeStyle='rgba(255,255,255,.07)';g.lineWidth=2;const off=(t*40)%60;for(let i=-1;i<14;i++){const y=720+i*60+off*0;const yy=720+Math.pow((i*60+off)/700,1.6)*560;if(yy>720&&yy<1280){g.beginPath();g.moveTo(0,yy);g.lineTo(720,yy);g.stroke()}}for(let i=-10;i<=10;i++){g.beginPath();g.moveTo(360+i*30,720);g.lineTo(360+i*160,1280);g.stroke()}}
@@ -375,12 +382,12 @@ function mgBg(kind,t,k){const gr=g.createRadialGradient(360,520,40,360,520,820);
  else if(kind==='dots'){for(let i=0;i<60;i++){const x=(rng(i+k*7)*720+t*(6+i%5*3))%720,y=(rng(i+90+k)*1000-t*(8+i%4*4)+4000)%1000+80;g.fillStyle=`rgba(255,255,255,${.05+.1*rng(i+3)})`;g.beginPath();g.arc(x,y,1.5+rng(i)*2,0,7);g.fill()}}
  const hz=g.createLinearGradient(0,640,0,780);hz.addColorStop(0,'rgba(224,184,96,0)');hz.addColorStop(1,'rgba(224,184,96,.08)');g.fillStyle=hz;g.fillRect(0,640,720,140)}
 /* --- 字幕（音声に同期して1文字ずつ点灯。数字・キーワードは金色）--- */
-function mgCap(c,lt,k,sc){const s=c.s,fs=s.length>20?44:s.length>12?52:60;g.font=`900 ${fs}px ${MGF}`;const tw=g.measureText(s).width,nl=Math.max(1,Math.ceil(tw/600)),ls=wrap(s,nl>1?Math.min(600,tw/nl*1.1+fs*.5):600),n=s.length;
+function mgCap(c,lt,k,sc){const s=c.s,fs=Math.round((s.length>20?44:s.length>12?52:60)*(k===0?1.18:1)),vr=k%3;g.font=`900 ${fs}px ${MGF}`;const tw=g.measureText(s).width,nl=Math.max(1,Math.ceil(tw/600)),ls=wrap(s,nl>1?Math.min(600,tw/nl*1.1+fs*.5):600),n=s.length;
  const wts=[...s].map(ch=>/[、，,]/.test(ch)?3:/[。！？!?]/.test(ch)?4:1),tot=wts.reduce((p,q)=>p+q,0);let dur=c.au?c.au.buf.duration/rate():c.d*.8,st=c.au?c.au.start-c.t0:.15;const p=mcl((lt-st)/dur+.03);let acc=0;const lit=wts.map(w=>{acc+=w;return acc/tot<=p+1e-6?1:0});
  const kws=mgKit(c,k,sc.length).kw;const hi=new Array(n).fill(0);kws.forEach(w=>{let i=-1;while((i=s.indexOf(w,i+1))>=0){for(let j=i;j<i+w.length;j++)hi[j]=1}});
  const fi=mea(lt/.3),fo=mcl((c.d-lt)/.2),al=Math.min(fi,fo),lh=fs*1.5,y0=905-((ls.length-1)*lh)/2;g.save();g.globalAlpha*=al;g.textBaseline='middle';g.textAlign='left';let idx=0;
- ls.forEach((ln,j)=>{let x=(720-g.measureText(ln).width)/2;const y=y0+j*lh+(1-fi)*22;[...ln].forEach(ch=>{const w=g.measureText(ch).width,on=lit[idx],pop=on?Math.max(0,1-(p-(wts.slice(0,idx+1).reduce((a,b)=>a+b,0)/tot))*0):0;
-   g.save();g.translate(x+w/2,y);if(on){const age=(p*tot-wts.slice(0,idx+1).reduce((a,b)=>a+b,0))*-1;const sc2=1+.14*Math.max(0,1-Math.abs(age)/1.2);g.scale(sc2,sc2)}
+ ls.forEach((ln,j)=>{let x=(720-g.measureText(ln).width)/2+(vr===1?(1-fi)*(j%2?-90:90):0);const y=y0+j*lh+(vr===0?(1-fi)*22:0);[...ln].forEach(ch=>{const w=g.measureText(ch).width,on=lit[idx],pop=on?Math.max(0,1-(p-(wts.slice(0,idx+1).reduce((a,b)=>a+b,0)/tot))*0):0;
+   g.save();g.translate(x+w/2,y);if(vr===2&&fi<1){const z=1+.35*(1-fi);g.scale(z,z)}if(on){const age=(p*tot-wts.slice(0,idx+1).reduce((a,b)=>a+b,0))*-1;const sc2=1+.14*Math.max(0,1-Math.abs(age)/1.2);g.scale(sc2,sc2)}
    g.lineWidth=fs*.22;g.strokeStyle='rgba(0,0,0,.95)';g.strokeText(ch,-w/2,0);g.fillStyle=on?(hi[idx]?GD:WH):(hi[idx]?'rgba(224,184,96,.3)':'rgba(245,241,234,.28)');g.fillText(ch,-w/2,0);g.restore();x+=w;idx++})});g.restore()}
 /* --- 場面の描画 --- */
 function mgScene(K,lt,u,c,k){const gy=790,t=lt,pr=mea(lt/.9),ph=lt*(K.pose==='run'?9:5.4);const S1=K.big?.7:1.08;
@@ -401,16 +408,27 @@ function mgTrans(lt,k,c){const a=.34;if(lt>a)return;const q=lt/a,m=k%3;g.save();
  else if(m===1){g.strokeStyle=`rgba(224,184,96,${.8*(1-q)})`;g.lineWidth=8;g.beginPath();g.arc(360,470,40+q*700,0,7);g.stroke()}
  else{g.fillStyle=`rgba(255,255,255,${.22*(1-q)})`;g.fillRect(0,0,720,1280);const y=1280-q*1500;g.fillStyle=`rgba(224,184,96,${.9*(1-q)})`;g.fillRect(0,y,720,6)}
  g.restore()}
+
+const mgBrand=()=>([...(($('brand').value||'BEYOND.').trim())].join(' ')),mgHandle=()=>($('handle').value||'').trim();
+function mgChrome(t,D,c,lt,sc,k){/* 上部の進行バー・ブランド・終わりのブランドカード */
+ g.save();g.fillStyle='rgba(255,255,255,.12)';g.fillRect(0,0,720,6);g.fillStyle=GD;g.fillRect(0,0,720*mcl(t/D),6);
+ g.globalAlpha=.9;g.fillStyle=GD;g.font=`800 22px ${MGF}`;g.textAlign='center';g.textBaseline='middle';g.fillText(mgBrand(),360,86);g.restore();
+ if(k===sc.length-1){const q=mcl((lt-(c.d-1.8))/.5);if(q>0){g.save();g.globalAlpha=q;g.textAlign='center';g.textBaseline='middle';const bs=1+.06*(1-mea(q));g.translate(360,1060);g.scale(bs,bs);g.font=`900 72px ${MGF}`;g.lineWidth=12;g.strokeStyle='#000';const b=mgBrand();g.strokeText(b,0,0);g.fillStyle=GD;g.fillText(b,0,0);const h=mgHandle();if(h){g.font=`700 28px ${MGF}`;g.fillStyle=WH;g.globalAlpha=q*.9;g.fillText(h,0,52)}g.restore()}}}
+function mgHook(lt){/* 冒頭の引き込み：白フラッシュ・色ずれ・リング・パンチイン */
+ if(lt<.5){const q=lt/.5;g.save();g.fillStyle=`rgba(255,255,255,${.55*Math.pow(1-q,2)})`;g.fillRect(0,0,720,1280);
+  for(let i=0;i<6;i++){const y=rng(i+Math.floor(lt*30))*900+100;g.fillStyle=`rgba(${i%2?'255,60,80':'60,220,255'},${.25*(1-q)})`;g.fillRect(0,y,720,3+rng(i)*6)}
+  g.strokeStyle=`rgba(224,184,96,${.9*(1-q)})`;g.lineWidth=6;g.beginPath();g.arc(360,520,30+q*620,0,7);g.stroke();g.restore()}
+ if(lt<3){const q=mcl(lt/3);g.save();g.strokeStyle=`rgba(224,184,96,${.35*(1-q)})`;g.lineWidth=4;g.strokeRect(14,14,692,1252);g.restore()}}
 function drawMG(t,D,sc){const W=cv.width;GD=S.acc||'#e0b860';g.save();g.setTransform(W/720,0,0,W/720,0,0);
- const c=sc.find(x=>t<x.t0+x.d)||sc[sc.length-1]||{s:'',t0:0,d:D,i:0},k=c.i,lt=Math.max(0,t-c.t0),K=mgKit(c,k,sc.length);
+ const c=sc.find(x=>t<x.t0+x.d)||sc[sc.length-1]||{s:'',t0:0,d:D,i:0},k=c.i,lt=Math.max(0,t-c.t0);let K=null,pv=null;for(let j=0;j<=k&&j<sc.length;j++){K=mgKit(sc[j],j,sc.length,pv);pv=K}if(!K)K=mgKit(c,k,sc.length);
  if(K.big&&(K.big.u==='%'||K.big.u==='％'))S.mgPct=mcl(K.big.n/100);
  g.fillStyle='#000';g.fillRect(0,0,720,1280);mgBg(K.bg,t,k);
  const tin=mea(lt/.5),tout=mcl((c.d-lt)/.22),m=k%3;g.save();
  if(m===1){g.beginPath();g.arc(360,470,mea(lt/.45)*900+1,0,7);g.clip()}
- const sk=.94+.06*tin+(1-tout)*.04;g.translate(360,470);g.scale(sk,sk);g.translate(-360,-470);if(m===2)g.translate(0,(1-tin)*60);g.globalAlpha=Math.min(1,tin*1.6)*tout;mgScene(K,lt,0,c,k);g.restore();
+ const sk=(k===0?1.22-.22*mea(lt/.7):.94+.06*tin)+(1-tout)*.04;g.translate(360,470);g.scale(sk,sk);g.translate(-360,-470);if(m===2)g.translate(0,(1-tin)*60);g.globalAlpha=Math.min(1,tin*1.6)*tout;mgScene(K,lt,0,c,k);g.restore();
  mgTrans(lt,k,c);
- g.save();g.globalAlpha=.9;g.fillStyle='#e0b860';g.font=`800 22px ${MGF}`;g.textAlign='center';g.textBaseline='middle';g.fillText('B E C O M E .',360,86);g.restore();
- mgCap(c,lt,k,sc);
+ mgChrome(t,D,c,lt,sc,k);
+ mgCap(c,lt,k,sc);if(k===0)mgHook(lt);
  const v=g.createRadialGradient(360,640,260,360,640,860);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(0,0,0,.65)');g.fillStyle=v;g.fillRect(0,0,720,1280);
  for(let j=0;j<46;j++){g.fillStyle='rgba(255,255,255,.045)';g.fillRect(Math.random()*720,Math.random()*1280,2,2)}
  g.restore();return k}
@@ -436,7 +454,7 @@ function drawReal(t,D,sc){const W=cv.width;g.save();g.setTransform(W/720,0,0,W/7
  g.fillStyle='rgba(0,0,0,.9)';g.fillRect(0,0,720,150);g.fillRect(0,1130,720,150);
  const v=g.createRadialGradient(360,640,240,360,640,860);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(0,0,0,.6)');g.fillStyle=v;g.fillRect(0,0,720,1280);
  const gd=GD;GD='#f2c880';mgCap(c,lt,k,sc);GD=gd;
- g.save();g.globalAlpha=.85;g.fillStyle='#f2c880';g.font=`800 22px ${MGF}`;g.textAlign='center';g.textBaseline='middle';g.fillText('B E C O M E .',360,86);g.restore();
+ GD='#f2c880';mgChrome(t,D,c,lt,sc,k);GD=gd;if(k===0)mgHook(lt);
  for(let j=0;j<40;j++){g.fillStyle='rgba(255,255,255,.04)';g.fillRect(Math.random()*720,Math.random()*1280,2,2)}
  g.restore();return k}
 
@@ -790,6 +808,7 @@ function gui_keep(){}
 gui();
 const VSTY={mg:{tpl:'cinema',bgs:'mg',acc:null,n:'図解・矢印・数字・人物がアニメーションする黒背景の映像。心理や自己啓発の解説向け。'},real:{tpl:'growth',bgs:'real',acc:null,n:'写真を追加すると実写の映像になります。写真が無い場合は、夕景のシルエット映像で代替します（実写の動画素材は使いません）。'},cinema:{tpl:'cinema',bgs:'auto',acc:null,n:'予告編のように重厚な、夜景・光の筋・星空などのダークシネマ。'},psych:{tpl:'psych',bgs:'mg',acc:'#b79cff',n:'心理学の用語を図解で見せる、紫アクセントのアニメーション。'},story:{tpl:'growth',bgs:'auto',acc:null,n:'1日目から積み上げる成長ドキュメンタリー調のストーリー。'}};
 function applyStyle(){const k=$('vs5').value,v=VSTY[k]||VSTY.mg;$('tpl').value=v.tpl;$('bgs').value=v.bgs;S.acc=v.acc;S.tplKey=null;$('vs5n').textContent=v.n;store.set('bs_vs5',k)}
+$('brand').value=store.get('bs_brand','BEYOND.');$('handle').value=store.get('bs_handle','@beyond8428');$('brand').oninput=()=>store.set('bs_brand',$('brand').value);$('handle').oninput=()=>store.set('bs_handle',$('handle').value);
 $('vs5').onchange=applyStyle;
 /* 制作指示リンク: #s=スタイル&t=テーマ&x=台本(改行区切り)&d=秒 を読み込む（自動で動画作成は始めない） */
 function jobImport(){try{const h=location.hash.replace(/^#/,'');if(!/(^|&)(t|x)=/.test(h))return;const q=new URLSearchParams(h),st=q.get('s'),t=(q.get('t')||'').slice(0,60),x=(q.get('x')||'').replace(/\r/g,'').trim().slice(0,3000),d=q.get('d');
