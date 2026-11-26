@@ -27,6 +27,7 @@ export async function encodeMp4({canvas,fps,frames,render,audio,vBitrate=8e6,aBi
  await out.start();
  if(as){let first=true;for(const p of A.pk){await as.add(new EncodedPacket(p.d,'key',p.t,p.dur),first?{decoderConfig:{codec:'mp4a.40.2',numberOfChannels:2,sampleRate:audio.sampleRate,description:A.desc}}:undefined);first=false}}
  const tv=performance.now();
- for(let i=0;i<frames;i++){await render(i,i/fps);await vs.add(i/fps,1/fps);if(progress&&i%10===0)progress(i/frames)}
- vs.close();if(as)as.close();await out.finalize();T.video=performance.now()-tv;T.total=performance.now()-t0;
+ try{for(let i=0;i<frames;i++){await render(i,i/fps);await vs.add(i/fps,1/fps);if(progress&&i%10===0)progress(i/frames)}
+ vs.close();if(as)as.close();await out.finalize()}catch(e){try{await out.cancel()}catch{}throw e}
+ T.video=performance.now()-tv;T.total=performance.now()-t0;
  return{blob:new Blob([out.target.buffer],{type:'video/mp4'}),T}}

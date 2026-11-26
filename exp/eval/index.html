@@ -22,7 +22,7 @@ function clampScore(v,max){const n=Math.round(Number(v));return Number.isFinite(
 function total(v){return C.reduce((q,c,i)=>q+clampScore((ST.s[v]||{})[i]||0,c[1]),0)}
 function scored(v){return C.every((c,i)=>(ST.s[v]||{})[i]!==undefined&&(ST.s[v]||{})[i]!=='')}
 function gateOk(v){return G.every((x,i)=>(ST.g[v]||{})[i]==='合格')}
-function verdict(v){if(!scored(v))return{t:'採点中',c:'w'};const T=total(v),q=T>=90;if(!gateOk(v))return{t:T+'点｜公開不可（著作権・規約・セキュリティの合格が揃っていません）',c:'bad'};return q?{t:T+'点｜品質目標達成・公開可（最終承認はオーナー）',c:'ok'}:{t:T+'点｜品質目標（90点）未達。改善が必要',c:'w'}}
+function verdict(v){if(!scored(v))return{t:'未評価（採点前または採点途中）',c:'w'};const T=total(v),q=T>=90;if(!gateOk(v))return{t:T+'点（採点済み）｜公開不可（著作権・規約・セキュリティの合格が揃っていません）',c:'bad'};return q?{t:T+'点（採点済み）｜品質目標達成・公開可（最終承認はオーナー）',c:'ok'}:{t:T+'点（採点済み）｜品質目標（90点）未達。改善が必要',c:'w'}}
 function build(){const t=$('t');t.textContent='';let h=el('tr',null,t);el('th','項目（配点）',h);V.forEach(v=>el('th','動画'+v,h));
  C.forEach((c,i)=>{const r=el('tr',null,t);el('td',c[0]+'（'+c[1]+'点）',r);V.forEach(v=>{const d=el('td',null,r),inp=el('input',null,d);inp.type='number';inp.min=0;inp.max=c[1];inp.step=1;inp.inputMode='numeric';inp.id='s'+v+i;const cur=(ST.s[v]||{})[i];if(cur!==undefined)inp.value=cur;
   inp.oninput=()=>{ST.s[v]=ST.s[v]||{};if(inp.value===''){delete ST.s[v][i]}else{const n=clampScore(inp.value,c[1]);ST.s[v][i]=n;if(String(n)!==inp.value)inp.value=n}save();calc()}})});
@@ -30,10 +30,10 @@ function build(){const t=$('t');t.textContent='';let h=el('tr',null,t);el('th','
  G.forEach((x,i)=>{const r=el('tr',null,g);el('td',x,r);V.forEach(v=>{const d=el('td',null,r),s=el('select',null,d);s.id='g'+v+i;['未確認','合格','不合格'].forEach(o=>{const op=el('option',o,s);op.value=o});s.value=(ST.g[v]||{})[i]||'未確認';s.onchange=()=>{ST.g[v]=ST.g[v]||{};ST.g[v][i]=s.value;save();calc()}})});
  const m=$('map');m.textContent='';V.forEach(v=>{el('span','動画'+v+' = ',m);const s=el('select',null,m);s.id='m'+v;['','A','B','C'].forEach(o=>{const op=el('option',o||'未選択',s);op.value=o});s.value=ST.m[v]||'';s.onchange=()=>{ST.m[v]=s.value;save()};el('span','　',m)})}
 function calc(){const r=$('res');r.textContent='';V.forEach(v=>{const x=verdict(v),d=el('div','動画'+v+': '+x.t,r);d.className=x.c});
- $('out').value=V.map(v=>'動画'+v+' 合計'+total(v)+'点（'+C.map((c,i)=>c[0]+((ST.s[v]||{})[i]??'-')+'/'+c[1]).join('、')+'）｜著作権'+((ST.g[v]||{})[0]||'未確認')+'・規約'+((ST.g[v]||{})[1]||'未確認')+'・セキュリティ'+((ST.g[v]||{})[2]||'未確認')+'｜'+verdict(v).t).join('\n')}
+ $('out').value=V.map(v=>'動画'+v+' '+(scored(v)?'合計'+total(v)+'点':'未評価')+'（'+C.map((c,i)=>c[0]+((ST.s[v]||{})[i]??'-')+'/'+c[1]).join('、')+'）｜著作権'+((ST.g[v]||{})[0]||'未確認')+'・規約'+((ST.g[v]||{})[1]||'未確認')+'・セキュリティ'+((ST.g[v]||{})[2]||'未確認')+'｜'+verdict(v).t).join('\n')}
 function reveal(){const used=V.map(v=>ST.m[v]).filter(Boolean),s=$('sum');s.textContent='';if(used.length<3||new Set(used).size<3){s.textContent='P・Q・RにA・B・Cを1つずつ選んでください';s.className='note w';return null}
  s.className='note';const rows=V.map(v=>({v,k:ST.m[v],T:total(v),ok:scored(v)})).sort((a,b)=>a.k<b.k?-1:1);
- rows.forEach(r=>el('div',r.k+'案（動画'+r.v+'）: '+(r.ok?r.T+'点':'採点未完了')+'｜'+C.map((c,i)=>c[0]+((ST.s[r.v]||{})[i]??'-')).join('／'),s));
+ rows.forEach(r=>el('div',r.k+'案（動画'+r.v+'）: '+(r.ok?r.T+'点':'未評価')+'｜'+C.map((c,i)=>c[0]+((ST.s[r.v]||{})[i]??'-')).join('／'),s));
  if(rows.every(r=>r.ok)){const best=rows.slice().sort((a,b)=>b.T-a.T);el('div','最高点: '+best[0].k+'案（'+best[0].T+'点）'+(best[0].T===best[1].T?'｜同点があります。冒頭の引き込みと編集テンポの合計で比べてください':'')+'｜この結果は1回・少人数の評価です。判断は複数本で確認してください',s)}
  $('out').value+='\n\n【答え合わせ】'+rows.map(r=>r.k+'案=動画'+r.v+' '+r.T+'点').join('、');return rows}
 $('rv').onclick=reveal;build();calc();window.EV={total,verdict,reveal,clampScore,ST};

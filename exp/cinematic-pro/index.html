@@ -25,7 +25,7 @@ label{display:block}small{color:#9aa0ad}
 <p><button id="bDir" class="p">台本から演出を設計して反映</button><button id="bDirV">別案を出す</button><button id="bDirA">標準A案（15秒）に戻す</button></p>
 <div id="dirsum" class="note"></div>
 <div class="note">同じ台本・素材・音声で演出だけを切り替えて比べます（採点は完成動画を見て行います）</div><p><button id="vA">A 基本</button><button id="vB">B 高度</button><button id="vC">C ディレクター最適化</button></p>
-<p><button id="bBlind" class="p">ブラインド比較セットを書き出す（3本）</button></p><div id="blindl" class="note"></div>
+<p><button id="bBlind" class="p">ブラインド比較セットを書き出す（3本）</button> <button id="bAbort" hidden>書き出しを中止</button></p><div id="blindl" class="note"></div>
 <p><button id="bReveal">答え合わせ（採点が終わってから押す）</button></p><div id="revl" class="note" style="white-space:pre-wrap"></div>
 <h2>外部AI（ChatGPT・Claude）の映像設計を取り込む</h2>
 <p class="note">追加のAPI費用なしで、ChatGPTやClaudeの通常の画面で作った映像設計JSON（become.design/1）を貼り付けて反映できます。形式・範囲を検証し、外れた値は取り込みません。コードは実行しません。外部AIの設計の良し悪しは検証されません【未確認】。</p>
@@ -352,20 +352,23 @@ G.BSInspect=inspect;if(typeof module!=='undefined')module.exports=inspect;
 })(typeof window!=='undefined'?window:globalThis);
 
 const PF={f:[],m:0,t0:0};
-function perfSummary(r){const f=PF.f.slice().sort((a,b)=>a-b),n=f.length,avg=f.reduce((q,v)=>q+v,0)/Math.max(1,n);return{frames:n,avgMs:+avg.toFixed(1),p95Ms:+(f[Math.floor(n*.95)]||0).toFixed(1),maxMs:+(f[n-1]||0).toFixed(1),totalSec:+((performance.now()-PF.t0)/1000).toFixed(1),heapMB:PF.m?+(PF.m/1048576).toFixed(0):null,deviceMemGB:navigator.deviceMemory||null,cores:navigator.hardwareConcurrency||null,res:CW+'x'+CH,dur:D}}
-function perfText(){const q=S.perf;return q?'｜【計測】'+q.res+' '+q.dur+'秒: 描画 平均'+q.avgMs+'ms／95%点'+q.p95Ms+'ms／最大'+q.maxMs+'ms、全体'+q.totalSec+'秒、ヒープ最大'+(q.heapMB==null?'取得不可':q.heapMB+'MB')+'、端末メモリ'+(q.deviceMemGB==null?'取得不可':q.deviceMemGB+'GB')+'、コア'+(q.cores||'?'):''}
+function perfSummary(r){const f=PF.f.slice().sort((a,b)=>a-b),n=f.length,avg=f.reduce((q,v)=>q+v,0)/Math.max(1,n);return{frames:n,avgMs:+avg.toFixed(1),p95Ms:+(f[Math.floor(n*.95)]||0).toFixed(1),maxMs:+(f[n-1]||0).toFixed(1),totalSec:+((performance.now()-PF.t0)/1000).toFixed(1),heapMB:PF.m?+(PF.m/1048576).toFixed(0):null,deviceMemGB:navigator.deviceMemory||null,cores:navigator.hardwareConcurrency||null,res:CW+'x'+CH,dur:D,slow:(()=>{const k=Math.min(30,Math.floor(n/3));if(k<5)return null;const a=f.length?PF.f.slice(0,k).reduce((q,v)=>q+v,0)/k:0,b=PF.f.slice(-k).reduce((q,v)=>q+v,0)/k;return a>0?+(b/a).toFixed(2):null})()}}
+function perfText(){const q=S.perf;return q?'｜【計測】'+q.res+' '+q.dur+'秒: 描画 平均'+q.avgMs+'ms／95%点'+q.p95Ms+'ms／最大'+q.maxMs+'ms、全体'+q.totalSec+'秒、ヒープ最大'+(q.heapMB==null?'取得不可':q.heapMB+'MB')+'、端末メモリ'+(q.deviceMemGB==null?'取得不可':q.deviceMemGB+'GB')+'、コア'+(q.cores||'?')+(q.slow==null?'':'、後半/前半の描画時間比 '+q.slow+(q.slow>2?'（⚠ 発熱や負荷で遅くなった可能性）':'')):''}
 async function sniff(blob){const u=new Uint8Array(await blob.slice(0,16).arrayBuffer());if(u[0]===0x1A&&u[1]===0x45&&u[2]===0xDF&&u[3]===0xA3)return'webm';if(u[4]===0x66&&u[5]===0x74&&u[6]===0x79&&u[7]===0x70)return'mp4';return'unknown'}
+function exportGuard(i){if(S.abort){const e=new Error('中止');e.code='ABORT';throw e}
+ if(i%15===0&&performance.memory&&performance.memory.jsHeapSizeLimit&&performance.memory.usedJSHeapSize>.85*performance.memory.jsHeapSizeLimit){const e=new Error('メモリ不足');e.code='MEMORY';throw e}
+ if(S.hidden){S.hidden=false;try{say('⚠ 書き出し中に画面を離れました。端末によっては書き出しが遅くなる・止まることがあります。画面を点けたままにしてください','w')}catch{}}}
 async function exportOffline(){if(S.busy)return null;S.busy=true;const st=(m,c)=>say(m,c);
- PF.f=[];PF.m=0;PF.t0=performance.now();try{st('H.264+AAC書き出しの準備中…');if(!S.mix)await prep();
+ PF.f=[];PF.m=0;PF.t0=performance.now();if(!(S.cmp&&S.cmp.on))S.abort=false;S.hidden=false;const vh=()=>{if(document.hidden)S.hidden=true};document.addEventListener('visibilitychange',vh);try{st('H.264+AAC書き出しの準備中…');if(!S.mix)await prep();
   let M;try{M=await import('../mp4-lab/lib/mp4enc.js')}catch(e){S.busy=false;st('実験用エンコーダを読み込めませんでした: '+e.message+'。従来の③書き出しを使ってください','w');return null}
   const clipsOn=S.clips.map((c,i)=>c&&c.el?i:-1).filter(i=>i>=0),seek=(el,t)=>new Promise(ok=>{let d=false;const f=()=>{if(!d){d=true;el.removeEventListener('seeked',f);ok()}};el.addEventListener('seeked',f);try{el.pause()}catch{}el.currentTime=t;setTimeout(f,1500)});
   const r=await M.encodeMp4({canvas:out,fps:FPS,frames:Math.round(D*FPS),audio:S.mix,vBitrate:CW>=1080?10e6:5e6,
-   render:async(i,t)=>{const _t0=performance.now();try{const sc=sceneAt(t),c=S.clips[sc],mk=S.sc[sc].mask;if(mk&&sc>0&&t-S.sc[sc].a<mk.dur){const pc=S.clips[sc-1];if(pc&&pc.el&&pc.el.duration){const q=mediaT(sc-1,t)+pc.meta.inp,d=pc.el.duration;await seek(pc.el,d>0?q%d:q)}}if(c&&c.el&&c.el.duration){const q=mediaT(sc,t)+c.meta.inp,d=c.el.duration;await seek(c.el,d>0?q%d:q)}renderFrame(t)}finally{PF.f.push(performance.now()-_t0);if(PF.f.length%15===1&&performance.memory)PF.m=Math.max(PF.m,performance.memory.usedJSHeapSize)}},
+   render:async(i,t)=>{const _t0=performance.now();try{exportGuard(i);const sc=sceneAt(t),c=S.clips[sc],mk=S.sc[sc].mask;if(mk&&sc>0&&t-S.sc[sc].a<mk.dur){const pc=S.clips[sc-1];if(pc&&pc.el&&pc.el.duration){const q=mediaT(sc-1,t)+pc.meta.inp,d=pc.el.duration;await seek(pc.el,d>0?q%d:q)}}if(c&&c.el&&c.el.duration){const q=mediaT(sc,t)+c.meta.inp,d=c.el.duration;await seek(c.el,d>0?q%d:q)}renderFrame(t)}finally{PF.f.push(performance.now()-_t0);if(PF.f.length%15===1&&performance.memory)PF.m=Math.max(PF.m,performance.memory.usedJSHeapSize)}},
    progress:p=>st('H.264+AAC書き出し中 '+Math.round(p*100)+'%')});
   S.busy=false;S.perf=perfSummary(r);const blob=r.blob,rep=BSInspect(await blob.arrayBuffer()),v=await verifyBlob(blob);
   window.CP.lastBlob=blob;const url=URL.createObjectURL(blob);$('dl').href=url;$('dl').download='CINEMATIC-PRO-A-15s-h264.mp4';$('dl').hidden=false;$('dl').textContent='H.264+AAC版を保存';
   st('書き出し完了（音声符号化: 端末標準AAC／所要 '+(r.T.total/1000).toFixed(1)+'秒＝動画の'+(r.T.total/1000/D).toFixed(2)+'倍）｜【実測】'+rep.tracks.map(t=>t.kind==='video'?t.codec+' '+t.width+'x'+t.height+' '+(t.fps||'?')+'fps':t.codec).join(' + ')+' '+(rep.duration||0).toFixed(1)+'秒｜'+(v.msg||'')+'｜TikTok推奨条件(H.264+AAC+1080x1920+30fps): '+(rep.allOk?'満たす':'満たさない→'+rep.checks.filter(x=>!x[1]).map(x=>x[0]).join('、'))+'（取り込み可否・Android再生は未確認）｜サイズ '+(blob.size/1048576).toFixed(1)+'MB'+perfText(),rep.allOk&&v.ok?'':'w');
-  return{blob,rep,v,T:r.T}}catch(e){S.busy=false;st(e.code==='NO_NATIVE_AAC'?'⚠ '+e.message:'H.264+AAC書き出しに失敗しました: '+e.message+'。従来の③書き出しを使ってください','w');return null}}
+  document.removeEventListener('visibilitychange',vh);return{blob,rep,v,T:r.T}}catch(e){document.removeEventListener('visibilitychange',vh);S.busy=false;S.lastFail={code:e.code||'ERR',msg:e.message};st(e.code==='NO_NATIVE_AAC'?'⚠ '+e.message:e.code==='ABORT'?'書き出しを中止しました。素材・設定・完成済みの動画は残っています':e.code==='MEMORY'?'⚠ 端末のメモリが不足してきたため、安全のため書き出しを止めました。素材・設定・完成済みの動画は残っています。ほかのアプリを閉じてから、解像度を720にして再実行してください':'H.264+AAC書き出しに失敗しました: '+e.message+'。素材・設定・完成済みの動画は残っています。従来の③書き出しも使えます','w');return null}}
 async function verifyBlob(blob){try{const ab=await blob.arrayBuffer(),ctx=new OfflineAudioContext(1,1,48000),b=await ctx.decodeAudioData(ab),x=b.getChannelData(0),sr=b.sampleRate,A=S.sc;
  const nw=S.ln.map(L=>rmsDb(x,L.t0*sr,(L.t0+L.d)*sr)),sil=rmsDb(x,(A[A.length-1].a-.12)*sr,(A[A.length-1].a+.12)*sr),nav=nw.reduce((q,v)=>q+v,0)/Math.max(1,nw.length),ok=!S.narr||(nav>-30&&nav-sil>12);
  return{ok:b.duration>14&&b.duration<16.5&&ok,dur:b.duration,narr:+nav.toFixed(1),sil:+sil.toFixed(1),msg:`書き出したファイルの長さ ${b.duration.toFixed(2)}秒／ナレーション区間 ${nav.toFixed(1)}dB／余韻の無音 ${sil.toFixed(1)}dB`+(ok?'':'（音声の確認が必要）')}}catch(e){return{ok:false,unverified:true,msg:'書き出し後の音声を自動検査できませんでした: '+e.message+'。再生して確認してください'}}}
@@ -454,21 +457,53 @@ function applyVariant(k){const b=makeVariant(k,S.baseOrig||S.base);if(!S.baseOri
 ['A','B','C'].forEach(k=>{const e=$('v'+k);if(e)e.onclick=()=>{if(!S.base){return}applyVariant(k)}});
 /* ---------- ブラインド比較: 3案をランダムな記号で書き出し、音量をそろえ、答えは採点後まで伏せる ---------- */
 function shuf(a){const r=a.slice();for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]]}return r}
-async function blindSet(exporter){if(S.busy||!S.base)return null;const ex=exporter||exportOffline,ks=shuf(['A','B','C']),cs=shuf(['P','Q','R']),res=[];
- S.cmp={on:true,key:{}};try{sessionStorage.removeItem('cpKey')}catch{}$('revl').textContent='';
- try{for(let i=0;i<3;i++){const k=ks[i],c=cs[i];applyVariant(k);try{$('dirsum').textContent='ブラインド書き出し中（案は伏せています）';$('govt').textContent=''}catch{}S.mix=null;await prep();
-   $('blindl').textContent='書き出し中 '+(i+1)+'/3 …';const r=await ex();if(!r||!r.blob){$('blindl').textContent='書き出しに失敗しました（'+(i+1)+'本目）。端末のAAC対応などを確認してください';return null}
-   S.cmp.key[c]=k;res.push({code:c,blob:r.blob,mix:S.mixInfo,perf:S.perf,dur:D})}}
- finally{S.cmp.on=false}
+/* 音の検査: 最大ピーク・音割れ・ナレーションの聞き取りやすさの目安（機械検査。最終判断は耳で行う） */
+function audioReport(buf){const sr=buf.sampleRate,EA=S.sc[S.sc.length-1],end=Math.min(buf.length,Math.floor(EA.a*sr)),ch=[0,1].map(k=>k<buf.numberOfChannels?buf.getChannelData(k):null).filter(Boolean);let pk=0,cl=0;
+ for(const x of ch)for(let i=0;i<end;i++){const v=Math.abs(x[i]);if(v>pk)pk=v;if(v>=.999)cl++}
+ const x=ch[0],sp=S.ln.map(L=>[L.t0,L.t0+L.d]);let sq=0,sn=0,gq=0,gn=0;for(let i=0;i<end;i+=4){const t=i/sr,inSp=sp.some(a=>t>=a[0]&&t<a[1]);if(inSp){sq+=x[i]*x[i];sn++}else if(t>.3){gq+=x[i]*x[i];gn++}}
+ const sd=sn?10*Math.log10(sq/sn+1e-12):null,gd=gn?10*Math.log10(gq/gn+1e-12):null,gap=sd!=null&&gd!=null?+(sd-gd).toFixed(1):null,W=[];
+ const pkDb=+(20*Math.log10(pk+1e-9)).toFixed(1);if(pkDb>-1)W.push('最大ピークが高い（'+pkDb+'dBFS。-1dBFS以下が目安）');if(cl>0)W.push('音割れの可能性（頭打ち '+cl+' サンプル）');
+ if(S.narr&&gap!=null&&gap<10)W.push('ナレーション区間と無声区間の音量差が小さい（'+gap+'dB）。聞き取りにくい可能性');
+ return{peakDb:pkDb,clipSamples:cl,speechDb:sd==null?null:+sd.toFixed(1),gapDb:gd==null?null:+gd.toFixed(1),speechOverGap:gap,warn:W}}
+/* 退避保存: 書き出し済みの動画を端末内のIndexedDBに残し、途中で止まっても失われないようにする */
+function idbBlind(){return new Promise((ok,ng)=>{const q=indexedDB.open('cp_blind',1);q.onupgradeneeded=()=>q.result.createObjectStore('v',{keyPath:'k'});q.onsuccess=()=>ok(q.result);q.onerror=()=>ng(q.error)})}
+async function blindSave(rec){try{const db=await idbBlind();await new Promise((ok,ng)=>{const t=db.transaction('v','readwrite');t.objectStore('v').put(rec);t.oncomplete=ok;t.onerror=()=>ng(t.error)});return true}catch{return false}}
+async function blindList(){try{const db=await idbBlind();return await new Promise((ok,ng)=>{const t=db.transaction('v');const r=t.objectStore('v').getAll();r.onsuccess=()=>ok(r.result);r.onerror=()=>ng(r.error)})}catch{return[]}}
+async function blindPrune(run){try{const db=await idbBlind(),all=await blindList();await new Promise(ok=>{const t=db.transaction('v','readwrite');all.filter(r=>r.run!==run).forEach(r=>t.objectStore('v').delete(r.k));t.oncomplete=ok;t.onerror=ok})}catch{}}
+function blindLink(L,code,blob,au,saved){const d=document.createElement('div'),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='CMP-'+code+'.mp4';a.textContent='動画 '+code+' を保存（'+(blob.size/1048576).toFixed(1)+'MB）';d.appendChild(a);
+ if(au){const t=document.createElement('div');t.className='note'+(au.warn.length?' w':'');t.textContent='音の検査: 最大ピーク '+au.peakDb+'dBFS｜音割れ '+au.clipSamples+'サンプル｜ナレーション区間−無声区間 '+(au.speechOverGap==null?'確認できません':au.speechOverGap+'dB')+(au.warn.length?'｜⚠ '+au.warn.join('／'):'｜問題なし（機械検査。最終は耳で確認）')+(saved===false?'｜⚠ 端末内への退避保存に失敗（この画面を閉じる前に必ず保存してください）':'');d.appendChild(t)}L.appendChild(d)}
+async function blindSet(exporter){if(S.busy||!S.base)return null;const ex=exporter||exportOffline,ks=shuf(['A','B','C']),cs=shuf(['P','Q','R']),res=[],run=Date.now(),L=$('blindl');
+ S.cmp={on:true,key:{},run};S.abort=false;try{sessionStorage.removeItem('cpKey')}catch{}$('revl').textContent='';L.textContent='';const stat=document.createElement('div');L.appendChild(stat);$('bAbort').hidden=false;let failed=null;
+ try{for(let i=0;i<3&&!failed;i++){if(S.abort){failed='中止しました';break}const k=ks[i],c=cs[i];applyVariant(k);try{$('dirsum').textContent='ブラインド書き出し中（案は伏せています）';$('govt').textContent=''}catch{}S.mix=null;await prep();
+   stat.textContent='書き出し中 '+(i+1)+'/3 …（途中で失敗しても、完成した動画はこの下に残ります）';let r=null;try{r=await ex()}catch(e){r=null}
+   if(!r||!r.blob){failed=S.abort?'中止しました':'書き出しに失敗しました（'+(i+1)+'本目）';break}
+   S.cmp.key[c]=k;const au=audioReport(S.mix),saved=await blindSave({k:run+c,run,code:c,variant:k,blob:r.blob,at:new Date().toISOString(),mix:S.mixInfo,audio:au,perf:S.perf});
+   res.push({code:c,variant:k,blob:r.blob,mix:S.mixInfo,audio:au,perf:S.perf,dur:D,saved,gov:(S.base.gov||[]).length});blindLink(L,c,r.blob,au,saved)}}
+ catch(e){failed='予期しないエラー: '+e.message}
+ finally{S.cmp.on=false;$('bAbort').hidden=true}
  try{sessionStorage.setItem('cpKey',JSON.stringify(S.cmp.key))}catch{}
- res.sort((a,b)=>a.code<b.code?-1:1);const L=$('blindl');L.textContent='';
- res.forEach(r=>{const a=document.createElement('a');a.href=URL.createObjectURL(r.blob);a.download='CMP-'+r.code+'.mp4';a.textContent='動画 '+r.code+' を保存（'+(r.blob.size/1048576).toFixed(1)+'MB）';a.style.display='block';L.appendChild(a)});
+ if(failed){stat.textContent=failed+'。完成済みの動画 '+res.length+' 本と素材・設定は残っています（動画は端末内にも一時保存済み）。原因を直して、もう一度「ブラインド比較セット」を押してください';stat.className='note w';window.CP.lastBlind=res;return null}
+ await blindPrune(run);
  const af=res.map(r=>r.mix&&r.mix.after),dif=af.every(v=>v!=null)?Math.max(...af)-Math.min(...af):null,lim=res.some(r=>r.mix&&r.mix.limited);
- const t=document.createElement('div');t.textContent='音量そろえ: '+(dif==null?'確認できません':'3本の平均音量の差 '+dif.toFixed(2)+' dB（目標±0.5dB以内）'+(dif<=.5?'':'⚠ 差が大きい'))+(lim?'｜一部は音割れ防止のため上げ幅を制限':'')+'｜長さ・解像度・素材・ナレーション・BGMは3本で共通。どれがA/B/Cかは「答え合わせ」まで伏せています';L.appendChild(t);
+ stat.textContent='音量そろえ: '+(dif==null?'確認できません':'3本の平均音量の差 '+dif.toFixed(2)+' dB（目標±0.5dB以内）'+(dif<=.5?'':'⚠ 差が大きい'))+(lim?'｜一部は音割れ防止のため上げ幅を制限':'')+'｜長さ・解像度・素材・ナレーション・BGMは3本で共通。どれがA/B/Cかは「答え合わせ」まで伏せています';
+ res.sort((a,b)=>a.code<b.code?-1:1);L.textContent='';L.appendChild(stat);res.forEach(r=>blindLink(L,r.code,r.blob,r.audio,r.saved));
  window.CP.lastBlind=res;return res}
+async function blindRecover(){const all=await blindList();if(!all.length)return 0;const run=Math.max(...all.map(r=>r.run)),g=all.filter(r=>r.run===run).sort((a,b)=>a.code<b.code?-1:1),L=$('blindl');
+ if(L.textContent)return 0;const h=document.createElement('div');h.className='note w';h.textContent='前回のブラインド書き出しで完成していた動画 '+g.length+' 本が端末内に残っています（ページを開き直しても失われません）。';L.appendChild(h);g.forEach(r=>blindLink(L,r.code,r.blob,r.audio,true));return g.length}
+async function sha256Hex(t){try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch{return null}}
+const CP_BUILD='cinematic-pro build 2026-11-27（git 30203ed 以降）';
+async function evidenceRecord(){const k=(S.cmp&&S.cmp.key)||{},res=(window.CP.lastBlind||[]),djt=S.dj||null,mats=[];
+ S.clips.forEach((c,i)=>{if(c&&c.el)mats.push({scene:i+1,file:c.name,bytes:c.file?c.file.size:null,url:($('cu'+i)||{}).value||'',credit:($('cc'+i)||{}).value||'',license:($('cl'+i)||{}).value||''})});
+ const E={recordedAt:new Date().toISOString(),app:{build:CP_BUILD,resolution:CW+'x'+CH,fps:FPS,seconds:D},device:{userAgent:navigator.userAgent,screen:screen.width+'x'+screen.height,dpr:devicePixelRatio,deviceMemoryGB:navigator.deviceMemory||null,cores:navigator.hardwareConcurrency||null},
+  script:S.ln.map(l=>l.toks.map(q=>q[0]).join('')),designJson:djt?{title:(window.LASTPLAN&&window.LASTPLAN.meta&&window.LASTPLAN.meta.title)||null,chars:djt.length,sha256:await sha256Hex(djt)}:null,
+  materials:mats,narration:{file:S.narrFile?S.narrFile.name:null,mock:!!S.isMockNarr},bgm:S.bgm?{file:S.bgm.name,source:S.bgm.src,license:S.bgm.lic,bpm:S.bgm.bpm,beatConfidence:S.bgm.an&&S.bgm.an.conf}:null,
+  videos:res.map(r=>({code:r.code,variant:k[r.code]||'（答え合わせ前）',bytes:r.blob.size,loudness:r.mix,audio:r.audio,perf:r.perf,autoAdjustments:r.gov}))};
+ return E}
 function revealKey(){let k=S.cmp&&S.cmp.key;if(!k||!Object.keys(k).length){try{k=JSON.parse(sessionStorage.getItem('cpKey')||'null')}catch{}}
- $('revl').textContent=k?Object.keys(k).sort().map(c=>'動画'+c+' = '+({A:'A 基本',B:'B 高度',C:'C ディレクター最適化'})[k[c]]).join('\n'):'ブラインド書き出しの記録がありません（ページを開き直した場合は失われます）';return k}
-$('bBlind').onclick=()=>blindSet();$('bReveal').onclick=revealKey;
+ $('revl').textContent=k?Object.keys(k).sort().map(c=>'動画'+c+' = '+({A:'A 基本',B:'B 高度',C:'C ディレクター最適化'})[k[c]]).join('\n'):'ブラインド書き出しの記録がありません（ページを開き直した場合は失われます）';
+ if(k){S.cmp=S.cmp||{};S.cmp.key=k;evidenceRecord().then(E=>{const t=JSON.stringify(E,null,1),a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:'text/plain'}));a.download='evidence-'+Date.now()+'.txt';a.textContent='比較の記録（素材・台本・JSON・アプリ版・端末・音の検査）を保存';a.style.display='block';$('revl').appendChild(a);window.CP.lastEvidence=E})}
+ return k}
+$('bBlind').onclick=()=>blindSet();$('bReveal').onclick=revealKey;$('bAbort').onclick=()=>{S.abort=true};try{blindRecover()}catch{}
 let DV=0;
 function applyDirector(){S.dj=null;const P=DIR.plan($('dsc').value,{variant:DV});if(!P.scenes.length){$('dirsum').textContent='台本が空です';return null}
  const b=planToBase(P);loadBase(b,'ディレクター案'+(DV?'（別案'+DV+'）':''));window.LASTPLAN=P;
@@ -544,5 +579,5 @@ $('bDJP').onclick=()=>{const t=BSDesign.requestPrompt($('dsc').value);$('djp').v
 $('bDJC').onclick=async()=>{const t=BSDesign.requestPrompt($('dsc').value);$('djp').value=t;$('djp').hidden=false;try{await navigator.clipboard.writeText(t);$('djs').textContent='依頼文をコピーしました。ChatGPT/Claudeに貼り付けてください'}catch{$('djp').select();$('djs').textContent='自動コピーできません。上の欄を長押しして全選択→コピーしてください'}};
 (function(){const o=$('implt'),L=BSDesign.IMPL;o.textContent=Object.keys(L).map(k=>(/^実装済み/.test(L[k])?'✔ ':'△ ')+k+'：'+L[k]).join('\n')+'\n※ 完成動画に反映されるのは✔の演出です。△は設計・近似のみ。'})();
 clipForm();ledger();renderFrame(1.5);
-window.CP={intakeReport,blindSet,revealKey,perfSummary,PF,makeVariant,applyVariant,GOV,govern,fxCost,analyzeBgm,loadBgm,drawParallax,rateAt,mediaT,applyCuts,importDesign,exportOffline,S,renderFrame,capLayout,boxes,safeCheck,buildAudio,measure,alignNarr,mockNarr,segments,report,prep,exportVideo,useClip,sceneAt,camera,trans,LN0,SCN0,out,og,GL:!!GL,SAFE,N,FPS,D,ledger,stats};
+window.CP={exportGuard,audioReport,evidenceRecord,blindRecover,blindList,CP_BUILD,intakeReport,blindSet,revealKey,perfSummary,PF,makeVariant,applyVariant,GOV,govern,fxCost,analyzeBgm,loadBgm,drawParallax,rateAt,mediaT,applyCuts,importDesign,exportOffline,S,renderFrame,capLayout,boxes,safeCheck,buildAudio,measure,alignNarr,mockNarr,segments,report,prep,exportVideo,useClip,sceneAt,camera,trans,LN0,SCN0,out,og,GL:!!GL,SAFE,N,FPS,D,ledger,stats};
 </script></body></html>
