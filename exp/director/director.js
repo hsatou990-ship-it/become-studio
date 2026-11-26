@@ -24,7 +24,7 @@ function analyze(t,i){let v=0,a=.3,n=0,hits=[];for(const c of LEX)for(const w of
  if(n){v/=n;a=(a-.3)/n*.7+.3*.3}else{v=0;a=.3}
  if(/[！!]/.test(t))a+=.15;if(/[？?]/.test(t))a+=.05;if(/ない|なかった|できない/.test(t)&&v>0)v*=.5;
  return{v:Math.max(-1,Math.min(1,v)),a:Math.max(0,Math.min(1,a)),hits}}
-function phrase(t,w){const i=t.indexOf(w);if(i<0)return w;let a=i,e=i+w.length;const P='はがをにでともの、，,へやか';while(a>0&&/[\u4e00-\u9fff]/.test(t[a-1])&&e-a<4)a--;while(e<t.length&&!P.includes(t[e])&&e-a<5)e++;return t.slice(a,e)}
+function phrase(t,w){const i=t.indexOf(w);if(i<0)return w;let a=i,e=i+w.length;const P='はがをにでともの、，,へやか';while(a>0&&/[\u4e00-\u9fff]/.test(t[a-1])&&e-a<4)a--;while(e<t.length&&!P.includes(t[e])&&e-a<7)e++;return t.slice(a,e)}
 function concepts(t){const o=[];for(const [re,id] of CONCEPT)if(re.test(t)&&!o.includes(id))o.push(id);return o}
 function plan(script,opt){opt=opt||{};const cps=opt.cps||5.2,target=opt.target||0,seed=hash(script+'|'+(opt.variant||0)),R=rng(seed),advice=[];
  const beats=splitBeats(script,cps);if(!beats.length)return{meta:{error:'台本が空です'},scenes:[]};
