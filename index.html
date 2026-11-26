@@ -37,7 +37,7 @@ nav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:re
 nav button{margin:0;border:0;border-radius:0;background:none;color:var(--mute);min-height:58px;font-size:12px;padding:6px 2px}#info,#vs,#vf,#vi{white-space:pre-line}nav button.on{color:var(--gold);box-shadow:inset 0 2px 0 var(--gold)}
 @media (prefers-reduced-motion:reduce){button:active{transform:none}}
 </style></head><body>
-<header><span class="logo">BECOME.</span><span>STUDIO v5.0</span><span id="ep">EP.001</span></header>
+<header><span class="logo">BECOME.</span><span>STUDIO v6.0</span><span id="ep">EP.001</span></header>
 <p id="st" role="status">準備完了。テーマを確認して「動画を作る」を押してください。</p>
 <main>
 <section id="hero">
@@ -96,6 +96,21 @@ nav button{margin:0;border:0;border-radius:0;background:none;color:var(--mute);m
 <ul id="atb"></ul>
 </details>
 <details id="adv"><summary>詳細設定（通常は触らなくて大丈夫です）</summary>
+<section class="pn" id="pgx">
+<h2>ElevenLabs ナレーション（有料・最優先で使用）</h2>
+<div class="ck"><input type="checkbox" id="xon" checked><span>ElevenLabsの声を使う（キー未設定・残り不足・上限超過のときは使わず、Gemini→無料Kokoroへ切替。追加課金はしません）</span></div>
+<label for="xk">ElevenLabs APIキー（この端末の中だけに保存。公開ソースには入りません）</label><input type="password" id="xk" autocomplete="off" placeholder="ここに貼り付けて「キーを保存」">
+<p><button class="pri" id="xsave">キーを保存</button><button id="xcheck">契約と残りを確認</button><button id="xclr">キーを消す</button></p>
+<p><button id="xfind">日本語の男性の声を探す</button></p>
+<label for="xvl">声の候補</label><select id="xvl"></select>
+<p><button id="xprev">試し聞き（無料）</button><button class="pri" id="xuse">この声を採用</button></p><audio id="xaud" controls hidden style="width:100%"></audio>
+<label for="xmodel">モデル</label><select id="xmodel"><option value="eleven_multilingual_v2">Multilingual v2（安定・推奨）</option><option value="eleven_v3">v3（表現が豊か・実験的）</option></select>
+<label for="xcap">1本あたりの上限（文字数。超えると生成しません）</label><input type="number" id="xcap" min="100" max="20000" step="100">
+<label for="xmcap">今月の自主上限（文字数・このアプリ内の合計）</label><input type="number" id="xmcap" min="500" max="500000" step="500">
+<p><button id="xtest">ElevenLabsで試し聞き</button></p>
+<p class="note" id="xst" style="white-space:pre-wrap"></p>
+<p class="note">生成の前に、契約の残りクレジットを毎回確認し、足りなければ何も生成せず止まります。同じ台本の再生成は端末内に保存した音声を使うため、追加消費しません。ElevenLabs側の設定画面で「上限を超えた分の従量課金」はオフのままにしてください。</p>
+</section>
 <section class="pn" id="pg0">
 <h2>AIナレーション（Gemini・第一候補）</h2>
 <div class="ck"><input type="checkbox" id="gon" checked><span>Geminiの声を使う（キー未設定・上限到達・失敗のときは、自動で無料のKokoroへ切り替え）</span></div>
@@ -156,8 +171,8 @@ Kokoro-82M：モデルの重みはApache-2.0。モデルカードに商用デプ
 <p><button class="pri" id="bPlay">▶ プレビュー</button><button id="bStop">■ 停止</button></p>
 <label>動画時間（ナレーション取込時は音声の長さが優先）</label>
 <select id="dur"><option value="45">45秒</option><option value="60">60秒</option><option value="75" selected>75秒</option><option value="90">90秒</option><option value="120">120秒</option></select>
-<label>背景アニメーション</label>
-<select id="bgs"><option value="auto">自動（3シーンごとに切替）</option><option value="mountain">山と太陽</option><option value="rays">光の筋</option><option value="city">夜の街</option><option value="stars">星空</option><option value="rain">雨と光</option></select>
+<label>映像スタイル</label>
+<select id="bgs"><option value="mg" selected>モーショングラフィックス（黒背景・白い人物・図解）</option><option value="auto">自動（3シーンごとに切替）</option><option value="mountain">山と太陽</option><option value="rays">光の筋</option><option value="city">夜の街</option><option value="stars">星空</option><option value="rain">雨と光</option></select>
 <label>背景写真（任意・複数可。無ければ生成アニメ）</label><input type="file" id="imgs" accept="image/*" multiple>
 <h2>BGM・効果音</h2>
 <div class="ck"><input type="checkbox" id="bgm" checked><span>オリジナル合成BGM（重低音パッドと鼓動）</span></div>
@@ -267,7 +282,138 @@ function bg(sty,t,u,k){
  else{for(let j=0;j<8;j++){const r=g.createRadialGradient(rng(j+k)*720,300+rng(j+9)*700,0,rng(j+k)*720,300+rng(j+9)*700,90);r.addColorStop(0,'#c9a45c33');r.addColorStop(1,'#0000');g.fillStyle=r;g.fillRect(0,0,720,1280)}
   g.strokeStyle='rgba(200,210,225,.22)';g.lineWidth=2;g.beginPath();for(let j=0;j<90;j++){const x=rng(j)*760,y=((rng(j+50)*1400+t*900*(.6+rng(j+7)))%1400)-60;g.moveTo(x,y);g.lineTo(x-12,y+60)}g.stroke()}}
 function wrap(s,max){const o=[];let l='';for(const ch of s){if(g.measureText(l+ch).width>max&&l){o.push(l);l=''}l+=ch}if(l)o.push(l);return o}
+/* ---------- v6.0: モーショングラフィックス映像（黒背景・白い人物・図解・キネティック字幕） ---------- */
+const mcl=(x,a=0,b=1)=>Math.max(a,Math.min(b,x)),mea=x=>1-Math.pow(1-mcl(x),3),mei=x=>{x=mcl(x);return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2},mbk=x=>{x=mcl(x);const a=1.70158,b=a+1;return 1+b*Math.pow(x-1,3)+a*Math.pow(x-1,2)};
+const MGF='"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans CJK JP",sans-serif',WH='#f5f1ea',GD='#e0b860',R2D=Math.PI/180;
+const lmb=(x,y,a1,l1,a2,l2)=>{const ax=x+Math.sin(a1*R2D)*l1,ay=y+Math.cos(a1*R2D)*l1,a=a1+a2;return[[x,y],[ax,ay],[ax+Math.sin(a*R2D)*l2,ay+Math.cos(a*R2D)*l2]]};
+/* --- 人物（関節を持つ白いマネキン）--- */
+function mgPose(n,ph){const w=Math.sin(ph),c=Math.cos(ph);
+ switch(n){
+ case'walk':{const a=28*w,b=28*Math.sin(ph+Math.PI),k1=8+34*Math.max(0,Math.cos(ph)),k2=8+34*Math.max(0,Math.cos(ph+Math.PI));return{sp:7,hd:0,A1:[-a*.9,-14],A2:[a*.9,-14],L1:[a,-k1],L2:[b,-k2],bob:5*Math.abs(w)}}
+ case'run':{const a=50*w,b=50*Math.sin(ph+Math.PI);return{sp:17,hd:-4,A1:[-a*1.1,-85],A2:[a*1.1,-85],L1:[a,-(20+55*Math.max(0,Math.cos(ph)))],L2:[b,-(20+55*Math.max(0,Math.cos(ph+Math.PI)))],bob:9*Math.abs(w)}}
+ case'sit':return{sp:26+2*w,hd:22,A1:[38,-78],A2:[30,-70],L1:[88,-88],L2:[80,-80],seat:1};
+ case'sitUp':return{sp:4,hd:0,A1:[28,-60],A2:[22,-50],L1:[88,-88],L2:[82,-82],seat:1};
+ case'slump':return{sp:24+1.5*w,hd:30,A1:[10,-6],A2:[4,-6],L1:[8,-14],L2:[-4,-12]};
+ case'think':return{sp:8,hd:16,A1:[28,-135],A2:[-4,-8],L1:[6,-4],L2:[-6,-4]};
+ case'up':return{sp:-3,hd:-14,A1:[158+4*w,-4],A2:[168-4*w,-4],L1:[12,-3],L2:[-12,-3]};
+ case'reach':return{sp:6,hd:-6,A1:[100,-6],A2:[-8,-6],L1:[14,-6],L2:[-14,-4]};
+ case'point':return{sp:4,hd:0,A1:[82,-4],A2:[-8,-8],L1:[6,-3],L2:[-6,-3]};
+ default:return{sp:2+1.2*w,hd:0,A1:[7,-6+2*w],A2:[-6,-6-2*w],L1:[4,-2],L2:[-4,-2]}}}
+function mgFig(x,gy,s,dir,pn,ph,al,col){const P=mgPose(pn,ph),tl=120*s,r=31*s;g.save();g.translate(x,0);g.scale(dir,1);g.translate(-x,0);g.globalAlpha*=al==null?1:al;g.lineCap='round';g.lineJoin='round';
+ const L=(a)=>lmb(0,0,a[0],85*s,a[1],85*s);let fd=Math.max(L(P.L1)[2][1],L(P.L2)[2][1]);const py=gy-fd-(P.bob||0)*s,px=x;
+ const nk=[px+Math.sin(P.sp*R2D)*tl,py-Math.cos(P.sp*R2D)*tl],sh=[px+(nk[0]-px)*.9,py+(nk[1]-py)*.9];
+ const lg=(a,sx,sy)=>lmb(sx,sy,a[0],85*s,a[1],85*s),ar=(a,sx,sy)=>lmb(sx,sy,a[0],68*s,a[1],62*s);
+ const draw=(pts,w,c)=>{g.strokeStyle=c;g.lineWidth=w;g.beginPath();g.moveTo(pts[0][0],pts[0][1]);for(let i=1;i<pts.length;i++)g.lineTo(pts[i][0],pts[i][1]);g.stroke()};
+ const back='#a9a49a',front=col||WH;
+ if(P.seat){g.fillStyle='#2a2a2a';g.strokeStyle='#555';g.lineWidth=2;g.beginPath();g.roundRect(px-44*s,py+14*s,96*s,fd-14*s+ (gy-py-fd) ,6);g.fill();g.stroke()}
+ draw(lg(P.L2,px,py),25*s,back);draw(ar(P.A2,sh[0],sh[1]),19*s,back);
+ draw([[px,py],nk],47*s,front);
+ const hc=[nk[0]+Math.sin((P.sp+P.hd)*R2D)*(r+9*s),nk[1]-Math.cos((P.sp+P.hd)*R2D)*(r+9*s)];g.fillStyle=front;g.beginPath();g.arc(hc[0],hc[1],r,0,7);g.fill();
+ draw(lg(P.L1,px,py),25*s,front);draw(ar(P.A1,sh[0],sh[1]),19*s,front);
+ g.restore();return{head:hc,hand:ar(P.A1,sh[0],sh[1])[2],py}}
+/* --- アイコン・図解（白い線画＋金のアクセント）--- */
+function mgIcon(n,x,y,s,t,p){g.save();g.translate(x,y);g.scale(s,s);g.lineCap='round';g.lineJoin='round';g.strokeStyle=WH;g.lineWidth=7;g.fillStyle=WH;g.globalAlpha*=mcl(p*1.4);const dash=(len)=>g.setLineDash([len*mcl(p*1.15),len*3]);
+ const circ=(cx,cy,r)=>{g.beginPath();g.arc(cx,cy,r,0,7);};
+ switch(n){
+ case'clock':{dash(640);circ(0,0,100);g.stroke();g.setLineDash([]);for(let i=0;i<12;i++){const a=i*Math.PI/6;g.lineWidth=i%3?3:6;g.beginPath();g.moveTo(Math.sin(a)*84,-Math.cos(a)*84);g.lineTo(Math.sin(a)*96,-Math.cos(a)*96);g.stroke()}
+  g.lineWidth=7;const m=t*1.8,h=m/12;g.beginPath();g.moveTo(0,0);g.lineTo(Math.sin(m)*78,-Math.cos(m)*78);g.stroke();g.lineWidth=9;g.beginPath();g.moveTo(0,0);g.lineTo(Math.sin(h)*52,-Math.cos(h)*52);g.stroke();g.fillStyle=GD;circ(0,0,9);g.fill();break}
+ case'calendar':{dash(900);g.beginPath();g.roundRect(-100,-95,200,190,16);g.stroke();g.setLineDash([]);g.fillStyle=GD;g.beginPath();g.roundRect(-100,-95,200,42,[16,16,0,0]);g.fill();g.lineWidth=5;for(let i=0;i<3;i++){}
+  const n2=Math.floor(mcl(p)*16);for(let i=0;i<20;i++){const cx=-72+(i%5)*36,cy=-28+Math.floor(i/5)*34;g.strokeStyle='#4a4a4a';g.lineWidth=3;g.strokeRect(cx-10,cy-10,20,20);if(i<n2){g.strokeStyle=GD;g.lineWidth=5;g.beginPath();g.moveTo(cx-8,cy);g.lineTo(cx-2,cy+7);g.lineTo(cx+9,cy-8);g.stroke()}}break}
+ case'phone':{dash(700);g.beginPath();g.roundRect(-62,-115,124,230,20);g.stroke();g.setLineDash([]);g.fillStyle='#1a1a1a';g.beginPath();g.roundRect(-52,-98,104,196,12);g.fill();const off=(t*60)%48;g.save();g.beginPath();g.rect(-52,-98,104,196);g.clip();for(let i=-1;i<5;i++){const yy=-88+i*48+off;g.fillStyle=i%2?'#3a3a3a':'#5a5a5a';g.beginPath();g.roundRect(-44,yy,88,36,8);g.fill();g.fillStyle=GD;g.beginPath();g.arc(-30,yy+18,7,0,7);g.fill()}g.restore();g.fillStyle=WH;g.beginPath();g.roundRect(-18,-108,36,5,3);g.fill();break}
+ case'book':{dash(800);g.beginPath();g.moveTo(0,-70);g.quadraticCurveTo(-60,-95,-120,-70);g.lineTo(-120,75);g.quadraticCurveTo(-60,50,0,75);g.quadraticCurveTo(60,50,120,75);g.lineTo(120,-70);g.quadraticCurveTo(60,-95,0,-70);g.moveTo(0,-70);g.lineTo(0,75);g.stroke();g.setLineDash([]);g.lineWidth=4;g.strokeStyle='#777';for(let i=0;i<4;i++){const w2=mcl(p*3-i*.3);g.beginPath();g.moveTo(-100,-38+i*22);g.lineTo(-100+78*w2,-38+i*22+0);g.moveTo(22,-38+i*22);g.lineTo(22+78*w2,-38+i*22);g.stroke()}g.strokeStyle=GD;g.lineWidth=6;g.beginPath();g.moveTo(60,-72);g.lineTo(60,-30+Math.sin(t*3)*4);g.stroke();break}
+ case'brain':{const N=[[0,-90],[-85,-45],[85,-45],[-100,35],[100,35],[-45,95],[45,95],[0,0],[-45,-30],[45,-30]],E=[[0,1],[0,2],[1,3],[2,4],[3,5],[4,6],[5,6],[7,0],[7,1],[7,2],[7,3],[7,4],[7,5],[7,6],[8,0],[9,0],[8,1],[9,2]];g.lineWidth=3;g.strokeStyle='#8c8c8c';E.forEach(([a,b])=>{g.beginPath();g.moveTo(N[a][0],N[a][1]);g.lineTo(N[b][0],N[b][1]);g.stroke()});
+  N.forEach((q,i)=>{g.fillStyle=WH;circ(q[0],q[1],i===7?15:9);g.fill()});E.forEach(([a,b],i)=>{const f=((t*.9+i*.37)%1);g.fillStyle=GD;g.globalAlpha*=.9;circ(N[a][0]+(N[b][0]-N[a][0])*f,N[a][1]+(N[b][1]-N[a][1])*f,5);g.fill();g.globalAlpha/=.9});const pu=.5+.5*Math.sin(t*3);g.strokeStyle=GD;g.globalAlpha*=.35*pu;g.lineWidth=5;circ(0,0,26+14*pu);g.stroke();break}
+ case'bulb':{dash(520);circ(0,-30,62);g.stroke();g.setLineDash([]);g.beginPath();g.moveTo(-26,30);g.lineTo(-26,70);g.lineTo(26,70);g.lineTo(26,30);g.stroke();g.beginPath();g.moveTo(-22,88);g.lineTo(22,88);g.stroke();const pu=.6+.4*Math.sin(t*4);g.strokeStyle=GD;g.lineWidth=6;g.globalAlpha*=pu;for(let i=0;i<8;i++){const a=i*Math.PI/4+Math.PI/8;g.beginPath();g.moveTo(Math.sin(a)*86,-30-Math.cos(a)*86);g.lineTo(Math.sin(a)*112,-30-Math.cos(a)*112);g.stroke()}g.fillStyle=GD;g.globalAlpha=.25*pu*mcl(p);circ(0,-30,56);g.fill();break}
+ case'mountain':{dash(900);g.beginPath();g.moveTo(-170,90);g.lineTo(-60,-60);g.lineTo(-10,10);g.lineTo(55,-100);g.lineTo(170,90);g.closePath();g.stroke();g.setLineDash([]);g.strokeStyle=GD;g.lineWidth=6;g.beginPath();g.moveTo(55,-100);g.lineTo(55,-172);g.stroke();g.fillStyle=GD;const w3=Math.sin(t*5)*5;g.beginPath();g.moveTo(55,-172);g.lineTo(100,-160+w3);g.lineTo(55,-146);g.closePath();g.fill();break}
+ case'target':{g.lineWidth=7;[100,68,36].forEach((r,i)=>{g.setLineDash([r*6.3*mcl(p*1.2-i*.1),r*20]);circ(0,0,r);g.stroke()});g.setLineDash([]);g.fillStyle=GD;circ(0,0,12);g.fill();const f=mea(p*1.1-.25);g.strokeStyle=GD;g.lineWidth=8;g.beginPath();g.moveTo(130-130*(1-f)*-1+ (1-f)*140,-130-(1-f)*120);g.lineTo(6,-6);g.stroke();break}
+ case'check':{for(let i=0;i<3;i++){const yy=-80+i*80,q=mcl(p*3-i*.6);g.globalAlpha=1;g.strokeStyle=WH;g.lineWidth=6;g.beginPath();g.roundRect(-110,yy-26,52,52,10);g.stroke();g.strokeStyle='#555';g.lineWidth=7;g.beginPath();g.moveTo(-34,yy);g.lineTo(-34+130*mcl(q*1.5),yy);g.stroke();if(q>.5){g.strokeStyle=GD;g.lineWidth=9;g.beginPath();g.moveTo(-100,yy);g.lineTo(-88,yy+13);g.lineTo(-68,yy-14);g.stroke()}}break}
+ case'sunrise':{const rise=mea(p*1.1);g.save();g.beginPath();g.rect(-220,-260,440,260);g.clip();g.fillStyle=GD;circ(0,70-rise*120,76);g.fill();g.lineWidth=5;g.strokeStyle=GD;g.globalAlpha*=.6;for(let i=0;i<13;i++){const a=-Math.PI+(i+.5)*Math.PI/13,r1=96+Math.sin(t*3+i)*6;g.beginPath();g.moveTo(Math.cos(a)*r1,70-rise*120+Math.sin(a)*r1);g.lineTo(Math.cos(a)*(r1+34),70-rise*120+Math.sin(a)*(r1+34));g.stroke()}g.restore();g.strokeStyle=WH;g.lineWidth=6;g.beginPath();g.moveTo(-220,0);g.lineTo(220,0);g.stroke();break}
+ case'stairs':{dash(900);g.beginPath();g.moveTo(-150,100);for(let i=0;i<5;i++){g.lineTo(-150+i*60,100-i*42);g.lineTo(-90+i*60,100-i*42)}g.lineTo(150,100-5*42+0);g.lineTo(150,100);g.stroke();break}
+ case'loop':{g.lineWidth=9;g.rotate(t*1.4);g.beginPath();g.arc(0,0,86,.3,Math.PI*1.7);g.stroke();const a=Math.PI*1.7,ex=Math.cos(a)*86,ey=Math.sin(a)*86;g.beginPath();g.moveTo(ex-4,ey-30);g.lineTo(ex,ey);g.lineTo(ex+28,ey-14);g.stroke();g.rotate(-t*1.4);g.strokeStyle=GD;g.lineWidth=5;g.globalAlpha*=.6;circ(0,0,112);g.setLineDash([8,14]);g.stroke();break}
+ case'hourglass':{g.lineWidth=7;g.beginPath();g.moveTo(-70,-110);g.lineTo(70,-110);g.lineTo(8,0);g.lineTo(70,110);g.lineTo(-70,110);g.lineTo(-8,0);g.closePath();g.stroke();const f=(t*.25)%1;g.fillStyle=GD;g.beginPath();g.moveTo(-8-(1-f)*50,-100+f*70);g.lineTo(8+(1-f)*50,-100+f*70);g.lineTo(2,-6);g.lineTo(-2,-6);g.closePath();g.fill();g.beginPath();g.moveTo(-60*f,104);g.lineTo(60*f,104);g.lineTo(0,104-f*70);g.closePath();g.fill();g.fillRect(-1.5,0,3,100);break}
+ case'q':{g.fillStyle=GD;g.font=`900 ${300}px ${MGF}`;g.textAlign='center';g.textBaseline='middle';g.globalAlpha*=.95;g.fillText('?',0,Math.sin(t*2)*8);break}
+ case'eye':{dash(500);g.beginPath();g.moveTo(-120,0);g.quadraticCurveTo(0,-90,120,0);g.quadraticCurveTo(0,90,-120,0);g.stroke();g.setLineDash([]);const ox=Math.sin(t*1.5)*22;g.fillStyle=GD;circ(ox,0,34);g.fill();g.fillStyle='#000';circ(ox,0,14);g.fill();break}
+ }
+ g.restore()}
+function mgChart(n,x,y,s,t,p){g.save();g.translate(x,y);g.scale(s,s);g.lineCap='round';g.lineJoin='round';g.globalAlpha*=mcl(p*1.5);const ax=()=>{g.strokeStyle='#666';g.lineWidth=4;g.beginPath();g.moveTo(-150,-110);g.lineTo(-150,110);g.lineTo(160,110);g.stroke();g.strokeStyle='#2c2c2c';g.lineWidth=2;for(let i=1;i<4;i++){g.beginPath();g.moveTo(-150,110-i*55);g.lineTo(160,110-i*55);g.stroke()}};
+ if(n==='line'){ax();const pts=[0,.08,.14,.2,.28,.3,.45,.58,.72,.9,1].map((v,i,a)=>[-140+i*29,100-v*190]),q=mcl(p*1.1)*(pts.length-1);g.strokeStyle=GD;g.lineWidth=9;g.beginPath();g.moveTo(pts[0][0],pts[0][1]);let ex=pts[0][0],ey=pts[0][1];for(let i=1;i<pts.length;i++){const f=mcl(q-(i-1));if(f<=0)break;ex=pts[i-1][0]+(pts[i][0]-pts[i-1][0])*f;ey=pts[i-1][1]+(pts[i][1]-pts[i-1][1])*f;g.lineTo(ex,ey)}g.stroke();g.fillStyle=WH;g.beginPath();g.arc(ex,ey,12,0,7);g.fill();g.strokeStyle=GD;g.globalAlpha*=.4;g.lineWidth=4;g.beginPath();g.arc(ex,ey,22+6*Math.sin(t*5),0,7);g.stroke()}
+ else if(n==='bars'||n==='down'){ax();for(let i=0;i<6;i++){const v=n==='bars'?.18+i*.15:.95-i*.15,h=190*v*mea(p*1.3-i*.12);g.fillStyle=i===5?(n==='bars'?GD:'#c0554a'):WH;g.globalAlpha=(i===5?1:.85)*mcl(p*1.5);g.beginPath();g.roundRect(-128+i*49,110-h,32,h,4);g.fill()}}
+ else if(n==='donut'){const v=mcl(p*1.1);g.lineWidth=26;g.strokeStyle='#2a2a2a';g.beginPath();g.arc(0,0,100,0,7);g.stroke();g.strokeStyle=GD;g.beginPath();g.arc(0,0,100,-Math.PI/2,-Math.PI/2+Math.PI*2*v*(S.mgPct||.7));g.stroke()}
+ g.restore()}
+/* --- 台本の意味から演出を決める --- */
+const MGK=[
+ [/スマホ|画面|SNS|眺め/,{icon:'phone',pose:'sit',bg:'dots'}],
+ [/毎朝|毎晩|同じ|繰り返|いつか|待っ|変わらな/,{icon:'loop',pose:'slump',bg:'dots'}],
+ [/時間が|過ぎ|減って|年が/,{icon:'hourglass',pose:'slump',bg:'dots'}],
+ [/失う|損|痛み|苦し|逃げ|諦/,{chart:'down',pose:'slump',bg:'dots'}],
+ [/脳|心理|バイアス|作業興奮|損失回避|効果|性質/,{icon:'brain',pose:'think',bg:'grid'}],
+ [/見て(い)?な|他人|評価|スポットライト|比べ/,{icon:'eye',pose:'stand',bg:'grid'}],
+ [/本|読|学ぶ|学び|知識/,{icon:'book',pose:'sitUp',bg:'grid'}],
+ [/挑戦|始め|一歩|動け|踏み出|最初の|動き出/,{icon:'stairs',pose:'walk',bg:'rays',stairs:1}],
+ [/続け|積み|毎日|日数|継続|習慣|コツコツ|やめなかっ/,{icon:'calendar',pose:'walk',bg:'grid'}],
+ [/成功|理想|未来|自由|夢|景色|頂|本気/,{icon:'mountain',pose:'reach',bg:'rays'}],
+ [/自信|行動|前に進|超え|成長|変化|変わる/,{chart:'line',pose:'walk',bg:'grid'}],
+ [/気づ|思い|考え|決め|答え|本当/,{icon:'bulb',pose:'think',bg:'rays'}],
+ [/タイマー|朝|2分|分/,{icon:'clock',pose:'stand',bg:'grid'}],
+ [/結果|証拠|事実|裏切らな/,{icon:'check',pose:'stand',bg:'grid'}]];
+const MGU={'分':'clock','秒':'clock','時間':'clock','日':'calendar','年':'calendar','回':'target','ページ':'book','ミリ':'target','%':'donut','％':'donut','つ':'target','本':'book'};
+function mgKit(c,k,n){S.kits=S.kits||new Map();const key=c.s+'|'+k;if(S.kits.has(key))return S.kits.get(key);const role=S.rolesFor===$('script').value?(S.roles||[])[k]:null;let K={icon:null,chart:null,pose:'stand',bg:'grid',big:null,kw:[],side:k%2?1:-1,stairs:0};
+ const m=c.s.match(/(\d+)\s*(分|時間|秒|日|年|回|ページ|ミリ|%|％|つ|本)/);
+ for(const[r,v]of MGK){const q=c.s.match(r);if(q){K={...K,...v};K.kw.push(q[0]);break}}
+ if(m){K.big={n:+m[1],u:m[2]};K.icon=MGU[m[2]]||'target';K.kw.push(m[0]);if(m[2]==='%'||m[2]==='％')K.icon='donut'}
+ if(!K.icon&&!K.chart){const f={hook:{icon:'q',pose:'stand',bg:'rays'},pain:{icon:'loop',pose:'slump',bg:'dots'},truth:{icon:'bulb',pose:'think',bg:'rays'},act:{icon:'stairs',pose:'walk',bg:'rays',stairs:1},proof:{icon:'check',pose:'stand',bg:'grid'},close:{icon:'sunrise',pose:'up',bg:'rays'},story:{chart:'line',pose:'walk',bg:'grid'},psych:{icon:'brain',pose:'think',bg:'grid'}}[role]||(k===0?{icon:'q',pose:'stand',bg:'rays'}:k===n-1?{icon:'sunrise',pose:'up',bg:'rays'}:{chart:'line',pose:'walk',bg:'grid'});K={...K,...f}}
+ if(k===0&&/[？?]$/.test(c.s)){K.icon='q';K.chart=null;K.pose='stand';K.hook=1}
+ if(k===n-1){K.icon='sunrise';K.chart=null;K.pose='up';K.close=1;K.big=null}
+ K.kw=K.kw.concat((c.s.match(/\d+|[ぁ-んァ-ヶー一-龠]{0,0}/g)||[]).filter(Boolean));S.kits.set(key,K);return K}
+/* --- 背景効果 --- */
+function mgBg(kind,t,k){const gr=g.createRadialGradient(360,520,40,360,520,820);gr.addColorStop(0,'#101010');gr.addColorStop(1,'#000');g.fillStyle=gr;g.fillRect(0,0,720,1280);
+ if(kind==='grid'){g.strokeStyle='rgba(255,255,255,.07)';g.lineWidth=2;const off=(t*40)%60;for(let i=-1;i<14;i++){const y=720+i*60+off*0;const yy=720+Math.pow((i*60+off)/700,1.6)*560;if(yy>720&&yy<1280){g.beginPath();g.moveTo(0,yy);g.lineTo(720,yy);g.stroke()}}for(let i=-10;i<=10;i++){g.beginPath();g.moveTo(360+i*30,720);g.lineTo(360+i*160,1280);g.stroke()}}
+ else if(kind==='rays'){g.save();g.translate(360,560);g.rotate(t*.05+k);g.strokeStyle='rgba(224,184,96,.07)';g.lineWidth=3;for(let i=0;i<28;i++){g.rotate(Math.PI*2/28);g.beginPath();g.moveTo(130,0);g.lineTo(900,0);g.stroke()}g.restore()}
+ else if(kind==='dots'){for(let i=0;i<60;i++){const x=(rng(i+k*7)*720+t*(6+i%5*3))%720,y=(rng(i+90+k)*1000-t*(8+i%4*4)+4000)%1000+80;g.fillStyle=`rgba(255,255,255,${.05+.1*rng(i+3)})`;g.beginPath();g.arc(x,y,1.5+rng(i)*2,0,7);g.fill()}}
+ const hz=g.createLinearGradient(0,640,0,780);hz.addColorStop(0,'rgba(224,184,96,0)');hz.addColorStop(1,'rgba(224,184,96,.08)');g.fillStyle=hz;g.fillRect(0,640,720,140)}
+/* --- 字幕（音声に同期して1文字ずつ点灯。数字・キーワードは金色）--- */
+function mgCap(c,lt,k,sc){const s=c.s,fs=s.length>20?44:s.length>12?52:60;g.font=`900 ${fs}px ${MGF}`;const tw=g.measureText(s).width,nl=Math.max(1,Math.ceil(tw/600)),ls=wrap(s,nl>1?Math.min(600,tw/nl*1.1+fs*.5):600),n=s.length;
+ const wts=[...s].map(ch=>/[、，,]/.test(ch)?3:/[。！？!?]/.test(ch)?4:1),tot=wts.reduce((p,q)=>p+q,0);let dur=c.au?c.au.buf.duration/rate():c.d*.8,st=c.au?c.au.start-c.t0:.15;const p=mcl((lt-st)/dur+.03);let acc=0;const lit=wts.map(w=>{acc+=w;return acc/tot<=p+1e-6?1:0});
+ const kws=mgKit(c,k,sc.length).kw;const hi=new Array(n).fill(0);kws.forEach(w=>{let i=-1;while((i=s.indexOf(w,i+1))>=0){for(let j=i;j<i+w.length;j++)hi[j]=1}});
+ const fi=mea(lt/.3),fo=mcl((c.d-lt)/.2),al=Math.min(fi,fo),lh=fs*1.5,y0=905-((ls.length-1)*lh)/2;g.save();g.globalAlpha*=al;g.textBaseline='middle';g.textAlign='left';let idx=0;
+ ls.forEach((ln,j)=>{let x=(720-g.measureText(ln).width)/2;const y=y0+j*lh+(1-fi)*22;[...ln].forEach(ch=>{const w=g.measureText(ch).width,on=lit[idx],pop=on?Math.max(0,1-(p-(wts.slice(0,idx+1).reduce((a,b)=>a+b,0)/tot))*0):0;
+   g.save();g.translate(x+w/2,y);if(on){const age=(p*tot-wts.slice(0,idx+1).reduce((a,b)=>a+b,0))*-1;const sc2=1+.14*Math.max(0,1-Math.abs(age)/1.2);g.scale(sc2,sc2)}
+   g.lineWidth=fs*.22;g.strokeStyle='rgba(0,0,0,.95)';g.strokeText(ch,-w/2,0);g.fillStyle=on?(hi[idx]?GD:WH):(hi[idx]?'rgba(224,184,96,.3)':'rgba(245,241,234,.28)');g.fillText(ch,-w/2,0);g.restore();x+=w;idx++})});g.restore()}
+/* --- 場面の描画 --- */
+function mgScene(K,lt,u,c,k){const gy=790,t=lt,pr=mea(lt/.9),ph=lt*(K.pose==='run'?9:5.4);const S1=K.big?.7:1.08;
+ g.strokeStyle='rgba(255,255,255,.22)';g.lineWidth=3;const gl=g.createLinearGradient(80,0,640,0);gl.addColorStop(0,'rgba(255,255,255,0)');gl.addColorStop(.2,'rgba(255,255,255,.3)');gl.addColorStop(.8,'rgba(255,255,255,.3)');gl.addColorStop(1,'rgba(255,255,255,0)');g.strokeStyle=gl;g.beginPath();g.moveTo(80,gy+2);g.lineTo(640,gy+2);g.stroke();
+ const fx=K.hook||K.close?360:K.side<0?190:530,ix=K.hook||K.close?360:K.side<0?520:210;let gyy=gy,fdir=K.side<0?1:-1;let figX=fx;
+ if(K.pose==='walk'){figX=fx+ (K.hook||K.close?0:Math.sin(lt*.8)*26)}
+ if(K.stairs){const st=mcl(lt/c.d);gyy=gy-Math.floor(st*5)*0-st*150;g.strokeStyle='rgba(255,255,255,.5)';g.lineWidth=5;g.beginPath();g.moveTo(figX-210,gy+2);for(let i=0;i<5;i++){g.lineTo(figX-210+i*70,gy-i*30);g.lineTo(figX-140+i*70,gy-i*30)}g.stroke();figX=fx-100+st*190;fdir=1}
+ if(K.close){g.save();g.globalAlpha*=.0;g.restore()}
+ const big=K.big,bn=big?Math.round(big.n*mea(lt/Math.max(.5,c.d*.55))):0;
+ if(K.hook){const sp=g.createRadialGradient(360,760,10,360,420,520);sp.addColorStop(0,'rgba(255,255,255,.2)');sp.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=sp;g.beginPath();g.moveTo(300,120);g.lineTo(420,120);g.lineTo(560,gy);g.lineTo(160,gy);g.closePath();g.fill()}
+ if(K.close||K.icon==='sunrise'){mgIcon('sunrise',360,gy-6,2.1*pr,t,mea(lt/1.2))}
+ const fp=mgFig(figX,gyy,K.hook||K.close?1.2:S1*1.0,fdir,K.pose,ph,mea(lt/.45));
+ if(K.hook){mgIcon('q',360,350,1.15,t,mea(lt/.6)*1)}
+ else if(K.icon&&K.icon!=='sunrise'){const sc3=K.big?.9:1.2,yy=K.big?620:500;if(K.icon==='donut'){mgChart('donut',ix,yy,.9,t,mea(lt/1.2))}else mgIcon(K.icon,K.big?(K.side<0?520:200):ix,yy,sc3*pr,t,mea(lt/1.0))}
+ if(K.chart)mgChart(K.chart,ix,500,1.15,t,mea(lt/1.4));
+ if(big){g.save();g.textAlign='center';g.textBaseline='middle';const sx=1+.1*(1-mbk(lt/.5));g.translate(360,K.side<0?250:250);g.scale(sx,sx);g.font=`900 210px ${MGF}`;const txt=(big.u==='%'||big.u==='％'?bn:bn)+'';g.lineWidth=14;g.strokeStyle='#000';g.strokeText(txt,-60,0);g.fillStyle=GD;g.fillText(txt,-60,0);const w=g.measureText(txt).width;g.font=`900 74px ${MGF}`;g.fillStyle=WH;g.textAlign='left';g.lineWidth=10;g.strokeText(big.u,-60+w/2+14,36);g.fillText(big.u,-60+w/2+14,36);g.restore()}}
+function mgTrans(lt,k,c){const a=.34;if(lt>a)return;const q=lt/a,m=k%3;g.save();if(m===0){const x=-120+q*960;const gr=g.createLinearGradient(x-90,0,x+90,0);gr.addColorStop(0,'rgba(255,255,255,0)');gr.addColorStop(.5,`rgba(255,255,255,${.5*(1-q)})`);gr.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=gr;g.fillRect(x-90,0,180,1280)}
+ else if(m===1){g.strokeStyle=`rgba(224,184,96,${.8*(1-q)})`;g.lineWidth=8;g.beginPath();g.arc(360,470,40+q*700,0,7);g.stroke()}
+ else{g.fillStyle=`rgba(255,255,255,${.22*(1-q)})`;g.fillRect(0,0,720,1280);const y=1280-q*1500;g.fillStyle=`rgba(224,184,96,${.9*(1-q)})`;g.fillRect(0,y,720,6)}
+ g.restore()}
+function drawMG(t,D,sc){const W=cv.width;g.save();g.setTransform(W/720,0,0,W/720,0,0);
+ const c=sc.find(x=>t<x.t0+x.d)||sc[sc.length-1]||{s:'',t0:0,d:D,i:0},k=c.i,lt=Math.max(0,t-c.t0),K=mgKit(c,k,sc.length);
+ if(K.big&&(K.big.u==='%'||K.big.u==='％'))S.mgPct=mcl(K.big.n/100);
+ g.fillStyle='#000';g.fillRect(0,0,720,1280);mgBg(K.bg,t,k);
+ const tin=mea(lt/.5),tout=mcl((c.d-lt)/.22),m=k%3;g.save();
+ if(m===1){g.beginPath();g.arc(360,470,mea(lt/.45)*900+1,0,7);g.clip()}
+ const sk=.94+.06*tin+(1-tout)*.04;g.translate(360,470);g.scale(sk,sk);g.translate(-360,-470);if(m===2)g.translate(0,(1-tin)*60);g.globalAlpha=Math.min(1,tin*1.6)*tout;mgScene(K,lt,0,c,k);g.restore();
+ mgTrans(lt,k,c);
+ g.save();g.globalAlpha=.9;g.fillStyle='#e0b860';g.font=`800 22px ${MGF}`;g.textAlign='center';g.textBaseline='middle';g.fillText('B E C O M E .',360,86);g.restore();
+ mgCap(c,lt,k,sc);
+ const v=g.createRadialGradient(360,640,260,360,640,860);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(0,0,0,.65)');g.fillStyle=v;g.fillRect(0,0,720,1280);
+ for(let j=0;j<46;j++){g.fillStyle='rgba(255,255,255,.045)';g.fillRect(Math.random()*720,Math.random()*1280,2,2)}
+ g.restore();return k}
+
 function draw(t,D,sc){
+ if($('bgs').value==='mg'&&!S.photos.length)return drawMG(t,D,sc);
  const W=cv.width;g.save();g.setTransform(W/720,0,0,W/720,0,0);
  const c=sc.find(x=>t<x.t0+x.d)||sc[sc.length-1]||{s:'',t0:0,d:D,i:0},k=c.i,lt=t-c.t0,u=Math.min(1,Math.max(0,lt/c.d));
  const sel=$('bgs').value,sty=sel==='auto'?(S.tpl?S.tpl.st:ST)[Math.floor(k/3)%(S.tpl?S.tpl.st.length:5)]:sel;
@@ -515,7 +661,7 @@ async function makeVideo(){
   else{const tN=Date.now();let lT=null;S.onNar=(i,n)=>{ckc();if(lT==null)lT=Date.now();S.nline=i;S.nN=n};
    tk=setInterval(()=>{const el=(Date.now()-tN)/1000;if(S.nline==null){prog(.02+.08*(1-Math.exp(-el/120)),null);ms(1,'▶','音声エンジンを準備中（初回のみ数分）経過 '+fmt(el))}
     else{const i=S.nline,n=S.nN,avg=i>0?(Date.now()-lT)/1000/i:4;prog(.10+.35*i/n,(n-i)*avg+estD(lines())+14);ms(1,'▶',`${i+1}/${n}行目を生成中`)}},500);
-   await narrate();clearInterval(tk);tk=null;ms(1,'✔',S.act.bufs.length+'行 生成完了（'+({gemini:'Gemini',kokoro:'Kokoro'}[S.act.src]||'')+'）'+(S.gFall?'／Gemini不使用：'+S.gFall:''))}
+   await narrate();clearInterval(tk);tk=null;ms(1,'✔',S.act.bufs.length+'行 生成完了（'+(ENG[S.act.src]||'')+'）'+(S.xFall&&S.act.src!=='eleven'?'／ElevenLabs不使用：'+S.xFall:'')+(S.gFall&&S.act.src==='kokoro'?'／Gemini不使用：'+S.gFall:''))}
   ckc();cur=2;ms(2,'▶');const tg=+$('dur').value,f=fitTarget();upd();let M=model();
   if(!M.A)throw JE('ナレーション音声がありません。BGMのみの動画は作りません');if(M.miss)throw JE('未生成の行があります');const bad=chkM(M);if(bad)throw JE(bad);
   ms(2,'✔',`合計 ${fmt(M.D)}（目標 ${fmt(tg)}）`+(f.cut?`／長すぎたため ${f.cut}行を省略`:'')+(M.D>tg+1?'／目標より長いまま続行':''));
@@ -568,14 +714,18 @@ async function genGemini(L,roles){const voice=$('gv').value,tx=$('gtag').checked
     await sleep(1500*(k+1))}}
   if(!bufs[i])throw last}
  $('pgv').value=1;return{mode:'clips',bufs,src:'gemini',vk:'g:'+voice+':'+GM[mi]}}
-async function narrate(){const L=lines();let last;const useG=$('gon').checked&&(gkey()||$('gpx').value.trim());S.gFall='';
- if(useG){try{xmsg('Gemini（自然な男性ナレーション）で生成しています…');const roles=S.rolesFor===$('script').value?S.roles:[];const A=await genGemini(L,roles);S.cand=S.act=A;S.tclip=A.bufs[0];S.ttext=L[0];S.vt=null;S.gDone=true;return}
+async function narrate(){const L=lines();let last;const useX=$('xon').checked&&xkey()&&xvoice(),useG=$('gon').checked&&(gkey()||$('gpx').value.trim());S.gFall='';S.xFall='';
+ const roles=S.rolesFor===$('script').value?S.roles:[];
+ if(useX){try{xmsg('ElevenLabs（人間らしい男性ナレーション）で生成しています…');const A=await genEleven(L,roles);S.cand=S.act=A;S.tclip=A.bufs[0];S.ttext=L[0];S.vt=null;S.gDone=true;return}
+  catch(e){if(e.cancel)throw e;S.xFall=xemsg(e);LOG('ElevenLabs失敗→次の声へ: '+String(e.message).slice(0,160));xmsg('⚠ '+S.xFall+'。次の声エンジンに切り替えます…',1);await sleep(1200)}}
+ else S.xFall=$('xon').checked?(xkey()?'声が未選択':'キー未設定'):'';
+ if(useG){try{xmsg('Gemini（自然な男性ナレーション）で生成しています…');const A=await genGemini(L,roles);S.cand=S.act=A;S.tclip=A.bufs[0];S.ttext=L[0];S.vt=null;S.gDone=true;return}
   catch(e){if(e.cancel)throw e;S.gFall=gmsg(e);LOG('Gemini失敗→Kokoroへ切替: '+String(e.message).slice(0,160));xmsg('⚠ '+S.gFall+'。無料のKokoroの声に切り替えます…',1);await sleep(1200)}}
  else S.gFall=$('gon').checked?'キー未設定':'';
  for(let k=1;k<=3;k++){ckc();
   try{xmsg(k>1?`ナレーションの生成をやり直しています（${k}/3回目）…`:'ナレーション（Kokoro）を生成しています…');S.nline=null;await genAll();S.act=S.cand;return}
   catch(e){if(e.cancel)throw e;last=e;LOG(`ナレーション試行${k}失敗: `+String(e&&e.message||e).slice(0,200));if(!e.bad)S.tts=null;S.vt=null;S.tclip=null;if(k<3)await sleep(1500*k)}}
- throw JE('ナレーションを作れませんでした（'+(S.gFall?S.gFall+'→':'')+'Kokoroも3回試しました）。'+why(last)+'\n声が入らない動画は作らないため、ここで止めました。通信状況を確認して、もう一度「動画を作る」を押してください')}
+ throw JE('ナレーションを作れませんでした（'+(S.xFall?S.xFall+'→':'')+(S.gFall?S.gFall+'→':'')+'Kokoroも3回試しました）。'+why(last)+'\n声が入らない動画は作らないため、ここで止めました。通信状況を確認して、もう一度「動画を作る」を押してください')}
 /* --- テンプレート --- */
 const TPL={
  cinema:{n:'ダークシネマ',st:['city','rays','stars','mountain','rain'],tint:'rgba(10,28,45,.12)',sty:'予告編のように重厚に語る。',seq:[['hook',1],['pain',2],['truth',1],['theme'],['act',3],['proof',2],['close',1]],grow:['pain','act','proof','truth'],pool:{hook:P.hook,pain:P.pain,truth:P.truth,act:P.act,proof:P.proof,close:P.close}},
@@ -609,13 +759,84 @@ $('gtest').onclick=async()=>{const b=$('gtest');b.disabled=true;$('gst').textCon
  catch(e){LOG('gtest失敗: '+e.message);$('gst').textContent='✖ '+gmsg(e)+'\n詳細: '+String(e.message).slice(0,200)}finally{b.disabled=false}};
 function gui_keep(){}
 gui();
+/* ---------- v6.0: ElevenLabs（有料）ナレーション＋クレジット管理 ---------- */
+const XB='https://api.elevenlabs.io',ENG={eleven:'ElevenLabs',gemini:'Gemini',kokoro:'Kokoro'};
+const xkey=()=>store.get('bs_xk','')||'',xvoice=()=>store.get('bs_xv','')||'';
+const XS={hook:{st:.42,sy:.4},pain:{st:.38,sy:.5},truth:{st:.5,sy:.4},psych:{st:.5,sy:.3},story:{st:.45,sy:.35},act:{st:.5,sy:.3},proof:{st:.5,sy:.3},close:{st:.4,sy:.5}};
+S.xc=new Map();
+const xmonth=()=>{const m=new Date().toISOString().slice(0,7),o=store.get('bs_xu',null);return o&&o.m===m?o:{m,n:0}};
+const xhist=()=>store.get('bs_xh',[])||[];
+function xerr(r,raw){let j=null;try{j=JSON.parse(raw)}catch{}const d=j&&j.detail,st=(d&&(d.status||d.code))||'',m=String((d&&(d.message||d))||raw).slice(0,200);
+ return Object.assign(new Error('HTTP '+r.status+' '+st+' '+m),{xs:r.status,xcode:String(st),xq:r.status===402||/quota|credit|exceeded/i.test(st+m),xkey:r.status===401||/invalid_api_key|needs_authorization/i.test(st),xperm:r.status===403||/missing_permissions/i.test(st+m),xrate:r.status===429,xvoice:r.status===404||/voice_not_found|invalid_voice/i.test(st+m),xmodel:/model/i.test(st)&&r.status===400})}
+async function xfetch(path,opt={},tmo=60000){const key=xkey();if(!key)throw Object.assign(new Error('APIキー未設定'),{xkey:1});const ctl=new AbortController(),tm=setTimeout(()=>ctl.abort(),tmo);let r;
+ try{r=await fetch(XB+path,{...opt,headers:{'xi-api-key':key,...(opt.body?{'Content-Type':'application/json'}:{}),...(opt.headers||{})},signal:ctl.signal})}
+ catch(e){throw Object.assign(new Error(e.name==='AbortError'?'時間切れ':'通信できません（'+e.message+'）'),{xnet:1})}finally{clearTimeout(tm)}return r}
+async function xsub(){const r=await xfetch('/v1/user/subscription'),raw=await r.text();if(!r.ok)throw xerr(r,raw);const j=JSON.parse(raw);
+ if(typeof j.character_limit!=='number'||typeof j.character_count!=='number')throw Object.assign(new Error('契約情報の形式が想定と違います'),{xfmt:1});
+ return{tier:j.tier,used:j.character_count,limit:j.character_limit,left:j.character_limit-j.character_count,status:j.status,ext:j.max_credit_limit_extension,canExt:!!j.can_extend_character_limit,reset:j.next_character_count_reset_unix}}
+/* 生成前の安全確認：失敗したら一切生成しない（fail-closed） */
+async function xguard(L){const need=L.reduce((a,s)=>a+s.length,0),cap=+$('xcap').value||1500,mcap=+$('xmcap').value||20000,mu=xmonth();
+ if(need>cap)throw Object.assign(new Error('1本あたりの上限（'+cap+'文字）を超えています（今回 '+need+'文字）'),{xblock:1});
+ if(mu.n+need>mcap)throw Object.assign(new Error('今月の自主上限（'+mcap+'文字）を超えるため停止（使用済み '+mu.n+'文字）'),{xblock:1});
+ const s=await xsub();if(!/^(active|trialing)$/.test(String(s.status)))throw Object.assign(new Error('契約の状態が有効ではありません（'+s.status+'）'),{xblock:1});
+ if(need>s.left)throw Object.assign(new Error('契約の残りクレジットが足りません（残り '+s.left+'、必要 '+need+'）。上限を超える課金を防ぐため停止'),{xblock:1,xq:1});
+ return{s,need}}
+async function xcall(text,voice,model,role,prev,next,seedUsed){
+ const rs=XS[role]||{st:.5,sy:.35},body={text,model_id:model,voice_settings:{stability:rs.st,similarity_boost:.8,style:rs.sy,use_speaker_boost:true,speed:1}};
+ if(prev)body.previous_text=prev;if(next)body.next_text=next;if(model!=='eleven_multilingual_v2')body.language_code='ja';
+ const r=await xfetch('/v1/text-to-speech/'+encodeURIComponent(voice)+'?output_format=mp3_44100_128',{method:'POST',body:JSON.stringify(body)},90000);
+ if(!r.ok)throw xerr(r,await r.text());const ab=await r.arrayBuffer();if(ab.byteLength<2000)throw Object.assign(new Error('音声データが小さすぎます'),{bad:1});return dec(ab)}
+const xemsg=e=>!e?'':e.xblock?'ElevenLabsを使わず停止：'+e.message:e.xkey?'ElevenLabsのAPIキーが無効、または未設定です':e.xperm?'ElevenLabsのAPIキーの権限が足りません（Text to Speech と Voices と User の読み取りを許可してください）':e.xq?'ElevenLabsのクレジットが不足しています（追加課金はしていません）':e.xrate?'ElevenLabsの同時利用が多すぎます':e.xvoice?'選んだ声がアカウントで使えません（声を選び直してください）':e.xnet?'ElevenLabsに通信できません':e.bad?'ElevenLabsの音声が無音または破損でした':'ElevenLabsでエラー：'+String(e.message||e).slice(0,100);
+async function genEleven(L,roles){const voice=xvoice(),model=$('xmodel').value;if(!voice)throw Object.assign(new Error('声が未選択です'),{xblock:1});
+ const need0=L.reduce((a,s,i)=>a+(S.xc.has(voice+'|'+model+'|'+s+'|'+(roles[i]||''))?0:s.length),0),todo=L.map((s,i)=>S.xc.has(voice+'|'+model+'|'+s+'|'+(roles[i]||''))?null:s).filter(x=>x!==null);
+ let before=null;if(need0>0){xmsg('契約の残りクレジットを確認しています…');const gd=await xguard(todo);before=gd.s;LOG(`ElevenLabs事前確認OK 残り${gd.s.left} 必要${gd.need} プラン${gd.s.tier}`)}
+ const bufs=[];let spent=0,mdl=model;
+ for(let i=0;i<L.length;i++){S.onNar&&S.onNar(i,L.length);$('pgv').value=i/L.length;const ck=voice+'|'+model+'|'+L[i]+'|'+(roles[i]||''),hit=S.xc.get(ck);if(hit){bufs[i]=hit;continue}
+  let last;for(let k=0;k<2&&!bufs[i];k++){
+   try{let b=await xcall(L[i],voice,mdl,roles[i],L[i-1],L[i+1]);const v=vcheck(b,L[i]);if(!v.ok)throw Object.assign(new Error(v.why),{bad:1});const tr=trimBuf(b);b=vcheck(tr,L[i]).ok?tr:b;bufs[i]=b;S.xc.set(ck,b);spent+=L[i].length;const mu=xmonth();mu.n+=L[i].length;store.set('bs_xu',mu);LOG(`ElevenLabs ${i+1}行目OK（${mdl}）`)}
+   catch(e){last=e;LOG(`ElevenLabs ${i+1}行目失敗(${k+1}): `+String(e.message).slice(0,160));if(S.cancel)throw Object.assign(new Error('中止しました'),{cancel:1,jp:1});
+    if(e.xkey||e.xperm||e.xq||e.xvoice||e.xrate)throw e;if(e.xmodel&&mdl!=='eleven_multilingual_v2'){mdl='eleven_multilingual_v2';continue}if(e.bad&&k===0)continue;await sleep(1500)}}
+  if(!bufs[i])throw last}
+ $('pgv').value=1;let after=null;try{after=await xsub()}catch{}
+ const real=before&&after?after.used-before.used:null;const h=xhist();h.unshift({d:new Date().toLocaleString('ja-JP'),chars:spent,real,left:after?after.left:null,m:mdl});store.set('bs_xh',h.slice(0,20));xui();
+ return{mode:'clips',bufs,src:'eleven',vk:'x:'+voice+':'+mdl}}
+/* --- 設定UI --- */
+function xui(){const k=xkey(),mu=xmonth(),h=xhist()[0];$('xst').textContent=`APIキー: ${k?'この端末に保存済み':'未設定'} ／ 声: ${xvoice()?xvoice().slice(0,8)+'…':'未選択'} ／ アプリ内の今月使用: ${mu.n}文字${h?`\n直近: ${h.d} 生成${h.chars}文字／契約側の実消費 ${h.real==null?'確認できません':h.real+'文字'}／残り ${h.left==null?'確認できません':h.left}`:''}`;$('xk').value=''}
+$('xsave').onclick=async()=>{const v=$('xk').value.trim();if(!v)return say('キーが空です');if(/\s/.test(v)||v.length<20)return say('キーの形式が正しくありません。コピーし直してください');store.set('bs_xk',v);xui();await xcheck()};
+$('xclr').onclick=()=>{store.set('bs_xk','');store.set('bs_xv','');xui();say('ElevenLabsのキーと声の選択を消しました')};
+$('xon').onchange=()=>store.set('bs_xon',$('xon').checked);$('xmodel').onchange=()=>store.set('bs_xmodel',$('xmodel').value);$('xcap').onchange=()=>store.set('bs_xcap',+$('xcap').value||1500);$('xmcap').onchange=()=>store.set('bs_xmcap',+$('xmcap').value||20000);
+{$('xon').checked=!!store.get('bs_xon',true);const m=store.get('bs_xmodel','eleven_multilingual_v2');if([...$('xmodel').options].some(o=>o.value===m))$('xmodel').value=m;$('xcap').value=store.get('bs_xcap',1500);$('xmcap').value=store.get('bs_xmcap',20000)}
+async function xcheck(){const b=$('xcheck');b.disabled=true;$('xst').textContent='契約情報を確認しています…（クレジットは消費しません）';
+ try{const s=await xsub();let w='';if(s.ext!==0&&s.ext!=null)w='\n⚠ 上限超過の従量課金が有効になっています（追加枠 '+(s.ext==='unlimited'||s.ext<0?'無制限':s.ext)+'）。ElevenLabsの設定で無効にしてください。このアプリは残りを超える生成を行いません';
+  $('xst').textContent=`✔ プラン ${s.tier}（${s.status}）／今月の使用 ${s.used} / ${s.limit}／残り ${s.left}${w}`}
+ catch(e){$('xst').textContent='✖ '+xemsg(e)+'\n詳細: '+String(e.message).slice(0,160)}finally{b.disabled=false}}
+$('xcheck').onclick=xcheck;
+async function xfind(){const b=$('xfind');b.disabled=true;$('xst').textContent='日本語の男性の声を検索しています…（クレジットは消費しません）';const sel=$('xvl');sel.innerHTML='';S.xv=new Map();
+ try{let n=0;const add=(v,own)=>{if(!v||!v.voice_id||S.xv.has(v.voice_id))return;S.xv.set(v.voice_id,{...v,own});const o=document.createElement('option');o.value=v.voice_id;o.textContent=(own?'【登録済】':'')+v.name+(v.description?'：'+String(v.description).slice(0,24):'');sel.appendChild(o);n++};
+  try{const r=await xfetch('/v1/voices'),raw=await r.text();if(r.ok){(JSON.parse(raw).voices||[]).filter(v=>!v.labels||!v.labels.gender||v.labels.gender==='male').forEach(v=>add(v,true))}}catch(e){if(e.xkey)throw e}
+  const r2=await xfetch('/v1/shared-voices?page_size=24&language=ja&gender=male&sort=usage_character_count_7d'),raw2=await r2.text();if(!r2.ok)throw xerr(r2,raw2);(JSON.parse(raw2).voices||[]).forEach(v=>add(v,false));
+  $('xst').textContent=n?`声の候補 ${n}件。「試し聞き（無料）」で聞き比べ、気に入った声を「この声を採用」してください`:'候補が見つかりません。確認できません'}
+ catch(e){$('xst').textContent='✖ '+xemsg(e)+'\n詳細: '+String(e.message).slice(0,160)}finally{b.disabled=false}}
+$('xfind').onclick=xfind;
+$('xprev').onclick=()=>{const v=S.xv&&S.xv.get($('xvl').value);if(!v||!v.preview_url)return say('試し聞きできる音声がありません');const a=$('xaud');a.src=v.preview_url;a.hidden=false;a.play().catch(()=>{})};
+$('xuse').onclick=async()=>{const id=$('xvl').value,v=S.xv&&S.xv.get(id);if(!v)return say('先に「声を探す」を押して声を選んでください');const b=$('xuse');b.disabled=true;
+ try{if(!v.own){if(!v.public_owner_id)throw Object.assign(new Error('この声はアカウントに追加できません'),{});const r=await xfetch(`/v1/voices/add/${encodeURIComponent(v.public_owner_id)}/${encodeURIComponent(id)}`,{method:'POST',body:JSON.stringify({new_name:'BS '+String(v.name).slice(0,30)})}),raw=await r.text();if(!r.ok&&!/already/i.test(raw))throw xerr(r,raw);let j=null;try{j=JSON.parse(raw)}catch{}if(j&&j.voice_id&&j.voice_id!==id)store.set('bs_xv',j.voice_id);else store.set('bs_xv',id)}else store.set('bs_xv',id);
+  xui();say('声を採用しました（'+v.name+'）。次は「ElevenLabsで試し聞き」で本番の声を確認してください')}
+ catch(e){$('xst').textContent='✖ '+xemsg(e)+'\n詳細: '+String(e.message).slice(0,160)}finally{b.disabled=false}};
+$('xtest').onclick=async()=>{const b=$('xtest');b.disabled=true;const tx='理想を語るな。理想になれ。';$('xst').textContent='ElevenLabsに依頼中…（'+tx.length+'文字分のクレジットを使います）';
+ try{if(!xvoice())throw Object.assign(new Error('声が未選択です'),{xblock:1});const gd=await xguard([tx]);const buf=await xcall(tx,xvoice(),$('xmodel').value,'close','','');const v=vcheck(buf,tx);if(!v.ok)throw Object.assign(new Error(v.why),{bad:1});
+  const mu=xmonth();mu.n+=tx.length;store.set('bs_xu',mu);const a=await xsub().catch(()=>null);const h=xhist();h.unshift({d:new Date().toLocaleString('ja-JP'),chars:tx.length,real:a?a.used-gd.s.used:null,left:a?a.left:null,m:$('xmodel').value});store.set('bs_xh',h.slice(0,20));xui();
+  $('xst').textContent+=`\n✔ 生成成功：${sfmt(v.s)}。これから再生します。男性の声か、低く知的か、棒読みでないかを耳で確認してください`;listen(model({mode:'clips',bufs:[buf]},[tx]),'ElevenLabsテスト')}
+ catch(e){LOG('xtest失敗: '+e.message);$('xst').textContent='✖ '+xemsg(e)+'\n詳細: '+String(e.message).slice(0,200)}finally{b.disabled=false}};
+xui();
+
 /* --- 成果の記録 --- */
 const vids=()=>store.get('bs_vids',[]);
-function recVid(M){const a=vids();a.unshift({id:Date.now(),ep:S.ep,date:new Date().toLocaleDateString('ja-JP'),th:$('th').value.trim(),tpl:S.tplKey||'cinema',eng:S.act.src,voice:S.act.src==='gemini'?$('gv').value:'jm_kumo',dur:Math.round(M.D),lines:M.sc.length,m:null});store.set('bs_vids',a.slice(0,60));S.curVid=a[0].id;aui()}
+function recVid(M){const a=vids();a.unshift({id:Date.now(),ep:S.ep,date:new Date().toLocaleDateString('ja-JP'),th:$('th').value.trim(),tpl:S.tplKey||'cinema',eng:S.act.src,voice:S.act.src==='eleven'?xvoice():S.act.src==='gemini'?$('gv').value:'jm_kumo',dur:Math.round(M.D),lines:M.sc.length,m:null});store.set('bs_vids',a.slice(0,60));S.curVid=a[0].id;aui()}
 const num=id=>{const v=$(id).value.trim();return v===''?null:Math.max(0,+v)};
 const pct=(a,b)=>b>0&&a!=null?(100*a/b):null,f1=x=>x==null?'—':x.toFixed(1);
 function aui(){const a=vids(),sel=$('av'),cur=sel.value;sel.innerHTML=a.length?a.map(v=>`<option value="${v.id}">${esc(v.date)} ${esc(v.th).slice(0,16)}（${TPL[v.tpl]?TPL[v.tpl].n:v.tpl}・${v.dur}秒）</option>`).join(''):'<option value="">作成済みの動画がありません</option>';if(cur&&a.some(v=>String(v.id)===cur))sel.value=cur;else if(S.curVid)sel.value=S.curVid;
- $('atb').innerHTML=a.length?a.map(v=>{const m=v.m;return`<li><b>${esc(v.date)} ${esc(v.th).slice(0,18)}</b><small>${TPL[v.tpl]?TPL[v.tpl].n:v.tpl} / ${v.eng==='gemini'?'Gemini':'Kokoro'} / ${v.dur}秒</small>${m?`<small>再生 ${m.views??'—'} ／ 平均視聴 ${m.avg??'—'}秒（維持率 ${f1(pct(m.avg,v.dur))}%）／ 保存 ${m.saves??'—'}（保存率 ${f1(pct(m.saves,m.views))}%）／ いいね ${m.likes??'—'} ／ フォロワー増 ${m.follow??'—'}</small>`:'<small>成果は未記録</small>'}</li>`}).join(''):'<li>まだ記録がありません</li>'}
+ $('atb').innerHTML=a.length?a.map(v=>{const m=v.m;return`<li><b>${esc(v.date)} ${esc(v.th).slice(0,18)}</b><small>${TPL[v.tpl]?TPL[v.tpl].n:v.tpl} / ${ENG[v.eng]||'Kokoro'} / ${v.dur}秒</small>${m?`<small>再生 ${m.views??'—'} ／ 平均視聴 ${m.avg??'—'}秒（維持率 ${f1(pct(m.avg,v.dur))}%）／ 保存 ${m.saves??'—'}（保存率 ${f1(pct(m.saves,m.views))}%）／ いいね ${m.likes??'—'} ／ フォロワー増 ${m.follow??'—'}</small>`:'<small>成果は未記録</small>'}</li>`}).join(''):'<li>まだ記録がありません</li>'}
 $('arec').onclick=()=>{const a=vids(),v=a.find(x=>String(x.id)===$('av').value);if(!v)return say('先に動画を作成してください');const m={views:num('a_v'),avg:num('a_a'),saves:num('a_s'),likes:num('a_l'),follow:num('a_f')};if(Object.values(m).every(x=>x==null))return say('数値を1つ以上入力してください');if(m.avg!=null&&m.avg>v.dur+5)return say(`平均視聴時間（${m.avg}秒）が動画の長さ（${v.dur}秒）を超えています。入力を確認してください`);v.m=m;store.set('bs_vids',a);aui();say('成果を記録しました')};
 $('ash').onchange=e=>{const f=e.target.files[0];if(!f)return;const u=URL.createObjectURL(f);$('ashp').src=u;$('ashp').hidden=false;$('ashp').onload=()=>URL.revokeObjectURL(u)};
 function suggest(){const a=vids().filter(v=>v.m&&v.m.views>0),o=[];if(!a.length)return{txt:'成果を記録した動画がまだありません。再生回数などを入力すると、提案を作れます。',best:null};
@@ -626,7 +847,7 @@ function suggest(){const a=vids().filter(v=>v.m&&v.m.views>0),o=[];if(!a.length)
  if(fl!=null&&fl<1)o.push('・フォロワー増が少なめです。結びに「続きはプロフィールから」を入れ、シリーズ化（EP番号を声に出す）を検討してください。');
  const grp=(key,f)=>{const g={};a.forEach(v=>{const r=pct(v.m.avg,v.dur);if(r==null)return;(g[f(v)]=g[f(v)]||[]).push(r)});return Object.entries(g).filter(([,x])=>x.length>=2).map(([k,x])=>[k,x.reduce((p,q)=>p+q,0)/x.length]).sort((p,q)=>q[1]-p[1])};
  const gt=grp('tpl',v=>v.tpl);if(gt.length>1)o.push('・テンプレート別の平均維持率: '+gt.map(([k,x])=>`${TPL[k]?TPL[k].n:k} ${x.toFixed(1)}%`).join(' ／ ')+`。次回は「${TPL[gt[0][0]]?TPL[gt[0][0]].n:gt[0][0]}」を優先。`);
- const ge=grp('eng',v=>v.eng);if(ge.length>1)o.push('・声エンジン別の平均維持率: '+ge.map(([k,x])=>`${k==='gemini'?'Gemini':'Kokoro'} ${x.toFixed(1)}%`).join(' ／ '));
+ const ge=grp('eng',v=>v.eng);if(ge.length>1)o.push('・声エンジン別の平均維持率: '+ge.map(([k,x])=>`${ENG[k]||'Kokoro'} ${x.toFixed(1)}%`).join(' ／ '));
  if(a.length<5)o.push(`・記録が${a.length}本です。比較が安定するのは5本以上が目安です。`);
  const best=a.slice().sort((p,q)=>(pct(q.m.avg,q.dur)||0)-(pct(p.m.avg,p.dur)||0))[0];o.push(`・維持率が最も高い動画: ${best.date}「${best.th.slice(0,16)}」（${TPL[best.tpl]?TPL[best.tpl].n:best.tpl}・${best.dur}秒）`);
  o.push('※この基準は一般的な経験則の目安で、TikTokの公式基準ではありません。サンプルが少ないうちは偶然の影響が大きいです。');return{txt:o.join('\n'),best}}
