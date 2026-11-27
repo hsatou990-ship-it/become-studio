@@ -66,7 +66,7 @@ with sync_playwright() as p:
     pg.evaluate("()=>{const S=CP.S;S.narr=CP.mockNarr();S.sc=JSON.parse(JSON.stringify(CP.SCN0));S.ln=JSON.parse(JSON.stringify(CP.LN0));S.off=0}")
     # clips & license gate
     base=frame(pg,3.5)
-    pg.set_input_files('#cf0',D+'/clip_p.mp4')
+    pg.set_input_files('#cf0',os.environ.get('BECOME_FIX','/tmp/become-fixtures')+'/clip_p.mp4')
     r0=pg.evaluate("()=>CP.useClip(0)");msg=pg.inner_text('#cm0')
     chk('C9 clip without rights info is refused (mock stays)',r0==False and '使いません' in msg and pg.evaluate("()=>CP.S.clips[0]===null"),msg[:60])
     pg.fill('#cu0','https://www.pexels.com/video/test-123/');pg.fill('#cc0','Test Creator');pg.fill('#cl0','Pexels License');pg.check('#ck0')
@@ -75,7 +75,7 @@ with sync_playwright() as p:
     chk('C9b with full rights info: clip accepted and ledger written',r1==True and 'Test Creator' in led and 'Pexels License' in led and 'Video by' in led and 'S2' in led,led[:100])
     f1=frame(pg,1.0)
     chk('C9c accepted clip is actually drawn (differs from mock)',f1!=base)
-    pg.set_input_files('#cf1',D+'/clip_l.mp4');pg.fill('#cu1','https://example.org/x');pg.fill('#cc1','C');pg.fill('#cl1','CC0');pg.check('#ck1')
+    pg.set_input_files('#cf1',os.environ.get('BECOME_FIX','/tmp/become-fixtures')+'/clip_l.mp4');pg.fill('#cu1','https://example.org/x');pg.fill('#cc1','C');pg.fill('#cl1','CC0');pg.check('#ck1')
     r2=pg.evaluate("()=>CP.useClip(1)");cm=pg.inner_text('#cm1')
     chk('C9d landscape/low-res clip: accepted with warnings',r2==True and '横向き' in cm and '解像度' in cm,cm)
     pg.evaluate("()=>{CP.S.clips[0]=null;CP.S.clips[1]=null;CP.ledger()}")
@@ -97,11 +97,11 @@ with sync_playwright() as p:
     t0=time.time()
     ex=pe.evaluate("async()=>{const r=await CP.exportVideo();const ab=await r.blob.arrayBuffer();let s='';const u=new Uint8Array(ab);for(let i=0;i<u.length;i+=32768)s+=String.fromCharCode.apply(null,u.subarray(i,i+32768));return {full:r.full,codecsOk:r.codecsOk,status:document.getElementById('st').textContent,type:r.type,kind:r.kind,claimed:r.claimed,mismatch:r.mismatch,size:r.blob.size,v:r.v,stall:r.stall,b64:btoa(s),ft:CP.S.ft.length}}")
     el=time.time()-t0
-    open(D+'/out.'+ex['kind'],'wb').write(base64.b64decode(ex['b64']))
+    open('/tmp/tc_out.'+ex['kind'],'wb').write(base64.b64decode(ex['b64']))
     chk('C12 real-time export produced a video (>10KB) in about 15-20s',ex['size']>10000 and 14<el<26,'%s %dB %.1fs'%(ex['type'],ex['size'],el))
     print('INFO claimed',ex['claimed'],'actual',ex['kind'],'mismatch',ex['mismatch'])
     chk('C12b export verification passed (length 14-16.5s, narration audible, ending silent)',ex['v']['ok'] and not ex['v'].get('left'),ex['v'])
-    fn=D+'/out.'+ex['kind']
+    fn='/tmp/tc_out.'+ex['kind']
     pr=json.loads(subprocess.run(['ffprobe','-v','error','-show_entries','stream=codec_name,codec_type,width,height','-show_entries','format=duration,format_name','-of','json',fn],capture_output=True,text=True).stdout)
     cod={s['codec_type']:s['codec_name'] for s in pr['streams']};dur=float(pr['format']['duration'])
     chk('C12c ffprobe: real encoded video+audio streams, duration ~15s',('video' in cod and 'audio' in cod) and 14<dur<16.5,[cod,dur,pr['streams'][0].get('width')])
