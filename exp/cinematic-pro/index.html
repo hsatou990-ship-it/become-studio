@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none';script-src 'self' 'unsafe-inline';style-src 'unsafe-inline';img-src blob: data:;media-src blob: data:;connect-src 'none';base-uri 'none';form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none';script-src 'self' 'unsafe-inline';style-src 'unsafe-inline';img-src blob: data:;media-src blob: data:;connect-src https://pixabay.com https://cdn.pixabay.com;base-uri 'none';form-action 'none'">
 <title>CINEMATIC PRO 15秒試作（実験ページ）</title>
 <style>
 :root{color-scheme:dark}body{margin:0;background:#0b0c10;color:#e8e6df;font:15px/1.6 system-ui,"Noto Sans JP",sans-serif;padding:12px 16px 60px}
@@ -13,9 +13,10 @@ label{display:block}small{color:#9aa0ad}
 .ng{color:#ff8a80}.ok{color:#8bd48b}.pn{border:1px solid #2a3140;border-radius:10px;padding:8px;margin:6px 0}.bc{margin:6px 0}
 </style></head><body>
 <h1>CINEMATIC PRO 15秒試作（実験ページ・正式版とは別）</h1>
-<div class="pn" id="pjbar" hidden><span></span><br><button id="pjgo" class="pri">続きから再開</button></div><p class="note" id="pjst"></p>
-<p class="note" id="bld">配信版: cinematic-pro build 2026-11-27-r5-am（試験: 自動保存／素材一括取得の基盤・通信は無効／未公開ブランチ）</p>
-<p class="note">このページは現在、外部へ一切接続しません（通信遮断のCSP）。素材の一括取得も通信は無効で、実通信は個別承認後に接続先を限定して有効化します。素材はオーナーが自分で取得した動画ファイルを取り込みます。権利情報が揃っていない素材は使いません。未取込の場面は「模擬素材」で表示され、映像品質の評価対象になりません。</p>
+<div class="pn" id="pjbar" hidden><span></span><br><button id="pjgo" class="pri">続きから再開</button></div><p class="note" id="pjst"></p><p class="note" id="pjper"></p>
+<details><summary>プロジェクトのバックアップと復元（設定とナレーション・素材の出所。APIキーは含みません）</summary><p class="note">素材の動画本体は含みません（取得済みの素材はこの端末の受信箱から、無いものは保存済みIDから再取得します）。手動で取り込んだ素材は元ファイルを取り込み直してください。復元の前に、いまの作業は自動で退避します。</p><button id="pjBk">バックアップを保存（JSON）</button> <input type="file" id="pjIm" accept="application/json,.json"><p class="note" id="pjbst"></p></details>
+<p class="note" id="bld">配信版: cinematic-pro build 2026-11-27-r6-am（試験: 実通信の準備／検索1回・動画1本の試験枠のみ／未公開ブランチ）</p>
+<p class="note">このページの通信は pixabay.com と cdn.pixabay.com だけに限定しています（通信遮断のCSP）。通信は既定で無効で、「実通信の試験」で有効にしたときだけ、検索1回・動画1本の枠内で行います。それを超える通信は結果確認とオーナー承認のあとに開放します。素材はオーナーが自分で取得した動画ファイルを取り込みます。権利情報が揃っていない素材は使いません。未取込の場面は「模擬素材」で表示され、映像品質の評価対象になりません。</p>
 <canvas id="cv"></canvas>
 <p><button id="bPrep" class="p">① 音と編集を準備</button><button id="bPrev">② プレビュー再生</button><button id="bExp" class="p">③ 書き出し（15秒）</button><button id="bExp2" class="p">③b 高互換MP4書き出し（実験・H.264+AAC）</button><select id="resSel"><option value="720">720×1280（軽い）</option><option value="1080">1080×1920（TikTok推奨）</option></select><span id="rs" class="note"></span><a id="dl" hidden style="display:inline-block;padding:8px 10px;border:1px solid #d4af37;border-radius:8px;color:#d4af37">完成動画を保存</a></p>
 <p class="note" id="st">待機中</p>
@@ -63,11 +64,22 @@ label{display:block}small{color:#9aa0ad}
 <pre class="note" id="syncrep">ナレーション未取込（尺の管理は取り込み後に表示）</pre>
 <details><summary>発話区間の手動修正（検出がずれた・失敗したとき）</summary><div id="syncman"></div></details>
 <details><summary>監督レビュー（読み取り専用・点数なし）</summary><p class="note">映画監督・撮影監督・映像編集者・カラーリスト・広告ディレクターの視点で、いまの設計と完成フレームを確認します。素材・字幕・音声・設定は変更しません（素材の再生位置は実行後に元へ戻します）。</p><button id="bDR">レビューを実行</button><button id="bDRc">結果をコピー</button><pre class="note" id="drout">未実行</pre></details>
-<h2>素材の一括自動取得（試験・通信は承認待ちのため無効）</h2>
+<h2>素材の一括自動取得（試験・通信は試験枠のみ）</h2>
 <div class="pn" id="abox"><p class="note" id="bnet"></p>
 <label for="bpv">素材の提供元（交換できます）</label><select id="bpv"></select>
+<label for="bmode">取得の方法</label><select id="bmode"><option value="review">候補を先に確認して、採用したものだけ取得（おすすめ）</option><option value="auto">検索と同時に各場面の1位を取得</option></select>
 <label for="bkey">提供元のAPIキー（このタブを開いている間だけ。保存・送信しません）</label><input type="password" id="bkey" autocomplete="off" placeholder="キーを入力">
-<p><button class="pri" id="bGo">素材を一括自動取得</button><button id="bFail">失敗した場面だけ再処理</button><button id="bStop">中断</button></p>
+<details id="rt"><summary>実通信の試験（検索1回・動画1本まで）</summary>
+<p class="note">承認された範囲だけの通信です。接続先は pixabay.com と cdn.pixabay.com のみ。検索1回・動画1本を超える通信は、結果の確認とオーナー承認が出るまで自動で止まります。結果の文章にAPIキーは含まれません。</p>
+<div class="ck"><input type="checkbox" id="breal"><span>実通信を有効にする（Pixabay・試験枠のみ）</span></div>
+<label for="rq">検索語（英語）</label><input type="text" id="rq" value="sunrise mountain">
+<p><button id="rS">① 検索を1回行う</button></p>
+<p><select id="rSel"></select></p>
+<p><button id="rD">② 選んだ動画を1本ダウンロードして点検</button></p>
+<p class="note" id="rCnt"></p>
+<video id="rVid" controls playsinline muted hidden style="width:160px;border-radius:8px"></video><img id="rImg" alt="" hidden style="width:90px;border-radius:8px;vertical-align:top">
+<pre class="note" id="rOut">未実行</pre><p><button id="rC">結果の文章をコピー</button></p></details>
+<p><button class="pri" id="bGo">素材を一括自動取得</button><button id="bTop">各場面の1位をまとめて採用</button><button id="bRef">保存済みIDから素材を再取得</button><button id="bFail">失敗した場面だけ再処理</button><button id="bStop">中断</button></p>
 <progress id="bpg" max="1" value="0"></progress><p class="note" id="bst"></p><p class="note ng" id="bnote"></p>
 <div id="brev"></div>
 <div class="ck"><input type="checkbox" id="bokc"><span>全場面の素材について、人物の描写・商標・不適切表現・権利情報を確認しました</span></div>
@@ -692,9 +704,9 @@ async function blindSet(exporter){if(S.busy||!S.base)return null;const ex=export
 async function blindRecover(){const all=await blindList();if(!all.length)return 0;const run=Math.max(...all.map(r=>r.run)),g=all.filter(r=>r.run===run).sort((a,b)=>a.code<b.code?-1:1),L=$('blindl');
  if(L.textContent)return 0;const h=document.createElement('div');h.className='note w';h.textContent='前回のブラインド書き出しで完成していた動画 '+g.length+' 本が端末内に残っています（ページを開き直しても失われません）。';L.appendChild(h);g.forEach(r=>blindLink(L,r.code,r.blob,r.audio,true));return g.length}
 async function sha256Hex(t){try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch{return null}}
-const CP_BUILD='cinematic-pro build 2026-11-27-r5-am（試験: 自動保存／素材一括取得の基盤・通信は無効／未公開ブランチ）';
+const CP_BUILD='cinematic-pro build 2026-11-27-r6-am（試験: 実通信の準備／検索1回・動画1本の試験枠のみ／未公開ブランチ）';
 async function evidenceRecord(){const k=(S.cmp&&S.cmp.key)||{},res=(window.CP.lastBlind||[]),djt=S.dj||null,mats=[];
- S.clips.forEach((c,i)=>{if(c&&c.el)mats.push({scene:i+1,file:c.name,bytes:c.file?c.file.size:null,url:($('cu'+i)||{}).value||'',credit:($('cc'+i)||{}).value||'',license:($('cl'+i)||{}).value||'',rights:{pending:!!c.pend,provider:(BT.st[i]&&BT.st[i].rec)||null}})});
+ S.clips.forEach((c,i)=>{if(c&&c.el)mats.push({scene:i+1,file:c.name,bytes:c.file?c.file.size:null,url:($('cu'+i)||{}).value||'',credit:($('cc'+i)||{}).value||'',license:($('cl'+i)||{}).value||'',rights:{pending:!!c.pend,provider:(BT.st[i]&&BT.st[i].rec)||null},quality:(()=>{const h=c.el&&!c.rel?c.el.videoHeight:0,w=c.el&&!c.rel?c.el.videoWidth:0,d=c.el&&!c.rel?c.el.duration:0;return{width:w||null,height:h||null,durationSec:d?+d.toFixed(2):null,mbps:d&&c.file?+(c.file.size*8/d/1e6).toFixed(2):null,scaleTo1920:h?+(1920/h).toFixed(2):null}})()})});
  const E={recordedAt:new Date().toISOString(),app:{build:CP_BUILD,resolution:CW+'x'+CH,fps:FPS,seconds:D},device:{memoryMonitor:memMon(),tempMeasured:false,userAgent:navigator.userAgent,screen:screen.width+'x'+screen.height,dpr:devicePixelRatio,deviceMemoryGB:navigator.deviceMemory||null,cores:navigator.hardwareConcurrency||null},
   script:S.ln.map(l=>l.toks.map(q=>q[0]).join('')),designJson:djt?{title:(window.LASTPLAN&&window.LASTPLAN.meta&&window.LASTPLAN.meta.title)||null,chars:djt.length,sha256:await sha256Hex(djt)}:null,
   materials:mats,crop:Object.keys(S.crop||{}).map(i=>({scene:+i+1,subjectX:S.crop[i].sx,subjectY:S.crop[i].sy,screenY:S.crop[i].ty,warn:cropCheck(+i).warn})),narration:{file:S.narrFile?S.narrFile.name:null,mock:!!S.isMockNarr,voice:S.voice==='beta'?{id:VOICE_B.id,name:VOICE_B.name,note:VOICE_B.note,params:{hp:VOICE_B.hp,hpQdB:+voiceHpQdB().toFixed(2),pk1:VOICE_B.pk1,hs:VOICE_B.hs,pk2:VOICE_B.pk2}}:{id:'original',name:'原音（加工なし）'},sync:S.sync?{ok:S.sync.ok,mode:S.sync.mode,manual:S.sync.manual,confidence:S.sync.conf.level,confidenceReasons:S.sync.conf.reasons,contentVerified:false,spans:S.sync.spans||null,targetSec:S.sync.D0||null,finalSec:S.sync.D||null,extended:S.sync.extended||false,addedPauseSec:S.sync.addedPause||0,afterglowSec:S.sync.afterglow||null,logoHoldSec:S.sync.logoHold||null,stretch:1,speedOutliers:S.sync.content&&S.sync.content.outliers||[]}:null},bgmMode:bgmEff(),bgm:bgmEff()==='ext'?{file:S.bgm.name,source:S.bgm.src,license:S.bgm.lic,bpm:S.bgm.bpm,beatConfidence:S.bgm.an&&S.bgm.an.conf}:null,
@@ -793,7 +805,7 @@ $('bDJC').onclick=async()=>{const t=BSDesign.requestPrompt($('dsc').value);$('dj
 (function(){const o=$('implt'),L=BSDesign.IMPL;o.textContent=Object.keys(L).map(k=>(/^実装済み/.test(L[k])?'✔ ':'△ ')+k+'：'+L[k]).join('\n')+'\n※ 完成動画に反映されるのは✔の演出です。△は設計・近似のみ。'})();
 clipForm();ledger();renderFrame(1.5);
 /* ---------- 段階0: プロジェクト自動保存（別DB cp_project。既存の cp_session / cp_stock は変更しない） ---------- */
-const INIT_DSC=$('dsc').value,PJ={sid:Date.now()+'-'+Math.random().toString(36).slice(2,8),rot:false,sig:'',busy:false,last:0,restoring:false,err:''};
+const INIT_DSC=$('dsc').value,PJ={sid:Date.now()+'-'+Math.random().toString(36).slice(2,8),rot:false,sig:'',busy:false,last:0,restoring:false,err:'',fault:null,persist:'',persistAsked:false};
 const escH=s=>String(s==null?'':s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 function coded(code,msg,status){const e=new Error(msg);e.code=code;if(status)e.status=status;return e}
 function idbP(){return new Promise((ok,ng)=>{const r=indexedDB.open('cp_project',1);r.onupgradeneeded=()=>{const d=r.result;d.createObjectStore('p',{keyPath:'id'});d.createObjectStore('f',{keyPath:'key'})};r.onsuccess=()=>ok(r.result);r.onerror=()=>ng(new Error('IndexedDBを開けません'))})}
@@ -801,67 +813,118 @@ const idbReq=(db,st,mode,fn)=>new Promise((ok,ng)=>{const t=db.transaction(st,mo
 const fkey=(pre,f)=>pre+':'+(f.name||'')+':'+f.size+':'+(f.lastModified||0);
 function pjSnap(){/* 保存対象の軽量な状態（Blobを含まない）。署名の比較にも使う。APIキーは含めない */
  const clips=[];S.clips.forEach((c,i)=>{if(!c||!c.file)return;clips.push({i,inboxKey:c.inboxKey||null,fkey:c.inboxKey?null:fkey('clip',c.file),name:c.name,src:c.meta.src,url:c.meta.url,by:c.meta.by,lic:c.meta.lic,inp:c.meta.inp,ok:!!c.meta.ok,pend:!!c.pend,at:c.meta.at})});
- return{v:1,dsc:$('dsc').value,plan:S.base.sc!==SCN0&&!S.dj,dj:S.dj||null,dv:DV,font:S.font,narrKey:S.narrFile?fkey('narr',S.narrFile):null,narrName:S.narrFile?S.narrFile.name:null,mockNarr:!!S.isMockNarr,bgmMode:S.bgmMode||null,bgmKey:S.bgmFile?fkey('bgm',S.bgmFile):null,bgmSrc:S.bgm?S.bgm.src:null,bgmLic:S.bgm?S.bgm.lic:null,voice:S.voice||null,manual:S.manual||null,syncMode:S.syncMode||null,crop:S.crop&&Object.keys(S.crop).length?S.crop:null,clips,bt:{prov:BT.prov,st:BT.st}}}
+ return{v:1,dsc:$('dsc').value,plan:S.base.sc!==SCN0&&!S.dj,dj:S.dj||null,dv:DV,font:S.font,narrKey:S.narrFile?fkey('narr',S.narrFile):null,narrName:S.narrFile?S.narrFile.name:null,mockNarr:!!S.isMockNarr,bgmMode:S.bgmMode||null,bgmKey:S.bgmFile?fkey('bgm',S.bgmFile):null,bgmSrc:S.bgm?S.bgm.src:null,bgmLic:S.bgm?S.bgm.lic:null,voice:S.voice||null,manual:S.manual||null,syncMode:S.syncMode||null,crop:S.crop&&Object.keys(S.crop).length?S.crop:null,clips,bt:{prov:BT.prov,mode:BT.mode,st:BT.st}}}
 function pjNonEmpty(){return S.clips.some(Boolean)||!!S.narrFile||!!S.dj||$('dsc').value!==INIT_DSC}
-async function pjPutFile(db,key,blob){const ex=await idbReq(db,'f','readonly',o=>o.get(key));if(ex)return;await idbReq(db,'f','readwrite',o=>o.put({key,blob,at:Date.now()}))}
+async function pjHas(db,key){return (await idbReq(db,'f','readonly',o=>o.count(IDBKeyRange.only(key))))>0}
+async function pjPutFile(db,key,blob){if(await pjHas(db,key))return;await idbReq(db,'f','readwrite',o=>o.put({key,blob,at:Date.now()}))}
+async function pjRotate(db,always){const cur=await idbReq(db,'p','readonly',o=>o.get('current'));
+ if(cur&&(always||cur.sid!==PJ.sid)){const all=await idbReq(db,'p','readonly',o=>o.getAll());const prevs=all.filter(r=>/^prev-/.test(r.id)).sort((a,b)=>a.at-b.at);await idbReq(db,'p','readwrite',o=>o.put(Object.assign({},cur,{id:'prev-'+cur.at})));while(prevs.length>=3){const d=prevs.shift();await idbReq(db,'p','readwrite',o=>o.delete(d.id))}}}
+async function persistAsk(){try{if(!navigator.storage||!navigator.storage.persist)return PJ.persist='unsupported';if(navigator.storage.persisted&&await navigator.storage.persisted())return PJ.persist='granted';return PJ.persist=(await navigator.storage.persist())?'granted':'denied'}catch{return PJ.persist='unknown'}}
 async function pjSave(force){if(PJ.busy||PJ.restoring||(S.busy&&!force))return false;if(!pjNonEmpty())return false;const snap=pjSnap(),sig=JSON.stringify(snap);if(!force&&sig===PJ.sig)return false;PJ.busy=true;
  try{const db=await idbP();
-  if(!PJ.rot){/* この閲覧セッションで最初の保存: 既存の「現在」を退避してから上書き（直近3件を保持）。復元した場合は退避しない */
-   const cur=await idbReq(db,'p','readonly',o=>o.get('current'));
-   if(cur&&cur.sid!==PJ.sid){const all=await idbReq(db,'p','readonly',o=>o.getAll());const prevs=all.filter(r=>/^prev-/.test(r.id)).sort((a,b)=>a.at-b.at);await idbReq(db,'p','readwrite',o=>o.put(Object.assign({},cur,{id:'prev-'+cur.at})));while(prevs.length>=3){const d=prevs.shift();await idbReq(db,'p','readwrite',o=>o.delete(d.id))}}
-   PJ.rot=true}
-  if(S.narrFile)await pjPutFile(db,snap.narrKey,S.narrFile);if(S.bgmFile)await pjPutFile(db,snap.bgmKey,S.bgmFile);
-  for(const c of snap.clips)if(c.fkey){const cl=S.clips[c.i];if(cl&&cl.file)await pjPutFile(db,c.fkey,cl.file)}
+  /* 先に「新しく書き込む必要のあるファイル」と容量を確認。足りなければ何も書かず、既存の保存データは触らない */
+  const todo=[];if(S.narrFile&&!await pjHas(db,snap.narrKey))todo.push([snap.narrKey,S.narrFile]);if(S.bgmFile&&!await pjHas(db,snap.bgmKey))todo.push([snap.bgmKey,S.bgmFile]);
+  for(const c of snap.clips)if(c.fkey){const cl=S.clips[c.i];if(cl&&cl.file&&!await pjHas(db,c.fkey))todo.push([c.fkey,cl.file])}
+  const need=todo.reduce((a,x)=>a+x[1].size,0);if(need>0){const fr=await storageFree();if(fr<need*1.5+30*1048576){PJ.err='空き容量が足りません（残り約'+Math.max(0,Math.round(fr/1048576))+'MB・必要約'+Math.round(need*1.5/1048576+30)+'MB）。バックアップ（JSON）を保存するか、不要な素材を削除してください。直前の保存データはそのまま残っています';pjUi();return false}}
+  if(!PJ.rot){await pjRotate(db,false);PJ.rot=true}/* この閲覧セッションで最初の保存: 既存の「現在」を退避してから上書き（直近3件を保持）。復元した場合は退避しない */
+  for(const [k,f] of todo)await pjPutFile(db,k,f);
+  if(PJ.fault)await PJ.fault('beforeCurrent');/* 試験用フック（通常は未設定） */
   await idbReq(db,'p','readwrite',o=>o.put(Object.assign({id:'current',sid:PJ.sid,at:Date.now()},snap)));
-  PJ.sig=sig;PJ.last=Date.now();PJ.err='';pjUi();return true}
+  PJ.sig=sig;PJ.last=Date.now();PJ.err='';if(!PJ.persistAsked){PJ.persistAsked=true;persistAsk().then(pjUi)}pjUi();return true}
  catch(e){PJ.err=redact(e.message||'保存に失敗');pjUi();return false}finally{PJ.busy=false}}
-function pjUi(){const e=$('pjst');if(!e)return;e.className='note'+(PJ.err?' w':'');e.textContent=PJ.err?'⚠ 自動保存に失敗しました（'+PJ.err+'）。完成動画や素材はこの端末に残っていますが、再読み込み前に書き出しを済ませてください':(PJ.last?'自動保存: '+new Date(PJ.last).toLocaleTimeString('ja-JP')+'（この端末の中だけ。元のデータは消しません）':'')}
+function pjUi(){const e=$('pjst');if(!e)return;e.className='note'+(PJ.err?' w':'');e.textContent=PJ.err?'⚠ 自動保存に失敗しました（'+PJ.err+'）。完成動画や素材はこの端末に残っていますが、再読み込み前に書き出しを済ませてください':(PJ.last?'自動保存: '+new Date(PJ.last).toLocaleTimeString('ja-JP')+'（この端末の中だけ。元のデータは消しません）':'');pjPer()}
+async function pjPer(){const e=$('pjper');if(!e)return;let q='';try{const x=await navigator.storage.estimate();if(x&&x.quota)q='｜使用 '+Math.round((x.usage||0)/1048576)+'MB／上限 約'+Math.round(x.quota/1048576)+'MB'}catch{}const m={granted:'保存領域: 永続化済み（端末の自動削除から保護）',denied:'保存領域: 永続化は許可されていません（空きが少なくなると端末が自動で消す可能性があります。大事な作業はバックアップ（JSON）を保存してください）',unsupported:'保存領域の永続化: この端末では確認できません',unknown:'保存領域の永続化: 確認できません'};e.className='note'+(PJ.persist==='denied'?' w':'');e.textContent=PJ.persist?m[PJ.persist]+q:''}
 async function pjList(){try{const db=await idbP();const all=await idbReq(db,'p','readonly',o=>o.getAll());return all.sort((a,b)=>b.at-a.at)}catch{return[]}}
-async function pjRestore(id){const db=await idbP(),rec=await idbReq(db,'p','readonly',o=>o.get(id||'current'));if(!rec)return{ok:false,msg:'保存データがありません'};PJ.restoring=true;const miss=[];
+async function pjApply(rec,src){const miss=[];PJ.restoring=true;
  try{const inbox=await inboxAll(),R={dsc:rec.dsc,plan:rec.plan,dj:rec.dj,dv:rec.dv,font:rec.font,mockNarr:rec.mockNarr,bgmMode:rec.bgmMode,voice:rec.voice,manual:rec.manual,syncMode:rec.syncMode,crop:rec.crop,clips:[],pend:{}};
-  for(const c of rec.clips){let blob=null;if(c.inboxKey){const x=inbox.find(q=>q.key===c.inboxKey);blob=x&&x.blob}else if(c.fkey){const x=await idbReq(db,'f','readonly',o=>o.get(c.fkey));blob=x&&x.blob}
+  for(const c of rec.clips||[]){let blob=null;if(c.inboxKey){const x=inbox.find(q=>q.key===c.inboxKey);blob=x&&x.blob}else if(c.fkey){blob=await src.file(c.fkey)}
    if(!blob){miss.push('場面'+(c.i+1)+'の素材（'+(c.inboxKey||c.name)+'）');continue}
    R.clips.push({i:c.i,file:new File([blob],c.name||'clip.mp4',{type:blob.type||'video/mp4'}),src:c.src,url:c.url,by:c.by,lic:c.lic,inp:c.inp,ok:c.ok,pend:c.pend,inboxKey:c.inboxKey})}
-  if(rec.narrKey){const x=await idbReq(db,'f','readonly',o=>o.get(rec.narrKey));if(x)R.narr=new File([x.blob],rec.narrName||'narration.wav',{type:x.blob.type});else miss.push('ナレーション音声')}
-  if(rec.bgmKey&&rec.bgmSrc){const x=await idbReq(db,'f','readonly',o=>o.get(rec.bgmKey));if(x)R.bgm={file:new File([x.blob],'bgm',{type:x.blob.type}),src:rec.bgmSrc,lic:rec.bgmLic};else miss.push('BGM')}
+  if(rec.narrKey){const x=await src.file(rec.narrKey);if(x)R.narr=new File([x],rec.narrName||'narration.wav',{type:x.type});else miss.push('ナレーション音声')}
+  if(rec.bgmKey&&rec.bgmSrc){const x=await src.file(rec.bgmKey);if(x)R.bgm={file:new File([x],'bgm',{type:x.type}),src:rec.bgmSrc,lic:rec.bgmLic};else miss.push('BGM')}
   await applyRec(R,true);
-  BT.prov=(rec.bt&&rec.bt.prov)||BT.prov;BT.st=(rec.bt&&rec.bt.st)||{};if($('bpv'))$('bpv').value=BT.prov;
+  BT.prov=(rec.bt&&rec.bt.prov)||BT.prov;BT.mode=(rec.bt&&rec.bt.mode)||BT.mode;BT.st=(rec.bt&&rec.bt.st)||{};if($('bpv'))$('bpv').value=BT.prov;
   /* 素材が見つからない場面は「失敗」として残し、再処理できるようにする */
-  miss.forEach(m=>{const mm=/場面(\d+)/.exec(m);if(mm){const b=bstat(+mm[1]-1);b.st='failed';b.msg='保存済みの素材が見つかりません';b.fix='「失敗した場面だけ再処理」または手動で取り込んでください'}});
+  miss.forEach(m=>{const mm=/場面(\d+)/.exec(m);if(mm){const b=bstat(+mm[1]-1);b.st='failed';b.msg='保存済みの素材が見つかりません';b.fix='「保存済みIDから素材を再取得」「失敗した場面だけ再処理」または手動で取り込んでください'}});
   PJ.sid=rec.sid||PJ.sid;PJ.rot=true;PJ.sig='';btRender();return{ok:true,miss,msg:'復元しました'+(miss.length?'（見つからないもの: '+miss.join('、')+'）':'')}}
- catch(e){return{ok:false,msg:'復元に失敗: '+redact(e.message)}}finally{PJ.restoring=false;PJ.sig=JSON.stringify(pjSnap())}}
+ catch(e){return{ok:false,miss,msg:'復元に失敗: '+redact(e.message)}}finally{PJ.restoring=false;PJ.sig=JSON.stringify(pjSnap())}}
+async function pjRestore(id){const db=await idbP(),rec=await idbReq(db,'p','readonly',o=>o.get(id||'current'));if(!rec)return{ok:false,msg:'保存データがありません'};
+ return pjApply(rec,{file:async k=>{const x=await idbReq(db,'f','readonly',o=>o.get(k));return x&&x.blob}})}
+const b64Of=async b=>{const u=new Uint8Array(await b.arrayBuffer());let t='';for(let i=0;i<u.length;i+=32768)t+=String.fromCharCode.apply(null,u.subarray(i,i+32768));return btoa(t)};
+const b64Blob=(b,type)=>{const t=atob(b),u=new Uint8Array(t.length);for(let i=0;i<t.length;i++)u[i]=t.charCodeAt(i);return new Blob([u],{type:type||'application/octet-stream'})};
+async function pjExport(){const snap=pjSnap(),o={app:'CINEMATIC PRO',kind:'project-backup',v:1,at:new Date().toISOString(),build:CP_BUILD,snap},notes=[];
+ if(S.narrFile){if(S.narrFile.size>40*1048576)notes.push('ナレーションが大きい（'+Math.round(S.narrFile.size/1048576)+'MB）ため含めていません');else o.narr={name:S.narrFile.name,type:S.narrFile.type,b64:await b64Of(S.narrFile)}}
+ const man=snap.clips.filter(c=>c.fkey).map(c=>'場面'+(c.i+1)+'（'+c.name+'）');if(man.length)notes.push('手動で取り込んだ素材は含まれません: '+man.join('、'));if(S.bgmFile)notes.push('BGMは含まれません');
+ const blob=new Blob([JSON.stringify(o)],{type:'application/json'});return{blob,name:'cinematic-backup-'+o.at.slice(0,19).replace(/[:T]/g,'-')+'.json',notes,bytes:blob.size}}
+async function pjImport(text){let o;try{o=JSON.parse(text)}catch{return{ok:false,msg:'バックアップのファイルを読めません（JSONではありません）'}}
+ if(!o||o.kind!=='project-backup'||o.v!==1||!o.snap||typeof o.snap!=='object')return{ok:false,msg:'CINEMATIC PROのバックアップではありません'};
+ const rec=Object.assign({},o.snap);if(!Array.isArray(rec.clips))rec.clips=[];
+ /* 復元前に、いまの作業を退避（直近3件）。失敗したら復元しない */
+ try{if(pjNonEmpty()){await pjSave(true);const db=await idbP();await pjRotate(db,true)}}catch(e){return{ok:false,msg:'いまの作業を退避できないため復元を中止しました: '+redact(e.message)}}
+ if(o.narr&&o.narr.b64&&rec.narrKey){const nb=b64Blob(o.narr.b64,o.narr.type);rec.narrName=o.narr.name||rec.narrName;return pjApply(rec,{file:async k=>k===rec.narrKey?nb:null})}
+ return pjApply(rec,{file:async()=>null})}
+async function batchRefetch(){if(BT.run)return{ok:false,msg:'処理中です'};BT.run=true;BT.stop=false;let n=0,fail=0,halt='';const N=S.sc.length-1;
+ try{for(let i=0;i<N;i++){if(BT.stop){halt='中断しました';break}const b=bstat(i);if(S.clips[i]||!b.rec||b.lock)continue;
+   try{const pid=b.rec.provider,P=PROV[pid];if(!P||!P.byId)throw coded('NOPROV','この提供元は再取得に対応していません');if(!BT.key)throw coded('NOKEY','APIキーが未入力です');if(!rateOkP(pid))throw coded('RATE','自主上限に到達しました');
+    const r=P.byId(b.rec.id,BT.key),c=P.parse(await netJson(r.url,r.opt),'').find(x=>x.id===b.rec.id);if(!c||!c.file)throw coded('NOCAND','提供元から素材が見つかりません（削除された可能性）');
+    b.cands=[Object.assign({},c,{score:b.rec.score||0,warn:[]})];await batchApply(i,0);n++}
+   catch(e){b.st='failed';b.msg=redact(e.message);b.fix=errFix(e);fail++;if(isGlobalErr(e)){halt=b.msg+'。'+b.fix;break}}
+   btRender()}}
+ finally{BT.run=false}
+ btRender();await pjSave(true).catch(()=>{});return{ok:!halt&&!fail,done:n,failed:fail,halt}}
 async function pjBanner(){const L=await pjList(),b=$('pjbar');if(!b)return;if(!L.length){b.hidden=true;return}const r=L[0],n=(r.clips||[]).length;b.hidden=false;b.querySelector('span').textContent='前回の作業が保存されています（'+new Date(r.at).toLocaleString('ja-JP')+'｜素材 '+n+'本'+(r.narrKey?'｜ナレーションあり':'')+(r.dj?'｜設計JSONあり':'')+'）。'+(L.length>1?'他に '+(L.length-1)+'件の退避があります。':'');
  b.querySelector('#pjgo').onclick=async()=>{b.querySelector('#pjgo').disabled=true;const R=await pjRestore(r.id);$('pjst').className='note'+(R.ok&&!R.miss.length?'':' w');$('pjst').textContent=R.msg;if(R.ok)b.hidden=true;b.querySelector('#pjgo').disabled=false}}
 setInterval(()=>{pjSave(false).catch(()=>{})},4000);
 
 /* ---------- 段階1: 素材の一括取得基盤（提供元は交換式。通信は既定で無効＝実通信は個別承認後） ---------- */
-const BT={key:'',prov:'pexels',run:false,stop:false,st:{},rate:{},net:null};
+const BT={key:'',prov:'pixabay',mode:'review',run:false,stop:false,st:{},rate:{},net:null,th:{},open:{},hdr:null,lastSrc:''};
 function redact(s){let t=String(s==null?'':s);const k=BT.key;if(k&&k.length>3)t=t.split(k).join('[KEY]');return t.replace(/AIza[0-9A-Za-z_-]{20,}/g,'[KEY]')}
 function setTransport(t){BT.net=t||null;const e=$('bnet');if(e)e.textContent=BT.net?'通信: 有効（'+(BT.net.label||'接続先')+'）':'通信: 無効（実通信は個別承認後に有効化します）。いまは設計・保存・レビューの動作確認のみ行えます'}
 async function netJson(url,opt){if(!BT.net||!BT.net.json)throw coded('NETOFF','通信が無効です（実通信は未承認）');return BT.net.json(url,opt||{})}
 async function netBlob(url,opt){if(!BT.net||!BT.net.blob)throw coded('NETOFF','通信が無効です（実通信は未承認）');return BT.net.blob(url,opt||{})}
+/* ---------- 実通信（承認範囲: Pixabay・検索1回・動画1本の試験枠）---------- */
+const REAL={hosts:['pixabay.com','cdn.pixabay.com'],lim:{s:1,d:1,t:0},LS:'cp_realcnt',MAXB:60*1048576};
+function realCnt(){try{const c=JSON.parse(localStorage.getItem(REAL.LS)||'{}');return{s:+c.s||0,d:+c.d||0,t:+c.t||0}}catch{return{s:0,d:0,t:0}}}
+function realBump(k){const c=realCnt();if(c[k]>=REAL.lim[k])throw coded('LIMIT','承認済みの試験枠（検索'+REAL.lim.s+'回・動画'+REAL.lim.d+'本）に達しました。これ以上の実通信は、結果の確認とオーナー承認のあとに開放します');c[k]++;try{localStorage.setItem(REAL.LS,JSON.stringify(c))}catch{throw coded('LIMIT','通信回数を記録できないため、安全のため通信を止めました')}}
+async function realReq(url,kind,ms,read){let u;try{u=new URL(url)}catch{throw coded('HOST','接続先のURLが不正です')}
+ if(u.protocol!=='https:'||!REAL.hosts.includes(u.hostname))throw coded('HOST','許可されていない接続先です（'+u.hostname+'）。承認済みの接続先は pixabay.com と cdn.pixabay.com だけです');
+ realBump(kind);const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),ms);
+ try{const r=await fetch(u.href,{method:'GET',credentials:'omit',referrerPolicy:'no-referrer',cache:'no-store',redirect:'follow',signal:ac.signal});
+  try{const f=new URL(r.url);if(!REAL.hosts.includes(f.hostname))throw coded('HOST','接続先が承認外へ転送されました（'+f.hostname+'）')}catch(e){if(e.code)throw e}
+  if(kind==='s')BT.hdr={remaining:r.headers.get('X-RateLimit-Remaining'),limit:r.headers.get('X-RateLimit-Limit'),reset:r.headers.get('X-RateLimit-Reset')};
+  if(!r.ok)throw coded('HTTP','提供元がエラーを返しました（HTTP '+r.status+'）',r.status);
+  return await read(r)}
+ catch(e){if(e.code)throw e;if(e&&e.name==='AbortError')throw coded('TIMEOUT','応答がありません（時間切れ）');throw coded('NETFAIL','通信できませんでした（オフライン、または提供元がブラウザからの接続を許可していない可能性があります）')}
+ finally{clearTimeout(tm)}}
+const realTransport=()=>({real:true,label:'Pixabay・実通信（試験枠: 検索'+REAL.lim.s+'回／動画'+REAL.lim.d+'本）',
+ json:u=>realReq(u,'s',20000,async r=>{BT.lastSrc='net';return r.json()}),
+ blob:(u,o)=>realReq(u,o&&o.thumb?'t':'d',o&&o.thumb?15000:120000,async r=>{const n=+r.headers.get('content-length')||0;if(n>REAL.MAXB){try{r.body&&r.body.cancel()}catch{}throw coded('TOOBIG','60MB超')}return r.blob()})});
 const TERMS={pexels:{name:'Pexels',license:'Pexels License',url:'https://www.pexels.com/license/',checked:'2026-11-27'},pixabay:{name:'Pixabay',license:'Pixabay Content License',url:'https://pixabay.com/service/license-summary/',checked:'2026-11-26'}};
 const PROV={
  pexels:{id:'pexels',name:'Pexels',needsKey:true,srcLabel:'Pexels（検索連携）',limit:{n:180,ms:3600e3},
+  byId:(id,key)=>({url:'https://api.pexels.com/v1/videos/videos/'+encodeURIComponent(id),opt:{headers:{Authorization:key}}}),
   req:(q,key)=>({url:'https://api.pexels.com/v1/videos/search?query='+encodeURIComponent(q)+'&orientation=portrait&size=medium&per_page=15',opt:{headers:{Authorization:key}}}),
-  parse:(d,q)=>(d&&d.videos||[]).map(v=>{const f=(v.video_files||[]).filter(x=>x.file_type==='video/mp4'&&x.width&&x.height).sort((a,b)=>Math.abs(a.height-1920)-Math.abs(b.height-1920))[0];
+  parse:(d,q)=>(d&&d.videos||(d&&d.id&&d.video_files?[d]:[])).map(v=>{const f=(v.video_files||[]).filter(x=>x.file_type==='video/mp4'&&x.width&&x.height).sort((a,b)=>Math.abs(a.height-1920)-Math.abs(b.height-1920))[0];
    return{provider:'pexels',id:String(v.id),page:v.url,thumb:(v.video_pictures&&v.video_pictures[0]&&v.video_pictures[0].picture)||v.image,w:v.width,h:v.height,dur:v.duration,creator:v.user&&v.user.name,creatorUrl:v.user&&v.user.url,tags:(String(v.url||'').split('/video/')[1]||'').replace(/-\d+\/?$/,'').split('-'),file:f&&f.link,fw:f&&f.width,fh:f&&f.height,q}})},
  pixabay:{id:'pixabay',name:'Pixabay',needsKey:true,srcLabel:'Pixabay（検索連携）',limit:{n:90,ms:60e3},
-  req:(q,key)=>({url:'https://pixabay.com/api/videos/?key='+encodeURIComponent(key)+'&q='+encodeURIComponent(q)+'&video_type=film&per_page=20&safesearch=true',opt:{}}),
-  parse:(d,q)=>(d&&d.hits||[]).map(h=>{const vs=h.videos||{},v=vs.medium&&vs.medium.url?vs.medium:vs.small&&vs.small.url?vs.small:vs.tiny;
-   return{provider:'pixabay',id:String(h.id),page:h.pageURL,thumb:v&&v.thumbnail,w:v&&v.width,h:v&&v.height,dur:h.duration,creator:h.user,creatorUrl:'https://pixabay.com/users/'+h.user+'-'+h.user_id+'/',tags:String(h.tags||'').split(',').map(s=>s.trim().toLowerCase()),file:v&&v.url,fw:v&&v.width,fh:v&&v.height,q}})}};
+  req:(q,key,o)=>({url:'https://pixabay.com/api/videos/?key='+encodeURIComponent(key)+'&q='+encodeURIComponent(q)+'&video_type=film&min_height='+Math.min(1080,(o&&o.minH)||1080)+'&per_page=20&safesearch=true',opt:{}}),
+  byId:(id,key)=>({url:'https://pixabay.com/api/videos/?key='+encodeURIComponent(key)+'&id='+encodeURIComponent(id),opt:{}}),
+  parse:(d,q)=>(d&&d.hits||[]).map(h=>{const vs=h.videos||{},pk=pickVar(vs),v=pk&&pk.v;
+   return{provider:'pixabay',id:String(h.id),page:h.pageURL,thumb:v&&v.thumbnail,w:v&&v.width,h:v&&v.height,dur:h.duration,creator:h.user,creatorUrl:'https://pixabay.com/users/'+h.user+'-'+h.user_id+'/',tags:String(h.tags||'').split(',').map(s=>s.trim().toLowerCase()),file:v&&v.url,fw:v&&v.width,fh:v&&v.height,fsize:v&&v.size||0,vname:pk&&pk.n,q}})}};
+/* Pixabayは1本につき large/medium/small/tiny の画質違いを返す。縦1080px以上を満たす最小の版を選び（容量・発熱を抑える）、満たす版が無ければ最大の版を選ぶ。40MB超の版は避ける */
+function pickVar(vs){const L=['large','medium','small','tiny'].map(n=>({n,v:vs[n]})).filter(x=>x.v&&x.v.url),ok=L.filter(x=>!x.v.size||x.v.size<=40*1048576),P=ok.length?ok:L,m=x=>Math.min(x.v.width||0,x.v.height||0),suff=P.filter(x=>m(x)>=1080).sort((a,b)=>m(a)-m(b))[0];return suff||P.slice().sort((a,b)=>m(b)-m(a))[0]}
 function bstat(i){return BT.st[i]||(BT.st[i]={st:'pending',msg:'',fix:'',cands:[],sel:0,lock:false,rec:null})}
 function sceneSpec(i){const s=S.sc[i],P=S.dj&&window.LASTPLAN&&window.LASTPLAN.scenes&&window.LASTPLAN.scenes[i];return{need:+(s.b-s.a+.3).toFixed(2),queries:((P&&P.queries)||[]).filter(Boolean),avoid:(P&&P.avoid)||[],minH:(P&&P.minHeight)||1080,line:(S.ln[i]&&S.ln[i].toks.map(k=>k[0]).join(''))||s.name}}
-function scoreC(c,need,avoid,minH){const toks=String(c.q).toLowerCase().split(/\s+/).filter(Boolean),tg=(c.tags||[]).join(' ').toLowerCase(),kw=toks.length?toks.filter(t=>tg.includes(t)).length/toks.length:0,portrait=c.h>=c.w?1:.35,res=Math.min(1,Math.min(c.fw||c.w||0,c.fh||c.h||0)/(minH||1080)),dur=c.dur>=need?1:Math.max(0,(c.dur||0)/need),bad=(avoid||[]).some(a=>a&&tg.includes(String(a).toLowerCase()));return{kw,portrait,res,dur,bad,score:Math.round(100*(.4*kw+.3*portrait*res+.3*dur))}}
+function scoreC(c,need,avoid,minH){const toks=String(c.q).toLowerCase().split(/\s+/).filter(Boolean),tg=(c.tags||[]).join(' ').toLowerCase(),kw=toks.length?toks.filter(t=>tg.includes(t)).length/toks.length:0,portrait=c.h>=c.w?1:.35,res=Math.min(1,(c.fh||c.h||0)/((minH||1080)*16/9)),dur=c.dur>=need?1:Math.max(0,(c.dur||0)/need),bad=(avoid||[]).some(a=>a&&tg.includes(String(a).toLowerCase()));return{kw,portrait,res,dur,bad,score:Math.round(100*(.4*kw+.3*portrait*res+.3*dur))}}
 function rateOkP(p){const P=PROV[p],a=(BT.rate[p]=BT.rate[p]||[]),now=Date.now();while(a.length&&now-a[0]>P.limit.ms)a.shift();if(a.length>=P.limit.n)return false;a.push(now);return true}
 const SC_TTL=864e5;
 function scGet(k){try{const c=JSON.parse(localStorage.getItem('cp_scache')||'{}'),x=c[k];return x&&Date.now()-x.t<SC_TTL?x.d:null}catch{return null}}
 function scPut(k,d){try{const c=JSON.parse(localStorage.getItem('cp_scache')||'{}'),n=Date.now();for(const q in c)if(n-c[q].t>=SC_TTL)delete c[q];c[k]={t:n,d};localStorage.setItem('cp_scache',JSON.stringify(c))}catch{try{localStorage.removeItem('cp_scache')}catch{}}}
 function scClear(){try{localStorage.removeItem('cp_scache')}catch{}}
-async function provSearch(pid,q){const P=PROV[pid];if(!P)throw coded('NOPROV','未知の提供元です');if(P.needsKey&&!BT.key)throw coded('NOKEY','APIキーが未入力です');const ck=pid+'|'+q,hit=scGet(ck);if(hit)return hit;/* 検索結果は24時間キャッシュ（Pixabay規約）。キーは含めない */
- if(!rateOkP(pid))throw coded('RATE','自主上限に到達しました（時間をおいて再処理してください）');const r=P.req(q,BT.key),res=P.parse(await netJson(r.url,r.opt),q);scPut(ck,res);return res}
-function errFix(e){const c=e&&e.code,s=e&&e.status;if(c==='NETOFF')return'実通信は承認後に有効になります。それまでは手動で取り込めます';if(c==='NOKEY')return'提供元のAPIキーを入力してください（保存されません）';if(s===401||s===403)return'キーが無効か権限がありません。キーを確認してください';if(s===429||c==='RATE')return'利用上限です。時間をおいて「失敗した場面だけ再処理」を押してください';if(c==='NOSTORAGE')return'端末の空き容量が不足しています。不要な素材を削除してから再処理してください';if(c==='TOOBIG')return'素材が大きすぎます（60MB超）。「次の候補」を選ぶか手動で取り込んでください';if(c==='NOCAND')return'条件に合う候補がありません。設計JSONの検索語を変えるか、手動で取り込んでください';if(c==='NOQ')return'設計JSONを取り込み、各場面の検索語を設定してください';if(c==='EMPTY')return'素材が空でした。再処理するか、次の候補を選んでください';return'もう一度「失敗した場面だけ再処理」を押してください。続く場合は手動で取り込めます'}
-const isGlobalErr=e=>['NETOFF','NOKEY','RATE','NOSTORAGE'].includes(e.code)||e.status===401||e.status===403||e.status===429;
+async function provSearch(pid,q,o){const P=PROV[pid];if(!P)throw coded('NOPROV','未知の提供元です');if(P.needsKey&&!BT.key)throw coded('NOKEY','APIキーが未入力です');const ck=pid+'|'+q+'|'+Math.min(1080,(o&&o.minH)||1080),hit=scGet(ck);if(hit){BT.lastSrc='cache';return hit}/* 検索結果は24時間キャッシュ（Pixabay規約）。キーは含めない */
+ if(!rateOkP(pid))throw coded('RATE','自主上限に到達しました（時間をおいて再処理してください）');const r=P.req(q,BT.key,o),res=P.parse(await netJson(r.url,r.opt),q);scPut(ck,res);return res}
+function errFix(e){const c=e&&e.code,s=e&&e.status;if(c==='NETOFF')return'実通信は承認後に有効になります。それまでは手動で取り込めます';if(c==='NOKEY')return'提供元のAPIキーを入力してください（保存されません）';if(s===401||s===403)return'キーが無効か権限がありません。キーを確認してください';if(s===429||c==='RATE')return'利用上限です。時間をおいて「失敗した場面だけ再処理」を押してください';if(c==='NOSTORAGE')return'端末の空き容量が不足しています。不要な素材を削除してから再処理してください';if(c==='TOOBIG')return'素材が大きすぎます（60MB超）。「次の候補」を選ぶか手動で取り込んでください';if(c==='NOCAND')return'条件に合う候補がありません。設計JSONの検索語を変えるか、手動で取り込んでください';if(c==='NOQ')return'設計JSONを取り込み、各場面の検索語を設定してください';if(c==='EMPTY')return'素材が空でした。再処理するか、次の候補を選んでください';if(c==='LIMIT')return'承認済みの試験枠に達しました。追加の実通信は、結果の確認とオーナー承認のあとに開放します';if(c==='HOST')return'承認外の接続先です。通信は行いませんでした。接続先の追加はオーナー承認が必要です';if(c==='TIMEOUT')return'通信が遅い可能性があります。電波の良い場所で、時間をおいて再実行してください';if(c==='NETFAIL')return'オフライン、または提供元がブラウザからの接続を許可していない可能性があります。結果の文章を共有してください';if(s===400)return'キーまたは検索語が不正の可能性があります。キーをもう一度確認してください';if(c==='DECODE')return'この端末で再生できない形式です。別の候補を選んでください';return'もう一度「失敗した場面だけ再処理」を押してください。続く場合は手動で取り込めます'}
+const isGlobalErr=e=>['NETOFF','NOKEY','RATE','NOSTORAGE','LIMIT','HOST','NETFAIL','TIMEOUT'].includes(e.code)||[400,401,403,429].includes(e.status);
 async function storageFree(){try{const e=await navigator.storage.estimate();return e.quota&&e.usage!=null?e.quota-e.usage:Infinity}catch{return Infinity}}
 async function inboxPutAuto(c,blob){const db=await idbS(),T=TERMS[c.provider]||{};await new Promise((ok,ng)=>{const t=db.transaction('clips','readwrite');t.objectStore('clips').put({key:c.provider+':'+c.id,blob,w:c.fw||c.w,h:c.fh||c.h,dur:c.dur,at:Date.now(),meta:{src:PROV[c.provider].srcLabel,url:c.page,by:c.creator||'',lic:T.license||'',credit:'Video by '+(c.creator||'(作者名不明)')+' from '+(T.name||c.provider)+' ('+c.page+')',checked:T.checked||'',ownerConfirmed:false,auto:true}});t.oncomplete=ok;t.onerror=()=>ng(coded('NOSTORAGE','保存に失敗（容量不足の可能性）'));t.onabort=t.onerror})}
 async function getAsset(c){const key=c.provider+':'+c.id,hit=(await inboxAll()).find(x=>x.key===key);if(hit)return{blob:hit.blob,reused:true};
@@ -869,28 +932,40 @@ async function getAsset(c){const key=c.provider+':'+c.id,hit=(await inboxAll()).
  const blob=await netBlob(c.file,{provider:c.provider});if(!blob||!blob.size)throw coded('EMPTY','空のファイルが返されました');if(blob.size>60*1048576)throw coded('TOOBIG','60MB超');if((await storageFree())<blob.size*2)throw coded('NOSTORAGE','空き容量が足りません');await inboxPutAuto(c,blob);return{blob,reused:false}}
 function usedKeys(except){const u=new Set();S.clips.forEach((c,i)=>{if(c&&i!==except&&c.inboxKey)u.add(c.inboxKey)});return u}
 function creatorCount(except){const m={};S.clips.forEach((c,i)=>{if(c&&i!==except&&c.meta&&c.meta.by&&c.inboxKey)m[c.meta.by]=(m[c.meta.by]||0)+1});return m}
-async function batchApply(i,k){const b=bstat(i),c=b.cands[k];if(!c)throw coded('NOCAND','候補がありません');b.st='downloading';btRender();const {blob,reused}=await getAsset(c),T=TERMS[c.provider]||{},key=c.provider+':'+c.id;
+async function batchApply(i,k){const b=bstat(i),c=b.cands[k];if(!c)throw coded('NOCAND','候補がありません');const was=b.st;b.st='downloading';btRender();let got;try{got=await getAsset(c)}catch(e){b.st=was==='downloading'||was==='searching'?'failed':was;throw e}const {blob,reused}=got,T=TERMS[c.provider]||{},key=c.provider+':'+c.id;
  const meta={src:PROV[c.provider].srcLabel,url:c.page,by:c.creator||'',lic:T.license||'',ok:false,inp:0,at:new Date().toISOString().slice(0,10)};
  const prev=S.clips[i];const ok=await attachClip(i,new File([blob],key.replace(':','-')+'.mp4',{type:blob.type||'video/mp4'}),meta,{pend:true,inboxKey:key});
- if(!ok){S.clips[i]=prev;throw coded('EMPTY','素材を読み込めませんでした')}
+ if(!ok){S.clips[i]=prev;b.st=was==='downloading'||was==='searching'?'failed':was;throw coded('EMPTY','素材を読み込めませんでした')}
  b.sel=k;b.st='done';b.msg=reused?'取得済みの素材を再利用しました':'';b.fix='';b.rec={provider:c.provider,id:c.id,pageUrl:c.page,creator:c.creator||'',creatorUrl:c.creatorUrl||'',license:T.license||'',licenseUrl:T.url||'',termsCheckedOn:T.checked||'',fetchedAt:new Date().toISOString(),credit:'Video by '+(c.creator||'(作者名不明)')+' from '+(T.name||c.provider)+' ('+c.page+')',query:c.q,score:c.score};
  $('cs'+i)&&([...$('cs'+i).options].some(o=>o.value===meta.src)&&($('cs'+i).value=meta.src));if($('cu'+i)){$('cu'+i).value=meta.url;$('cc'+i).value=meta.by;$('cl'+i).value=meta.lic;$('ck'+i).checked=false}
  ledger();return true}
-async function batchScene(i){const sp=sceneSpec(i),b=bstat(i);if(!S.dj||!sp.queries.length)throw coded('NOQ','この場面に検索語がありません');const seen=new Set(),usedA=usedKeys(i),cc=creatorCount(i),cand=[];let lastE=null;
- for(const q of sp.queries){try{cand.push(...await provSearch(BT.prov,q))}catch(e){if(isGlobalErr(e))throw e;lastE=e}}
- const L=cand.filter(c=>{const k=c.provider+':'+c.id;if(seen.has(k)||usedA.has(k)||!c.file)return false;seen.add(k);return true}).map(c=>Object.assign({},c,{score:0,_s:scoreC(c,sp.need,sp.avoid,sp.minH)})).filter(c=>!c._s.bad&&!((cc[c.creator]||0)>=2)).map(c=>{c.score=c._s.score;c.warn=[];if(c.dur<sp.need)c.warn.push('尺が短い（'+c.dur+'秒）');if(c.h<c.w)c.warn.push('横向き');if(c._s.res<1)c.warn.push('解像度が設計値未満');delete c._s;return c}).sort((a,b)=>b.score-a.score).slice(0,3);
- if(!L.length)throw lastE||coded('NOCAND','条件に合う候補がありません');b.cands=L;await batchApply(i,0)}
+async function batchScene(i,mode){const sp=sceneSpec(i),b=bstat(i);if(!S.dj||!sp.queries.length)throw coded('NOQ','この場面に検索語がありません');const seen=new Set(),usedA=usedKeys(i),cc=creatorCount(i),cand=[];let lastE=null;
+ for(const q of sp.queries){try{cand.push(...await provSearch(BT.prov,q,{minH:sp.minH}))}catch(e){if(isGlobalErr(e))throw e;lastE=e}}
+ /* 同じ作者の素材は品質を超えない範囲（最大+3点）でだけ優先する。上限は設けない */
+ const L=cand.filter(c=>{const k=c.provider+':'+c.id;if(seen.has(k)||usedA.has(k)||!c.file)return false;seen.add(k);return true}).map(c=>Object.assign({},c,{score:0,_s:scoreC(c,sp.need,sp.avoid,sp.minH)})).filter(c=>!c._s.bad).map(c=>{const same=!!(c.creator&&cc[c.creator]);c.score=Math.min(100,c._s.score+(same?3:0));c.warn=[];c.same=same;const up=c.fh?1920/c.fh:0;c.up=up?+up.toFixed(2):null;if(c.dur<sp.need)c.warn.push('尺が短い（'+c.dur+'秒）');if(c.h<c.w)c.warn.push('横向き（縦に切り抜きます）');if(up>1.5)c.warn.push('縦1920pxへの拡大が大きい（約×'+up.toFixed(1)+'）。画質が落ちる可能性');if(c._s.res<1&&up<=1.5)c.warn.push('解像度が設計値未満');delete c._s;return c}).sort((a,b)=>b.score-a.score).slice(0,mode==='review'?5:3);
+ if(!L.length)throw lastE||coded('NOCAND','条件に合う候補がありません');b.cands=L;
+ if(mode==='review'){b.msg='';b.fix='';if(!(S.clips[i]&&b.rec)){b.sel=0;b.st='cand'}else b.sel=-1;return}
+ await batchApply(i,0)}
 function bprog(p,m){const e=$('bpg');if(e)e.value=p;const t=$('bst');if(t&&m!=null)t.textContent=m}
 async function batchRun(o){o=o||{};if(BT.run)return{ok:false,msg:'処理中です'};BT.run=true;BT.stop=false;const n=S.sc.length-1;while(S.clips.length<n)S.clips.push(null);let ok=0,fail=0,skipped=0,halt='';
  try{for(let i=0;i<n;i++){if(BT.stop){halt='中断しました。ここまでの結果は保存されています';break}const b=bstat(i);
-   if(b.lock){skipped++;continue}if(o.only==='failed'?b.st!=='failed':(b.st==='done'&&!o.force)){if(b.st==='done')ok++;continue}
+   if(b.lock){skipped++;continue}if(o.only==='failed'?b.st!=='failed':((b.st==='done'||b.st==='cand')&&!o.force)){if(b.st==='done'||b.st==='cand')ok++;continue}
    b.st='searching';b.msg='';b.fix='';bprog(i/n,'場面'+(i+1)+'/'+n+'を処理中…');btRender();
-   try{await batchScene(i);ok++}catch(e){b.st='failed';b.msg=redact(e.message);b.fix=errFix(e);fail++;if(isGlobalErr(e)){halt=b.msg+'。'+b.fix+'（残りの場面は未処理のまま保存されています）';break}}
+   try{await batchScene(i,BT.mode);ok++}catch(e){b.st='failed';b.msg=redact(e.message);b.fix=errFix(e);fail++;if(isGlobalErr(e)){halt=b.msg+'。'+b.fix+'（残りの場面は未処理のまま保存されています）';break}}
    btRender();pjSave(false).catch(()=>{})}}
  finally{BT.run=false}
- bprog(1,(halt||('完了: 成功 '+ok+'／失敗 '+fail+'／ロック中 '+skipped+'場面'))+(fail&&!halt?'。失敗した場面は「失敗した場面だけ再処理」または手動で取り込めます':''));btRender();await pjSave(true).catch(()=>{});return{ok:!halt&&!fail,done:ok,failed:fail,locked:skipped,halt}}
+ bprog(1,(halt||((BT.mode==='review'?'候補の検索が完了: ':'完了: ')+'成功 '+ok+'／失敗 '+fail+'／ロック中 '+skipped+'場面'+(BT.mode==='review'&&ok?'。内容を確認して「採用」するか、「各場面の1位をまとめて採用」を押してください':'')))+(fail&&!halt?'。失敗した場面は「失敗した場面だけ再処理」または手動で取り込めます':''));btRender();await pjSave(true).catch(()=>{});return{ok:!halt&&!fail,done:ok,failed:fail,locked:skipped,halt}}
 async function batchPick(i,k){const b=bstat(i);if(b.lock)return{ok:false,msg:'ロック中です。先にロックを外してください'};if(!b.cands||!b.cands.length)return{ok:false,msg:'候補がありません'};k=((k%b.cands.length)+b.cands.length)%b.cands.length;const old=b.sel;
- try{await batchApply(i,k);btRender();pjSave(false).catch(()=>{});return{ok:true,sel:k}}catch(e){b.sel=old;b.st=S.clips[i]?'done':'failed';b.msg=redact(e.message);b.fix=errFix(e);btRender();return{ok:false,msg:b.msg+'。'+b.fix}}}
+ try{await batchApply(i,k);btRender();pjSave(false).catch(()=>{});return{ok:true,sel:k}}catch(e){b.sel=old;b.st=S.clips[i]&&b.rec?'done':(b.cands.length?'cand':'failed');b.msg=redact(e.message);b.fix=errFix(e);btRender();return{ok:false,msg:b.msg+'。'+b.fix}}}
+async function batchAdopt(i,k){const b=bstat(i);if(b.lock)return{ok:false,msg:'ロック中です。先にロックを外してください'};if(!b.cands||!b.cands[k])return{ok:false,msg:'候補がありません'};const old=b.sel;
+ try{await batchApply(i,k);btRender();pjSave(false).catch(()=>{});return{ok:true,sel:k}}catch(e){b.sel=old;b.st=S.clips[i]&&b.rec?'done':'cand';b.msg=redact(e.message);b.fix=errFix(e);btRender();return{ok:false,msg:b.msg+'。'+b.fix}}}
+async function batchAdoptTop(){if(BT.run)return{ok:false,msg:'処理中です'};BT.run=true;BT.stop=false;let n=0,fail=0,halt='';const N=S.sc.length-1;
+ try{for(let i=0;i<N;i++){if(BT.stop){halt='中断しました。ここまでの結果は保存されています';break}const b=bstat(i);if(b.lock||b.st!=='cand')continue;const used=usedKeys(i),k=b.cands.findIndex(c=>!used.has(c.provider+':'+c.id));
+   if(k<0){b.st='failed';b.msg='候補がすべて他の場面で使われています';b.fix='検索語を変えるか、手動で取り込んでください';fail++;continue}
+   bprog(i/N,'場面'+(i+1)+'/'+N+'を取得中…');try{await batchApply(i,k);n++}catch(e){b.st='cand';b.msg=redact(e.message);b.fix=errFix(e);fail++;if(isGlobalErr(e)){halt=b.msg+'。'+b.fix;break}}
+   btRender();pjSave(false).catch(()=>{})}}
+ finally{BT.run=false}
+ bprog(1,halt||('採用: '+n+'場面'+(fail?'／失敗 '+fail+'場面':'')));btRender();await pjSave(true).catch(()=>{});return{ok:!halt&&!fail,done:n,failed:fail,halt}}
 function batchLock(i,on){const b=bstat(i);b.lock=on==null?!b.lock:!!on;btRender();pjSave(false).catch(()=>{});return b.lock}
 async function rightsConfirmAll(){if(!$('bokc').checked)return{ok:false,msg:'先に確認のチェックを入れてください'};let n=0;const db=await idbS().catch(()=>null);
  for(let i=0;i<S.clips.length;i++){const c=S.clips[i];if(!c||!c.pend)continue;c.meta.ok=true;c.pend=false;if($('ck'+i))$('ck'+i).checked=true;n++;
@@ -904,21 +979,60 @@ function releaseClip(i){const c=S.clips[i];if(!c||!c.el||c.rel)return;try{c.el.p
 async function acquireClip(i){const c=S.clips[i];if(!c||!c.el||!c.rel)return;if(c.acq)return c.acq;c.acq=(async()=>{const el=c.el;c.url=URL.createObjectURL(c.file);el.src=c.url;await new Promise(ok=>{let d=0;const f=()=>{if(!d){d=1;ok()}};el.onloadeddata=f;el.onerror=f;setTimeout(f,15000)});try{if(Math.abs(el.currentTime-c.meta.inp)>.01){el.currentTime=c.meta.inp;await new Promise(ok=>{el.addEventListener('seeked',()=>ok(),{once:true});setTimeout(ok,1500)})}}catch{}c.rel=false})().finally(()=>{c.acq=null});return c.acq}
 function releaseFar(i,keep){if(S.clips.filter(Boolean).length<=LIVEMAX)return;const ks=new Set(keep||[i-1,i,i+1]);S.clips.forEach((c,k)=>{if(c&&c.el&&!ks.has(k))releaseClip(k)})}
 /* ---------- 一括レビュー画面 ---------- */
-function btRender(){const box=$('brev');if(!box)return;const n=S.sc.length-1;let h='';const lab={pending:'未処理',searching:'検索中…',downloading:'取得中…',done:'反映済み',failed:'失敗'};
+function candLine(c,k,b,i){const T=(c.fsize?(c.fsize/1048576).toFixed(1)+'MB':'サイズ不明');const th=BT.th[c.provider+':'+c.id];const on=b.sel===k&&S.clips[i]&&b.rec&&b.rec.id===c.id;
+ return '<div class="note" style="margin:6px 0;overflow:hidden">'+(th?'<img alt="" src="'+th+'" style="width:54px;height:96px;object-fit:cover;float:left;margin-right:8px;border-radius:6px">':'')+'['+(k+1)+'] 提案点 '+escH(c.score)+'（メタ情報のみの推測）｜作者 '+escH(c.creator||'不明')+(c.same?'（同じ作者・世界観の統一）':'')+'｜'+escH(c.fw||c.w||'?')+'×'+escH(c.fh||c.h||'?')+'｜'+escH(c.dur||'?')+'秒｜'+escH(T)+(c.up?'｜縦1920pxへの拡大 ×'+escH(c.up):'')+(c.warn&&c.warn.length?'<br><span class="ng">注意: '+escH(c.warn.join('／'))+'</span>':'')+'<br>'+(c.page?'<a href="'+escH(c.page)+'" target="_blank" rel="noopener noreferrer">元ページで確認</a>　':'')+(on?'<b class="ok">採用中</b>':'<button data-a="adopt:'+i+':'+k+'"'+(b.lock?' disabled':'')+'>この素材を採用</button>')+'</div>'}
+function btRender(){const box=$('brev');if(!box)return;const n=S.sc.length-1;let h='';const lab={pending:'未処理',searching:'検索中…',cand:'候補あり（未採用）',downloading:'取得中…',done:'反映済み',failed:'失敗'};
  for(let i=0;i<n;i++){const b=bstat(i),c=S.clips[i],sp=sceneSpec(i),st=b.lock?'🔒ロック中':(lab[b.st]||b.st);
   h+='<fieldset class="bc"><b>'+escH(S.sc[i].id+' '+S.sc[i].name)+'</b>（'+(S.sc[i].b-S.sc[i].a).toFixed(1)+'秒）　<span class="'+(b.st==='failed'?'ng':'ok')+'">'+escH(st)+'</span><br><span class="note">'+escH(sp.line)+'</span><br>';
-  if(c){h+=(c.th?'<img alt="" src="'+c.th+'" style="width:72px;height:128px;object-fit:cover;float:left;margin-right:8px;border-radius:6px">':'')+'<span class="note">'+escH((c.meta.src||'')+'｜'+(b.rec?b.rec.id:(c.meta.url||'').slice(-24))+'｜作者 '+(c.meta.by||'不明'))+'｜'+(c.pend?'<b class="ng">権利未確認</b>':'権利確認済み')+'</span><br>'+(c.meta.url?'<a href="'+escH(c.meta.url)+'" target="_blank" rel="noopener noreferrer">元ページで確認</a>':'')+(b.msg?'<br><span class="note">'+escH(b.msg)+'</span>':'')+((c.w&&c.w.length)?'<br><span class="ng">注意: '+escH(c.w.join('／'))+'</span>':'');
-   const cs=b.cands||[];if(cs.length>1)h+='<br><span class="note">候補 '+(b.sel+1)+'/'+cs.length+'（提案点 '+escH(cs[b.sel]&&cs[b.sel].score)+'・メタ情報のみの推測）</span>'}
-  else h+='<span class="note">'+(b.st==='failed'?'':'素材は未設定（模擬素材）')+'</span>';
-  if(b.st==='failed')h+='<br><span class="ng">'+escH(b.msg||'')+'</span><br><span class="note">'+escH(b.fix||'')+'</span>';
-  h+='<br style="clear:both"><button data-a="next:'+i+'"'+((b.cands||[]).length>1?'':' disabled')+'>次の候補</button><button data-a="prev:'+i+'"'+((b.cands||[]).length>1?'':' disabled')+'>前の候補</button><button data-a="lock:'+i+'">'+(b.lock?'ロック解除':'ロック')+'</button><button data-a="man:'+i+'">手動で取り込む</button></fieldset>'}
+  if(c){h+=(c.th?'<img alt="" src="'+c.th+'" style="width:72px;height:128px;object-fit:cover;float:left;margin-right:8px;border-radius:6px">':'')+'<span class="note">'+escH((c.meta.src||'')+'｜'+(b.rec?b.rec.id:(c.meta.url||'').slice(-24))+'｜作者 '+(c.meta.by||'不明'))+'｜'+(c.pend?'<b class="ng">権利未確認</b>':'権利確認済み')+'</span><br>'+(c.meta.url?'<a href="'+escH(c.meta.url)+'" target="_blank" rel="noopener noreferrer">元ページで確認</a>':'')+(b.msg?'<br><span class="note">'+escH(b.msg)+'</span>':'')+((c.w&&c.w.length)?'<br><span class="ng">注意: '+escH(c.w.join('／'))+'</span>':'')}
+  else h+='<span class="note">'+(b.st==='failed'||b.st==='cand'?'':'素材は未設定（模擬素材）')+'</span>';
+  if(b.st==='failed'||(b.st==='cand'&&(b.msg||b.fix)))h+='<br><span class="ng">'+escH(b.msg||'')+'</span><br><span class="note">'+escH(b.fix||'')+'</span>';
+  const cs=b.cands||[];if(cs.length){h+='<br style="clear:both"><details data-i="'+i+'"'+(BT.open[i]||b.st==='cand'?' open':'')+'><summary>候補 '+cs.length+'件を見る（採用したものだけ取得します）</summary>'+cs.map((x,k)=>candLine(x,k,b,i)).join('')+'<button data-a="thumb:'+i+'">この場面のサムネイルを見る</button></details>'}
+  h+='<br style="clear:both"><button data-a="next:'+i+'"'+(c&&b.rec&&cs.length>1?'':' disabled')+'>次の候補</button><button data-a="prev:'+i+'"'+(c&&b.rec&&cs.length>1?'':' disabled')+'>前の候補</button><button data-a="lock:'+i+'">'+(b.lock?'ロック解除':'ロック')+'</button><button data-a="man:'+i+'">手動で取り込む</button></fieldset>'}
  box.innerHTML=h;const pend=S.clips.filter(c=>c&&c.pend).length;const u=$('bnote');if(u)u.textContent=pend?'権利未確認の素材が '+pend+'本あります。確認するまで書き出せません':''}
-function btBind(){const box=$('brev');box.onclick=async e=>{const a=e.target&&e.target.dataset&&e.target.dataset.a;if(!a)return;const [k,v]=a.split(':'),i=+v;if(k==='next'||k==='prev'){const b=bstat(i),r=await batchPick(i,b.sel+(k==='next'?1:-1));if(!r.ok)bprog(null,r.msg)}else if(k==='lock')batchLock(i);else if(k==='man'){const el=$('cf'+i);if(el){el.scrollIntoView({block:'center'});el.focus&&el.focus()}}};
- $('bGo').onclick=()=>{BT.key=$('bkey').value.trim();batchRun({})};$('bFail').onclick=()=>{BT.key=$('bkey').value.trim();batchRun({only:'failed'})};$('bStop').onclick=()=>{BT.stop=true};
+function btBind(){const box=$('brev');box.onclick=async e=>{const a=e.target&&e.target.dataset&&e.target.dataset.a;if(!a)return;const [k,v,w]=a.split(':'),i=+v;if(k==='adopt'){const r=await batchAdopt(i,+w);if(!r.ok)bprog(null,r.msg)}else if(k==='thumb')await thumbsFor(i);else if(k==='next'||k==='prev'){const b=bstat(i),r=await batchPick(i,b.sel+(k==='next'?1:-1));if(!r.ok)bprog(null,r.msg)}else if(k==='lock')batchLock(i);else if(k==='man'){const el=$('cf'+i);if(el){el.scrollIntoView({block:'center'});el.focus&&el.focus()}}};
+ $('bGo').onclick=()=>{BT.key=$('bkey').value.trim();batchRun({})};$('bFail').onclick=()=>{BT.key=$('bkey').value.trim();batchRun({only:'failed'})};$('bTop').onclick=()=>{batchAdoptTop()};$('bRef').onclick=async()=>{BT.key=$('bkey').value.trim();const r=await batchRefetch();bprog(1,r.halt||('再取得: '+r.done+'場面'+(r.failed?'／失敗 '+r.failed+'場面':'')))};box.addEventListener('toggle',e=>{const d=e.target;if(d&&d.dataset&&d.dataset.i!=null)BT.open[d.dataset.i]=d.open},true);$('bStop').onclick=()=>{BT.stop=true};
  $('bOk').onclick=async()=>{const r=await rightsConfirmAll();bprog(null,r.msg)};$('bkey').oninput=()=>{BT.key=$('bkey').value.trim()};
- const sel=$('bpv');sel.innerHTML=Object.values(PROV).map(p=>'<option value="'+p.id+'">'+escH(p.name)+'</option>').join('');sel.value=BT.prov;sel.onchange=()=>{BT.prov=sel.value}}
-btBind();setTransport(null);btRender();pjBanner();
+ const sel=$('bpv');sel.innerHTML=Object.values(PROV).map(p=>'<option value="'+p.id+'">'+escH(p.name)+'</option>').join('');sel.value=BT.prov;sel.onchange=()=>{BT.prov=sel.value};const md=$('bmode');md.value=BT.mode;md.onchange=()=>{BT.mode=md.value}}
+async function thumbsFor(i){const b=bstat(i);let n=0;for(const c of b.cands||[]){const k=c.provider+':'+c.id;if(BT.th[k]||!c.thumb)continue;try{const bl=await netBlob(c.thumb,{provider:c.provider,thumb:true});if(bl&&bl.size&&bl.size<3*1048576){BT.th[k]=URL.createObjectURL(bl);n++}}catch(e){bprog(null,redact(e.message)+'。'+errFix(e));break}}btRender();return n}
+/* ---------- 実通信の試験（検索1回→動画1本→点検） ---------- */
+const RT={cands:[],t:null,dl:null};
+const vSeek=(v,t)=>new Promise(ok=>{let d=0;const f=()=>{if(!d){d=1;ok()}};v.addEventListener('seeked',f,{once:true});setTimeout(f,1500);try{v.currentTime=t}catch{f()}});
+async function estFps(v){if(!v.requestVideoFrameCallback)return null;await vSeek(v,0);return new Promise(ok=>{let n=0,t0=null,t1=0,done=0;const fin=x=>{if(!done){done=1;try{v.pause()}catch{}ok(x)}};const cb=(now,md)=>{n++;if(t0==null)t0=md.mediaTime;t1=md.mediaTime;if(t1-t0>=1||n>150)fin(n>2&&t1>t0?+((n-1)/(t1-t0)).toFixed(1):null);else v.requestVideoFrameCallback(cb)};v.requestVideoFrameCallback(cb);v.play().catch(()=>fin(null));setTimeout(()=>fin(null),4000)})}
+async function inspectBlob(blob){const v=document.createElement('video');v.muted=true;v.playsInline=true;v.preload='auto';const url=URL.createObjectURL(blob);v.src=url;
+ try{await new Promise((ok,ng)=>{v.onloadeddata=ok;v.onerror=()=>ng(coded('DECODE','この端末で再生できない形式です'));setTimeout(()=>ng(coded('DECODE','読み込み時間切れ')),20000)});
+  const w=v.videoWidth,h=v.videoHeight,dur=v.duration,cv=document.createElement('canvas');cv.width=72;cv.height=128;const x=cv.getContext('2d',{willReadFrequently:true}),sw=Math.min(w,h*9/16),L=[],S2=[];let thumb='';
+  for(const p of[.1,.35,.6,.85]){await vSeek(v,Math.max(0,Math.min(dur-.05,dur*p)));x.drawImage(v,(w-sw)/2,0,sw,h,0,0,72,128);const d=x.getImageData(0,0,72,128).data;let sy=0,sy2=0,ss=0,nn=d.length/4;for(let k=0;k<d.length;k+=4){const r=d[k],g=d[k+1],bb=d[k+2],y=.2126*r+.7152*g+.0722*bb;sy+=y;sy2+=y*y;const mx=Math.max(r,g,bb),mn=Math.min(r,g,bb);ss+=mx?(mx-mn)/mx:0}const m=sy/nn;L.push(m);S2.push({c:Math.sqrt(Math.max(0,sy2/nn-m*m)),s:ss/nn});if(!thumb)thumb=cv.toDataURL('image/jpeg',.7)}
+  const avg=a=>a.reduce((p,q)=>p+q,0)/a.length,fps=await estFps(v);
+  return{w,h,dur:+dur.toFixed(2),fps,mbps:dur>0?+(blob.size*8/dur/1e6).toFixed(2):null,lum:Math.round(avg(L)),contrast:Math.round(avg(S2.map(q=>q.c))),sat:+avg(S2.map(q=>q.s)).toFixed(2),up:h?+(1920/h).toFixed(2):null,thumb}}
+ finally{try{v.removeAttribute('src');v.load()}catch{}URL.revokeObjectURL(url)}}
+const mbOf=n=>n?(n/1048576).toFixed(1)+'MB':'確認できません';
+function rtText(){const L=['【実通信試験の結果】','日時: '+new Date().toISOString(),'ビルド: '+CP_BUILD,'端末: '+navigator.userAgent,'提供元: '+(PROV[BT.prov]?PROV[BT.prov].name:BT.prov),'通信の使用: 検索 '+realCnt().s+'/'+REAL.lim.s+'回、動画 '+realCnt().d+'/'+REAL.lim.d+'本'];
+ if(RT.t){const t=RT.t;L.push('','■ ① 検索（検索語: '+t.q+'）','結果: '+t.status,'応答時間: '+(t.ms==null?'確認できません':t.ms+'ms'),'取得元: '+(t.src==='cache'?'24時間キャッシュ（通信なし）':'提供元へ通信'),'CORS（ブラウザからの検索）: '+t.cors,'ヒット件数: '+t.n,'レート制限ヘッダー: '+(BT.hdr&&(BT.hdr.remaining||BT.hdr.limit)?'残り '+BT.hdr.remaining+'／上限 '+BT.hdr.limit+'／回復まで '+BT.hdr.reset+'秒':'確認できません（ブラウザに公開されていない可能性）'));
+  t.top.forEach((c,k)=>L.push((k+1)+') ID '+c.id+'｜作者 '+(c.creator||'不明')+'｜'+(c.fw||c.w)+'×'+(c.fh||c.h)+'（'+(c.vname||'版不明')+'）｜'+c.dur+'秒｜'+mbOf(c.fsize)+'｜提案点 '+c.score+'｜'+c.page+(c.warn&&c.warn.length?'｜注意: '+c.warn.join('／'):'')))}
+ if(RT.dl){const d=RT.dl;L.push('','■ ② ダウンロードと点検','結果: '+d.status);if(d.ok){L.push('素材: '+d.id+'（作者 '+d.creator+'）','取得元ページ: '+d.page,'ライセンス: '+d.lic+'（規約確認日 '+d.checked+'）','表記案: '+d.credit,'ダウンロード先ホスト: '+d.host+'（CORS: '+d.cors+'）','サイズ: '+mbOf(d.bytes)+'｜形式: '+(d.type||'確認できません')+'｜所要時間: '+d.ms+'ms｜速度: '+d.mbps+'Mbps','解像度: '+d.q.w+'×'+d.q.h+'｜長さ: '+d.q.dur+'秒｜フレームレート: '+(d.q.fps==null?'確認できません':d.q.fps+'fps')+'｜平均ビットレート: '+(d.q.mbps==null?'確認できません':d.q.mbps+'Mbps'),'縦1920pxへの拡大率: ×'+d.q.up+(d.q.w>d.q.h?'（横向き素材は中央を縦に切り抜いた場合の値）':''),'縦中央切り抜きの機械測定（参考値・品質点ではありません）: 明るさ '+d.q.lum+'/255｜コントラスト '+d.q.contrast+'｜彩度 '+d.q.sat+(d.q.lum<35?'｜暗め':d.q.lum>220?'｜明るすぎ':'')+(d.q.contrast<25?'｜低コントラスト':''),'保存: 端末内の素材受信箱に「権利未確認」として保存'+(d.reused?'（取得済みの素材を再利用）':''),'シネマ感・構図・台本との意味の一致・縦切り抜き後の見え方: 人の目での確認が必要です（機械判定はしていません）')}else L.push('原因と対処: '+d.fix)}
+ return redact(L.join('\n'))}
+function rtShow(){$('rOut').textContent=rtText();const c=realCnt();$('rCnt').textContent='使用済み通信: 検索 '+c.s+'/'+REAL.lim.s+'回、動画 '+c.d+'/'+REAL.lim.d+'本｜'+(BT.net&&BT.net.real?'実通信: 有効':'実通信: 無効（チェックを入れると有効になります）')}
+async function rtSearch(){BT.key=$('bkey').value.trim();const q=$('rq').value.trim();RT.dl=null;RT.t={q,status:'実行中…',ms:null,src:'',cors:'確認中',n:0,top:[]};rtShow();const t0=performance.now();
+ try{const raw=await provSearch(BT.prov,q,{minH:1080});RT.t.ms=Math.round(performance.now()-t0);RT.t.src=BT.lastSrc;RT.t.cors=BT.lastSrc==='cache'?'（キャッシュのため未確認）':'成功（ブラウザから検索できました）';
+  const L=raw.filter(c=>c.file).map(c=>{const sc=scoreC(c,5,[],1080),w=[];if(c.h<c.w)w.push('横向き（縦に切り抜きます）');const up=c.fh?1920/c.fh:0;c.up=up?+up.toFixed(2):null;if(up>1.5)w.push('縦1920pxへの拡大が大きい（約×'+up.toFixed(1)+'）');return Object.assign({},c,{score:sc.score,warn:w})}).sort((a,b)=>b.score-a.score).slice(0,5);
+  RT.cands=L;RT.t.n=raw.length;RT.t.top=L;RT.t.status=L.length?'成功':'ヒットなし（検索語を変えてください）';$('rSel').innerHTML=L.map((c,k)=>'<option value="'+k+'">'+(k+1)+'位 '+escH(c.creator||'不明')+' '+escH(c.fw||c.w)+'×'+escH(c.fh||c.h)+' '+escH(c.dur)+'秒 '+escH(mbOf(c.fsize))+'</option>').join('')}
+ catch(e){RT.t.status='失敗: '+redact(e.message);RT.t.cors=e.code==='NETFAIL'?'失敗の可能性（ブラウザが遮断）':(e.code==='HTTP'?'通信は成功（HTTP '+e.status+'）':'未確認');RT.t.src=e.code==='LIMIT'||e.code==='HOST'?'通信せず':'提供元へ通信';RT.t.n=0;RT.t.fix=errFix(e);RT.t.status+='。'+RT.t.fix}
+ rtShow();return RT.t}
+async function rtDownload(){BT.key=$('bkey').value.trim();const k=+$('rSel').value,c=RT.cands[k];if(!c){RT.dl={status:'先に「① 検索」を実行してください',fix:'検索結果から1本を選びます'};rtShow();return RT.dl}
+ RT.dl={status:'実行中…'};rtShow();const t0=performance.now();let host='';try{host=new URL(c.file).hostname}catch{}
+ try{const{blob,reused}=await getAsset(c),ms=Math.round(performance.now()-t0),q=await inspectBlob(blob),T=TERMS[c.provider]||{};
+  RT.dl={ok:true,status:'成功',id:c.id,creator:c.creator||'不明',page:c.page,lic:T.license||'',checked:T.checked||'',credit:'Video by '+(c.creator||'(作者名不明)')+' from '+(T.name||c.provider)+' ('+c.page+')',host,cors:reused?'（再利用のため未確認）':'成功',bytes:blob.size,type:blob.type,ms,mbps:ms?+(blob.size*8/ms/1000).toFixed(1):null,q,reused};
+  const vi=$('rVid');if(vi.dataset.u)URL.revokeObjectURL(vi.dataset.u);vi.dataset.u=URL.createObjectURL(blob);vi.src=vi.dataset.u;vi.hidden=false;$('rImg').src=q.thumb;$('rImg').hidden=false}
+ catch(e){RT.dl={ok:false,status:'失敗: '+redact(e.message),fix:errFix(e)}}
+ rtShow();return RT.dl}
+$('breal').onchange=()=>{setTransport($('breal').checked?realTransport():null);rtShow()};$('rS').onclick=rtSearch;$('rD').onclick=rtDownload;
+$('rC').onclick=async()=>{try{await navigator.clipboard.writeText(rtText());$('rC').textContent='コピーしました'}catch{$('rC').textContent='コピーできません（文章を長押しで選択してください）'}setTimeout(()=>$('rC').textContent='結果の文章をコピー',2000)};
+/* ---------- バックアップと復元の操作 ---------- */
+$('pjBk').onclick=async()=>{const e=$('pjbst');try{const r=await pjExport(),a=document.createElement('a');a.href=URL.createObjectURL(r.blob);a.download=r.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),5000);e.className='note';e.textContent='保存しました: '+r.name+'（'+mbOf(r.bytes)+'）'+(r.notes.length?'。注意: '+r.notes.join('／'):'')}catch(x){e.className='note w';e.textContent='バックアップを保存できませんでした: '+redact(x.message)}};
+$('pjIm').onchange=async()=>{const f=$('pjIm').files[0],e=$('pjbst');if(!f)return;try{const r=await pjImport(await f.text());e.className='note'+(r.ok&&!(r.miss||[]).length?'':' w');e.textContent=r.msg}catch(x){e.className='note w';e.textContent='復元できませんでした: '+redact(x.message)}$('pjIm').value=''};
+btBind();setTransport(null);rtShow();btRender();pjBanner();
 
-BTX.reset=()=>{BT.st={};btRender()};
-window.CP={clearSearchCache:scClear,setTransport,PROV,BT,batchRun,batchPick,batchLock,rightsConfirmAll,rightsGate,pjSave,pjSnap,pjRestore,pjList,PJ,applyRec,liveCount,acquireClip,releaseClip,releaseFar,LIVEMAX,sceneSpec,scoreC,redact,attachClip,bstat,btRender,cropSet,cropReset,cropCheck,cropScreen,cropPlace,cropSubBand,directorReview,drText,DR_TH,setVoice,voiceBuf,voiceHpQdB,VOICE_B,previewVoice,segmentsEx,syncConf,contentCheck,planSync,validManual,setSyncMode,SYNC,bgmEff,beatOn,setBgmMode,memMon,memMonText,exportGuard,audioReport,evidenceRecord,blindRecover,blindList,CP_BUILD,intakeReport,blindSet,revealKey,perfSummary,PF,makeVariant,applyVariant,GOV,govern,fxCost,analyzeBgm,loadBgm,drawParallax,rateAt,mediaT,applyCuts,importDesign,exportOffline,S,renderFrame,capLayout,boxes,safeCheck,buildAudio,measure,alignNarr,mockNarr,segments,report,prep,exportVideo,useClip,sceneAt,camera,trans,LN0,SCN0,out,og,GL:!!GL,SAFE,N,FPS,D,ledger,stats};
+BTX.reset=()=>{BT.st={};for(const k in BT.th)try{URL.revokeObjectURL(BT.th[k])}catch{}BT.th={};BT.open={};btRender()};
+window.CP={clearSearchCache:scClear,setTransport,realTransport,REAL,realCnt,rtSearch,rtDownload,rtText,RT,inspectBlob,pickVar,batchAdopt,batchAdoptTop,batchRefetch,pjExport,pjImport,pjApply,persistAsk,thumbsFor,PROV,BT,batchRun,batchPick,batchLock,rightsConfirmAll,rightsGate,pjSave,pjSnap,pjRestore,pjList,PJ,applyRec,liveCount,acquireClip,releaseClip,releaseFar,LIVEMAX,sceneSpec,scoreC,redact,attachClip,bstat,btRender,cropSet,cropReset,cropCheck,cropScreen,cropPlace,cropSubBand,directorReview,drText,DR_TH,setVoice,voiceBuf,voiceHpQdB,VOICE_B,previewVoice,segmentsEx,syncConf,contentCheck,planSync,validManual,setSyncMode,SYNC,bgmEff,beatOn,setBgmMode,memMon,memMonText,exportGuard,audioReport,evidenceRecord,blindRecover,blindList,CP_BUILD,intakeReport,blindSet,revealKey,perfSummary,PF,makeVariant,applyVariant,GOV,govern,fxCost,analyzeBgm,loadBgm,drawParallax,rateAt,mediaT,applyCuts,importDesign,exportOffline,S,renderFrame,capLayout,boxes,safeCheck,buildAudio,measure,alignNarr,mockNarr,segments,report,prep,exportVideo,useClip,sceneAt,camera,trans,LN0,SCN0,out,og,GL:!!GL,SAFE,N,FPS,D,ledger,stats};
 </script></body></html>
