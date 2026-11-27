@@ -14,7 +14,7 @@ with sync_playwright() as p:
     pg.select_option('#resSel','1080');pg.wait_for_timeout(1000);ready(pg);pg.wait_for_timeout(6000)
     B=snap(pg);print('B',{k:v for k,v in B.items() if k!='meta'})
     ck('R1 解像度が1080に切り替わる','1080' in B['res'],B['res'])
-    ck('R2 素材の本数・識別・権利状態が同じ',B['clips']==A['clips'] and B['meta']==A['meta'],(B['clips'],A['clips']))
+    ck('R2 素材の本数・識別・権利状態が同じ',B['clips']==A['clips'] and B['meta']==A['meta'],(A['meta'],B['meta']))
     ck('R3 ナレーションが同じ',B['narr'] and abs(B['dur']-A['dur'])<.05,(B['dur'],A['dur']))
     ck('R4 設計JSONと通信枠の使用数が同じ',B['dj']==A['dj'] and B['cnt']==A['cnt'] and B['ep']==A['ep'],(B['cnt'],A['cnt']))
     ck('R5 切り替えで追加の通信なし',len(pg.REQ['api'])==api0 and len(pg.REQ['cdn'])==cdn0)
