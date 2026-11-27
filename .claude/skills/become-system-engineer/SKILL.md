@@ -107,6 +107,12 @@ UI/UX設計
 - Androidの実機での音声の再生と取り込みの挙動は、模擬環境では確認できない。
 - 画面の簡素化（6ステップ化）の効果は、実機での操作を見るまで判断しない。
 
-## 8. 変更履歴
+## 8. 参照資料（必要なときだけ読む）
+
+- references/automation.md: AUTOMATION ENGINEER の機能（工程の状態、自動停止、24工程の現状、自動復旧の設計）。
+- 品質ゲートと品質回帰テストは、become-chief-orchestrator/references/quality-gate.md。
+
+## 9. 変更履歴
 
 - v0.1（2026-11-28）: オーナー提供の草案（107行）を基に、独自の言葉で再構成して配置
+- v0.1.1（2026-11-28）: AUTOMATION ENGINEER を参照資料として統合
