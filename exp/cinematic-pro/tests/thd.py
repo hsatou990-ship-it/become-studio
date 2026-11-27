@@ -1,0 +1,18 @@
+exec(open("tr1.py").read().split("\nwith sync_playwright()")[0])
+R=[]
+def ck(n,ok,info=''):R.append(bool(ok));print(('PASS ' if ok else 'FAIL ')+n,'' if ok else info)
+SRC=open(REPO+'/exp/cinematic-pro/index.html',encoding='utf-8').read()
+with sync_playwright() as p:
+    b=p.chromium.launch(executable_path='/usr/bin/google-chrome',args=['--no-sandbox','--headless=new','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader','--autoplay-policy=no-user-gesture-required'])
+    ctx,pg=mkctx(b);pg.goto(BASE.split('#')[0]);pg.evaluate("()=>{try{localStorage.clear()}catch{}}");pg.reload();pg.wait_for_function("()=>typeof CP!=='undefined'&&CP.S",timeout=20000);pg.wait_for_timeout(800)
+    r=pg.evaluate("()=>({w:CW,h:CH,sel:document.getElementById('resSel').value,fps:FPS})")
+    ck('1 既定の出力が1080×1920／30fps',r['w']==1080 and r['h']==1920 and r['sel']=='1080' and r['fps']==30,r)
+    ck('2 画面に出す解像度の表示が実際の値',pg.evaluate("()=>document.getElementById('rs').textContent.includes('1080×1920')"))
+    ctx2,pg2=mkctx(b);pg2.goto(BASE.split('#')[0]+'#res=360');pg2.evaluate("()=>{try{localStorage.clear()}catch{}}");pg2.reload();ready(pg2);pg2.wait_for_timeout(600)
+    rp=pg2.evaluate("()=>JSON.stringify(report())")
+    ck('3 出力レポートが、実際の解像度を示し、固定の1080文言を含まない（360指定時）','360x640' in rp and '書き出しは1080x1920' not in rp,rp[:200])
+    ck('4 ソースに固定の「書き出し1080x1920」表記が残らない','書き出し1080x1920' not in SRC and '書き出しは1080x1920' not in SRC)
+    ck('5 メモリ不足の表示が、720への切り替えを勧めない','解像度を720にして' not in SRC)
+    ck('6 1080未満の出力では、完了表示に標準と異なることを明示する','標準の1080×1920ではありません' in SRC)
+    ck('7 720へ自動で切り替える処理がない（解像度の変更は選択欄の操作のみ）',SRC.count("location.hash='res='")==1)
+    print('TOTAL',sum(R),'/',len(R))

@@ -108,7 +108,7 @@ const NS=(document.querySelector('meta[name=cp-ns]')||{}).content||'';
 const W=1080,H=1920,FPS=30,MW=540,MH=960,GOLD='#d4af37';
 const $=id=>document.getElementById(id);
 let D=15,N=D*FPS;const HP=new URLSearchParams(location.hash.slice(1));
-const RES=Math.max(180,Math.min(1080,+HP.get('res')||720)),SCL=RES/W,CW=RES,CH=Math.round(RES*H/W);
+const RES=Math.max(180,Math.min(1080,+HP.get('res')||1080)),SCL=RES/W,CW=RES,CH=Math.round(RES*H/W);
 const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x)),lerp=(a,b,u)=>a+(b-a)*u,ease=u=>u*u*(3-2*u);
 const FF={serif:'"Noto Serif JP","Noto Serif CJK JP","Hiragino Mincho ProN","Yu Mincho",serif',gothic:'"Noto Sans JP","Noto Sans CJK JP","Hiragino Sans","Yu Gothic",sans-serif'};
 const SAFE={x0:86,x1:994,y0:230,y1:1344};
@@ -516,8 +516,8 @@ async function exportOffline(){if(S.busy)return null;{const g=rightsGate();if(g)
    progress:p=>st('H.264+AAC書き出し中 '+Math.round(p*100)+'%')});
   S.busy=false;S.perf=perfSummary(r);const blob=r.blob,rep=BSInspect(await blob.arrayBuffer()),v=await verifyBlob(blob);
   window.CP.lastBlob=blob;const url=URL.createObjectURL(blob);$('dl').href=url;$('dl').download='CINEMATIC-PRO-A-15s-h264.mp4';$('dl').hidden=false;$('dl').textContent='H.264+AAC版を保存';
-  st('書き出し完了（音声符号化: 端末標準AAC／所要 '+(r.T.total/1000).toFixed(1)+'秒＝動画の'+(r.T.total/1000/D).toFixed(2)+'倍）｜【実測】'+rep.tracks.map(t=>t.kind==='video'?t.codec+' '+t.width+'x'+t.height+' '+(t.fps||'?')+'fps':t.codec).join(' + ')+' '+(rep.duration||0).toFixed(1)+'秒｜'+(v.msg||'')+'｜TikTok推奨条件(H.264+AAC+1080x1920+30fps): '+(rep.allOk?'満たす':'満たさない→'+rep.checks.filter(x=>!x[1]).map(x=>x[0]).join('、'))+'（取り込み可否・Android再生は未確認）｜サイズ '+(blob.size/1048576).toFixed(1)+'MB'+perfText(),rep.allOk&&v.ok?'':'w');
-  document.removeEventListener('visibilitychange',vh);return{blob,rep,v,T:r.T}}catch(e){document.removeEventListener('visibilitychange',vh);S.busy=false;S.lastFail={code:e.code||'ERR',msg:e.message};st(e.code==='NO_NATIVE_AAC'?'⚠ '+e.message:e.code==='ABORT'?'書き出しを中止しました。素材・設定・完成済みの動画は残っています':e.code==='MEMORY'?'⚠ 端末のメモリが不足してきたため、安全のため書き出しを止めました。素材・設定・完成済みの動画は残っています。ほかのアプリを閉じてから、解像度を720にして再実行してください':'H.264+AAC書き出しに失敗しました: '+e.message+'。素材・設定・完成済みの動画は残っています。従来の③書き出しも使えます','w');return null}}
+  st((CW<1080?'⚠ 解像度が '+CW+'×'+CH+' です（標準の1080×1920ではありません）｜':'')+'書き出し完了（音声符号化: 端末標準AAC／所要 '+(r.T.total/1000).toFixed(1)+'秒＝動画の'+(r.T.total/1000/D).toFixed(2)+'倍）｜【実測】'+rep.tracks.map(t=>t.kind==='video'?t.codec+' '+t.width+'x'+t.height+' '+(t.fps||'?')+'fps':t.codec).join(' + ')+' '+(rep.duration||0).toFixed(1)+'秒｜'+(v.msg||'')+'｜TikTok推奨条件(H.264+AAC+1080x1920+30fps): '+(rep.allOk?'満たす':'満たさない→'+rep.checks.filter(x=>!x[1]).map(x=>x[0]).join('、'))+'（取り込み可否・Android再生は未確認）｜サイズ '+(blob.size/1048576).toFixed(1)+'MB'+perfText(),rep.allOk&&v.ok?'':'w');
+  document.removeEventListener('visibilitychange',vh);return{blob,rep,v,T:r.T}}catch(e){document.removeEventListener('visibilitychange',vh);S.busy=false;S.lastFail={code:e.code||'ERR',msg:e.message};st(e.code==='RIGHTS'?'⚠ '+e.message:e.code==='NO_NATIVE_AAC'?'⚠ '+e.message:e.code==='ABORT'?'書き出しを中止しました。素材・設定・完成済みの動画は残っています':e.code==='MEMORY'?'⚠ 端末のメモリが不足してきたため、安全のため書き出しを止めました。素材・設定・完成済みの動画は残っています。原因: 端末のメモリ不足です。ほかのアプリを閉じてから、もう一度実行してください。解像度を下げると画質が下がります。下げる場合は、その影響を理解したうえで、ご自身で選んでください':'H.264+AAC書き出しに失敗しました: '+e.message+'。素材・設定・完成済みの動画は残っています。従来の③書き出しも使えます','w');return null}}
 async function verifyBlob(blob){try{const ab=await blob.arrayBuffer(),ctx=new OfflineAudioContext(1,1,48000),b=await ctx.decodeAudioData(ab),x=b.getChannelData(0),sr=b.sampleRate,A=S.sc;
  const nw=S.ln.map(L=>rmsDb(x,L.t0*sr,(L.t0+L.d)*sr)),sil=rmsDb(x,(A[A.length-1].a-.12)*sr,(A[A.length-1].a+.12)*sr),nav=nw.reduce((q,v)=>q+v,0)/Math.max(1,nw.length),ok=!S.narr||(nav>-30&&nav-sil>12);
  return{ok:b.duration>14&&b.duration<16.5&&ok,dur:b.duration,narr:+nav.toFixed(1),sil:+sil.toFixed(1),msg:`書き出したファイルの長さ ${b.duration.toFixed(2)}秒／ナレーション区間 ${nav.toFixed(1)}dB／余韻の無音 ${sil.toFixed(1)}dB`+(ok?'':'（音声の確認が必要）')}}catch(e){return{ok:false,unverified:true,msg:'書き出し後の音声を自動検査できませんでした: '+e.message+'。再生して確認してください'}}}
@@ -525,7 +525,7 @@ async function verifyBlob(blob){try{const ab=await blob.arrayBuffer(),ctx=new Of
 function stats(){const out2=[];S.sc.forEach((s,i)=>{const t=(s.a+s.b)/2;renderFrame(t);const d=og.getImageData(0,0,CW,CH).data;let l=0,sa=0,n=0;for(let k=0;k<d.length;k+=64){const r=d[k],g=d[k+1],b=d[k+2],mx=Math.max(r,g,b),mn=Math.min(r,g,b);l+=(.2126*r+.7152*g+.0722*b)/255;sa+=mx?(mx-mn)/mx:0;n++}out2.push({id:s.id,luma:+(l/n).toFixed(3),sat:+(sa/n).toFixed(3)})});return out2}
 function safeCheck(){let ok=true,worst=null;const bb={x0:1e9,y0:1e9,x1:-1e9,y1:-1e9};for(let f=0;f<N;f++){boxes(f/FPS).forEach(b=>{bb.x0=Math.min(bb.x0,b.x0);bb.y0=Math.min(bb.y0,b.y0);bb.x1=Math.max(bb.x1,b.x1);bb.y1=Math.max(bb.y1,b.y1)})}
  ok=bb.x0>=SAFE.x0&&bb.x1<=SAFE.x1&&bb.y0>=SAFE.y0&&bb.y1<=SAFE.y1;return{ok,bb}}
-function report(){const A=S.sc,ds=A.map(s=>s.b-s.a),r={frames:N,res:CW+'x'+CH+'（書き出しは1080x1920）',scenes:A.length,cuts:A.length-1,asl:+(ds.reduce((q,v)=>q+v,0)/A.length).toFixed(2),cutTimes:A.slice(1).map(s=>+s.a.toFixed(2)),gl:!!GL,safe:safeCheck(),stats:stats(),audio:S.meas,warn:S.warn.slice(),realClips:S.clips.filter(Boolean).length,note:S.clips.some(Boolean)?'実素材を含む':'模擬素材のみ。映像品質の判定には使えません'};
+function report(){const A=S.sc,ds=A.map(s=>s.b-s.a),r={frames:N,res:CW+'x'+CH,scenes:A.length,cuts:A.length-1,asl:+(ds.reduce((q,v)=>q+v,0)/A.length).toFixed(2),cutTimes:A.slice(1).map(s=>+s.a.toFixed(2)),gl:!!GL,safe:safeCheck(),stats:stats(),audio:S.meas,warn:S.warn.slice(),realClips:S.clips.filter(Boolean).length,note:S.clips.some(Boolean)?'実素材を含む':'模擬素材のみ。映像品質の判定には使えません'};
  if(S.ft.length)r.fps=+(1000/(S.ft.reduce((a,b)=>a+b,0)/S.ft.length)).toFixed(1);return r}
 /* ---------- 評価フォーム ---------- */
 const EVI=['映像素材の品質','台本と映像の一致','編集テンポ','字幕デザイン','音響品質','感情への訴求力','映像の滑らかさ','オリジナリティ','ブランドの統一感','作品全体の完成度'];
@@ -661,7 +661,7 @@ async function directorReview(){if(S.busy)return null;const n=S.sc.length-1,A=S.
  it('広告ディレクター','measured','mot1','冒頭1秒の画面の変化量（0.1秒と0.9秒の差 0-1）',f2(mot)+'｜最初の画面の明るさ '+f2(f0.luma),f0.luma>=DR_TH.firstLuma?'info':'check',mk+'（最初の画面の明るさ '+DR_TH.firstLuma+'以上）','変化量は数値のみ。訴求力の判断ではありません');
  const cps=L.map(l=>{const c=l.toks.map(k=>k[0]).join('').replace(/[、。！？!?]/g,'').length;return f2(c/Math.max(.1,l.d))});
  it('広告ディレクター','measured','cps','字幕の文字量（文字/秒）',cps.join(' / '),'info','基準なし','TikTok公式の「1秒5〜10語」は英語の語数で、日本語への換算根拠が確認できません');
- it('広告ディレクター','design','fmt','出力形式','縦9:16・書き出し1080x1920・音声：'+(S.narr?'ナレーションあり':'ナレーションなし')+'｜BGM：'+bgmEff(),'info',TT+'：縦9:16・720P以上・音声あり','BGMはTikTokで投稿時に追加する運用');
+ it('広告ディレクター','design','fmt','出力形式','縦9:16・書き出し'+CW+'x'+CH+'・音声：'+(S.narr?'ナレーションあり':'ナレーションなし')+'｜BGM：'+bgmEff(),'info',TT+'：縦9:16・720P以上・音声あり','BGMはTikTokで投稿時に追加する運用');
  it('広告ディレクター','design','brand','ブランド表示（BEYOND.）','結びの '+f2(D-A[n].a)+'秒のみ（冒頭・途中の表示なし）','info','基準なし','GoogleのABCDは早く・何度も示すことを推奨（YouTube広告向け。TikTokへの適用は確認できません）。採用するかはオーナー判断');
  ['冒頭で手が止まるか（訴求力）','視聴を続けたくなる構成か（維持）','記憶に残る表現があるか','BEYOND.らしい独自性があるか'].forEach((q,k)=>it('広告ディレクター','human','h'+k,q,'未評価','needs-viewing','人の視聴・投稿後の実データ'));
  /* ======== 素材と権利 ======== */
