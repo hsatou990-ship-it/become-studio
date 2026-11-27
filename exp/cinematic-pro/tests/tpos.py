@@ -1,0 +1,9 @@
+exec(open("tam2.py").read().split("\nwith sync_playwright()")[0])
+J=open('/home/claude/become-studio/exp/design/price-of-staying.design.json',encoding='utf-8').read()
+with sync_playwright() as p:
+    b=p.chromium.launch(executable_path='/usr/bin/google-chrome',args=['--no-sandbox','--headless=new','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader'])
+    pg=b.new_context(viewport={'width':412,'height':915}).new_page();errs=[];pg.on('pageerror',lambda e:errs.append(str(e)))
+    pg.goto(BASE+'#res=360');pg.reload();ready(pg);pg.wait_for_timeout(400)
+    pg.fill('#dj',J);pg.click('#bDJ');pg.wait_for_timeout(900)
+    print(pg.inner_text('#djs')[:600])
+    print(pg.evaluate("()=>CP.S.sc.length-1"),pg.evaluate("()=>CP.S.sc.slice(0,-1).map((_,i)=>CP.sceneSpec(i).queries)"),errs)
