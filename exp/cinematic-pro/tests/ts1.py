@@ -55,4 +55,11 @@ with sync_playwright() as p:
     pg.wait_for_timeout(800)
     m=pg.inner_text('#bst')+pg.inner_text('#brev')
     ck('4d 画像取得の失敗文が検索回数の枠と誤記しない','検索5回・動画6本' not in m,m[:120])
+    # 5 版表示（画面の「配信版」が実際のビルドと一致）
+    pg=fresh(b)
+    bl=pg.evaluate("()=>({shown:document.getElementById('bld').textContent,build:CP.CP_BUILD||null})")
+    cb=pg.evaluate("()=>typeof CP_BUILD==='string'?CP_BUILD:null")
+    ck('5a 画面の配信版表示が、実際のビルド(CP_BUILD)と一致',cb and cb in bl['shown'],(bl['shown'][:80],cb))
+    ck('5b 画面の配信版表示が旧版(r9)を示さない','r9-am' not in bl['shown'],bl['shown'][:80])
+    ck('5c HTMLの固定文字に旧版の表記が残らない','r9-am' not in open(REPO+'/exp/cinematic-pro/index.html',encoding='utf-8').read().split('<script')[0])
     print('TOTAL',sum(R),'/',len(R))

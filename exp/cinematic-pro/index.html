@@ -16,7 +16,7 @@ select,input,button,textarea{max-width:100%;box-sizing:border-box}fieldset,detai
 <h1>CINEMATIC PRO 15秒試作（実験ページ・正式版とは別）</h1>
 <div class="pn" id="pjbar" hidden><span></span><br><button id="pjgo" class="pri">続きから再開</button></div><p class="note" id="pjst"></p><p class="note" id="pjper"></p>
 <details><summary>プロジェクトのバックアップと復元（設定とナレーション・素材の出所。APIキーは含みません）</summary><p class="note">素材の動画本体は含みません（取得済みの素材はこの端末の受信箱から、無いものは保存済みIDから再取得します）。手動で取り込んだ素材は元ファイルを取り込み直してください。復元の前に、いまの作業は自動で退避します。</p><button id="pjBk">バックアップを保存（JSON）</button> <input type="file" id="pjIm" accept="application/json,.json"><p class="note" id="pjbst"></p></details>
-<p class="note" id="bld">配信版: cinematic-pro build 2026-11-27-r9-am（試験: 複数場面の自動取得・配置／検索5回・動画6本の試験枠／未公開ブランチ）</p>
+<p class="note" id="bld">配信版: （読み込み中）</p>
 <p class="note">このページの通信は pixabay.com と cdn.pixabay.com だけに限定しています（通信遮断のCSP）。通信は既定で無効で、「実通信の試験」で有効にしたときだけ、<span id="quotaTxt">承認済みの試験枠</span>の枠内で行います。それを超える通信は結果確認とオーナー承認のあとに開放します。素材はオーナーが自分で取得した動画ファイルを取り込みます。権利情報が揃っていない素材は使いません。未取込の場面は「模擬素材」で表示され、映像品質の評価対象になりません。</p>
 <canvas id="cv"></canvas>
 <p><button id="bPrep" class="p">① 音と編集を準備</button><button id="bPrev">② プレビュー再生</button><button id="bExp" class="p">③ 書き出し（15秒）</button><button id="bExp2" class="p">③b 高互換MP4書き出し（実験・H.264+AAC）</button><select id="resSel"><option value="720">720×1280（軽い）</option><option value="1080">1080×1920（TikTok推奨）</option></select><span id="rs" class="note"></span><a id="dl" hidden style="display:inline-block;padding:8px 10px;border:1px solid #d4af37;border-radius:8px;color:#d4af37">完成動画を保存</a></p>
@@ -719,7 +719,8 @@ async function blindSet(exporter){if(S.busy||!S.base)return null;const ex=export
 async function blindRecover(){const all=await blindList();if(!all.length)return 0;const run=Math.max(...all.map(r=>r.run)),g=all.filter(r=>r.run===run).sort((a,b)=>a.code<b.code?-1:1),L=$('blindl');
  if(L.textContent)return 0;const h=document.createElement('div');h.className='note w';h.textContent='前回のブラインド書き出しで完成していた動画 '+g.length+' 本が端末内に残っています（ページを開き直しても失われません）。';L.appendChild(h);g.forEach(r=>blindLink(L,r.code,r.blob,r.audio,true));return g.length}
 async function sha256Hex(t){try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch{return null}}
-const CP_BUILD='cinematic-pro build 2026-11-28-r10-am（試験: 複数場面の自動取得・配置／検索5回・動画6本の試験枠／未公開ブランチ）';
+const CP_BUILD='cinematic-pro build 2026-11-28-r10b-am（試験: 複数場面の自動取得・配置／検索5回・動画6本の試験枠／未公開ブランチ）';
+try{$('bld').textContent='配信版: '+CP_BUILD}catch{}
 async function evidenceRecord(){const k=(S.cmp&&S.cmp.key)||{},res=(window.CP.lastBlind||[]),djt=S.dj||null,mats=[];
  S.clips.forEach((c,i)=>{if(c&&c.el)mats.push({scene:i+1,file:c.name,bytes:c.file?c.file.size:null,url:($('cu'+i)||{}).value||'',credit:($('cc'+i)||{}).value||'',license:($('cl'+i)||{}).value||'',rights:{pending:!!c.pend,provider:(BT.st[i]&&BT.st[i].rec)||null},quality:(()=>{const h=c.el&&!c.rel?c.el.videoHeight:0,w=c.el&&!c.rel?c.el.videoWidth:0,d=c.el&&!c.rel?c.el.duration:0;return{width:w||null,height:h||null,durationSec:d?+d.toFixed(2):null,mbps:d&&c.file?+(c.file.size*8/d/1e6).toFixed(2):null,scaleTo1920:h?+(1920/h).toFixed(2):null}})()})});
  const E={recordedAt:new Date().toISOString(),app:{build:CP_BUILD,resolution:CW+'x'+CH,fps:FPS,seconds:D},device:{memoryMonitor:memMon(),tempMeasured:false,userAgent:navigator.userAgent,screen:screen.width+'x'+screen.height,dpr:devicePixelRatio,deviceMemoryGB:navigator.deviceMemory||null,cores:navigator.hardwareConcurrency||null},
