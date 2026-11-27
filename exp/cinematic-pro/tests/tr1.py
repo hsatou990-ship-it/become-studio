@@ -1,3 +1,4 @@
+import os;REPO=os.environ.get('BECOME_REPO','/home/claude/become-studio');FIX=os.environ.get('BECOME_FIX','/tmp/become-fixtures')
 exec(open("tab1.py").read().split("\nwith sync_playwright()")[0])
 import base64
 PNG=base64.b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==')
@@ -16,24 +17,24 @@ def mkctx(b,w=412,h=915):
     ctx.route('https://pixabay.com/**',h_api);ctx.route('https://cdn.pixabay.com/**',h_cdn)
     return ctx,pg
 import urllib.parse as up
-D4J=open('/home/claude/become-studio/exp/design/price-of-staying.design.json',encoding='utf-8').read()
+D4J=open((REPO+'/exp/design/price-of-staying.design.json'),encoding='utf-8').read()
 def st(pg):return pg.evaluate("()=>({nst:document.getElementById('nst').textContent.slice(0,110),mock:CP.S.isMockNarr,narr:!!CP.S.narr,files:document.getElementById('narr').files.length,fname:(document.getElementById('narr').files[0]||{}).name||null,voicest:document.getElementById('voicest').textContent.slice(0,70)})")
 with sync_playwright() as p:
     b=p.chromium.launch(executable_path='/usr/bin/google-chrome',args=['--no-sandbox','--headless=new','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader','--autoplay-policy=no-user-gesture-required'])
     # S1 WAV basic
     ctx,pg=mkctx(b);pg.goto(BASE+'#res=360');pg.evaluate("()=>{try{localStorage.clear()}catch{}}");pg.reload();ready(pg);pg.wait_for_timeout(400)
-    pg.set_input_files('#narr','/tmp/wavfx/n48m.wav');pg.wait_for_timeout(1500);print('S1a WAV48 mono',st(pg))
+    pg.set_input_files('#narr',(FIX+'/wavfx/n48m.wav'));pg.wait_for_timeout(1500);print('S1a WAV48 mono',st(pg))
     pg.click('#bVo');pg.wait_for_timeout(500);print('S1b 原音を試聴',st(pg)['voicest'])
     pg.click('#bVb');pg.wait_for_timeout(1500);print('S1c βを試聴',st(pg)['voicest'])
     # S2 design import after WAV
     pg.fill('#dj',D4J);pg.click('#bDJ');pg.wait_for_timeout(900);print('S2a 設計JSON反映後',st(pg))
     pg.click('#bVo');pg.wait_for_timeout(500);print('S2b その後の試聴',st(pg)['voicest'])
     # S4 mock after WAV (input still shows file)
-    pg.set_input_files('#narr','/tmp/wavfx/n441s.wav');pg.wait_for_timeout(1500);print('S4a WAV44.1 stereo',st(pg))
+    pg.set_input_files('#narr',(FIX+'/wavfx/n441s.wav'));pg.wait_for_timeout(1500);print('S4a WAV44.1 stereo',st(pg))
     pg.click('#bMock');pg.wait_for_timeout(1500);print('S4b 模擬ボタン後',st(pg))
     # S3 persistence: mock then WAV then reload+restore
     ctx2,pg2=mkctx(b);pg2.goto(BASE+'#res=360');pg2.evaluate("()=>{try{localStorage.clear()}catch{}}");pg2.reload();ready(pg2);pg2.wait_for_timeout(400)
-    pg2.click('#bMock');pg2.wait_for_timeout(1500);pg2.set_input_files('#narr','/tmp/wavfx/n48m.wav');pg2.wait_for_timeout(7000);print('S3a mock→WAV',st(pg2))
+    pg2.click('#bMock');pg2.wait_for_timeout(1500);pg2.set_input_files('#narr',(FIX+'/wavfx/n48m.wav'));pg2.wait_for_timeout(7000);print('S3a mock→WAV',st(pg2))
     pg2.reload();ready(pg2);pg2.wait_for_timeout(1500);vis=pg2.evaluate("()=>!document.getElementById('pjbar').hidden");print('S3b reload banner',vis,st(pg2))
     if vis:
         pg2.click('#pjgo');pg2.wait_for_timeout(3000);print('S3c restored',st(pg2))

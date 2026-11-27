@@ -1,9 +1,10 @@
+import os;REPO=os.environ.get('BECOME_REPO','/home/claude/become-studio');FIX=os.environ.get('BECOME_FIX','/tmp/become-fixtures')
 from playwright.sync_api import sync_playwright
 import json
 URL='http://127.0.0.1:8765/exp/cinematic-pro/index.html#res=360'
 R=[]
 def chk(n,c,d=''):R.append(bool(c));print('PASS' if c else 'FAIL',n,'' if c else str(d)[:500])
-S2=open('/home/claude/become-studio/exp/design/sample2.design.json').read()
+S2=open((REPO+'/exp/design/sample2.design.json')).read()
 with sync_playwright() as p:
     b=p.chromium.launch(executable_path='/usr/bin/google-chrome',args=['--no-sandbox','--headless=new','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader'])
     pg=b.new_context(viewport={'width':412,'height':915}).new_page();errs=[];pg.on('pageerror',lambda e:errs.append(str(e)))

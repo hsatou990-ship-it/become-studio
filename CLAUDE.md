@@ -27,3 +27,4 @@
 - 更新の前後で、同じ台本・素材・音声・設定の品質回帰を比較する。機械測定と視聴評価を分ける（手順: become-chief-orchestrator/references/quality-gate.md）。
 - 台本入力から完成MP4の保存までのE2E試験は、未整備。実機での完成と書き出しの後に、整備する。
 - 必要なスキルと資料だけを読み込む。全スキルを毎回読まない。
+- 試験の再現手順（新規クローン）と、一括実行の判定は、become-system-engineer/references/reproducible.md。

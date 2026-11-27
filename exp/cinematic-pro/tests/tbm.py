@@ -1,7 +1,8 @@
+import os;REPO=os.environ.get('BECOME_REPO','/home/claude/become-studio');FIX=os.environ.get('BECOME_FIX','/tmp/become-fixtures')
 from playwright.sync_api import sync_playwright
 import json
 URL='http://127.0.0.1:8765/exp/cinematic-pro/index.html#res=360'
-J=open('/home/claude/become-studio/exp/design/price-of-staying.design.json').read()
+J=open((REPO+'/exp/design/price-of-staying.design.json')).read()
 R=[]
 def chk(n,c,d=''):R.append(bool(c));print('PASS' if c else 'FAIL',n,'' if c else str(d)[:500])
 RMS="""(b,a,z)=>{const x=b.getChannelData(0),sr=b.sampleRate;let q=0,n=0;for(let i=Math.floor(a*sr);i<Math.floor(z*sr)&&i<x.length;i++){q+=x[i]*x[i];n++}return 10*Math.log10(Math.max(q/Math.max(n,1),1e-14))}"""

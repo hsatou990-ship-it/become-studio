@@ -1,3 +1,4 @@
+import os;REPO=os.environ.get('BECOME_REPO','/home/claude/become-studio');FIX=os.environ.get('BECOME_FIX','/tmp/become-fixtures')
 exec(open("tr1.py").read().split("\nwith sync_playwright()")[0])
 R=[]
 def ck(n,ok,info=''):
@@ -24,7 +25,7 @@ with sync_playwright() as p:
     # 3 narration state
     pg=fresh(b)
     ck('3a 初期は音声なし表示',nn(pg) is not None and '音声なし' in nn(pg),nn(pg))
-    pg.set_input_files('#narr','/tmp/wavfx/n48m.wav');pg.wait_for_timeout(1500)
+    pg.set_input_files('#narr',(FIX+'/wavfx/n48m.wav'));pg.wait_for_timeout(1500)
     ck('3b WAV後は外部音声+ファイル名',nn(pg) and '外部音声' in nn(pg) and 'n48m.wav' in nn(pg),nn(pg))
     pg.fill('#dj',D4J);pg.click('#bDJ');pg.wait_for_timeout(900)
     s=pg.evaluate("()=>({narr:!!CP.S.narr})")
@@ -32,7 +33,7 @@ with sync_playwright() as p:
     ck('3d 反映後の表示が実態と一致(外部音声または要確認)',nn(pg) and ('外部音声' in nn(pg)),nn(pg))
     pg.click('#bVo');pg.wait_for_timeout(500)
     ck('3e 反映後に原音の試聴が「先に取り込んで」とならない','先にナレーション' not in pg.inner_text('#voicest'),pg.inner_text('#voicest'))
-    pg.set_input_files('#narr','/tmp/wavfx/n441s.wav');pg.wait_for_timeout(1500);pg.click('#bMock');pg.wait_for_timeout(1500)
+    pg.set_input_files('#narr',(FIX+'/wavfx/n441s.wav'));pg.wait_for_timeout(1500);pg.click('#bMock');pg.wait_for_timeout(1500)
     st_=pg.evaluate("()=>({files:document.getElementById('narr').files.length,mock:CP.S.isMockNarr})")
     ck('3f 模擬ボタン後はファイル入力が空',st_['files']==0,st_)
     ck('3g 模擬ボタン後は模擬音声表示',nn(pg) and '模擬音声' in nn(pg) and '外部音声' not in nn(pg),nn(pg))

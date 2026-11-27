@@ -1,3 +1,4 @@
+import os;REPO=os.environ.get('BECOME_REPO','/home/claude/become-studio');FIX=os.environ.get('BECOME_FIX','/tmp/become-fixtures')
 from playwright.sync_api import sync_playwright
 import json, base64, hashlib, time, re
 exec(open('tns.py').read().split("with sync_playwright()")[0])
@@ -6,7 +7,7 @@ RR=[]
 def c(n,ok,d=''):RR.append(bool(ok));print('PASS' if ok else 'FAIL',n,'' if ok else str(d)[:700])
 KEY='SECRET-KEY-ABC123xyz'
 # 17-scene (about 70 s) design built from the sample design
-base=json.load(open('/home/claude/become-studio/exp/design/price-of-staying.design.json'))
+base=json.load(open((REPO+'/exp/design/price-of-staying.design.json')))
 T=base['scenes']
 sc=[]
 for k in range(17):

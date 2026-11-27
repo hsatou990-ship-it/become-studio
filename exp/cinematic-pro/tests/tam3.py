@@ -1,6 +1,7 @@
+import os;REPO=os.environ.get('BECOME_REPO','/home/claude/become-studio');FIX=os.environ.get('BECOME_FIX','/tmp/become-fixtures')
 exec(open("tam.py").read().split("\nwith sync_playwright()")[0])
 import shutil
-SRC='/home/claude/become-studio/exp/cinematic-pro/index.html';TMP='/home/claude/become-studio/exp/cinematic-pro/_nstest.html'
+SRC=(REPO+'/exp/cinematic-pro/index.html');TMP=(REPO+'/exp/cinematic-pro/_nstest.html')
 t=open(SRC,encoding='utf-8').read().replace('<meta name="robots"','<meta name="cp-ns" content="t_"><meta name="robots"',1);open(TMP,'w',encoding='utf-8').write(t)
 with sync_playwright() as p:
     b=p.chromium.launch(executable_path='/usr/bin/google-chrome',args=['--no-sandbox','--headless=new','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader','--autoplay-policy=no-user-gesture-required'])

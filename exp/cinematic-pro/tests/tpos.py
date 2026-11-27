@@ -1,5 +1,6 @@
+import os;REPO=os.environ.get('BECOME_REPO','/home/claude/become-studio');FIX=os.environ.get('BECOME_FIX','/tmp/become-fixtures')
 exec(open("tam2.py").read().split("\nwith sync_playwright()")[0])
-J=open('/home/claude/become-studio/exp/design/price-of-staying.design.json',encoding='utf-8').read()
+J=open((REPO+'/exp/design/price-of-staying.design.json'),encoding='utf-8').read()
 with sync_playwright() as p:
     b=p.chromium.launch(executable_path='/usr/bin/google-chrome',args=['--no-sandbox','--headless=new','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader'])
     pg=b.new_context(viewport={'width':412,'height':915}).new_page();errs=[];pg.on('pageerror',lambda e:errs.append(str(e)))

@@ -1,3 +1,4 @@
+import os;REPO=os.environ.get('BECOME_REPO','/home/claude/become-studio');FIX=os.environ.get('BECOME_FIX','/tmp/become-fixtures')
 exec(open("tr1.py").read().split("\nwith sync_playwright()")[0])
 import tempfile,shutil
 U9='http://localhost:8767/r9/exp/cinematic-pro/index.html#res=360';U10='http://localhost:8767/r10/exp/cinematic-pro/index.html#res=360'
@@ -19,7 +20,7 @@ with sync_playwright() as p:
     # A: r9 でデータを作る
     pg.goto(U9);pg.evaluate("()=>{try{localStorage.clear()}catch{}}");pg.reload();ready(pg);pg.wait_for_timeout(500)
     pg.fill('#dj',D4J);pg.click('#bDJ');pg.wait_for_timeout(900)
-    pg.set_input_files('#narr','/tmp/wavfx/n48m.wav');pg.wait_for_timeout(2500)
+    pg.set_input_files('#narr',(FIX+'/wavfx/n48m.wav'));pg.wait_for_timeout(2500)
     pg.evaluate("()=>{document.getElementById('rt').open=true}");pg.fill('#bkey',KEY);pg.check('#breal')
     r=pg.evaluate("async()=>{CP.BT.key=document.getElementById('bkey').value;return await CP.autoMaterial()}");pg.wait_for_timeout(1500)
     A=snap(pg);print('A(r9)',{k:v for k,v in A.items() if k!='meta'},'api',len(REQ['api']),'cdn',len(REQ['cdn']))

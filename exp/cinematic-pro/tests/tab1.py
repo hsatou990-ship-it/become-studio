@@ -1,3 +1,4 @@
+import os;REPO=os.environ.get('BECOME_REPO','/home/claude/become-studio');FIX=os.environ.get('BECOME_FIX','/tmp/become-fixtures')
 exec(open("tam2.py").read().split("\nwith sync_playwright()")[0])
 import subprocess
 D4=json.loads(json.dumps(base));sc4=[]
@@ -63,7 +64,7 @@ with sync_playwright() as p:
     # T6 auto crop
     pg.evaluate("()=>{CP.BT.lib=true;CP.BT.mode='review'}")
     pg.fill('#dj',D4J);pg.click('#bDJ');pg.wait_for_timeout(800)
-    clip(pg,0,'/tmp/cropfx/right.mp4');clip(pg,1,'/tmp/cropfx/center.mp4');clip(pg,2,'/tmp/cropfx/right.mp4')
+    clip(pg,0,(FIX+'/cropfx/right.mp4'));clip(pg,1,(FIX+'/cropfx/center.mp4'));clip(pg,2,(FIX+'/cropfx/right.mp4'))
     q0=pg.evaluate("async()=>{const q=await CP.autoCropClip(0);return q&&{sx:q.sx,auto:q.auto}}")
     q1=pg.evaluate("async()=>await CP.autoCropClip(1)")
     pg.evaluate("()=>CP.cropSet(2,{sx:.2})");q2=pg.evaluate("async()=>await CP.autoCropClip(2)")

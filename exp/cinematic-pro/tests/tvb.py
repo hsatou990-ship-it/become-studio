@@ -1,8 +1,9 @@
+import os;REPO=os.environ.get('BECOME_REPO','/home/claude/become-studio');FIX=os.environ.get('BECOME_FIX','/tmp/become-fixtures')
 from playwright.sync_api import sync_playwright
 import json, numpy as np, scipy.signal as sg, hashlib
 R='/tmp/claude-0/-home-claude/bb67a613-d9e5-5fe2-80d2-b0e9f790cfb0/scratchpad/riko/'
 URL='http://127.0.0.1:8765/exp/cinematic-pro/index.html#res=360'
-J=open('/home/claude/become-studio/exp/design/price-of-staying.design.json').read()
+J=open((REPO+'/exp/design/price-of-staying.design.json')).read()
 T=json.load(open(R+'t3oct.json'));cs=[int(k) for k in T];tb=np.array([v[0] for v in T.values()])
 Rr=[]
 def chk(n,c,d=''):Rr.append(bool(c));print('PASS' if c else 'FAIL',n,'' if c else str(d)[:400])
