@@ -182,8 +182,18 @@ function capLayout(t){const out=[];const FS=81,MAXW=880;
  return out.filter(o=>o.alpha>0)}
 function logoLayout(t){const a=S.sc[S.sc.length-1].a+.2;if(t<a)return null;const u=clamp((t-a)/.6);return{alpha:ease(u),lineW:360*ease(clamp((t-a-.2)/.6)),y:H*.46}}
 function boxes(t){const r=[];capLayout(t).forEach(o=>r.push({x0:o.x,x1:o.x+o.w,y0:o.y-o.sz*.9,y1:o.y+o.sz*.25}));const l=logoLayout(t);if(l){r.push({x0:W/2-210,x1:W/2+210,y0:l.y-80,y1:l.y+60})}return r}
+/* 字幕の視認性: 字幕位置の背景輝度を測り、帯・縁取り・影を連続的に調整する。暗い背景では何も足さない（高級感を保つ）。測定値は時間で滑らかにして、ちらつきを防ぐ */
+const CAPL={t:-9,v:.3},lumC=document.createElement('canvas');lumC.width=24;lumC.height=12;const lumG=lumC.getContext('2d',{willReadFrequently:true});
+function capStyle(g,t,CL){if(!CL||!CL.length)return null;const box={x0:Math.min(...CL.map(o=>o.x)),x1:Math.max(...CL.map(o=>o.x+o.w)),y0:Math.min(...CL.map(o=>o.y-o.sz*.9)),y1:Math.max(...CL.map(o=>o.y+o.sz*.25))};
+ let m=CAPL.v;try{const cw=g.canvas.width,ch=g.canvas.height,sx=Math.max(0,Math.floor(box.x0*SCL)),sy=Math.max(0,Math.floor(box.y0*SCL)),sw=Math.max(1,Math.min(cw-sx,Math.ceil((box.x1-box.x0)*SCL))),sh=Math.max(1,Math.min(ch-sy,Math.ceil((box.y1-box.y0)*SCL)));
+  lumG.clearRect(0,0,24,12);lumG.drawImage(g.canvas,sx,sy,sw,sh,0,0,24,12);const d=lumG.getImageData(0,0,24,12).data;let q=0;for(let k=0;k<d.length;k+=4)q+=(.2126*d[k]+.7152*d[k+1]+.0722*d[k+2])/255;m=q/288}catch{}
+ const dt=t-CAPL.t;CAPL.v=(dt>0&&dt<=.25)?CAPL.v+(m-CAPL.v)*(1-Math.exp(-dt/.55)):m;CAPL.t=t;
+ const k=clamp((CAPL.v-.25)/.5);return{v:CAPL.v,k,ab:.34*k,sw:k>.02?1.5+5.5*k:0,sa:.5+.45*k,blur:14+6*k,box}}
 function drawCaps(g,t,fade){g.setTransform(SCL,0,0,SCL,0,0);g.textBaseline='alphabetic';g.shadowColor='rgba(0,0,0,.6)';g.shadowBlur=14;g.shadowOffsetY=2;const fa=1-fade;
- capLayout(t).forEach(o=>{g.font=fontOf(o.sz);g.globalAlpha=clamp(o.alpha)*fa;g.fillStyle=o.emph?GOLD:'#fff';g.fillText(o.s,o.x,o.y)});
+ const CL=capLayout(t),cs=capStyle(g,t,CL);
+ if(cs&&cs.ab>.01){const bx=cs.box,cx=(bx.x0+bx.x1)/2,cy=(bx.y0+bx.y1)/2,rx=(bx.x1-bx.x0)/2+170,ry=(bx.y1-bx.y0)/2+70,al=Math.max(...CL.map(o=>clamp(o.alpha)))*fa;g.save();g.shadowBlur=0;g.shadowOffsetY=0;g.translate(cx,cy);g.scale(1,ry/rx);const rg=g.createRadialGradient(0,0,0,0,0,rx);rg.addColorStop(0,`rgba(0,0,0,${cs.ab*al})`);rg.addColorStop(.35,`rgba(0,0,0,${cs.ab*al*.8})`);rg.addColorStop(.7,`rgba(0,0,0,${cs.ab*al*.3})`);rg.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=rg;g.fillRect(-rx,-rx,rx*2,rx*2);g.restore()}
+ if(cs){g.shadowBlur=cs.blur;g.shadowColor=`rgba(0,0,0,${.6+.2*cs.k})`}
+ CL.forEach(o=>{g.font=fontOf(o.sz);g.globalAlpha=clamp(o.alpha)*fa;if(cs&&cs.sw>0){g.lineJoin='round';g.lineWidth=cs.sw*o.sz/81;g.strokeStyle=`rgba(0,0,0,${cs.sa})`;g.strokeText(o.s,o.x,o.y)}g.fillStyle=o.emph?GOLD:'#fff';g.fillText(o.s,o.x,o.y)});
  const l=logoLayout(t);if(l){g.shadowBlur=18;g.globalAlpha=l.alpha;g.fillStyle='#fff';g.font=`700 118px ${FF.serif}`;g.textAlign='center';let s='BEYOND.';if('letterSpacing' in g)g.letterSpacing='14px';g.fillText(s,W/2+7,l.y);if('letterSpacing' in g)g.letterSpacing='0px';g.shadowBlur=0;g.fillStyle=GOLD;g.fillRect(W/2-l.lineW/2,l.y+34,l.lineW,4);g.textAlign='left'}
  g.globalAlpha=1;g.shadowBlur=0;g.shadowOffsetY=0}
 /* ---------- 描画（WebGL: 色調整。非対応端末は2Dで代替） ---------- */
