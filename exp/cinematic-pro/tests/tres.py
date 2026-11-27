@@ -1,0 +1,22 @@
+exec(open("tr1.py").read().split("\nwith sync_playwright()")[0])
+R=[]
+def ck(n,ok,info=''):R.append(bool(ok));print(('PASS ' if ok else 'FAIL ')+n,'' if ok else info)
+def snap(pg):
+    return pg.evaluate("""()=>({res:CP.S?document.getElementById('rs').textContent.trim():'',cnt:CP.realCnt(),clips:CP.S.clips.filter(Boolean).length,narr:!!CP.S.narr,dur:CP.S.narr?+CP.S.narr.duration.toFixed(2):0,dj:!!CP.S.dj,meta:CP.S.clips.filter(Boolean).map(c=>(c.meta.id||c.meta.url||'')+'|'+(c.meta.by||'')+'|'+(c.pend?'pend':'ok')),ep:CP.rlogGet().filter(x=>x.step==='epoch').length})""")
+with sync_playwright() as p:
+    b=p.chromium.launch(executable_path='/usr/bin/google-chrome',args=['--no-sandbox','--headless=new','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader','--autoplay-policy=no-user-gesture-required'])
+    ctx,pg=mkctx(b);pg.goto(BASE.split('#')[0]+'#res=360');pg.evaluate("()=>{try{localStorage.clear()}catch{}}");pg.reload();ready(pg);pg.wait_for_timeout(500)
+    pg.fill('#dj',D4J);pg.click('#bDJ');pg.wait_for_timeout(900)
+    pg.set_input_files('#narr',FIX+'/wavfx/n48m.wav');pg.wait_for_timeout(2500)
+    pg.evaluate("()=>{document.getElementById('rt').open=true}");pg.fill('#bkey',KEY);pg.check('#breal')
+    pg.evaluate("async()=>{CP.BT.key=document.getElementById('bkey').value;return await CP.autoMaterial()}");pg.wait_for_timeout(1500)
+    A=snap(pg);api0,cdn0=len(pg.REQ['api']),len(pg.REQ['cdn']);print('A',{k:v for k,v in A.items() if k!='meta'})
+    pg.select_option('#resSel','1080');pg.wait_for_timeout(1000);ready(pg);pg.wait_for_timeout(6000)
+    B=snap(pg);print('B',{k:v for k,v in B.items() if k!='meta'})
+    ck('R1 解像度が1080に切り替わる','1080' in B['res'],B['res'])
+    ck('R2 素材の本数・識別・権利状態が同じ',B['clips']==A['clips'] and B['meta']==A['meta'],(B['clips'],A['clips']))
+    ck('R3 ナレーションが同じ',B['narr'] and abs(B['dur']-A['dur'])<.05,(B['dur'],A['dur']))
+    ck('R4 設計JSONと通信枠の使用数が同じ',B['dj']==A['dj'] and B['cnt']==A['cnt'] and B['ep']==A['ep'],(B['cnt'],A['cnt']))
+    ck('R5 切り替えで追加の通信なし',len(pg.REQ['api'])==api0 and len(pg.REQ['cdn'])==cdn0)
+    ck('R6 ページエラーなし',pg.errs==[],pg.errs)
+    print('TOTAL',sum(R),'/',len(R))
