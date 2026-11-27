@@ -12,7 +12,7 @@ pre{white-space:pre-wrap;background:#12141b;border-radius:8px;padding:8px;font-s
 label{display:block}small{color:#9aa0ad}
 </style></head><body>
 <h1>CINEMATIC PRO 15秒試作（実験ページ・正式版とは別）</h1>
-<p class="note" id="bld">配信版: cinematic-pro build 2026-11-27-r4-crop（試験: 被写体位置の手動指定／未公開ブランチ）</p>
+<p class="note" id="bld">配信版: cinematic-pro build 2026-11-27-r4（被写体位置の手動指定／BGMなし／Cinematic Voice β／ナレーション同期／監督レビュー）</p>
 <p class="note">このページは外部へ一切接続しません（通信遮断のCSP）。APIキーも使いません。素材はオーナーが自分で取得した動画ファイルを取り込みます。権利情報が揃っていない素材は使いません。未取込の場面は「模擬素材」で表示され、映像品質の評価対象になりません。</p>
 <canvas id="cv"></canvas>
 <p><button id="bPrep" class="p">① 音と編集を準備</button><button id="bPrev">② プレビュー再生</button><button id="bExp" class="p">③ 書き出し（15秒）</button><button id="bExp2" class="p">③b 高互換MP4書き出し（実験・H.264+AAC）</button><select id="resSel"><option value="720">720×1280（軽い）</option><option value="1080">1080×1920（TikTok推奨）</option></select><span id="rs" class="note"></span><a id="dl" hidden style="display:inline-block;padding:8px 10px;border:1px solid #d4af37;border-radius:8px;color:#d4af37">完成動画を保存</a></p>
@@ -667,7 +667,7 @@ async function blindSet(exporter){if(S.busy||!S.base)return null;const ex=export
 async function blindRecover(){const all=await blindList();if(!all.length)return 0;const run=Math.max(...all.map(r=>r.run)),g=all.filter(r=>r.run===run).sort((a,b)=>a.code<b.code?-1:1),L=$('blindl');
  if(L.textContent)return 0;const h=document.createElement('div');h.className='note w';h.textContent='前回のブラインド書き出しで完成していた動画 '+g.length+' 本が端末内に残っています（ページを開き直しても失われません）。';L.appendChild(h);g.forEach(r=>blindLink(L,r.code,r.blob,r.audio,true));return g.length}
 async function sha256Hex(t){try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch{return null}}
-const CP_BUILD='cinematic-pro build 2026-11-27-r4-crop（試験: 被写体位置の手動指定／未公開ブランチ）';
+const CP_BUILD='cinematic-pro build 2026-11-27-r4（被写体位置の手動指定／BGMなし／Cinematic Voice β／ナレーション同期／監督レビュー）';
 async function evidenceRecord(){const k=(S.cmp&&S.cmp.key)||{},res=(window.CP.lastBlind||[]),djt=S.dj||null,mats=[];
  S.clips.forEach((c,i)=>{if(c&&c.el)mats.push({scene:i+1,file:c.name,bytes:c.file?c.file.size:null,url:($('cu'+i)||{}).value||'',credit:($('cc'+i)||{}).value||'',license:($('cl'+i)||{}).value||''})});
  const E={recordedAt:new Date().toISOString(),app:{build:CP_BUILD,resolution:CW+'x'+CH,fps:FPS,seconds:D},device:{memoryMonitor:memMon(),tempMeasured:false,userAgent:navigator.userAgent,screen:screen.width+'x'+screen.height,dpr:devicePixelRatio,deviceMemoryGB:navigator.deviceMemory||null,cores:navigator.hardwareConcurrency||null},
