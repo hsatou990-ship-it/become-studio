@@ -20,7 +20,10 @@ with sync_playwright() as p:
         if m=='html':return route.fulfill(status=200,body='<html><title>Just a moment...</title></html>',content_type='text/html',headers=OKH)
         if m=='redir':return route.fulfill(status=302,headers={'location':'https://www.pixabay.com/api/videos/?x=1'})
         if m=='hold':HELD.append(route);return
-        if m=='hang':return
+        if m=='hang':
+            try:pg.wait_for_timeout(1200);route.abort('failed')
+            except Exception:pass
+            return
     ctx.route('https://pixabay.com/**',h_api);ctx.route('https://www.pixabay.com/**',lambda r,q:r.fulfill(status=200,body='{}'))
     ctx.route('https://cdn.pixabay.com/**',lambda r,q:r.fulfill(status=200,body=MP4,content_type='video/mp4',headers=OKH))
     def fresh():
@@ -70,3 +73,8 @@ with sync_playwright() as p:
     pg.click('#rD');done()
     c('D14 download succeeds once; a second different/blocked press does not erase the first result',good.startswith('✅') and '結果: 成功' in out(),(good,))
     c('Z no page errors',not errs,errs[:3]);print(sum(RR),'/',len(RR))
+    # 終了処理: 試験が意図的に残した保留・無限待ちの通信を解放してから閉じる（残したまま閉じると、Playwrightが終了時に例外を出す）
+    for _r in HELD:
+        try:_r.abort()
+        except Exception:pass
+    ctx.unroute_all(behavior='ignoreErrors');pg.close();ctx.close()

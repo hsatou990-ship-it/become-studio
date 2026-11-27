@@ -730,7 +730,7 @@ async function blindSet(exporter){if(S.busy||!S.base)return null;const ex=export
 async function blindRecover(){const all=await blindList();if(!all.length)return 0;const run=Math.max(...all.map(r=>r.run)),g=all.filter(r=>r.run===run).sort((a,b)=>a.code<b.code?-1:1),L=$('blindl');
  if(L.textContent)return 0;const h=document.createElement('div');h.className='note w';h.textContent='前回のブラインド書き出しで完成していた動画 '+g.length+' 本が端末内に残っています（ページを開き直しても失われません）。';L.appendChild(h);g.forEach(r=>blindLink(L,r.code,r.blob,r.audio,true));return g.length}
 async function sha256Hex(t){try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch{return null}}
-const CP_BUILD='cinematic-pro build 2026-11-28-r10b-am（試験: 複数場面の自動取得・配置／検索5回・動画6本の試験枠／未公開ブランチ）';
+const CP_BUILD='cinematic-pro build 2026-11-28-r11-am（試験: 権利状態の保持・1080p標準・字幕の自動視認性・素材の確認待ち／検索5回・動画6本の試験枠／未公開ブランチ）';
 document.addEventListener('change',e=>{const t=e.target;if(t&&/^cf\d+$/.test(t.id)){const k=$('ck'+t.id.slice(2));if(k)k.checked=false}});
 try{$('bld').textContent='配信版: '+CP_BUILD}catch{}
 async function evidenceRecord(){const k=(S.cmp&&S.cmp.key)||{},res=(window.CP.lastBlind||[]),djt=S.dj||null,mats=[];
@@ -992,6 +992,16 @@ async function chooseVariant(c){const vars=c.vars;if(!vars||vars.length<2)return
 function bstat(i){return BT.st[i]||(BT.st[i]={st:'pending',msg:'',fix:'',cands:[],sel:0,lock:false,rec:null})}
 function sceneSpec(i){const s=S.sc[i],P=S.dj&&window.LASTPLAN&&window.LASTPLAN.scenes&&window.LASTPLAN.scenes[i];return{need:+(s.b-s.a+.3).toFixed(2),queries:((P&&P.queries)||[]).filter(Boolean),avoid:(P&&P.avoid)||[],minH:(P&&P.minHeight)||1080,line:(S.ln[i]&&S.ln[i].toks.map(k=>k[0]).join(''))||s.name}}
 function scoreC(c,need,avoid,minH){const toks=String(c.q).toLowerCase().split(/\s+/).filter(Boolean),tg=(c.tags||[]).join(' ').toLowerCase(),kw=toks.length?toks.filter(t=>tg.includes(t)).length/toks.length:0,portrait=c.h>=c.w?1:.35,res=Math.min(1,(c.fh||c.h||0)/((minH||1080)*16/9)),dur=c.dur>=need?1:Math.max(0,(c.dur||0)/need),bad=(avoid||[]).some(a=>a&&tg.includes(String(a).toLowerCase()));return{kw,portrait,res,dur,bad,score:Math.round(100*(.4*kw+.3*portrait*res+.3*dur))}}
+/* 意味の一致の確認（映像の内容は見ない。検索語とタグだけの規則。精度は保証しない）。基準を満たさない候補は、自動採用せず確認待ちにする */
+const SEM_STOP=new Set('a an the of in on at and or with for to from dark light night day close up slow motion empty old new beautiful nature background view video footage shot scene room'.split(' '));
+const SEM_FILL=['coffee','cup','mug','glasses','eyeglasses','flower','flowers','blossom','petal','food','dessert','cake','wedding','party','cartoon','animation','illustration','toy','baby','cat','dog','puppy','handshake','meeting','laptop'];
+function semCheck(c,sp){const tg=(c.tags||[]).join(' ').toLowerCase(),core=String(c.q||'').toLowerCase().split(/\s+/).filter(t=>t&&!SEM_STOP.has(t)),hit=core.filter(t=>tg.includes(t)).length,cov=core.length?hit/core.length:1;
+ const cx=((sp&&sp.queries||[]).join(' ')+' '+(sp&&sp.line||'')+' '+String(c.q||'')).toLowerCase(),fill=SEM_FILL.filter(w=>new RegExp('\\b'+w+'\\b').test(tg)&&!cx.includes(w)),why=[];
+ if(cov<.34)why.push('検索語の中心語（'+core.join('・')+'）が候補のタグと一致しません');if(fill.length)why.push('場面の意図にないタグ（'+fill.join('・')+'）があります');return{ok:!why.length,cov:+cov.toFixed(2),fill,why}}
+const autoOk=c=>(!c.sem||c.sem.ok)&&(c.score||0)>=60;
+const dupOf=(c,i)=>!!(c.creator&&S.clips.some((q,j)=>j!==i&&q&&q.meta&&q.meta.by===c.creator&&q.srcDur&&Math.abs(q.srcDur-(c.dur||0))<.3));
+function pickAuto(i,b,used){const cs=b.cands||[],ok=c=>!used.has(c.provider+':'+c.id)&&autoOk(c),k=cs.findIndex(c=>ok(c)&&!dupOf(c,i));return k>=0?k:cs.findIndex(ok)}/* 同じ作者・ほぼ同じ長さは、同じ撮影の可能性として後回しにするだけ（他に基準を満たす候補がなければ採用）。確認待ちを増やさないため */
+function holdMsg(b){const w=(b.cands&&b.cands[0]&&b.cands[0].sem&&b.cands[0].sem.why)||[];return '確認待ち: 自動採用の基準（検索語の中心語がタグに一致／場面の意図にないタグがない／提案点60以上／他の場面と重複しない）を満たす候補がないため、自動採用していません。'+(w.length?'理由: '+w.join('／')+'。':'')}
 function rateOkP(p){const P=PROV[p],a=(BT.rate[p]=BT.rate[p]||[]),now=Date.now();while(a.length&&now-a[0]>P.limit.ms)a.shift();if(a.length>=P.limit.n)return false;a.push(now);return true}
 const SC_TTL=864e5;
 function scGet(k){try{const c=JSON.parse(localStorage.getItem(NS+'cp_scache')||'{}'),x=c[k];return x&&Date.now()-x.t<SC_TTL?x.d:null}catch{return null}}
@@ -1013,7 +1023,7 @@ async function batchApply(i,k){const b=bstat(i),c=b.cands[k];if(!c)throw coded('
  const meta={src:PROV[c.provider].srcLabel,url:c.page,by:c.creator||'',lic:T.license||'',ok:false,inp:0,at:new Date().toISOString().slice(0,10)};
  const prev=S.clips[i];const ok=await attachClip(i,new File([blob],key.replace(':','-')+'.mp4',{type:blob.type||'video/mp4'}),meta,{pend:true,inboxKey:key});
  if(!ok){S.clips[i]=prev;b.st=was==='downloading'||was==='searching'?'failed':was;throw coded('EMPTY','素材を読み込めませんでした')}
- b.sel=k;b.st='done';b.msg=reused?'取得済みの素材を再利用しました':'';b.fix='';b.rec={provider:c.provider,id:c.id,pageUrl:c.page,creator:c.creator||'',creatorUrl:c.creatorUrl||'',license:T.license||'',licenseUrl:T.url||'',termsCheckedOn:T.checked||'',fetchedAt:new Date().toISOString(),credit:'Video by '+(c.creator||'(作者名不明)')+' from '+(T.name||c.provider)+' ('+c.page+')',query:c.q,score:c.score,variant:{name:c.vname||'',w:c.fw||c.w,h:c.fh||c.h,bytes:c.fsize||0,reason:c.vreason||''}};
+ if(S.clips[i])S.clips[i].srcDur=c.dur||0;b.sel=k;b.st='done';b.msg=reused?'取得済みの素材を再利用しました':'';b.fix='';b.rec={provider:c.provider,id:c.id,pageUrl:c.page,creator:c.creator||'',creatorUrl:c.creatorUrl||'',license:T.license||'',licenseUrl:T.url||'',termsCheckedOn:T.checked||'',fetchedAt:new Date().toISOString(),credit:'Video by '+(c.creator||'(作者名不明)')+' from '+(T.name||c.provider)+' ('+c.page+')',query:c.q,score:c.score,variant:{name:c.vname||'',w:c.fw||c.w,h:c.fh||c.h,bytes:c.fsize||0,reason:c.vreason||''}};
  $('cs'+i)&&([...$('cs'+i).options].some(o=>o.value===meta.src)&&($('cs'+i).value=meta.src));if($('cu'+i)){$('cu'+i).value=meta.url;$('cc'+i).value=meta.by;$('cl'+i).value=meta.lic;$('ck'+i).checked=false}
  ledger();return true}
 async function libCands(i,sp){const used=usedKeys(i),out=[];for(const it of await inboxAll()){if(!it.key||used.has(it.key)||!it.meta||!it.meta.auto)continue;const kp=String(it.key).split(':'),prov=kp[0],id=kp.slice(1).join(':');if(!PROV[prov])continue;const tags=(it.meta.tags||[]).map(x=>String(x).toLowerCase());if(!tags.length)continue;let best=null;
@@ -1026,10 +1036,10 @@ async function batchScene(i,mode){const sp=sceneSpec(i),b=bstat(i);if(!S.dj||!sp
  /* 実通信中は1場面につき検索1回（承認枠の範囲に収める） */
  if(!libHit)for(const q of ((BT.net&&BT.net.real)?sp.queries.slice(0,1):sp.queries)){try{cand.push(...await provSearch(BT.prov,q,{minH:sp.minH}))}catch(e){if(isGlobalErr(e))throw e;lastE=e}}
  /* 同じ作者の素材は品質を超えない範囲（最大+3点）でだけ優先する。上限は設けない */
- const L=cand.filter(c=>{const k=c.provider+':'+c.id;if(seen.has(k)||usedA.has(k)||(!c.file&&!c.lib))return false;seen.add(k);return true}).map(c=>Object.assign({},c,{score:0,_s:scoreC(c,sp.need,sp.avoid,sp.minH)})).filter(c=>!c._s.bad).map(c=>{const same=!!(c.creator&&cc[c.creator]);c.score=Math.min(100,c._s.score+(same?3:0));c.warn=[];c.same=same;const up=c.fh?1920/c.fh:0;c.up=up?+up.toFixed(2):null;if(c.dur<sp.need)c.warn.push('尺が短い（'+c.dur+'秒）');if(c.h<c.w)c.warn.push('横向き（縦に切り抜きます）');if(up>1.5)c.warn.push('縦1920pxへの拡大が大きい（約×'+up.toFixed(1)+'）。画質が落ちる可能性');if(c._s.res<1&&up<=1.5)c.warn.push('解像度が設計値未満');delete c._s;return c}).sort((a,b)=>b.score-a.score).slice(0,mode==='review'?5:3);
+ const L=cand.filter(c=>{const k=c.provider+':'+c.id;if(seen.has(k)||usedA.has(k)||(!c.file&&!c.lib))return false;seen.add(k);return true}).map(c=>Object.assign({},c,{score:0,_s:scoreC(c,sp.need,sp.avoid,sp.minH)})).filter(c=>!c._s.bad).map(c=>{const same=!!(c.creator&&cc[c.creator]);c.score=Math.min(100,c._s.score+(same?3:0));c.warn=[];c.same=same;const up=c.fh?1920/c.fh:0;c.up=up?+up.toFixed(2):null;if(c.dur<sp.need)c.warn.push('尺が短い（'+c.dur+'秒）');if(c.h<c.w)c.warn.push('横向き（縦に切り抜きます）');if(up>1.5)c.warn.push('縦1920pxへの拡大が大きい（約×'+up.toFixed(1)+'）。画質が落ちる可能性');if(c._s.res<1&&up<=1.5)c.warn.push('解像度が設計値未満');c.sem=semCheck(c,sp);if(c.sem.fill.length)c.score=Math.max(0,c.score-15*Math.min(3,c.sem.fill.length));c.sem.why.forEach(w=>c.warn.push(w));delete c._s;return c}).sort((a,b)=>b.score-a.score).slice(0,mode==='review'?5:3);
  if(!L.length)throw lastE||coded('NOCAND','条件に合う候補がありません');b.cands=L;
  if(mode==='review'){b.msg='';b.fix='';if(!(S.clips[i]&&b.rec)){b.sel=0;b.st='cand'}else b.sel=-1;return}
- await batchApply(i,0)}
+ const k0=L.findIndex(c=>autoOk(c));if(k0<0){b.sel=0;b.st='cand';b.msg=holdMsg(b);b.fix='候補を見て、場面に合うものを選んでください';return}await batchApply(i,k0)}
 const PRODLOG={ops:0,auto0:null,auto1:null};try{document.addEventListener('click',e=>{if(e.target&&e.target.closest&&e.target.closest('button,input,select,summary'))PRODLOG.ops++},true)}catch{}
 function prodSummary(){return{manualTaps:PRODLOG.ops,autoMaterialSec:PRODLOG.auto0&&PRODLOG.auto1?+((PRODLOG.auto1-PRODLOG.auto0)/1000).toFixed(1):null,note:'画面の操作回数（ボタン・入力・選択）。自動取得の所要時間は、検索から採用までの合計'}}
 /* 構図の自動推定（モデル不使用・端末内の簡易計算）: 縮小した1コマの輪郭の強さの重心を被写体位置とみなす。横向き素材の縦クロップで中央固定による見切れを減らす目的。実機での目視確認が必要な推定であり、品質の保証ではない。手動指定は上書きしない */
@@ -1065,9 +1075,10 @@ async function batchPick(i,k){const b=bstat(i);if(b.lock)return{ok:false,msg:'�
 async function batchAdopt(i,k,down){const b=bstat(i);if(b.lock)return{ok:false,msg:'ロック中です。先にロックを外してください'};if(!b.cands||!b.cands[k])return{ok:false,msg:'候補がありません'};const old=b.sel;if(down)b.cands[k].allowDown=true;
  try{await batchApply(i,k);btRender();pjSave(false).catch(()=>{});return{ok:true,sel:k}}catch(e){b.sel=old;b.st=S.clips[i]&&b.rec?'done':'cand';b.msg=redact(e.message);b.fix=errFix(e);btRender();return{ok:false,msg:b.msg+'。'+b.fix}}}
 async function batchAdoptTop(){if(BT.run)return{ok:false,msg:'処理中です'};let n=0,fail=0,halt='';const N=S.sc.length-1;
- if(BT.net&&BT.net.real){let needD=0;for(let i=0;i<N;i++){const b=bstat(i);if(b.lock||b.st!=='cand')continue;const u=usedKeys(i),k=(b.cands||[]).findIndex(c=>!u.has(c.provider+':'+c.id));if(k>=0&&!b.cands[k].lib)needD++}const remD=REAL.lim.d-realCnt().d;if(needD>remD){const m='通信枠が足りません（取得が必要な場面 '+needD+'／残り動画 '+remD+'本）。通信は行っていません';bprog(1,m);return{ok:false,done:0,failed:0,halt:m}}}
+ if(BT.net&&BT.net.real){let needD=0;for(let i=0;i<N;i++){const b=bstat(i);if(b.lock||b.st!=='cand')continue;const u=usedKeys(i),k=pickAuto(i,b,u);if(k>=0&&!b.cands[k].lib)needD++}const remD=REAL.lim.d-realCnt().d;if(needD>remD){const m='通信枠が足りません（取得が必要な場面 '+needD+'／残り動画 '+remD+'本）。通信は行っていません';bprog(1,m);return{ok:false,done:0,failed:0,halt:m}}}
  BT.run=true;BT.stop=false;
- try{for(let i=0;i<N;i++){if(BT.stop){halt='中断しました。ここまでの結果は保存されています';break}const b=bstat(i);if(b.lock||b.st!=='cand')continue;const used=usedKeys(i),k=b.cands.findIndex(c=>!used.has(c.provider+':'+c.id));
+ try{for(let i=0;i<N;i++){if(BT.stop){halt='中断しました。ここまでの結果は保存されています';break}const b=bstat(i);if(b.lock||b.st!=='cand')continue;const used=usedKeys(i),k=pickAuto(i,b,used);
+   if(k<0&&b.cands.some(c=>!used.has(c.provider+':'+c.id))){b.st='cand';b.msg=holdMsg(b);b.fix='候補を見て、場面に合うものを選んでください';continue}
    if(k<0){b.st='failed';b.msg='候補がすべて他の場面で使われています';b.fix='検索語を変えるか、手動で取り込んでください';fail++;continue}
    bprog(i/N,'場面'+(i+1)+'/'+N+'を取得中…');try{await batchApply(i,k);n++}catch(e){b.st='cand';b.msg=redact(e.message);b.fix=errFix(e);fail++;if(isGlobalErr(e)){halt=b.msg+'。'+b.fix;break}}
    btRender();pjSave(false).catch(()=>{})}}

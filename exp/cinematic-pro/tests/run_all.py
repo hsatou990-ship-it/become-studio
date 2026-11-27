@@ -7,7 +7,7 @@ import os,sys,re,subprocess,time,socket,json
 HERE=os.path.dirname(os.path.abspath(__file__))
 REPO=os.environ.get('BECOME_REPO',os.path.abspath(HERE+'/../../..'));FIX=os.environ.get('BECOME_FIX','/tmp/become-fixtures')
 PORT=8765;TIMEOUT=int(os.environ.get('BECOME_TIMEOUT','300'))
-DEFAULT=['ts1','tab1','tam','tam2','tam4','tam5','tcrop','tdr','tvb','tns','tsess','tbm','tbm2','tg','tbl','tbv','tev','tin','tsf','tk','tv3','tj','tc','tm2','tb']
+DEFAULT=['ts1','tright','thd','tcap','tsel','tres','tab1','tam','tam2','tam4','tam5','tcrop','tdr','tvb','tns','tsess','tbm','tbm2','tg','tbl','tbv','tev','tin','tsf','tk','tv3','tj','tc','tm2','tb']
 names=sys.argv[1:] or DEFAULT
 def port_free():
     s=socket.socket();r=s.connect_ex(('127.0.0.1',PORT));s.close();return r!=0
