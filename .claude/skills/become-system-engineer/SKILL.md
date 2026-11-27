@@ -112,9 +112,11 @@ UI/UX設計
 - references/reproducible.md: 開発環境の再現性（試験コードの保存、素材の生成、環境の版、一括実行と判定、新規クローンからの復元、スキル発動確認）。
 - references/automation.md: AUTOMATION ENGINEER の機能（工程の状態、自動停止、24工程の現状、自動復旧の設計）。
 - 品質ゲートと品質回帰テストは、become-chief-orchestrator/references/quality-gate.md。
+- references/content-analysis.md: 映像内容の自動分析の比較と測定計画（モデル取得は未承認）。字幕の安全域は become-master-director/references/tiktok-caption-safezone.md（システム側の担当: 禁止域の自動試験と設定の版管理）。
 
 ## 9. 変更履歴
 
 - v0.1（2026-11-28）: オーナー提供の草案（107行）を基に、独自の言葉で再構成して配置
 - v0.1.1（2026-11-28）: AUTOMATION ENGINEER を参照資料として統合
 - v0.1.2（2026-11-28）: Reproducible Engineering を参照資料として統合
+- v0.1.3（2026-11-28）: 追加のみ。映像内容の分析の計画と、字幕の安全域の試験項目を参照資料として登録。
