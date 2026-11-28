@@ -28,4 +28,30 @@ p=subprocess.run(['ffmpeg','-v','error','-y','-f','lavfi','-i','testsrc2=size=10
 if p.returncode:sys.exit('ffmpeg failed (clip_p)')
 p=subprocess.run(['ffmpeg','-v','error','-y','-f','lavfi','-i','testsrc2=size=640x360:rate=30:duration=2','-c:v','libx264','-pix_fmt','yuv420p','-b:v','600k','-g','30',FIX+'/clip_l.mp4'])
 if p.returncode:sys.exit('ffmpeg failed (clip_l)')
+# --- 映像分析（段階A）用の合成素材: vafx/（縦540x960・30fps・8秒）---
+os.makedirs(FIX+'/vafx',exist_ok=True)
+def ff(out,args,fc=None):
+    cmd=['ffmpeg','-v','error','-y']+args
+    cmd+=['-pix_fmt','yuv420p','-c:v','libx264','-r','30','-g','30','-b:v','2M','-t','8',out]
+    if subprocess.run(cmd).returncode:sys.exit('ffmpeg failed: '+out)
+SZ='540x960'
+src_a=['-f','lavfi','-i','testsrc2=size=%s:rate=30:duration=8'%SZ]
+ff(FIX+'/vafx/ok_a.mp4',src_a)
+ff(FIX+'/vafx/ok_b.mp4',['-f','lavfi','-i','mandelbrot=size=%s:rate=30'%SZ])
+ff(FIX+'/vafx/ok_c.mp4',['-f','lavfi','-i','sierpinski=size=%s:rate=30'%SZ])
+ff(FIX+'/vafx/black_mid.mp4',src_a+['-vf',"drawbox=x=0:y=0:w=iw:h=ih:color=black:t=fill:enable='between(t,3,6)'"])
+ff(FIX+'/vafx/black_head.mp4',src_a+['-vf',"drawbox=x=0:y=0:w=iw:h=ih:color=black:t=fill:enable='between(t,0,6)'"])
+ff(FIX+'/vafx/black_short.mp4',src_a+['-vf',"drawbox=x=0:y=0:w=iw:h=ih:color=black:t=fill:enable='between(t,3.5,4)'"])
+ff(FIX+'/vafx/dark.mp4',src_a+['-vf','eq=brightness=-0.45'])
+ff(FIX+'/vafx/static.mp4',['-f','lavfi','-i','smptebars=size=%s:rate=30'%SZ])
+ff(FIX+'/vafx/flat.mp4',['-f','lavfi','-i','color=c=0x808080:size=%s:rate=30'%SZ])
+p=subprocess.run(['ffmpeg','-v','error','-y','-f','lavfi','-i','testsrc2=size=%s:rate=30:duration=4'%SZ,'-f','lavfi','-i','mandelbrot=size=%s:rate=30'%SZ,'-filter_complex','[1:v]trim=0:4,setpts=PTS-STARTPTS[b];[0:v][b]concat=n=2:v=1[v]','-map','[v]','-pix_fmt','yuv420p','-c:v','libx264','-r','30','-g','30','-b:v','2M','-t','8',FIX+'/vafx/cut_mid.mp4'])
+if p.returncode:sys.exit('ffmpeg failed: cut_mid')
+ff(FIX+'/vafx/dup_a.mp4',src_a+['-vf','scale=360:640','-b:v','300k'])
+for a,d in ((0,2),(5,7.5),(1,1.6),(6.5,8),(2,5),(3,3.9)):
+    ff(FIX+'/vafx/bk_%s_%s.mp4'%(a,d),src_a+['-vf',"drawbox=x=0:y=0:w=iw:h=ih:color=black:t=fill:enable='between(t,%s,%s)'"%(a,d)])
+for c in (2,6):
+    p=subprocess.run(['ffmpeg','-v','error','-y','-f','lavfi','-i','testsrc2=size=%s:rate=30:duration=%d'%(SZ,c),'-f','lavfi','-i','mandelbrot=size=%s:rate=30'%SZ,'-filter_complex','[1:v]trim=0:%d,setpts=PTS-STARTPTS[b];[0:v][b]concat=n=2:v=1[v]'%(8-c),'-map','[v]','-pix_fmt','yuv420p','-c:v','libx264','-r','30','-g','30','-b:v','2M','-t','8',FIX+'/vafx/cut_%d.mp4'%c])
+    if p.returncode:sys.exit('ffmpeg failed: cut_%d'%c)
+print('vafx ok')
 print('fixtures ok:',FIX)

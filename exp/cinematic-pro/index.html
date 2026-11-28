@@ -18,9 +18,13 @@ select,input,button,textarea{max-width:100%;box-sizing:border-box}fieldset,detai
 <details><summary>プロジェクトのバックアップと復元（設定とナレーション・素材の出所。APIキーは含みません）</summary><p class="note">素材の動画本体は含みません（取得済みの素材はこの端末の受信箱から、無いものは保存済みIDから再取得します）。手動で取り込んだ素材は元ファイルを取り込み直してください。復元の前に、いまの作業は自動で退避します。</p><button id="pjBk">バックアップを保存（JSON）</button> <input type="file" id="pjIm" accept="application/json,.json"><p class="note" id="pjbst"></p></details>
 <p class="note" id="bld">配信版: （読み込み中）</p>
 <p class="note">このページの通信は pixabay.com と cdn.pixabay.com だけに限定しています（通信遮断のCSP）。通信は既定で無効で、「実通信の試験」で有効にしたときだけ、<span id="quotaTxt">承認済みの試験枠</span>の枠内で行います。それを超える通信は結果確認とオーナー承認のあとに開放します。素材はオーナーが自分で取得した動画ファイルを取り込みます。権利情報が揃っていない素材は使いません。未取込の場面は「模擬素材」で表示され、映像品質の評価対象になりません。</p>
-<canvas id="cv"></canvas>
+<div id="cvw" style="position:relative;max-width:360px;margin:8px auto"><canvas id="cv" style="margin:0;max-width:none"></canvas><canvas id="szov" width="270" height="480" hidden style="position:absolute;left:0;top:0;width:100%;height:100%;max-width:none;margin:0;border:0;background:transparent;pointer-events:none"></canvas></div>
 <p><button id="bPrep" class="p">① 音と編集を準備</button><button id="bPrev">② プレビュー再生</button><button id="bExp" class="p">③ 書き出し（15秒）</button><button id="bExp2" class="p">③b 高互換MP4書き出し（実験・H.264+AAC）</button><select id="resSel"><option value="720">720×1280（軽い）</option><option value="1080">1080×1920（TikTok推奨）</option></select><span id="rs" class="note"></span><a id="dl" hidden style="display:inline-block;padding:8px 10px;border:1px solid #d4af37;border-radius:8px;color:#d4af37">完成動画を保存</a></p>
 <p class="note" id="st">待機中</p>
+<details id="szp"><summary>字幕セーフゾーン（TikTok向け・数値は未確定）</summary><p class="note">TikTok公式の投稿向けの数値は確認できていません。端末の投稿画面で実測した数値（キャンバスに対する%）を入れてください。「適用」を入れるまで、現在の字幕位置は変わりません。右の余白は、アイコンの縦位置に関係なく全高へ（安全側に）適用します。プレビューは入力値の目安で、実際のTikTok画面ではありません。書き出し中は自動で消えます。</p>
+<p class="note"><label>上%<input id="szTop" type="number" min="0" max="60" step=".5" style="width:4.5em"></label> <label>下%<input id="szBottom" type="number" min="0" max="60" step=".5" style="width:4.5em"></label> <label>説明文の行数<input id="szDesc" type="number" min="0" max="6" step="1" style="width:3.5em"></label> <label>1行の高さ%<input id="szLineH" type="number" min="0" max="10" step=".1" style="width:4.5em"></label> <label>左%<input id="szLeft" type="number" min="0" max="60" step=".5" style="width:4.5em"></label> <label>右%<input id="szRight" type="number" min="0" max="60" step=".5" style="width:4.5em"></label></p>
+<p class="note"><label><input type="checkbox" id="szOn">安全域を適用する</label> <label><input type="checkbox" id="szPv">TikTok想定のプレビューを重ねる</label></p><p class="note" id="szSt"></p></details>
+
 <h2>台本からの演出設計（AI映像ディレクター）</h2>
 <p class="note">台本を入れると、場面数・長さ・カメラ・つなぎ・色・字幕の強調・音をディレクターが設計し、このページに反映します（約1〜90秒）。感情の判定は辞書による【推測】です。現在、スピードランプ・スローモーション・マッチカット・Jカット・Lカットは「設計の指示」までで、映像への描画は未実装です。</p>
 <textarea id="dsc" style="width:100%;min-height:110px;box-sizing:border-box;background:#1b2130;color:#e8eaf0;border:1px solid #39435a;border-radius:8px;padding:8px">夜明け前の暗闇で、誰も見ていない努力を続ける
@@ -86,6 +90,7 @@ select,input,button,textarea{max-width:100%;box-sizing:border-box}fieldset,detai
 <pre class="note" id="rOut">未実行</pre><p><button id="rC">結果の文章をコピー</button></p></details>
 <p><button class="pri" id="bAuto">台本から素材を自動取得して配置（確認は最後にまとめて）</button></p><p><button id="bGo">素材を一括自動取得（候補のみ）</button><button id="bTop">各場面の1位をまとめて採用</button><button id="bRef">保存済みIDから素材を再取得</button><button id="bFail">失敗した場面だけ再処理</button><button id="bStop">中断</button></p>
 <progress id="bpg" max="1" value="0"></progress><p class="note" id="bst"></p><p class="note ng" id="bnote"></p>
+<p><button id="vaBtn">取り込み済み素材を自動分析（通信なし・モデルなし）</button></p><pre class="note" id="vaOut">未実行</pre>
 <div id="brev"></div>
 <div class="ck"><input type="checkbox" id="bokc"><span>全場面の素材について、人物の描写・商標・不適切表現・権利情報を確認しました</span></div>
 <p><button id="bOk">権利確認を確定する</button></p></div>
@@ -172,15 +177,38 @@ function trans(t){const A=S.sc;let fade=0,flash=0,lk=0,lx=0;
 function fontOf(sz,w){return`${w||700} ${sz}px ${FF[S.font]}`}
 const mm=document.createElement('canvas').getContext('2d');
 const backOut=u=>{const c1=1.70158,c3=c1+1;return 1+c3*Math.pow(u-1,3)+c1*Math.pow(u-1,2)};
-function capLayout(t){const out=[];const FS=81,MAXW=880;
+/* ---------- 字幕セーフゾーン（段階A: 設定の仕組みとプレビュー。TikTok公式の数値は確認できていません）----------
+ 数値（キャンバスに対する%）が未入力・未適用の間は、現在の字幕位置（縦46%・最大幅880）のまま。実測した数値を入れると、字幕を安全域の内側へ寄せる。端末サイズ・説明文の行数・UI変更は、数値の更新だけで追従できる */
+var SZ={ver:1,on:false,top:0,bottom:0,desc:0,lineH:0,left:0,right:0,preview:false};
+function szActive(){return !!(SZ.on&&(SZ.top>0||SZ.bottom>0||SZ.desc*SZ.lineH>0||SZ.left>0||SZ.right>0))}
+function szMaxW(){if(!szActive())return 880;const m=Math.max(SZ.left,SZ.right)/100*W;return Math.max(300,Math.min(880,W-2*m))}
+function szBand(){return{ta:H*SZ.top/100,ba:H*(1-(SZ.bottom+SZ.desc*SZ.lineH)/100)}}
+function szFit(y,up,dn){if(!szActive())return y;const {ta,ba}=szBand(),top=y-up,bot=y+dn;if(bot-top>ba-ta)return ta+up;if(top<ta)return y+(ta-top);if(bot>ba)return y-(bot-ba);return y}
+function szAdj(y0,nr,rh){return szFit(y0,81*.9,(nr-1)*rh+81*.25)}
+function szCheck(){if(!szActive())return{configured:false,ok:true,note:'安全域の数値が未確定のため、現在の字幕位置のままです'};const {ta,ba}=szBand(),mx=Math.max(SZ.left,SZ.right)/100*W,w={y0:1e9,y1:-1e9,x0:1e9,x1:-1e9},add=(x0,x1,y0,y1)=>{w.y0=Math.min(w.y0,y0);w.y1=Math.max(w.y1,y1);w.x0=Math.min(w.x0,x0);w.x1=Math.max(w.x1,x1)};
+ /* 出現・退場の動き（位置のずれ・拡大）の途中は除き、表示が落ち着いた（透明度95%以上の）字幕とロゴだけを検査する */
+ for(let f=0;f<N;f++){const t=f/FPS;capLayout(t).forEach(o=>{if(o.alpha>=.95)add(o.x,o.x+o.w,o.y-o.sz*.9,o.y+o.sz*.25)});const l=logoLayout(t);if(l&&l.alpha>=.95)add(W/2-210,W/2+210,l.y-80,l.y+60)}
+ const tol=12;/* 出現の動き（落ち着くまでの数px）の許容 */const ok=w.y0>=ta-tol&&w.y1<=ba+tol&&w.x0>=mx-tol&&w.x1<=W-mx+tol;return{configured:true,ok,worst:w,band:{ta:Math.round(ta),ba:Math.round(ba),mx:Math.round(mx)}}}
+function szLoad(){try{const o=JSON.parse(localStorage.getItem(NS+'cp_sz')||'null');if(o&&o.ver===1)['on','top','bottom','desc','lineH','left','right'].forEach(k=>{if(o[k]!=null)SZ[k]=o[k]})}catch{}szUi()}
+function szSet(o){o=o||{};['top','bottom','desc','lineH','left','right'].forEach(k=>{if(o[k]!=null){const v=+o[k];SZ[k]=isFinite(v)?Math.max(0,Math.min(60,v)):0}});if(o.on!=null)SZ.on=!!o.on;if(o.preview!=null)SZ.preview=!!o.preview;
+ try{localStorage.setItem(NS+'cp_sz',JSON.stringify({ver:1,on:SZ.on,top:SZ.top,bottom:SZ.bottom,desc:SZ.desc,lineH:SZ.lineH,left:SZ.left,right:SZ.right}))}catch{}szUi();try{renderFrame(LAST_T)}catch{}return szCheck()}
+function szUi(){const g=id=>document.getElementById(id);if(!g('szOn'))return;g('szOn').checked=SZ.on;g('szPv').checked=SZ.preview;g('szTop').value=SZ.top;g('szBottom').value=SZ.bottom;g('szDesc').value=SZ.desc;g('szLineH').value=SZ.lineH;g('szLeft').value=SZ.left;g('szRight').value=SZ.right;
+ const o=g('szov');if(o)o.hidden=!SZ.preview;const c=szCheck();g('szSt').textContent=c.configured?('適用中: 字幕は上 '+c.band.ta+'px〜下 '+c.band.ba+'px、左右の余白 '+c.band.mx+'px の内側。全フレームの検査: '+(c.ok?'内側に収まっています':'はみ出す箇所があります（ロゴの位置など）'))+'。実際のTikTok画面での確認は、実機で行ってください':'未適用: 安全域の数値が未確定のため、現在の字幕位置のままです'}
+function szDraw(t){const ov=document.getElementById('szov');if(!ov)return;const g=ov.getContext('2d'),k=ov.width/W;g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,ov.width,ov.height);g.scale(k,k);g.font='34px sans-serif';g.textBaseline='top';
+ if(szActive()){const {ta,ba}=szBand(),mx=Math.max(SZ.left,SZ.right)/100*W,zone=(x,y,w,h,s)=>{g.fillStyle='rgba(255,60,60,.28)';g.fillRect(x,y,w,h);g.fillStyle='#fff';g.fillText(s,x+10,y+8)};
+  if(ta>0)zone(0,0,W,ta,'上: 入力した余白');if(ba<H)zone(0,ba,W,H-ba,'下: 説明文・ハンドル等（入力値）');if(SZ.left>0)zone(0,ta,mx,ba-ta,'');if(SZ.right>0)zone(W-mx,ta,mx,ba-ta,'右: アイコン列（入力値）')}
+ else{g.fillStyle='rgba(0,0,0,.55)';g.fillRect(0,0,W,90);g.fillStyle='#fff';g.fillText('安全域の数値が未入力です（字幕位置は現在のまま）',20,24)}
+ g.strokeStyle='#3ddc84';g.lineWidth=4;boxes(t).forEach(b=>g.strokeRect(b.x0,b.y0,b.x1-b.x0,b.y1-b.y0));g.fillStyle='rgba(0,0,0,.55)';g.fillRect(0,H-70,W,70);g.fillStyle='#fff';g.fillText('入力値の目安です。実際のTikTok画面ではありません（緑枠＝字幕の位置）',20,H-56)}
+function szPvOff(){if(SZ.preview){SZ.preview=false;const o=document.getElementById('szov');if(o)o.hidden=true;const c=document.getElementById('szPv');if(c)c.checked=false}}
+function capLayout(t){const out=[];const FS=81,MAXW=szMaxW();
  S.ln.forEach((L,li)=>{const t1=L.t0+L.d,nx=S.ln[li+1],hideAt=Math.min(t1+.6,nx?nx.t0-.06:1e9);if(t<L.t0-.05||t>hideAt)return;const tot=L.toks.reduce((q,k)=>q+k[0].length,0);let cum=0;const kin=S.sc[li]&&S.sc[li].kin;let T;if(kin==='char'||kin==='track'){T=[];L.toks.forEach(k=>{for(const ch of k[0]){const s=L.t0+L.d*cum/tot;cum+=1;const sz=k[1]?FS*1.35:FS;mm.font=fontOf(sz);T.push({s:ch,emph:!!k[1],ts:s,sz,w:mm.measureText(ch).width+(k[1]?3:0),ch:1})}})}else T=L.toks.map(k=>{const s=L.t0+L.d*cum/tot;cum+=k[0].length;const sz=k[1]?FS*1.35:FS;mm.font=fontOf(sz);const w=mm.measureText(k[0]).width+(k[1]?10:0);return{s:k[0],emph:!!k[1],ts:s,sz,w,tk:kin==='track'?1:0}});
   const rows=[[]];let acc=0;T.forEach(k=>{if(acc+k.w>MAXW&&rows[rows.length-1].length){rows.push([]);acc=0}acc+=k.w;rows[rows.length-1].push(k)});
-  const rh=FS*1.55,y0=H*.46-(rows.length-1)*rh/2,fo=1-clamp((t-(hideAt-.2))/.2);
+  const rh=FS*1.55,y0=szAdj(H*.46-(rows.length-1)*rh/2,rows.length,rh),fo=1-clamp((t-(hideAt-.2))/.2);
   rows.forEach((row,ri)=>{const rw=row.reduce((q,k)=>q+k.w,0);let x=(W-rw)/2;row.forEach(k=>{if(k.ch&&kin==='track'){const a=clamp((t-L.t0)/.8),e=ease(a);out.push({s:k.s,emph:k.emph,x:x+(x+k.w/2-W/2)*(1-e)*.45,y:y0+ri*rh,sz:k.sz,w:k.w,alpha:e*fo,li});x+=k.w;return}
    if(k.ch){const a=clamp((t-k.ts)/.22),b=backOut(a);const sc=k.emph?1+.5*(1-b):1;out.push({s:k.s,emph:k.emph,x,y:y0+ri*rh+(1-b)*34,sz:k.sz*Math.max(.6,sc),w:k.w,alpha:clamp(a*2)*fo,li});x+=k.w;return}
    const a=clamp((t-k.ts)/.18),e=ease(a);const sc=k.emph?1+.12*(1-e):1;const tkx=k.tk?(1-e)*k.w*.35:0;out.push({s:k.s,emph:k.emph,x:x-tkx,y:y0+ri*rh+(1-e)*22,sz:k.sz*sc,w:k.w,alpha:a*fo,li});x+=k.w+(k.tk?(1-e)*k.w*.0:0)})})});
  return out.filter(o=>o.alpha>0)}
-function logoLayout(t){const a=S.sc[S.sc.length-1].a+.2;if(t<a)return null;const u=clamp((t-a)/.6);return{alpha:ease(u),lineW:360*ease(clamp((t-a-.2)/.6)),y:H*.46}}
+function logoLayout(t){const a=S.sc[S.sc.length-1].a+.2;if(t<a)return null;const u=clamp((t-a)/.6);return{alpha:ease(u),lineW:360*ease(clamp((t-a-.2)/.6)),y:szFit(H*.46,80,60)}}
 function boxes(t){const r=[];capLayout(t).forEach(o=>r.push({x0:o.x,x1:o.x+o.w,y0:o.y-o.sz*.9,y1:o.y+o.sz*.25}));const l=logoLayout(t);if(l){r.push({x0:W/2-210,x1:W/2+210,y0:l.y-80,y1:l.y+60})}return r}
 /* 字幕の視認性: 字幕位置の背景輝度を測り、帯・縁取り・影を連続的に調整する。暗い背景では何も足さない（高級感を保つ）。測定値は時間で滑らかにして、ちらつきを防ぐ */
 const CAPL={t:-9,v:.3},lumC=document.createElement('canvas');lumC.width=24;lumC.height=12;const lumG=lumC.getContext('2d',{willReadFrequently:true});
@@ -239,7 +267,7 @@ function renderFrame(t){LAST_T=t;const i=sceneAt(t),c=camera(i,t),tr=trans(t),fr
   og.globalCompositeOperation='overlay';og.globalAlpha=.07;og.drawImage(noise,(fr*37)%200,(fr*53)%200,256,256,0,0,CW,CH);og.globalCompositeOperation='source-over';og.globalAlpha=1;
   if(tr.lk>0){const lg=og.createLinearGradient(CW*(-.2+1.4*tr.lx-.2),0,CW*(-.2+1.4*tr.lx+.2),0);lg.addColorStop(0,'rgba(255,140,60,0)');lg.addColorStop(.5,`rgba(255,150,70,${.35*tr.lk})`);lg.addColorStop(1,'rgba(255,140,60,0)');og.fillStyle=lg;og.fillRect(0,0,CW,CH)}
   if(tr.flash>0){og.fillStyle=`rgba(255,255,255,${tr.flash})`;og.fillRect(0,0,CW,CH)}if(tr.fade>0){og.fillStyle=`rgba(0,0,0,${tr.fade})`;og.fillRect(0,0,CW,CH)}}
- drawCaps(og,t,tr.fade);og.setTransform(1,0,0,1,0,0);return i}
+ drawCaps(og,t,tr.fade);og.setTransform(1,0,0,1,0,0);if(SZ.preview)szDraw(t);return i}
 /* ---------- 音（自前合成。権利問題なし）と測定 ---------- */
 function noiseBuf(oc,sec,seed){const b=oc.createBuffer(1,Math.ceil(sec*oc.sampleRate),oc.sampleRate),d=b.getChannelData(0),r=mulberry(seed);for(let i=0;i<d.length;i++)d[i]=r()*2-1;return b}
 function rmsDb(x,a,b){let q=0,n=0;for(let i=Math.max(0,a|0);i<Math.min(x.length,b|0);i++){q+=x[i]*x[i];n++}return n?10*Math.log10(q/n+1e-12):-120}
@@ -410,13 +438,13 @@ function narrGuide(){const e=$('narrGuide');if(!e)return;const L=S.ln.map(l=>l.t
 function narrNow(){const e=$('narrnow');if(!e)return;let t;if(!S.narr)t='現在の音声: 音声なし（BGMのみ）';else{const b=S.narr,d=b.duration.toFixed(1),sy=S.aligned?'解析: '+S.ln.length+'文を検出し、字幕に同期済み':(S.sync&&S.sync.ok===false?'解析: 台本の'+S.ln.length+'文と合いません（注意を確認してください）':'解析: 未実施');
  t=S.isMockNarr?'現在の音声: 模擬音声（試験用の合成音・'+d+'秒）。外部の音声ファイルではありません｜'+sy:'現在の音声: 外部音声｜ファイル: '+(S.narrFile&&S.narrFile.name?S.narrFile.name:'名前の情報なし（保存データから復元）')+'｜'+d+'秒｜'+b.numberOfChannels+'ch '+b.sampleRate+'Hz｜読み込み: 成功｜'+sy}
  e.textContent=t}
-async function prep(){S.warn=S.warn.filter(w=>/^WebGL/.test(w));if(S.narr){const ok=alignNarr(S.narr);$('nst').textContent=ok?('ナレーションを取り込みました。字幕とカットを音声に合わせました（開始位置 '+S.off.toFixed(2)+'秒ずらし／動画 '+D+'秒）'+(S.isMockNarr?'【模擬音声】':'')):'ナレーションは取り込みましたが'+S.ln.length+'文として検出できませんでした'}
+async function prep(){try{vaRelease()}catch{}S.warn=S.warn.filter(w=>/^WebGL/.test(w));if(S.narr){const ok=alignNarr(S.narr);$('nst').textContent=ok?('ナレーションを取り込みました。字幕とカットを音声に合わせました（開始位置 '+S.off.toFixed(2)+'秒ずらし／動画 '+D+'秒）'+(S.isMockNarr?'【模擬音声】':'')):'ナレーションは取り込みましたが'+S.ln.length+'文として検出できませんでした'}
  narrNow();await buildAudio();S.meas=measure(S.mix);const m=S.meas,w=[];if(m.clip>0)w.push('音割れ（クリップ）が '+m.clip+' 箇所あります');if(S.narr&&m.silence>m.narrWin.reduce((q,v)=>q+v,0)/Math.max(1,S.ln.length)-18)w.push('余韻の無音が十分に下がっていません');S.warn.push(...w);
  say('準備完了。ピーク '+m.peak+'、全体 '+m.rmsAll+'dB'+(S.warn.length?'｜注意: '+S.warn.join('／'):''),S.warn.length?'w':'');return m}
 function playMix(dest){AC=AC||new (window.AudioContext||window.webkitAudioContext)({sampleRate:48000});const s=AC.createBufferSource();s.buffer=S.mix;s.connect(dest||AC.destination);return s}
 function loop(cb){return new Promise(res=>{const t0=performance.now();S.ft=[];let last=t0,stall=0;const f=()=>{const n=performance.now(),t=(n-t0)/1000;S.ft.push(n-last);if(n-last>1500)stall=Math.max(stall,n-last);last=n;const i=sceneAt(Math.min(t,D-.001));if(i!==S.cur)startScene(i);renderFrame(Math.min(t,D-.001));cb&&cb(t);if(t<D)requestAnimationFrame(f);else res({stall})};requestAnimationFrame(f)})}
 async function preview(){if(S.busy)return;if(!S.mix)await prep();S.busy=true;try{await (AC||(AC=new AudioContext({sampleRate:48000}))).resume()}catch{}const s=playMix();s.start();say('プレビュー中…');S.cur=-1;await loop();S.busy=false;S.clips.forEach(q=>q&&q.el.pause());say('プレビュー終了。フレーム間隔の平均 '+(S.ft.reduce((a,b)=>a+b,0)/S.ft.length).toFixed(1)+'ms（実機での判定は未確認）')}
-async function exportVideo(){if(S.busy)return null;{const g=rightsGate();if(g){say(g,'w');return null}}if(!S.mix)await prep();{const g2=rightsGate();if(g2){say(g2,'w');return null}}S.busy=true;S.left=false;let wl=null;try{wl=await navigator.wakeLock.request('screen')}catch{S.warn.push('画面スリープの防止に失敗しました（書き出し中は画面を消さないでください）')}
+async function exportVideo(){if(S.busy||VA.run)return null;try{szPvOff()}catch{}{const g=rightsGate();if(g){say(g,'w');return null}}if(!S.mix)await prep();{const g2=rightsGate();if(g2){say(g2,'w');return null}}S.busy=true;S.left=false;let wl=null;try{wl=await navigator.wakeLock.request('screen')}catch{S.warn.push('画面スリープの防止に失敗しました（書き出し中は画面を消さないでください）')}
  const vis=()=>{if(document.hidden){S.left=true;try{say('⚠ 書き出し中にアプリを離れました。映像が止まる可能性があります','w')}catch{}}};document.addEventListener('visibilitychange',vis);
  try{await (AC||(AC=new AudioContext({sampleRate:48000}))).resume()}catch{}
  const dest=AC.createMediaStreamDestination(),stream=out.captureStream(FPS);dest.stream.getAudioTracks().forEach(t=>stream.addTrack(t));
@@ -513,11 +541,11 @@ function memMonText(){return memMon()?'メモリ監視: 利用できます（ヒ
 function perfSummary(r){const f=PF.f.slice().sort((a,b)=>a-b),n=f.length,avg=f.reduce((q,v)=>q+v,0)/Math.max(1,n);return{frames:n,avgMs:+avg.toFixed(1),p95Ms:+(f[Math.floor(n*.95)]||0).toFixed(1),maxMs:+(f[n-1]||0).toFixed(1),totalSec:+((performance.now()-PF.t0)/1000).toFixed(1),heapMB:PF.m?+(PF.m/1048576).toFixed(0):null,deviceMemGB:navigator.deviceMemory||null,cores:navigator.hardwareConcurrency||null,res:CW+'x'+CH,dur:D,memMon:memMon(),slow:(()=>{const k=Math.min(30,Math.floor(n/3));if(k<5)return null;const a=f.length?PF.f.slice(0,k).reduce((q,v)=>q+v,0)/k:0,b=PF.f.slice(-k).reduce((q,v)=>q+v,0)/k;return a>0?+(b/a).toFixed(2):null})()}}
 function perfText(){const q=S.perf;return q?'｜【計測】'+q.res+' '+q.dur+'秒: 描画 平均'+q.avgMs+'ms／95%点'+q.p95Ms+'ms／最大'+q.maxMs+'ms、全体'+q.totalSec+'秒、ヒープ最大'+(q.heapMB==null?'取得不可（メモリ監視なし）':q.heapMB+'MB')+'、端末メモリ'+(q.deviceMemGB==null?'取得不可':q.deviceMemGB+'GB')+'、コア'+(q.cores||'?')+'、'+(q.memMon?'メモリ監視あり':'メモリ監視なし')+(q.slow==null?'':'、描画時間の後半/前半比 '+q.slow+'（端末温度の測定ではありません。比が2を超える場合は、負荷・他アプリ・発熱などで遅くなった可能性があります）'):''}
 async function sniff(blob){const u=new Uint8Array(await blob.slice(0,16).arrayBuffer());if(u[0]===0x1A&&u[1]===0x45&&u[2]===0xDF&&u[3]===0xA3)return'webm';if(u[4]===0x66&&u[5]===0x74&&u[6]===0x79&&u[7]===0x70)return'mp4';return'unknown'}
-function exportGuard(i){if(S.abort){const e=new Error('中止');e.code='ABORT';throw e}
+function exportGuard(i){if(i===0){try{szPvOff()}catch{}}if(S.abort){const e=new Error('中止');e.code='ABORT';throw e}
  if(i%15===0){const rg=rightsGate();if(rg){const e=new Error(rg);e.code='RIGHTS';throw e}}
  if(i%15===0&&performance.memory&&performance.memory.jsHeapSizeLimit&&performance.memory.usedJSHeapSize>.85*performance.memory.jsHeapSizeLimit){const e=new Error('メモリ不足');e.code='MEMORY';throw e}
  if(S.hidden){S.hidden=false;try{say('⚠ 書き出し中に画面を離れました。端末によっては書き出しが遅くなる・止まることがあります。画面を点けたままにしてください','w')}catch{}}}
-async function exportOffline(){if(S.busy)return null;{const g=rightsGate();if(g){say(g,'w');return null}}S.busy=true;const st=(m,c)=>say(m,c);
+async function exportOffline(){if(S.busy||VA.run)return null;try{szPvOff()}catch{}{const g=rightsGate();if(g){say(g,'w');return null}}S.busy=true;const st=(m,c)=>say(m,c);
  PF.f=[];PF.m=0;PF.t0=performance.now();if(!(S.cmp&&S.cmp.on))S.abort=false;S.hidden=false;const vh=()=>{if(document.hidden)S.hidden=true};document.addEventListener('visibilitychange',vh);try{st('H.264+AAC書き出しの準備中…');if(!S.mix)await prep();
   let M;try{M=await import('../mp4-lab/lib/mp4enc.js')}catch(e){S.busy=false;st('実験用エンコーダを読み込めませんでした: '+e.message+'。従来の③書き出しを使ってください','w');return null}
   const clipsOn=S.clips.map((c,i)=>c&&c.el?i:-1).filter(i=>i>=0),seek=(el,t)=>new Promise(ok=>{let d=false;const f=()=>{if(!d){d=true;el.removeEventListener('seeked',f);ok()}};el.addEventListener('seeked',f);try{el.pause()}catch{}el.currentTime=t;setTimeout(f,1500)});
@@ -535,7 +563,7 @@ async function verifyBlob(blob){try{const ab=await blob.arrayBuffer(),ctx=new Of
 function stats(){const out2=[];S.sc.forEach((s,i)=>{const t=(s.a+s.b)/2;renderFrame(t);const d=og.getImageData(0,0,CW,CH).data;let l=0,sa=0,n=0;for(let k=0;k<d.length;k+=64){const r=d[k],g=d[k+1],b=d[k+2],mx=Math.max(r,g,b),mn=Math.min(r,g,b);l+=(.2126*r+.7152*g+.0722*b)/255;sa+=mx?(mx-mn)/mx:0;n++}out2.push({id:s.id,luma:+(l/n).toFixed(3),sat:+(sa/n).toFixed(3)})});return out2}
 function safeCheck(){let ok=true,worst=null;const bb={x0:1e9,y0:1e9,x1:-1e9,y1:-1e9};for(let f=0;f<N;f++){boxes(f/FPS).forEach(b=>{bb.x0=Math.min(bb.x0,b.x0);bb.y0=Math.min(bb.y0,b.y0);bb.x1=Math.max(bb.x1,b.x1);bb.y1=Math.max(bb.y1,b.y1)})}
  ok=bb.x0>=SAFE.x0&&bb.x1<=SAFE.x1&&bb.y0>=SAFE.y0&&bb.y1<=SAFE.y1;return{ok,bb}}
-function report(){const A=S.sc,ds=A.map(s=>s.b-s.a),r={frames:N,res:CW+'x'+CH,scenes:A.length,cuts:A.length-1,asl:+(ds.reduce((q,v)=>q+v,0)/A.length).toFixed(2),cutTimes:A.slice(1).map(s=>+s.a.toFixed(2)),gl:!!GL,safe:safeCheck(),stats:stats(),audio:S.meas,warn:S.warn.slice(),realClips:S.clips.filter(Boolean).length,note:S.clips.some(Boolean)?'実素材を含む':'模擬素材のみ。映像品質の判定には使えません'};
+function report(){const A=S.sc,ds=A.map(s=>s.b-s.a),r={frames:N,res:CW+'x'+CH,scenes:A.length,cuts:A.length-1,asl:+(ds.reduce((q,v)=>q+v,0)/A.length).toFixed(2),cutTimes:A.slice(1).map(s=>+s.a.toFixed(2)),gl:!!GL,safe:safeCheck(),stats:stats(),sz:szCheck(),audio:S.meas,warn:S.warn.slice(),realClips:S.clips.filter(Boolean).length,note:S.clips.some(Boolean)?'実素材を含む':'模擬素材のみ。映像品質の判定には使えません'};
  if(S.ft.length)r.fps=+(1000/(S.ft.reduce((a,b)=>a+b,0)/S.ft.length)).toFixed(1);return r}
 /* ---------- 評価フォーム ---------- */
 const EVI=['映像素材の品質','台本と映像の一致','編集テンポ','字幕デザイン','音響品質','感情への訴求力','映像の滑らかさ','オリジナリティ','ブランドの統一感','作品全体の完成度'];
@@ -730,7 +758,7 @@ async function blindSet(exporter){if(S.busy||!S.base)return null;const ex=export
 async function blindRecover(){const all=await blindList();if(!all.length)return 0;const run=Math.max(...all.map(r=>r.run)),g=all.filter(r=>r.run===run).sort((a,b)=>a.code<b.code?-1:1),L=$('blindl');
  if(L.textContent)return 0;const h=document.createElement('div');h.className='note w';h.textContent='前回のブラインド書き出しで完成していた動画 '+g.length+' 本が端末内に残っています（ページを開き直しても失われません）。';L.appendChild(h);g.forEach(r=>blindLink(L,r.code,r.blob,r.audio,true));return g.length}
 async function sha256Hex(t){try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch{return null}}
-const CP_BUILD='cinematic-pro build 2026-11-28-r11-am（試験: 権利状態の保持・1080p標準・字幕の自動視認性・素材の確認待ち／検索5回・動画6本の試験枠／未公開ブランチ）';
+const CP_BUILD='cinematic-pro build 2026-11-28-r12-am（試験: 映像分析（適応型抽出・キャッシュ・重複検出）・取得済み候補への自動差し替え・字幕セーフゾーン設定／検索5回・動画6本の試験枠／未公開ブランチ）';
 document.addEventListener('change',e=>{const t=e.target;if(t&&/^cf\d+$/.test(t.id)){const k=$('ck'+t.id.slice(2));if(k)k.checked=false}});
 try{$('bld').textContent='配信版: '+CP_BUILD}catch{}
 async function evidenceRecord(){const k=(S.cmp&&S.cmp.key)||{},res=(window.CP.lastBlind||[]),djt=S.dj||null,mats=[];
@@ -1052,12 +1080,107 @@ async function autoCropClip(i){const c=S.clips[i];if(!c||!c.el||S.crop[i])return
   if(vw<.97){const sx=clamp(cx,vw/2,1-vw/2);let inn=0;for(let y=1;y<H-1;y++)for(let x=1;x<W-1;x++){const fx=(x+.5)/W;if(Math.abs(fx-sx)<=vw/2)inn+=Math.max(0,E[y*W+x]-med*1.5)}if(Math.abs(sx-.5)>.06&&inn/tot>=.5)o.sx=+sx.toFixed(3)}
   if(vh<.97){const sy=clamp(cy,vh/2,1-vh/2);if(Math.abs(sy-.5)>.06)o.sy=+sy.toFixed(3)}
   if(!Object.keys(o).length)return null;const q=cropSet(i,o);q.auto=true;return q}catch(e){return null}}
+/* ---------- 映像分析（段階A・モデル不使用・端末内・通信なし）----------
+ 測定できる項目: 明るさ・コントラスト・彩度・黒フレーム・鮮明度・動き・場面変化・重複（pHash）。
+ 測定できない項目（意味理解が必要）: 映像に何が写っているか、台本との意味の一致、感情の表現、美しさ。モデルなしでは、物体も出来事も理解できません。
+ 機械測定は映像品質の保証ではありません。差し替えは、測定上の欠陥（黒・無地・他場面との重複）が高い確信度で見つかり、かつ端末内の取得済み候補がその欠陥を持たない場合に限ります。 */
+const VA={ver:1,run:false,live:0,cache:new Map(),fly:new Map(),loaded:false,cv:null,g:null,last:null,
+ stat:{analyzed:0,hit:0,dedupe:0,frames:0,released:0,swaps:0,held:0,aborted:0},
+ opt:{n0:5,nMax:12,maxSwap:2,maxTry:3,cutT:.25,blackY:.06,blackShare:.2,darkY:.12,brightY:.92,staticD:.004,flatC:.02,dupHam:6,minGap:.3,cacheMax:60}};
+function vaLoad(){if(VA.loaded)return;VA.loaded=true;try{const o=JSON.parse(localStorage.getItem(NS+'cp_va')||'{}');for(const k in o)if(o[k]&&o[k].v===VA.ver)VA.cache.set(k,o[k])}catch{}}
+function vaSave(){try{const ks=[...VA.cache.keys()],ex=ks.length-VA.opt.cacheMax;if(ex>0)ks.slice(0,ex).forEach(k=>VA.cache.delete(k));const o={};VA.cache.forEach((v,k)=>o[k]=v);localStorage.setItem(NS+'cp_va',JSON.stringify(o))}catch{}}
+function vaCanvas(){if(!VA.cv){VA.cv=document.createElement('canvas');VA.cv.width=72;VA.cv.height=128;VA.g=VA.cv.getContext('2d',{willReadFrequently:true})}return VA.g}
+function vaFeat(d){const W=72,Hh=128,n=W*Hh,Y=new Float32Array(n),o=VA.opt;let sY=0,sS=0,dk=0,hot=0;
+ for(let i=0;i<n;i++){const r=d[4*i]/255,g=d[4*i+1]/255,b=d[4*i+2]/255,y=.2126*r+.7152*g+.0722*b;Y[i]=y;sY+=y;const mx=Math.max(r,g,b),mn=Math.min(r,g,b);sS+=mx>0?(mx-mn)/mx:0;if(y<o.blackY)dk++;if(y>o.brightY)hot++}
+ const m=sY/n;let v=0;for(let i=0;i<n;i++){const q=Y[i]-m;v+=q*q}
+ let sh=0;for(let y=1;y<Hh-1;y++)for(let x=1;x<W-1;x++){const k=y*W+x;sh+=Math.abs(4*Y[k]-Y[k-1]-Y[k+1]-Y[k-W]-Y[k+W])}
+ const g=new Float32Array(576);for(let by=0;by<32;by++)for(let bx=0;bx<18;bx++){let q=0;for(let y=0;y<4;y++)for(let x=0;x<4;x++)q+=Y[(by*4+y)*W+bx*4+x];g[by*18+bx]=q/16}
+ const hv=new Float32Array(72);for(let by=0;by<8;by++)for(let bx=0;bx<9;bx++){let q=0;for(let y=0;y<16;y++)for(let x=0;x<8;x++)q+=Y[(by*16+y)*W+bx*8+x];hv[by*9+bx]=q/128}
+ let h1=0,h2=0,bit=0;for(let by=0;by<8;by++)for(let bx=0;bx<8;bx++){const b=hv[by*9+bx]>hv[by*9+bx+1]?1:0;if(bit<32)h1=(h1*2+b)>>>0;else h2=(h2*2+b)>>>0;bit++}
+ const hx=q=>q.toString(16).padStart(8,'0');
+ return{y:m,c:Math.sqrt(v/n),s:sS/n,blk:dk/n,hot:hot/n,sh:sh/((W-2)*(Hh-2)),hash:hx(h1)+hx(h2),g}}
+function vaHam(a,b){let n=0;for(let k=0;k<2;k++){let x=(parseInt(a.slice(k*8,k*8+8),16)^parseInt(b.slice(k*8,k*8+8),16))>>>0;while(x){n+=x&1;x>>>=1}}return n}
+function vaDiff(a,b){let q=0;for(let i=0;i<576;i++)q+=Math.abs(a[i]-b[i]);return q/576}
+const vaIsBlack=f=>f.blk>=.9||f.y<VA.opt.blackY*.6;
+function vaSeek(v,t){return new Promise(ok=>{let d=0;const f=()=>{if(!d){d=1;v.removeEventListener('seeked',f);ok()}};v.addEventListener('seeked',f);try{v.currentTime=Math.max(0,t)}catch{f()}setTimeout(f,2500)})}
+const vaYield=()=>new Promise(r=>setTimeout(r,0));
+/* 黒の割合は範囲で扱う: 黒と黒に挟まれた区間は確実に黒（下限）、黒と非黒の間は境目が未確定（上限にだけ加える）。範囲が判定のしきい値をまたぐ間は、確信度が低い */
+function vaBlackBr(fr){let cov=0,lo=0,hi=0;for(let k=0;k<fr.length-1;k++){const g=fr[k+1].t-fr[k].t,a=vaIsBlack(fr[k]),b=vaIsBlack(fr[k+1]);cov+=g;if(a&&b){lo+=g;hi+=g}else if(a!==b)hi+=g}
+ if(cov<=0){const v=fr.length&&vaIsBlack(fr[0])?1:0;return{lo:v,hi:v,amb:false}}return{lo:lo/cov,hi:hi/cov,amb:lo/cov<VA.opt.blackShare&&hi/cov>=VA.opt.blackShare}}
+const vaMed=a=>{if(!a.length)return 0;const b=a.slice().sort((x,y)=>x-y);return b[b.length>>1]};
+const vaCutQ=(d,med,n)=>d>VA.opt.cutT&&(n<5||d>1.8*med+.02);
+/* 確信度に基づく追加抽出: 判断の境目にある所（黒の割合が未確定、他と比べて突出した変化＝場面変化の疑い、明るさのしきい値付近）だけ、隣り合うフレームの間に1枚足す */
+function vaNeed(fr){const o=VA.opt,why=[],ds=[];for(let k=0;k<fr.length-1;k++)ds.push(vaDiff(fr[k].g,fr[k+1].g));const med=vaMed(ds);let focus=-1,pr=0;const pair=(k,p)=>{const gap=fr[k+1].t-fr[k].t;if(gap>o.minGap&&p>pr){pr=p;focus=k}};
+ const br=vaBlackBr(fr);if(br.amb)for(let k=0;k<fr.length-1;k++)if(vaIsBlack(fr[k])!==vaIsBlack(fr[k+1])){pair(k,3+(fr[k+1].t-fr[k].t)/100);why.push('黒の割合が境目')}
+ ds.forEach((d,k)=>{if(d>o.cutT*.5&&(fr.length<5||d>1.8*med+.02)){pair(k,2+d);why.push('場面変化の疑い')}});
+ if(focus<0){const my=fr.reduce((q,f)=>q+f.y,0)/fr.length;if(Math.abs(my-o.darkY)<.02||Math.abs(my-o.brightY)<.02){let b=0,bk=-1;for(let k=0;k<fr.length-1;k++){const gp=fr[k+1].t-fr[k].t;if(gp>b){b=gp;bk=k}}if(b>o.minGap){focus=bk;why.push('明るさのしきい値付近')}}}
+ return{focus,why:[...new Set(why)],br}}
+function vaSummary(fr,t0,len,dur){const o=VA.opt,n=fr.length,ds=[],df=[];for(let k=0;k<n-1;k++){const d=vaDiff(fr[k].g,fr[k+1].g);ds.push(d);df.push({t:(fr[k].t+fr[k+1].t)/2,gap:fr[k+1].t-fr[k].t,d})}
+ const med=vaMed(ds),nd=vaNeed(fr),br=nd.br,share=(br.lo+br.hi)/2,avg=k=>fr.reduce((q,f)=>q+f[k],0)/n,cuts=df.filter(x=>vaCutQ(x.d,med,n)).map(x=>({t:+x.t.toFixed(2),d:+x.d.toFixed(3),loc:x.gap<=o.minGap+.05})),mv=df.filter(x=>!vaCutQ(x.d,med,n));
+ const mo=mv.length?mv.reduce((q,x)=>q+x.d,0)/mv.length:0,mx=mv.length?Math.max(...mv.map(x=>x.d)):0,y=avg('y'),c=avg('c'),fl=[],bad=[];
+ if(br.lo>=o.blackShare){fl.push('black');bad.push('black')}else if(c<o.flatC&&y>=o.blackY&&!br.amb){fl.push('flat');bad.push('flat')}
+ if(!bad.length){if(y<o.darkY)fl.push('dark');if(y>o.brightY)fl.push('bright');if(cuts.length)fl.push('cut');if(mx<o.staticD&&c>=o.flatC&&n>=2)fl.push('static')}
+ const low=nd.focus>=0||br.amb;
+ return{v:VA.ver,n,t0:+t0.toFixed(2),len:+len.toFixed(2),dur:+(dur||0).toFixed(2),y:+y.toFixed(3),c:+c.toFixed(3),s:+avg('s').toFixed(3),sh:+avg('sh').toFixed(3),share:+share.toFixed(3),bf:+(fr.filter(vaIsBlack).length/n).toFixed(3),shareLo:+br.lo.toFixed(3),shareHi:+br.hi.toFixed(3),mo:+mo.toFixed(4),cuts,flags:fl,bad,conf:low?'low':'high',why:low?nd.why.concat(br.amb&&!nd.why.length?['黒の割合が境目']:[]):[],hashes:fr.filter(f=>f.c>=o.flatC*1.5).map(f=>f.hash)}}
+async function vaMeasure(file,t0,len,o2){o2=o2||{};const o=VA.opt,n0=o2.n0||o.n0,nMax=o2.nMax||o.nMax,url=URL.createObjectURL(file),v=document.createElement('video');VA.live++;
+ v.muted=true;v.playsInline=true;v.preload='auto';v.src=url;
+ try{await new Promise((ok,ng)=>{v.onloadeddata=ok;v.onerror=()=>ng(new Error('分析用の読み込みに失敗'));setTimeout(()=>ng(new Error('分析用の読み込みがタイムアウト')),15000)});
+  const dur=v.duration||len||1,a=Math.min(Math.max(0,t0||0),Math.max(0,dur-.1)),b=Math.min(dur-.05,a+Math.max(.2,len||dur)),g=vaCanvas(),vw=v.videoWidth,vh=v.videoHeight,sw=Math.min(vw,vh*9/16),sh=Math.min(vh,vw*16/9),sx=(vw-sw)/2,sy=(vh-sh)/2,fr=[];
+  const take=async t=>{if(fr.some(f=>Math.abs(f.t-t)<.02))return;await vaSeek(v,t);g.drawImage(v,sx,sy,sw,sh,0,0,72,128);const f=vaFeat(g.getImageData(0,0,72,128).data);f.t=t;fr.push(f);fr.sort((p,q)=>p.t-q.t);VA.stat.frames++;await vaYield()};
+  const pos=n0===1?[.5]:Array.from({length:n0},(_,k)=>.02+.96*k/(n0-1));for(const p of pos)await take(a+(b-a)*p);
+  if(o2.full){const N=o2.full;fr.length=0;VA.stat.frames-=n0;for(let k=0;k<N;k++)await take(a+(b-a)*(.04+.92*k/Math.max(1,N-1)))}
+  else while(fr.length<nMax){const nd=vaNeed(fr);if(nd.focus<0)break;await take((fr[nd.focus].t+fr[nd.focus+1].t)/2)}
+  const r=vaSummary(fr,a,b-a,dur);r.vw=vw;r.vh=vh;return r}
+ finally{try{v.pause();v.removeAttribute('src');v.load()}catch{}URL.revokeObjectURL(url);VA.live--;VA.stat.released++}}
+function vaKey(c,i,inp,len){const base=(c&&c.inboxKey)?c.inboxKey:('f:'+((c&&c.name)||'')+':'+((c&&c.file&&c.file.size)||0)+':'+((c&&c.file&&c.file.lastModified)||0));return base+'|'+(+inp).toFixed(2)+'|'+(+len).toFixed(2)+'|v'+VA.ver}
+/* 同じ素材・同じ区間は再分析しない（キャッシュ。分析中の同時要求も1回にまとめる） */
+async function vaAnalyze(file,key,t0,len,o2){vaLoad();const hit=VA.cache.get(key);if(hit&&!(o2&&o2.nocache)){VA.stat.hit++;return Object.assign({},hit,{cached:true})}
+ if(VA.fly.has(key)){VA.stat.dedupe++;return VA.fly.get(key)}
+ const p=(async()=>{try{const r=await vaMeasure(file,t0,len,o2);VA.stat.analyzed++;if(!(o2&&o2.nocache)){VA.cache.delete(key);VA.cache.set(key,r);vaSave()}return r}finally{VA.fly.delete(key)}})();VA.fly.set(key,p);return p}
+function vaClipSeg(i){const c=S.clips[i],s=S.sc[i];return{c,t0:(c&&c.meta&&c.meta.inp)||0,len:Math.max(.5,s.b-s.a)}}
+async function vaClip(i,o2){const {c,t0,len}=vaClipSeg(i);if(!c||!c.file)return null;return vaAnalyze(c.file,vaKey(c,i,t0,len),t0,len,o2)}
+function vaDupPairs(R){const out=[],o=VA.opt;for(let i=0;i<R.length;i++)for(let j=i+1;j<R.length;j++){const A=R[i]&&R[i].hashes,B=R[j]&&R[j].hashes;if(!A||!B||!A.length||!B.length)continue;let m=0;for(const x of A)if(B.some(y=>vaHam(x,y)<=o.dupHam))m++;if(m>=Math.max(1,Math.ceil(Math.min(A.length,B.length)*.5)))out.push([i,j,m])}return out}
+const VA_TXT={black:'黒フレームが多い',flat:'ほぼ無地（映像の内容がない）',dark:'全体が暗い（映画的な暗さの可能性。差し替え対象にしません）',bright:'全体が明るすぎる',cut:'素材の途中で場面が切り替わる',static:'ほぼ静止',dup:'他の場面の素材と映像が重複'};
+function vaWhy(r,dup){const a=(r.flags||[]).map(f=>VA_TXT[f]||f);if(dup)a.push(VA_TXT.dup);return a}
+async function vaSwap(i,why,othersHashes){const b=bstat(i),sp=sceneSpec(i);b.va=b.va||{swaps:0,tried:[],log:[]};
+ if(b.lock)return{done:false,why:'手動で取り込んだ場面（ロック中）のため、自動では差し替えません'};
+ if(b.va.swaps>=VA.opt.maxSwap)return{done:false,why:'再評価の上限（'+VA.opt.maxSwap+'回）に達しました'};
+ const used=usedKeys(i);let lib=[];try{lib=await libCands(i,sp)}catch{}
+ lib=lib.filter(c=>c.lib&&!used.has(c.provider+':'+c.id)&&!b.va.tried.includes(c.provider+':'+c.id)).map(c=>Object.assign(c,{sem:semCheck(c,sp)})).filter(autoOk);
+ if(!lib.length)return{done:false,why:'端末内に取得済みの代替候補がありません（未取得の候補は、通信なしでは分析できません）'};
+ let tries=0;for(const c of lib){if(tries>=VA.opt.maxTry)break;tries++;const key=c.provider+':'+c.id;b.va.tried.push(key);
+  let got;try{got=await getAsset(c)}catch{continue}
+  const s=S.sc[i],r=await vaAnalyze(got.blob,key+'|0.00|'+Math.max(.5,s.b-s.a).toFixed(2)+'|v'+VA.ver,0,Math.max(.5,s.b-s.a)).catch(()=>null);
+  if(!r||r.conf!=='high'||r.bad.length)continue;
+  const dupN=(r.hashes||[]).filter(x=>othersHashes.some(y=>vaHam(x,y)<=VA.opt.dupHam)).length;if(dupN>=Math.max(1,Math.ceil(r.hashes.length*.5)))continue;
+  b.cands=[c].concat((b.cands||[]).filter(q=>q!==c));const from=S.clips[i]&&S.clips[i].inboxKey||'';
+  try{await batchApply(i,0)}catch{continue}
+  b.va.swaps++;b.va.log.push({from,to:key,why});VA.stat.swaps++;return{done:true,to:key,why:'差し替えました（'+why.join('／')+'）。新しい素材は権利が未確認です。権利確認をやり直してください'}}
+ return{done:false,why:'端末内の代替候補（'+tries+'件）も、測定上の基準を満たしませんでした'}}
+/* 分析→（差し替え）→解放 の一連。書き出し・プレビュー中は動かさない（負荷分離） */
+async function vaScenes(o){o=o||{};if(VA.run)return{ok:false,msg:'分析中です'};if(S.busy)return{ok:false,msg:'書き出し・再生中は分析しません'};VA.run=true;const N=S.sc.length-1,R=[],t0=performance.now(),s0=Object.assign({},VA.stat),rows=[];
+ try{for(let i=0;i<N;i++){if(S.busy){VA.stat.aborted++;break}R[i]=null;try{R[i]=await vaClip(i)}catch(e){rows.push({i,err:redact(e.message)})}await vaYield()}
+  const dp=vaDupPairs(R),dupSet=new Set();dp.forEach(([a,j])=>{dupSet.add(j)});/* 重複は、後ろの場面を差し替え対象にする（前の場面は残す） */
+  for(let i=0;i<N;i++){const r=R[i];if(!r){continue}const isDup=dupSet.has(i),why=vaWhy(r,isDup),b=bstat(i),row={i,id:S.sc[i].id,n:r.n,conf:r.conf,flags:r.flags.slice(),dup:isDup,cached:!!r.cached,swapped:false,msg:''};rows.push(row);
+   const trig=r.conf==='high'&&(r.bad.length||isDup);
+   if(trig){const oh=[];R.forEach((q,j)=>{if(j!==i&&q&&q.hashes)oh.push(...q.hashes)});const sw=await vaSwap(i,why.filter(w=>w!==VA_TXT.dark),oh);row.swapped=sw.done;row.msg=sw.why;if(!sw.done){VA.stat.held++;b.va=b.va||{swaps:0,tried:[],log:[]};b.msg='確認推奨（自動分析）: '+why.join('／')+'。'+sw.why;b.fix='この場面の素材を見て、必要なら差し替えてください（既存の素材は消していません）'}else{b.msg=sw.why;b.fix=''}}
+   else if(r.conf==='low'&&(r.why||[]).length){row.msg='確信度が低い（'+r.why.join('・')+'）ため、自動では変更しません'}
+   else if(r.flags.length){row.msg=why.join('／')}}
+  if(VA.stat.swaps>s0.swaps){await pjSave(true).catch(()=>{});btRender()}}
+ finally{vaRelease();VA.run=false}
+ const fr=VA.stat.frames-s0.frames,an=VA.stat.analyzed-s0.analyzed,hit=VA.stat.hit-s0.hit,sw=VA.stat.swaps-s0.swaps,hd=VA.stat.held-s0.held;
+ const line='映像分析（モデルなし・通信なし）: '+rows.filter(r=>r.n).length+'場面、新規分析 '+an+'本（抽出 '+fr+'枚）、キャッシュ再利用 '+hit+'本、差し替え '+sw+'場面、確認推奨 '+hd+'場面。測れるのは明るさ・黒・無地・重複などだけで、映像の意味は理解できません';
+ VA.last={rows,line,frames:fr,analyzed:an,hit,swaps:sw,held:hd,ms:Math.round(performance.now()-t0)};const e=$('vaOut');if(e)e.textContent=vaText();return Object.assign({ok:true},VA.last)}
+function vaText(){const L=VA.last;if(!L)return '未実行';return L.line+'\n'+L.rows.map(r=>r.err?r.i+': 分析できませんでした（'+r.err+'）':(r.id+': 抽出 '+r.n+'枚｜確信度 '+(r.conf==='high'?'高':'低')+(r.cached?'｜キャッシュ':'')+(r.flags.length?'｜'+r.flags.map(f=>VA_TXT[f]||f).join('・'):'｜測定上の問題なし')+(r.dup?'｜重複':'')+(r.msg?'｜'+r.msg:''))).join('\n')+'\n※ 機械測定は映像品質の保証ではありません。実際の映像で確認してください'}
+/* 分析が終わったら、一時の映像要素・キャンバス・進行中の要求を解放する。残すのは、小さな数値の結果（キャッシュ）だけ */
+function vaRelease(){VA.fly.clear();if(VA.cv){VA.cv.width=1;VA.cv.height=1;VA.cv=null;VA.g=null}}
 async function autoMaterial(){if(BT.run)return{ok:false,msg:'処理中です'};if(!S.dj){const m='先に台本から設計を作るか、設計JSONを取り込んでください（各場面の検索語が必要です）';bprog(null,m);return{ok:false,msg:m}}
  PRODLOG.auto0=Date.now();const c0=realCnt(),r1=await batchRun({});let r2={done:0,failed:0};if(r1&&!r1.halt&&(r1.done||0)>0)r2=await batchAdoptTop();
+ let va=null;try{va=await vaScenes({auto:true})}catch(e){va={ok:false,line:'映像分析で例外: '+redact(e.message)}}
  let ac=0;const N=S.sc.length-1;for(let i=0;i<N;i++){if(S.clips[i]&&await autoCropClip(i))ac++}
  PRODLOG.auto1=Date.now();const c1=realCnt(),ready=S.clips.filter(Boolean).length,bad=[];for(let i=0;i<N;i++){const b=bstat(i);if(!S.clips[i]||b.st==='failed')bad.push(S.sc[i].id)}
- const m='自動取得が終わりました: 反映 '+ready+'/'+N+'場面｜今回の通信 検索 '+(c1.s-c0.s)+'回・動画 '+(c1.d-c0.d)+'本（残り 検索 '+(REAL.lim.s-c1.s)+'回・動画 '+(REAL.lim.d-c1.d)+'本）｜構図の自動推定 '+ac+'場面'+(bad.length?'｜未反映: '+bad.join('・'):'')+'。下の一覧で問題のある場面だけ「次の候補」を押してください（映像品質の自己評価は行っていません。実際の映像で確認してください）';
- bprog(1,m);btRender();return{ok:!bad.length,ready,searches:c1.s-c0.s,downloads:c1.d-c0.d,autoCrop:ac,bad,r1,r2}}
+ const m='自動取得が終わりました: 反映 '+ready+'/'+N+'場面｜今回の通信 検索 '+(c1.s-c0.s)+'回・動画 '+(c1.d-c0.d)+'本（残り 検索 '+(REAL.lim.s-c1.s)+'回・動画 '+(REAL.lim.d-c1.d)+'本）｜構図の自動推定 '+ac+'場面'+(bad.length?'｜未反映: '+bad.join('・'):'')+(va&&va.line?'｜'+va.line:'')+'。下の一覧で問題のある場面だけ「次の候補」を押してください（映像品質の自己評価は行っていません。実際の映像で確認してください）';
+ bprog(1,m);btRender();return{ok:!bad.length,va,ready,searches:c1.s-c0.s,downloads:c1.d-c0.d,autoCrop:ac,bad,r1,r2}}
 function bprog(p,m){const e=$('bpg');if(e)e.value=p;const t=$('bst');if(t&&m!=null)t.textContent=m}
 async function preflight(o){o=o||{};const n=S.sc.length-1;let need=0;for(let i=0;i<n;i++){const b=bstat(i);if(b.lock)continue;if(o.only==='failed'?b.st!=='failed':((b.st==='done'||b.st==='cand')&&!o.force))continue;let hit=false;try{const l=BT.lib===false?[]:await libCands(i,sceneSpec(i));hit=l.length&&l[0].score>=70}catch{}if(!hit)need++}
  const real=!!(BT.net&&BT.net.real),c=realCnt(),remS=REAL.lim.s-c.s,remD=REAL.lim.d-c.d;return{need,real,remS,remD,ok:!real||need<=remS}}
@@ -1183,7 +1306,8 @@ let keyTm=null;function keyMask(on){const b=$('bkey');b.style.webkitTextSecurity
 $('bkshow').onclick=()=>keyMask($('bkey').style.webkitTextSecurity==='none');$('bkey').onblur=()=>keyMask(true);$('bkey').onchange=$('bkey').onpaste=()=>setTimeout(()=>{BT.key=$('bkey').value.trim();keySt()},0);
 $('bkclr').onclick=()=>{$('bkey').value='';BT.key='';keySt();keyMask(true)};
 btBind();setTransport(null);rtShow();keySt();btRender();pjBanner();
+szLoad();(function(){const g=id=>document.getElementById(id),rd=()=>szSet({on:g('szOn').checked,preview:g('szPv').checked,top:g('szTop').value,bottom:g('szBottom').value,desc:g('szDesc').value,lineH:g('szLineH').value,left:g('szLeft').value,right:g('szRight').value});['szOn','szPv','szTop','szBottom','szDesc','szLineH','szLeft','szRight'].forEach(id=>{const e=g(id);if(e)e.onchange=rd});const b=g('vaBtn');if(b)b.onclick=async()=>{b.disabled=true;try{await vaScenes({})}finally{b.disabled=false}}})();
 
 BTX.reset=()=>{BT.st={};for(const k in BT.th)try{URL.revokeObjectURL(BT.th[k])}catch{}BT.th={};BT.open={};btRender()};
-window.CP={autoMaterial,autoCropClip,libCands,preflight,PRODLOG,prodSummary,keyShape,keyCheck,keyStText,rlogGet,realReset,diagLines,rrstGet,chooseVariant,allVars,decodeTier,NS,clearSearchCache:scClear,setTransport,realTransport,REAL,realCnt,rtSearch,rtDownload,rtText,RT,inspectBlob,pickVar,batchAdopt,batchAdoptTop,batchRefetch,pjExport,pjImport,pjApply,persistAsk,thumbsFor,PROV,BT,batchRun,batchPick,batchLock,rightsConfirmAll,rightsGate,pjSave,pjSnap,pjRestore,pjList,PJ,applyRec,liveCount,acquireClip,releaseClip,releaseFar,LIVEMAX,sceneSpec,scoreC,redact,attachClip,bstat,btRender,cropSet,cropReset,cropCheck,cropScreen,cropPlace,cropSubBand,directorReview,drText,DR_TH,setVoice,voiceBuf,voiceHpQdB,VOICE_B,previewVoice,segmentsEx,syncConf,contentCheck,planSync,validManual,setSyncMode,SYNC,bgmEff,beatOn,setBgmMode,memMon,memMonText,exportGuard,audioReport,evidenceRecord,blindRecover,blindList,CP_BUILD,intakeReport,blindSet,revealKey,perfSummary,PF,makeVariant,applyVariant,GOV,govern,fxCost,analyzeBgm,loadBgm,drawParallax,rateAt,mediaT,applyCuts,importDesign,exportOffline,S,renderFrame,capLayout,boxes,safeCheck,buildAudio,measure,alignNarr,mockNarr,segments,report,prep,exportVideo,useClip,sceneAt,camera,trans,LN0,SCN0,out,og,GL:!!GL,SAFE,N,FPS,D,ledger,stats};
+window.CP={logoLayout,szFit,VA,vaScenes,vaClip,vaAnalyze,vaMeasure,vaKey,vaDupPairs,vaHam,vaRelease,vaText,SZ,szSet,szCheck,szActive,szAdj,szMaxW,autoMaterial,autoCropClip,libCands,preflight,PRODLOG,prodSummary,keyShape,keyCheck,keyStText,rlogGet,realReset,diagLines,rrstGet,chooseVariant,allVars,decodeTier,NS,clearSearchCache:scClear,setTransport,realTransport,REAL,realCnt,rtSearch,rtDownload,rtText,RT,inspectBlob,pickVar,batchAdopt,batchAdoptTop,batchRefetch,pjExport,pjImport,pjApply,persistAsk,thumbsFor,PROV,BT,batchRun,batchPick,batchLock,rightsConfirmAll,rightsGate,pjSave,pjSnap,pjRestore,pjList,PJ,applyRec,liveCount,acquireClip,releaseClip,releaseFar,LIVEMAX,sceneSpec,scoreC,redact,attachClip,bstat,btRender,cropSet,cropReset,cropCheck,cropScreen,cropPlace,cropSubBand,directorReview,drText,DR_TH,setVoice,voiceBuf,voiceHpQdB,VOICE_B,previewVoice,segmentsEx,syncConf,contentCheck,planSync,validManual,setSyncMode,SYNC,bgmEff,beatOn,setBgmMode,memMon,memMonText,exportGuard,audioReport,evidenceRecord,blindRecover,blindList,CP_BUILD,intakeReport,blindSet,revealKey,perfSummary,PF,makeVariant,applyVariant,GOV,govern,fxCost,analyzeBgm,loadBgm,drawParallax,rateAt,mediaT,applyCuts,importDesign,exportOffline,S,renderFrame,capLayout,boxes,safeCheck,buildAudio,measure,alignNarr,mockNarr,segments,report,prep,exportVideo,useClip,sceneAt,camera,trans,LN0,SCN0,out,og,GL:!!GL,SAFE,N,FPS,D,ledger,stats};
 </script></body></html>

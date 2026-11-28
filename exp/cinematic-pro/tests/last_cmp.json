@@ -1,0 +1,1821 @@
+{
+ "note": "合成素材での比較。実機・実素材ではない",
+ "rows": [
+  {
+   "設定": "固定4",
+   "平均枚数": 4.0,
+   "正答": 17,
+   "誤検出": 1,
+   "見逃し": 0,
+   "確信度低(保留)": 0,
+   "場面変化の検出": "3/3",
+   "平均ms": 180
+  },
+  {
+   "設定": "固定6",
+   "平均枚数": 6.0,
+   "正答": 17,
+   "誤検出": 0,
+   "見逃し": 1,
+   "確信度低(保留)": 0,
+   "場面変化の検出": "1/3",
+   "平均ms": 221
+  },
+  {
+   "設定": "固定8",
+   "平均枚数": 8.0,
+   "正答": 17,
+   "誤検出": 1,
+   "見逃し": 0,
+   "確信度低(保留)": 0,
+   "場面変化の検出": "2/3",
+   "平均ms": 253
+  },
+  {
+   "設定": "固定12",
+   "平均枚数": 12.0,
+   "正答": 18,
+   "誤検出": 0,
+   "見逃し": 0,
+   "確信度低(保留)": 0,
+   "場面変化の検出": "2/3",
+   "平均ms": 375
+  },
+  {
+   "設定": "適応 n0=2 max8",
+   "平均枚数": 3.61,
+   "正答": 15,
+   "誤検出": 0,
+   "見逃し": 3,
+   "確信度低(保留)": 0,
+   "場面変化の検出": "2/3",
+   "平均ms": 112
+  },
+  {
+   "設定": "適応 n0=3 max8",
+   "平均枚数": 4.72,
+   "正答": 17,
+   "誤検出": 0,
+   "見逃し": 1,
+   "確信度低(保留)": 1,
+   "場面変化の検出": "2/3",
+   "平均ms": 135
+  },
+  {
+   "設定": "適応 n0=3 max10",
+   "平均枚数": 4.83,
+   "正答": 17,
+   "誤検出": 0,
+   "見逃し": 1,
+   "確信度低(保留)": 1,
+   "場面変化の検出": "2/3",
+   "平均ms": 136
+  },
+  {
+   "設定": "適応 n0=3 max12",
+   "平均枚数": 4.89,
+   "正答": 17,
+   "誤検出": 0,
+   "見逃し": 1,
+   "確信度低(保留)": 0,
+   "場面変化の検出": "2/3",
+   "平均ms": 141
+  },
+  {
+   "設定": "適応 n0=4 max10",
+   "平均枚数": 5.89,
+   "正答": 15,
+   "誤検出": 0,
+   "見逃し": 3,
+   "確信度低(保留)": 3,
+   "場面変化の検出": "1/3",
+   "平均ms": 143
+  },
+  {
+   "設定": "適応 n0=5 max12",
+   "平均枚数": 6.5,
+   "正答": 18,
+   "誤検出": 0,
+   "見逃し": 0,
+   "確信度低(保留)": 0,
+   "場面変化の検出": "3/3",
+   "平均ms": 166
+  }
+ ],
+ "raw": {
+  "固定4": {
+   "ok_a": {
+    "n": 4,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 224
+   },
+   "ok_b": {
+    "n": 4,
+    "bad": [],
+    "flags": [],
+    "conf": "low",
+    "bf": 0,
+    "ms": 232
+   },
+   "ok_c": {
+    "n": 4,
+    "bad": [],
+    "flags": [],
+    "conf": "low",
+    "bf": 0,
+    "ms": 299
+   },
+   "dup_a": {
+    "n": 4,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 157
+   },
+   "dark": {
+    "n": 4,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 169
+   },
+   "static": {
+    "n": 4,
+    "bad": [],
+    "flags": [
+     "static"
+    ],
+    "conf": "high",
+    "bf": 0,
+    "ms": 68
+   },
+   "cut_mid": {
+    "n": 4,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "low",
+    "bf": 0,
+    "ms": 180
+   },
+   "cut_2": {
+    "n": 4,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "low",
+    "bf": 0,
+    "ms": 214
+   },
+   "cut_6": {
+    "n": 4,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "low",
+    "bf": 0,
+    "ms": 190
+   },
+   "black_mid": {
+    "n": 4,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "low",
+    "bf": 0.25,
+    "ms": 176
+   },
+   "flat": {
+    "n": 4,
+    "bad": [
+     "flat"
+    ],
+    "flags": [
+     "flat"
+    ],
+    "conf": "high",
+    "bf": 0,
+    "ms": 67
+   },
+   "bk_0_2": {
+    "n": 4,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "low",
+    "bf": 0.25,
+    "ms": 257
+   },
+   "bk_5_7.5": {
+    "n": 4,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "low",
+    "bf": 0.25,
+    "ms": 146
+   },
+   "bk_2_5": {
+    "n": 4,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "low",
+    "bf": 0.25,
+    "ms": 166
+   },
+   "black_short": {
+    "n": 4,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 170
+   },
+   "bk_1_1.6": {
+    "n": 4,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 193
+   },
+   "bk_6.5_8": {
+    "n": 4,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "low",
+    "bf": 0.25,
+    "ms": 157
+   },
+   "bk_3_3.9": {
+    "n": 4,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 172
+   }
+  },
+  "固定6": {
+   "ok_a": {
+    "n": 6,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 247
+   },
+   "ok_b": {
+    "n": 6,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 336
+   },
+   "ok_c": {
+    "n": 6,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 373
+   },
+   "dup_a": {
+    "n": 6,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 167
+   },
+   "dark": {
+    "n": 6,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 199
+   },
+   "static": {
+    "n": 6,
+    "bad": [],
+    "flags": [
+     "static"
+    ],
+    "conf": "high",
+    "bf": 0,
+    "ms": 82
+   },
+   "cut_mid": {
+    "n": 6,
+    "bad": [],
+    "flags": [],
+    "conf": "low",
+    "bf": 0,
+    "ms": 232
+   },
+   "cut_2": {
+    "n": 6,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "low",
+    "bf": 0,
+    "ms": 255
+   },
+   "cut_6": {
+    "n": 6,
+    "bad": [],
+    "flags": [],
+    "conf": "low",
+    "bf": 0,
+    "ms": 250
+   },
+   "black_mid": {
+    "n": 6,
+    "bad": [
+     "black"
+    ],
+    "flags": [
+     "black"
+    ],
+    "conf": "low",
+    "bf": 0.333,
+    "ms": 204
+   },
+   "flat": {
+    "n": 6,
+    "bad": [
+     "flat"
+    ],
+    "flags": [
+     "flat"
+    ],
+    "conf": "high",
+    "bf": 0,
+    "ms": 89
+   },
+   "bk_0_2": {
+    "n": 6,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "low",
+    "bf": 0.333,
+    "ms": 263
+   },
+   "bk_5_7.5": {
+    "n": 6,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "low",
+    "bf": 0.167,
+    "ms": 215
+   },
+   "bk_2_5": {
+    "n": 6,
+    "bad": [
+     "black"
+    ],
+    "flags": [
+     "black"
+    ],
+    "conf": "low",
+    "bf": 0.333,
+    "ms": 192
+   },
+   "black_short": {
+    "n": 6,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 237
+   },
+   "bk_1_1.6": {
+    "n": 6,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 196
+   },
+   "bk_6.5_8": {
+    "n": 6,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "low",
+    "bf": 0.167,
+    "ms": 210
+   },
+   "bk_3_3.9": {
+    "n": 6,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "low",
+    "bf": 0.167,
+    "ms": 233
+   }
+  },
+  "固定8": {
+   "ok_a": {
+    "n": 8,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 292
+   },
+   "ok_b": {
+    "n": 8,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 336
+   },
+   "ok_c": {
+    "n": 8,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 391
+   },
+   "dup_a": {
+    "n": 8,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 188
+   },
+   "dark": {
+    "n": 8,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 253
+   },
+   "static": {
+    "n": 8,
+    "bad": [],
+    "flags": [
+     "static"
+    ],
+    "conf": "high",
+    "bf": 0,
+    "ms": 98
+   },
+   "cut_mid": {
+    "n": 8,
+    "bad": [],
+    "flags": [],
+    "conf": "low",
+    "bf": 0,
+    "ms": 285
+   },
+   "cut_2": {
+    "n": 8,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "low",
+    "bf": 0,
+    "ms": 300
+   },
+   "cut_6": {
+    "n": 8,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "low",
+    "bf": 0,
+    "ms": 296
+   },
+   "black_mid": {
+    "n": 8,
+    "bad": [
+     "black"
+    ],
+    "flags": [
+     "black"
+    ],
+    "conf": "low",
+    "bf": 0.375,
+    "ms": 224
+   },
+   "flat": {
+    "n": 8,
+    "bad": [
+     "flat"
+    ],
+    "flags": [
+     "flat"
+    ],
+    "conf": "high",
+    "bf": 0,
+    "ms": 106
+   },
+   "bk_0_2": {
+    "n": 8,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "low",
+    "bf": 0.25,
+    "ms": 326
+   },
+   "bk_5_7.5": {
+    "n": 8,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "low",
+    "bf": 0.25,
+    "ms": 193
+   },
+   "bk_2_5": {
+    "n": 8,
+    "bad": [
+     "black"
+    ],
+    "flags": [
+     "black"
+    ],
+    "conf": "low",
+    "bf": 0.375,
+    "ms": 251
+   },
+   "black_short": {
+    "n": 8,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 264
+   },
+   "bk_1_1.6": {
+    "n": 8,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "low",
+    "bf": 0.125,
+    "ms": 280
+   },
+   "bk_6.5_8": {
+    "n": 8,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "low",
+    "bf": 0.25,
+    "ms": 220
+   },
+   "bk_3_3.9": {
+    "n": 8,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "low",
+    "bf": 0.125,
+    "ms": 249
+   }
+  },
+  "固定12": {
+   "ok_a": {
+    "n": 12,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 427
+   },
+   "ok_b": {
+    "n": 12,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 482
+   },
+   "ok_c": {
+    "n": 12,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 608
+   },
+   "dup_a": {
+    "n": 12,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 309
+   },
+   "dark": {
+    "n": 12,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 391
+   },
+   "static": {
+    "n": 12,
+    "bad": [],
+    "flags": [
+     "static"
+    ],
+    "conf": "high",
+    "bf": 0,
+    "ms": 155
+   },
+   "cut_mid": {
+    "n": 12,
+    "bad": [],
+    "flags": [],
+    "conf": "low",
+    "bf": 0,
+    "ms": 420
+   },
+   "cut_2": {
+    "n": 12,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "low",
+    "bf": 0,
+    "ms": 464
+   },
+   "cut_6": {
+    "n": 12,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "low",
+    "bf": 0,
+    "ms": 464
+   },
+   "black_mid": {
+    "n": 12,
+    "bad": [
+     "black"
+    ],
+    "flags": [
+     "black"
+    ],
+    "conf": "low",
+    "bf": 0.333,
+    "ms": 342
+   },
+   "flat": {
+    "n": 12,
+    "bad": [
+     "flat"
+    ],
+    "flags": [
+     "flat"
+    ],
+    "conf": "high",
+    "bf": 0,
+    "ms": 148
+   },
+   "bk_0_2": {
+    "n": 12,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "low",
+    "bf": 0.25,
+    "ms": 453
+   },
+   "bk_5_7.5": {
+    "n": 12,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "low",
+    "bf": 0.25,
+    "ms": 309
+   },
+   "bk_2_5": {
+    "n": 12,
+    "bad": [
+     "black"
+    ],
+    "flags": [
+     "black"
+    ],
+    "conf": "low",
+    "bf": 0.417,
+    "ms": 351
+   },
+   "black_short": {
+    "n": 12,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "low",
+    "bf": 0.083,
+    "ms": 386
+   },
+   "bk_1_1.6": {
+    "n": 12,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 310
+   },
+   "bk_6.5_8": {
+    "n": 12,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "low",
+    "bf": 0.167,
+    "ms": 383
+   },
+   "bk_3_3.9": {
+    "n": 12,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "low",
+    "bf": 0.083,
+    "ms": 352
+   }
+  },
+  "適応 n0=2 max8": {
+   "ok_a": {
+    "n": 2,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 69
+   },
+   "ok_b": {
+    "n": 5,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 159
+   },
+   "ok_c": {
+    "n": 5,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 257
+   },
+   "dup_a": {
+    "n": 2,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 44
+   },
+   "dark": {
+    "n": 2,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 61
+   },
+   "static": {
+    "n": 2,
+    "bad": [],
+    "flags": [
+     "static"
+    ],
+    "conf": "high",
+    "bf": 0,
+    "ms": 22
+   },
+   "cut_mid": {
+    "n": 7,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "high",
+    "bf": 0,
+    "ms": 234
+   },
+   "cut_2": {
+    "n": 5,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 139
+   },
+   "cut_6": {
+    "n": 7,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "high",
+    "bf": 0,
+    "ms": 257
+   },
+   "black_mid": {
+    "n": 2,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 66
+   },
+   "flat": {
+    "n": 2,
+    "bad": [
+     "flat"
+    ],
+    "flags": [
+     "flat"
+    ],
+    "conf": "high",
+    "bf": 0,
+    "ms": 30
+   },
+   "bk_0_2": {
+    "n": 7,
+    "bad": [
+     "black"
+    ],
+    "flags": [
+     "black"
+    ],
+    "conf": "high",
+    "bf": 0.571,
+    "ms": 186
+   },
+   "bk_5_7.5": {
+    "n": 2,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 45
+   },
+   "bk_2_5": {
+    "n": 2,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 79
+   },
+   "black_short": {
+    "n": 2,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 60
+   },
+   "bk_1_1.6": {
+    "n": 2,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 59
+   },
+   "bk_6.5_8": {
+    "n": 7,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "high",
+    "bf": 0.429,
+    "ms": 179
+   },
+   "bk_3_3.9": {
+    "n": 2,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 67
+   }
+  },
+  "適応 n0=3 max8": {
+   "ok_a": {
+    "n": 3,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 100
+   },
+   "ok_b": {
+    "n": 5,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 169
+   },
+   "ok_c": {
+    "n": 5,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 255
+   },
+   "dup_a": {
+    "n": 3,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 74
+   },
+   "dark": {
+    "n": 3,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 109
+   },
+   "static": {
+    "n": 3,
+    "bad": [],
+    "flags": [
+     "static"
+    ],
+    "conf": "high",
+    "bf": 0,
+    "ms": 34
+   },
+   "cut_mid": {
+    "n": 7,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "high",
+    "bf": 0,
+    "ms": 239
+   },
+   "cut_2": {
+    "n": 5,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 135
+   },
+   "cut_6": {
+    "n": 7,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "high",
+    "bf": 0,
+    "ms": 269
+   },
+   "black_mid": {
+    "n": 5,
+    "bad": [
+     "black"
+    ],
+    "flags": [
+     "black"
+    ],
+    "conf": "high",
+    "bf": 0.4,
+    "ms": 106
+   },
+   "flat": {
+    "n": 3,
+    "bad": [
+     "flat"
+    ],
+    "flags": [
+     "flat"
+    ],
+    "conf": "high",
+    "bf": 0,
+    "ms": 33
+   },
+   "bk_0_2": {
+    "n": 7,
+    "bad": [
+     "black"
+    ],
+    "flags": [
+     "black"
+    ],
+    "conf": "high",
+    "bf": 0.571,
+    "ms": 194
+   },
+   "bk_5_7.5": {
+    "n": 3,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 84
+   },
+   "bk_2_5": {
+    "n": 5,
+    "bad": [
+     "black"
+    ],
+    "flags": [
+     "black"
+    ],
+    "conf": "high",
+    "bf": 0.4,
+    "ms": 98
+   },
+   "black_short": {
+    "n": 8,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "low",
+    "bf": 0.125,
+    "ms": 189
+   },
+   "bk_1_1.6": {
+    "n": 3,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 82
+   },
+   "bk_6.5_8": {
+    "n": 7,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "high",
+    "bf": 0.429,
+    "ms": 182
+   },
+   "bk_3_3.9": {
+    "n": 3,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 85
+   }
+  },
+  "適応 n0=3 max10": {
+   "ok_a": {
+    "n": 3,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 105
+   },
+   "ok_b": {
+    "n": 5,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 167
+   },
+   "ok_c": {
+    "n": 5,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 278
+   },
+   "dup_a": {
+    "n": 3,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 81
+   },
+   "dark": {
+    "n": 3,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 110
+   },
+   "static": {
+    "n": 3,
+    "bad": [],
+    "flags": [
+     "static"
+    ],
+    "conf": "high",
+    "bf": 0,
+    "ms": 32
+   },
+   "cut_mid": {
+    "n": 7,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "high",
+    "bf": 0,
+    "ms": 260
+   },
+   "cut_2": {
+    "n": 5,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 139
+   },
+   "cut_6": {
+    "n": 7,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "high",
+    "bf": 0,
+    "ms": 228
+   },
+   "black_mid": {
+    "n": 5,
+    "bad": [
+     "black"
+    ],
+    "flags": [
+     "black"
+    ],
+    "conf": "high",
+    "bf": 0.4,
+    "ms": 108
+   },
+   "flat": {
+    "n": 3,
+    "bad": [
+     "flat"
+    ],
+    "flags": [
+     "flat"
+    ],
+    "conf": "high",
+    "bf": 0,
+    "ms": 44
+   },
+   "bk_0_2": {
+    "n": 7,
+    "bad": [
+     "black"
+    ],
+    "flags": [
+     "black"
+    ],
+    "conf": "high",
+    "bf": 0.571,
+    "ms": 156
+   },
+   "bk_5_7.5": {
+    "n": 3,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 75
+   },
+   "bk_2_5": {
+    "n": 5,
+    "bad": [
+     "black"
+    ],
+    "flags": [
+     "black"
+    ],
+    "conf": "high",
+    "bf": 0.4,
+    "ms": 97
+   },
+   "black_short": {
+    "n": 10,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "low",
+    "bf": 0.1,
+    "ms": 227
+   },
+   "bk_1_1.6": {
+    "n": 3,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 79
+   },
+   "bk_6.5_8": {
+    "n": 7,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "high",
+    "bf": 0.429,
+    "ms": 186
+   },
+   "bk_3_3.9": {
+    "n": 3,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 84
+   }
+  },
+  "適応 n0=3 max12": {
+   "ok_a": {
+    "n": 3,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 105
+   },
+   "ok_b": {
+    "n": 5,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 171
+   },
+   "ok_c": {
+    "n": 5,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 279
+   },
+   "dup_a": {
+    "n": 3,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 76
+   },
+   "dark": {
+    "n": 3,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 133
+   },
+   "static": {
+    "n": 3,
+    "bad": [],
+    "flags": [
+     "static"
+    ],
+    "conf": "high",
+    "bf": 0,
+    "ms": 43
+   },
+   "cut_mid": {
+    "n": 7,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "high",
+    "bf": 0,
+    "ms": 228
+   },
+   "cut_2": {
+    "n": 5,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 129
+   },
+   "cut_6": {
+    "n": 7,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "high",
+    "bf": 0,
+    "ms": 255
+   },
+   "black_mid": {
+    "n": 5,
+    "bad": [
+     "black"
+    ],
+    "flags": [
+     "black"
+    ],
+    "conf": "high",
+    "bf": 0.4,
+    "ms": 131
+   },
+   "flat": {
+    "n": 3,
+    "bad": [
+     "flat"
+    ],
+    "flags": [
+     "flat"
+    ],
+    "conf": "high",
+    "bf": 0,
+    "ms": 41
+   },
+   "bk_0_2": {
+    "n": 7,
+    "bad": [
+     "black"
+    ],
+    "flags": [
+     "black"
+    ],
+    "conf": "high",
+    "bf": 0.571,
+    "ms": 151
+   },
+   "bk_5_7.5": {
+    "n": 3,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 84
+   },
+   "bk_2_5": {
+    "n": 5,
+    "bad": [
+     "black"
+    ],
+    "flags": [
+     "black"
+    ],
+    "conf": "high",
+    "bf": 0.4,
+    "ms": 109
+   },
+   "black_short": {
+    "n": 11,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "high",
+    "bf": 0.182,
+    "ms": 259
+   },
+   "bk_1_1.6": {
+    "n": 3,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 68
+   },
+   "bk_6.5_8": {
+    "n": 7,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "high",
+    "bf": 0.429,
+    "ms": 192
+   },
+   "bk_3_3.9": {
+    "n": 3,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 81
+   }
+  },
+  "適応 n0=4 max10": {
+   "ok_a": {
+    "n": 4,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 105
+   },
+   "ok_b": {
+    "n": 5,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 180
+   },
+   "ok_c": {
+    "n": 5,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 191
+   },
+   "dup_a": {
+    "n": 4,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 84
+   },
+   "dark": {
+    "n": 4,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 106
+   },
+   "static": {
+    "n": 4,
+    "bad": [],
+    "flags": [
+     "static"
+    ],
+    "conf": "high",
+    "bf": 0,
+    "ms": 36
+   },
+   "cut_mid": {
+    "n": 5,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 137
+   },
+   "cut_2": {
+    "n": 5,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 133
+   },
+   "cut_6": {
+    "n": 8,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "high",
+    "bf": 0,
+    "ms": 225
+   },
+   "black_mid": {
+    "n": 10,
+    "bad": [
+     "black"
+    ],
+    "flags": [
+     "black"
+    ],
+    "conf": "low",
+    "bf": 0.5,
+    "ms": 203
+   },
+   "flat": {
+    "n": 4,
+    "bad": [
+     "flat"
+    ],
+    "flags": [
+     "flat"
+    ],
+    "conf": "high",
+    "bf": 0,
+    "ms": 41
+   },
+   "bk_0_2": {
+    "n": 8,
+    "bad": [
+     "black"
+    ],
+    "flags": [
+     "black"
+    ],
+    "conf": "high",
+    "bf": 0.5,
+    "ms": 205
+   },
+   "bk_5_7.5": {
+    "n": 10,
+    "bad": [
+     "black"
+    ],
+    "flags": [
+     "black"
+    ],
+    "conf": "low",
+    "bf": 0.4,
+    "ms": 184
+   },
+   "bk_2_5": {
+    "n": 10,
+    "bad": [
+     "black"
+    ],
+    "flags": [
+     "black"
+    ],
+    "conf": "low",
+    "bf": 0.5,
+    "ms": 179
+   },
+   "black_short": {
+    "n": 4,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 127
+   },
+   "bk_1_1.6": {
+    "n": 4,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 90
+   },
+   "bk_6.5_8": {
+    "n": 8,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "high",
+    "bf": 0.25,
+    "ms": 229
+   },
+   "bk_3_3.9": {
+    "n": 4,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 111
+   }
+  },
+  "適応 n0=5 max12": {
+   "ok_a": {
+    "n": 5,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 143
+   },
+   "ok_b": {
+    "n": 5,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 159
+   },
+   "ok_c": {
+    "n": 5,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 246
+   },
+   "dup_a": {
+    "n": 5,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 103
+   },
+   "dark": {
+    "n": 5,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 173
+   },
+   "static": {
+    "n": 5,
+    "bad": [],
+    "flags": [
+     "static"
+    ],
+    "conf": "high",
+    "bf": 0,
+    "ms": 53
+   },
+   "cut_mid": {
+    "n": 8,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "high",
+    "bf": 0,
+    "ms": 261
+   },
+   "cut_2": {
+    "n": 8,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "high",
+    "bf": 0,
+    "ms": 216
+   },
+   "cut_6": {
+    "n": 8,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "high",
+    "bf": 0,
+    "ms": 261
+   },
+   "black_mid": {
+    "n": 5,
+    "bad": [
+     "black"
+    ],
+    "flags": [
+     "black"
+    ],
+    "conf": "high",
+    "bf": 0.4,
+    "ms": 120
+   },
+   "flat": {
+    "n": 5,
+    "bad": [
+     "flat"
+    ],
+    "flags": [
+     "flat"
+    ],
+    "conf": "high",
+    "bf": 0,
+    "ms": 55
+   },
+   "bk_0_2": {
+    "n": 8,
+    "bad": [
+     "black"
+    ],
+    "flags": [
+     "black"
+    ],
+    "conf": "high",
+    "bf": 0.5,
+    "ms": 191
+   },
+   "bk_5_7.5": {
+    "n": 11,
+    "bad": [
+     "black"
+    ],
+    "flags": [
+     "black"
+    ],
+    "conf": "high",
+    "bf": 0.455,
+    "ms": 183
+   },
+   "bk_2_5": {
+    "n": 5,
+    "bad": [
+     "black"
+    ],
+    "flags": [
+     "black"
+    ],
+    "conf": "high",
+    "bf": 0.4,
+    "ms": 143
+   },
+   "black_short": {
+    "n": 11,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "high",
+    "bf": 0.182,
+    "ms": 257
+   },
+   "bk_1_1.6": {
+    "n": 5,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 110
+   },
+   "bk_6.5_8": {
+    "n": 8,
+    "bad": [],
+    "flags": [
+     "cut"
+    ],
+    "conf": "high",
+    "bf": 0.375,
+    "ms": 189
+   },
+   "bk_3_3.9": {
+    "n": 5,
+    "bad": [],
+    "flags": [],
+    "conf": "high",
+    "bf": 0,
+    "ms": 128
+   }
+  }
+ }
+}
