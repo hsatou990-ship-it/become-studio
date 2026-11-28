@@ -1,0 +1,23 @@
+const B=require('../ai/intent.js'),fs=require('fs');const R=[];const ck=(n,ok,i)=>{R.push(!!ok);console.log((ok?'PASS ':'FAIL ')+n+(ok?'':' '+JSON.stringify(i)))};
+const plan=JSON.parse(fs.readFileSync(process.env.PLAN,'utf8'));const c=B.buildCards(plan);
+ck('I1 場面ごとにカードができる',c.length===plan.scenes.length);
+ck('I2 日本語の台本は原文のまま保持',c.every((x,i)=>x.ja===plan.scenes[i].text));
+ck('I3 英語の肯定文は検索語から作る（自由翻訳をしない）',c[0].prompts.pos[0]==='a video frame of '+plan.scenes[0].search.queries[0]);
+ck('I4 除外条件は設計の avoid と既定を含む',c[0].avoid.includes('logo')&&c[0].avoid.includes('watermark'));
+ck('I5 構図は設計に項目が無いため未設定と明示',c[0].unset.includes('composition'));
+ck('I6 検索語が無い場面は要確認で、判定しない',(()=>{const k=B.buildCard({text:'あ'},0,plan);return k.needsReview&&B.judge([],k,[]).verdict==='unscored'})());
+ck('I7 光と色・感情が英語化される',/teal/.test(c[0].light)&&!!c[0].emotion);
+const mk=a=>B.l2(Float32Array.from(a));c[0].posVec=[mk([1,0,0])];c[0].avoidVec=[mk([0,0,1])];c[1].posVec=[mk([0,1,0])];c[1].avoidVec=[];
+const good=[mk([1,.1,0]),mk([.9,0,.1]),mk([1,0,0])],bad=[mk([0,1,0]),mk([.1,.9,0])],av=[mk([1,0,.1]),mk([0,0,1])],mix=[mk([1,0,0]),mk([0,1,0]),mk([0,1,.1])];
+ck('I8 一致するフレーム群は match',B.judge(good,c[0],c[1].posVec).verdict==='match');
+ck('I9 他の場面の映像は other-scene',B.judge(bad,c[0],c[1].posVec).verdict==='other-scene');
+ck('I10 除外条件のフレームが1枚でもあれば avoid（肯定が高くても）',B.judge(av,c[0],c[1].posVec).verdict==='avoid');
+ck('I11 フレーム間で割れる場合は match にしない（複数フレーム判断）',B.judge(mix,c[0],c[1].posVec).verdict!=='match');
+ck('I12 1枚だけの判定は確実としない',B.judge([good[0]],c[0],c[1].posVec).verdict==='uncertain');
+ck('I13 結果は品質を保証しない・未較正と明示',(j=>j.guarantee===false&&j.calibrated===false)(B.judge(good,c[0],c[1].posVec)));
+const r=B.rank(c.slice(0,2),[{key:'g',frames:good},{key:'b',frames:bad}]);
+ck('I14 順位: 場面1は g が先頭、場面2は b が先頭',r[0][0].key==='g'&&r[1][0].key==='b',r);
+const ev=B.evalPairs([{label:true,score:.9},{label:true,score:.7},{label:false,score:.4},{label:false,score:.8}],.6);
+ck('I15 評価: AUC・適合率・再現率',Math.abs(ev.auc-.75)<1e-9&&ev.tp===2&&ev.fp===1&&Math.abs(ev.precision-2/3)<1e-9,ev);
+ck('I16 日本語の台本とカードの文は混ざらない（英語文に日本語を含まない）',c.every(x=>x.prompts.pos.concat(x.prompts.avoid).every(t=>!/[぀-ヿ一-鿿]/.test(t))));
+console.log('TOTAL',R.filter(Boolean).length,'/',R.length);process.exit(R.every(Boolean)?0:1)

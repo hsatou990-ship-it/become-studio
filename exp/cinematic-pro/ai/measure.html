@@ -1,0 +1,19 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; style-src 'unsafe-inline'; img-src 'self' blob: data:; media-src blob:; connect-src 'self' blob:; worker-src 'self' blob:; base-uri 'none'; form-action 'none'">
+<title>BECOME. AI分析 測定ページ（段階B-0・試験用）</title>
+<style>body{font:14px/1.5 system-ui,sans-serif;background:#10141d;color:#e8eaf0;margin:0;padding:12px;max-width:760px}h1{font-size:17px}h2{font-size:15px;margin:14px 0 6px}
+button,select,input,textarea{font:inherit;background:#1b2130;color:#e8eaf0;border:1px solid #39435a;border-radius:8px;padding:8px}button{background:#2a6df4;border:0;margin:4px 4px 4px 0}button.g{background:#39435a}
+.note{color:#aab;font-size:12px;white-space:pre-wrap}.w{color:#ffcf6b}.ok{color:#7ee0a0}.ng{color:#ff8a8a}pre{background:#0b0e15;padding:8px;border-radius:8px;overflow:auto;font-size:12px;max-height:340px}table{border-collapse:collapse;font-size:12px;width:100%}td,th{border:1px solid #39435a;padding:3px 5px;text-align:left}</style></head><body>
+<h1>AI分析 測定ページ（段階B-0）</h1>
+<p class="note">編集画面とは分離した試験用ページです。通信は同一オリジンのみ（CSPで制限、外部への送信なし）。モデルとライブラリが配置されていない場合は、通信せずに安全に停止します。結果は「CLIPの類似度」であり、素材の品質・権利・見た目の良さを保証しません。</p>
+<div id="env" class="note"></div>
+<h2>1. 台本の設計JSON</h2><textarea id="dj" rows="5" style="width:100%;box-sizing:border-box" placeholder="become.design/1 のJSONを貼り付け"></textarea><input type="file" id="djf" accept=".json,application/json">
+<h2>2. 素材（取得済みの動画ファイル。複数可）</h2><input type="file" id="vf" accept="video/*" multiple><div id="lab"></div>
+<p class="note">正解の場面番号を選ぶと、他の場面は誤例として扱います。「該当なし」は全場面で誤例。素材が少ないときは、同じ素材を別の場面の誤例にも使います。</p>
+<h2>3. 条件</h2>
+<label>方式 <select id="be"><option value="wasm">WASM</option><option value="webgpu">WebGPU</option><option value="both">両方（順に実行）</option></select></label>
+<label>初期フレーム数 <input id="n0" type="number" value="3" min="2" max="8" style="width:60px"></label>
+<label>最大フレーム数 <input id="nmax" type="number" value="6" min="2" max="12" style="width:60px"></label>
+<div><button id="run">測定を開始</button><button id="stop" class="g">中止</button><button id="dl" class="g" disabled>結果を保存（JSON）</button></div>
+<div id="st" class="note"></div><h2>結果</h2><div id="res"></div><pre id="out">未測定</pre>
+<script type="module" src="measure.js"></script></body></html>
