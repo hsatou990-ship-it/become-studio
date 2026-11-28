@@ -1,7 +1,8 @@
 import os;REPO=os.environ.get('BECOME_REPO','/home/claude/become-studio');FIX=os.environ.get('BECOME_FIX','/tmp/become-fixtures')
 exec(open("tr1.py").read().split("\nwith sync_playwright()")[0])
 import tempfile,shutil
-U9='http://localhost:8767/r9/exp/cinematic-pro/index.html#res=360';U10='http://localhost:8767/r10/exp/cinematic-pro/index.html#res=360'
+OLD=os.environ.get('RET_OLD','r9');NEW=os.environ.get('RET_NEW','r10')   # 更新前と更新後の配信物（/tmp/ret/<名前>/ に置く）
+U9='http://localhost:8767/%s/exp/cinematic-pro/index.html#res=360'%OLD;U10='http://localhost:8767/%s/exp/cinematic-pro/index.html#res=360'%NEW
 R=[]
 def ck(n,ok,info=''):R.append(bool(ok));print(('PASS ' if ok else 'FAIL ')+n,'' if ok else info)
 def snap(pg):

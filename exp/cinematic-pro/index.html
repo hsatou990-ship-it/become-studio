@@ -1163,7 +1163,7 @@ async function vaScenes(o){o=o||{};if(VA.run)return{ok:false,msg:'分析中で�
   const dp=vaDupPairs(R),dupSet=new Set();dp.forEach(([a,j])=>{dupSet.add(j)});/* 重複は、後ろの場面を差し替え対象にする（前の場面は残す） */
   for(let i=0;i<N;i++){const r=R[i];if(!r){continue}const isDup=dupSet.has(i),why=vaWhy(r,isDup),b=bstat(i),row={i,id:S.sc[i].id,n:r.n,conf:r.conf,flags:r.flags.slice(),dup:isDup,cached:!!r.cached,swapped:false,msg:''};rows.push(row);
    const trig=r.conf==='high'&&(r.bad.length||isDup);
-   if(trig){const oh=[];R.forEach((q,j)=>{if(j!==i&&q&&q.hashes)oh.push(...q.hashes)});const sw=await vaSwap(i,why.filter(w=>w!==VA_TXT.dark),oh);row.swapped=sw.done;row.msg=sw.why;if(!sw.done){VA.stat.held++;b.va=b.va||{swaps:0,tried:[],log:[]};b.msg='確認推奨（自動分析）: '+why.join('／')+'。'+sw.why;b.fix='この場面の素材を見て、必要なら差し替えてください（既存の素材は消していません）'}else{b.msg=sw.why;b.fix=''}}
+   if(trig){const oh=[];R.forEach((q,j)=>{if(j!==i&&q&&q.hashes)oh.push(...q.hashes)});const sw=await vaSwap(i,why.filter(w=>w!==VA_TXT.dark),oh);row.swapped=sw.done;row.msg=sw.why;if(!sw.done){VA.stat.held++;b.va=b.va||{swaps:0,tried:[],log:[]};const pm=String(b.msg||'').replace(/(｜)?確認推奨（自動分析）[\s\S]*$/,'');b.msg=(pm?pm+'｜':'')+'確認推奨（自動分析）: '+why.join('／')+'。'+sw.why;/* 元の表示（取得済みの再利用など）は残し、確認推奨は付け足す（繰り返し実行しても増えない） */b.fix='この場面の素材を見て、必要なら差し替えてください（既存の素材は消していません）'}else{b.msg=sw.why;b.fix=''}}
    else if(r.conf==='low'&&(r.why||[]).length){row.msg='確信度が低い（'+r.why.join('・')+'）ため、自動では変更しません'}
    else if(r.flags.length){row.msg=why.join('／')}}
   if(VA.stat.swaps>s0.swaps){await pjSave(true).catch(()=>{});btRender()}}
