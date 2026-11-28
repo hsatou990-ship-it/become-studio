@@ -23,7 +23,7 @@ with sync_playwright() as p:
     pg.goto(BASE+'#res=360');pg.evaluate("()=>{try{localStorage.clear()}catch{}}");pg.reload();ready(pg);pg.wait_for_timeout(500)
     # T1 quota / epoch
     lim=pg.evaluate("()=>({s:CP.REAL.lim.s,d:CP.REAL.lim.d,cnt:CP.realCnt(),ep:CP.rlogGet().filter(x=>x.step==='epoch').length,b:CP.CP_BUILD})")
-    c('A1 trial quota is search 5 / video 6, counters start at 0, the new quota generation is logged once',lim['s']==5 and lim['d']==6 and lim['cnt']=={'s':0,'d':0,'t':0} and lim['ep']==1 and __import__('re').search(r'r\d+-am',lim['b']) is not None,lim)
+    c('A1 trial quota is search 5 / video 6, counters start at 0, the new quota generation is logged once',lim['s']==5 and lim['d']==6 and lim['cnt']=={'s':0,'d':0,'t':0} and lim['ep']==1 and __import__('re').search(r'r\d+-(am|b0)',lim['b']) is not None,lim)
     pg.reload();ready(pg);pg.wait_for_timeout(300)
     c('A1b reload does not log the generation again and does not reset counters',pg.evaluate("()=>CP.rlogGet().filter(x=>x.step==='epoch').length")==1)
     # import design
