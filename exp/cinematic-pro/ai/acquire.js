@@ -41,13 +41,15 @@ export async function status(deep){const m=await mget(),c=await caches.open(CACH
 export async function storageInfo(){const e=navigator.storage&&navigator.storage.estimate?await navigator.storage.estimate():null;return{usage:e?e.usage:null,quota:e?e.quota:null,persisted:navigator.storage&&navigator.storage.persisted?await navigator.storage.persisted():null}}
 export async function clearAll(){await caches.delete(CACHE)}
 /* 2. 取得（承認コードの一致が必要）。中断可能。失敗時は原因を返す。ファイル単位で復旧（取得済み・検証済みは再取得しない） */
+export async function savedPlan(){const m=await mget();return m.plan||null}
 export async function download(plan,code,{onProgress,signal,persist}={}){
  if(!plan||!plan.files||code!==plan.code)throw new Error('承認コードが一致しません。取得しません');
  const si=await storageInfo();if(si.quota!=null&&si.usage!=null&&plan.total*1.1>si.quota-si.usage)throw new Error('保存容量が足りません（必要 '+Math.round(plan.total*1.1/1048576)+' MB／空き '+Math.round((si.quota-si.usage)/1048576)+' MB）');
  if(persist&&navigator.storage&&navigator.storage.persist){try{await navigator.storage.persist()}catch{}}
  const m=await mget(),c=await caches.open(CACHE),res=[];let done=0;
- m.expect=plan.files.map(f=>f.name);await mput(m);
+ m.expect=plan.files.map(f=>f.name);m.plan=plan;await mput(m);
  for(const f of plan.files){const have=m.files.find(x=>x.name===f.name&&x.url===f.url&&x.verified);if(have&&await c.match('https://bs.local/f/'+f.name)){res.push({name:f.name,state:'既に保存済み・再取得なし'});done+=f.size;continue}
+  window.__bsCur={name:f.name,url:f.url,size:f.size};
   let lastErr=null,ok=false;
   for(let t=1;t<=MAXTRY&&!ok;t++){if(signal&&signal.aborted)throw new Error('中断しました');
    try{const r=await net(f.url,{signal});if(!r.ok)throw new Error('HTTP '+r.status);const rd=r.body.getReader(),parts=[];let got=0;

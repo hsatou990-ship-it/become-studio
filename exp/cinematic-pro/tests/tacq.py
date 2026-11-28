@@ -35,7 +35,7 @@ def tree(sub,bad=False):
         out.append(it)
     return out
 class Net:
-    def __init__(s,bad=False,slow=0,fail=None):s.log=[];s.bad=bad;s.slow=slow;s.fail=fail;s.attempts={}
+    def __init__(s,bad=False,slow=0,fail=None,redir=False):s.redir=redir;s.log=[];s.bad=bad;s.slow=slow;s.fail=fail;s.attempts={}
     def handler(s,route):
         u=route.request.url;s.log.append(u);H={'access-control-allow-origin':'*'}
         def js(o):route.fulfill(status=200,body=json.dumps(o),content_type='application/json',headers=H)
@@ -43,6 +43,7 @@ class Net:
         if '/api/models/'+M+'/tree/'+REV in u:return js(tree('root'))
         if u.startswith('https://huggingface.co/'+M+'/resolve/'+REV+'/'):
             p=u.split('/resolve/'+REV+'/')[1];s.attempts[p]=s.attempts.get(p,0)+1
+            if s.redir and p.startswith('onnx/'):return route.fulfill(status=302,headers={'location':'https://cas-bridge.xethub.hf.co/'+p,**H})
             if s.fail and p==s.fail:return route.abort()
             if s.slow:time.sleep(s.slow)
             return route.fulfill(status=200,body=FILES[p],headers=H)
@@ -118,4 +119,16 @@ with sync_playwright() as p:
     net=Net(slow=1.5);b,pg=newpage(p,net);resolve(pg);pg.fill('#aCode',code(pg));pg.click('#aGo');pg.wait_for_timeout(2200);pg.click('#aStop');settle(pg)
     ck('Q26 取得を中断でき、取得済みの分は保存されたまま残る','中断' in pg.inner_text('#aSt') and pg.inner_text('#aTab').count('照合済み')>=1,pg.inner_text('#aSt'))
     ck('Q27 ページエラーなし',pg.errs==[],pg.errs);b.close()
+    # リダイレクト先が未承認ホストの場合: 原因の表示と、取得済みの保持・再開
+    net=Net(redir=True);b,pg=newpage(p,net);resolve(pg);cd=code(pg);pg.fill('#aCode',cd);pg.click('#aGo');settle(pg,40000);pg.wait_for_timeout(500)
+    cs=pg.inner_text('#aCsp')
+    ck('Q28 CSP停止の対象ファイル・要求URL・停止したホスト・指示を表示',('onnx/vision_model_uint8.onnx' in cs) and ('要求したURL: https://huggingface.co/' in cs) and '停止したホスト' in cs and 'connect-src' in cs,cs)
+    st=pg.evaluate("async()=>(await ACQ.A.status(false)).rows.filter(r=>r.verified&&r.state==='ok').length")
+    ck('Q29 取得済みの設定ファイル7件は保持される（CSPの緩和なし）',st==7 and '分析の準備: 未完了' in pg.inner_text('#aRdy'),st)
+    pg.reload();pg.wait_for_timeout(500);net.redir=False;m0=len(net.log)
+    pg.click('#aResume');pg.wait_for_timeout(500);ck('Q30 再開は保存済みの取得対象を使い、メタデータを再取得しない・残り5件を表示',len(net.log)==m0 and '残り 5 件' in pg.inner_text('#aList'),(len(net.log)-m0,pg.inner_text('#aList')))
+    pg.fill('#aCode',cd);pg.click('#aGo');settle(pg)
+    got=[u for u in net.log[m0:] if '/resolve/' in u]
+    ck('Q31 再開では残り5件だけ取得し、7件は再取得しない・全件照合済みで準備完了',len(net.log[m0:])==5 and len(got)==2 and '分析の準備: 完了' in pg.inner_text('#aRdy'),(net.log[m0:],pg.inner_text('#aRdy')))
+    ck('Q32 ページエラーなし',pg.errs==[],pg.errs);b.close()
 print('TOTAL',sum(R),'/',len(R))

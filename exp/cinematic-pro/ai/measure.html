@@ -10,9 +10,9 @@ button,select,input,textarea{font:inherit;background:#1b2130;color:#e8eaf0;borde
 <h2>0. モデルとライブラリの取得（端末内に保存・測定ページ限定）</h2>
 <p class="note">ボタンを押したときだけ通信します。接続先: huggingface.co（モデル）／cdn.jsdelivr.net・data.jsdelivr.com（ライブラリとメタデータ）。取得後は通信なしで分析します。台本・音声・映像・分析結果は送信しません。</p>
 <div id="aSto" class="note"></div>
-<button id="aRes">取得対象を確認（メタデータのみ）</button><div id="aList"></div><div id="aPlan" class="note"></div>
+<button id="aRes">取得対象を確認（メタデータのみ）</button><button id="aResume" class="g">保存済みの取得対象で再開（通信なし）</button><div id="aList"></div><div id="aPlan" class="note"></div>
 <input id="aCode" placeholder="承認コード（8桁）" style="width:130px"> <button id="aGo" disabled>取得する</button><button id="aStop" class="g" disabled>中断</button>
-<div id="aSt" class="note"></div><div id="aTab"></div><div id="aRdy" class="note"></div>
+<div id="aSt" class="note"></div><pre id="aCsp" class="note w" style="white-space:pre-wrap;max-height:none"></pre><div id="aTab"></div><div id="aRdy" class="note"></div>
 <button id="aChk" class="g">保存状態を確認</button><button id="aDeep" class="g">保存内容を再検証</button>
 <label class="note"><input type="checkbox" id="aDelOk"> 削除を確認</label><button id="aDel" class="g">AIデータを削除</button>
 <h2>1. 台本の設計JSON</h2><textarea id="dj" rows="5" style="width:100%;box-sizing:border-box" placeholder="become.design/1 のJSONを貼り付け"></textarea><input type="file" id="djf" accept=".json,application/json">
