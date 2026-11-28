@@ -7,7 +7,7 @@
 export const TARGET={model:'Xenova/clip-vit-base-patch32',rev:'6b7c523703ae26e39be4b03774966f8571c7f523',lib:'3.8.1',
  hfFiles:['config.json','merges.txt','preprocessor_config.json','special_tokens_map.json','tokenizer.json','tokenizer_config.json','vocab.json','onnx/vision_model_uint8.onnx','onnx/text_model_uint8.onnx'],
  ortRe:/^\/dist\/ort-wasm-simd-threaded\.jsep\.(mjs|wasm)$/};
-export const ALLOWED_HOSTS=['huggingface.co','cdn.jsdelivr.net','data.jsdelivr.com'];
+export const ALLOWED_HOSTS=['huggingface.co','cdn.jsdelivr.net','data.jsdelivr.com'];   // 取得開始URLの許可。リダイレクト先 cas-bridge.xethub.hf.co は、CSP（connect-src）でのみ許可（ワイルドカードなし）
 export const CACHE='bsai-clip-b32-'+TARGET.rev.slice(0,7)+'-lib'+TARGET.lib+'-v1',MK='https://bs.local/__manifest.json',MAXTRY=2;
 const hex=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join(''),b64=b=>btoa(String.fromCharCode(...new Uint8Array(b)));
 export async function hashOf(buf,alg){if(alg==='sha256'){const d=await crypto.subtle.digest('SHA-256',buf);return{hex:hex(d),b64:b64(d)}}

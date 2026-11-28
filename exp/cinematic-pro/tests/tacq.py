@@ -43,7 +43,7 @@ class Net:
         if '/api/models/'+M+'/tree/'+REV in u:return js(tree('root'))
         if u.startswith('https://huggingface.co/'+M+'/resolve/'+REV+'/'):
             p=u.split('/resolve/'+REV+'/')[1];s.attempts[p]=s.attempts.get(p,0)+1
-            if s.redir and p.startswith('onnx/'):return route.fulfill(status=302,headers={'location':'https://cas-bridge.xethub.hf.co/'+p,**H})
+            if s.redir and p.startswith('onnx/'):return route.fulfill(status=302,headers={'location':('https://evil.example/'+p+'?X-Amz-Signature=SECRETSIG') if s.redir=='evil' else ('https://cas-bridge.xethub.hf.co/'+p+'?X-Amz-Signature=SECRETSIG'),**H})
             if s.fail and p==s.fail:return route.abort()
             if s.slow:time.sleep(s.slow)
             return route.fulfill(status=200,body=FILES[p],headers=H)
@@ -120,15 +120,28 @@ with sync_playwright() as p:
     ck('Q26 取得を中断でき、取得済みの分は保存されたまま残る','中断' in pg.inner_text('#aSt') and pg.inner_text('#aTab').count('照合済み')>=1,pg.inner_text('#aSt'))
     ck('Q27 ページエラーなし',pg.errs==[],pg.errs);b.close()
     # リダイレクト先が未承認ホストの場合: 原因の表示と、取得済みの保持・再開
-    net=Net(redir=True);b,pg=newpage(p,net);resolve(pg);cd=code(pg);pg.fill('#aCode',cd);pg.click('#aGo');settle(pg,40000);pg.wait_for_timeout(500)
+    net=Net(redir='evil');b,pg=newpage(p,net);resolve(pg);cd=code(pg);pg.fill('#aCode',cd);pg.click('#aGo');settle(pg,40000);pg.wait_for_timeout(500)
     cs=pg.inner_text('#aCsp')
     ck('Q28 CSP停止の対象ファイル・要求URL・停止したホスト・指示を表示',('onnx/vision_model_uint8.onnx' in cs) and ('要求したURL: https://huggingface.co/' in cs) and '停止したホスト' in cs and 'connect-src' in cs,cs)
     st=pg.evaluate("async()=>(await ACQ.A.status(false)).rows.filter(r=>r.verified&&r.state==='ok').length")
     ck('Q29 取得済みの設定ファイル7件は保持される（CSPの緩和なし）',st==7 and '分析の準備: 未完了' in pg.inner_text('#aRdy'),st)
+    ck('Q28b 署名付きURLの認証情報（?以降）を画面・記録に残さない','SECRETSIG' not in cs and not any('SECRETSIG' in c for c in pg.cons) if hasattr(pg,'cons') else 'SECRETSIG' not in cs)
     pg.reload();pg.wait_for_timeout(500);net.redir=False;m0=len(net.log)
     pg.click('#aResume');pg.wait_for_timeout(500);ck('Q30 再開は保存済みの取得対象を使い、メタデータを再取得しない・残り5件を表示',len(net.log)==m0 and '残り 5 件' in pg.inner_text('#aList'),(len(net.log)-m0,pg.inner_text('#aList')))
     pg.fill('#aCode',cd);pg.click('#aGo');settle(pg)
     got=[u for u in net.log[m0:] if '/resolve/' in u]
     ck('Q31 再開では残り5件だけ取得し、7件は再取得しない・全件照合済みで準備完了',len(net.log[m0:])==5 and len(got)==2 and '分析の準備: 完了' in pg.inner_text('#aRdy'),(net.log[m0:],pg.inner_text('#aRdy')))
     ck('Q32 ページエラーなし',pg.errs==[],pg.errs);b.close()
+    # CSPは承認した1ホストだけを追加で許可する（ワイルドカードなし）。Playwrightはリダイレクト先を横取りできないため、直接の接続で確認
+    net=Net();b,pg=newpage(p,net)
+    def h2(route):
+        u=route.request.url
+        if u.startswith('https://cas-bridge.xethub.hf.co/'):net.log.append(u.split('?')[0]);return route.fulfill(status=200,body='ok',headers={'access-control-allow-origin':'*'})
+        net.handler(route)
+    pg.context.route(lambda u:not u.startswith('http://127.0.0.1'),h2)
+    pr=pg.evaluate("""async()=>{window.__bsNet=true;const t=async u=>{try{const r=await fetch(u);return r.ok?'通った':'HTTP'+r.status}catch(e){return 'CSP停止'}};
+      const o=[await t('https://cas-bridge.xethub.hf.co/x?X-Amz-Signature=SECRETSIG'),await t('https://other.xethub.hf.co/x'),await t('https://cdn-lfs.hf.co/x'),await t('https://evil.example/x')];window.__bsNet=false;return o}""")
+    ck('Q33 追加許可は cas-bridge.xethub.hf.co の1ホストだけ（同系列の他ホスト・別ホストは停止）',pr==['通った','CSP停止','CSP停止','CSP停止'],pr)
+    ck('Q34 署名付きURLの認証情報を、画面と取得記録に残さない','SECRETSIG' not in pg.inner_text('body') and not any('SECRETSIG' in u for u in net.log))
+    b.close()
 print('TOTAL',sum(R),'/',len(R))
