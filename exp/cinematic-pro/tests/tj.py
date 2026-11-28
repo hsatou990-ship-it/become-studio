@@ -39,6 +39,8 @@ with sync_playwright() as p:
     pg.click('#bDJP');chk('P13 request prompt shown',pg.evaluate("()=>document.getElementById('djp').value.includes('become.design/1')&&!document.getElementById('djp').hidden"))
     chk('P14 impl table lists implemented and design-only',pg.evaluate("()=>{const t=document.getElementById('implt').textContent;return /✔ speed-ramp/.test(t)&&/△ live-anim-fusion/.test(t)}"))
     # director path still works and gets default j-cut at turn
+    # 設計JSON取込は台本欄を設計の台本に更新する（段階B-0）。P12の1文のままではディレクター案に転換点が無いため、台本欄を複数文に戻してから試験する
+    pg.fill('#dsc','変わるのが、怖いか。でも、時間は止まらない。その一歩が、未来を変える。今日から、始めよう。')
     pg.click('#bDir');pg.wait_for_timeout(300)
     d=pg.evaluate("()=>CP.S.sc.map(s=>s.cut&&s.cut.type)")
     chk('P15 director path: turn gets j-cut','j-cut' in d,d)
