@@ -791,7 +791,7 @@ async function blindSet(exporter){if(S.busy||!S.base)return null;const ex=export
 async function blindRecover(){const all=await blindList();if(!all.length)return 0;const run=Math.max(...all.map(r=>r.run)),g=all.filter(r=>r.run===run).sort((a,b)=>a.code<b.code?-1:1),L=$('blindl');
  if(L.textContent)return 0;const h=document.createElement('div');h.className='note w';h.textContent='前回のブラインド書き出しで完成していた動画 '+g.length+' 本が端末内に残っています（ページを開き直しても失われません）。';L.appendChild(h);g.forEach(r=>blindLink(L,r.code,r.blob,r.audio,true));return g.length}
 async function sha256Hex(t){try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch{return null}}
-const CP_BUILD='cinematic-pro build 2026-11-28-r12-am（試験: 映像分析（適応型抽出・キャッシュ・重複検出）・取得済み候補への自動差し替え・字幕セーフゾーン設定／検索5回・動画6本の試験枠／未公開ブランチ）';
+const CP_BUILD='cinematic-pro build 2026-11-28-r13-b0（試験: 台本と設計の一致・音声の出所・演出状態、AI測定ページ（モデル未取得）、前段: 映像分析（適応型抽出・キャッシュ・重複検出）・取得済み候補への自動差し替え・字幕セーフゾーン設定／検索5回・動画6本の試験枠／未公開ブランチ）';
 document.addEventListener('change',e=>{const t=e.target;if(t&&/^cf\d+$/.test(t.id)){const k=$('ck'+t.id.slice(2));if(k)k.checked=false}});
 try{$('bld').textContent='配信版: '+CP_BUILD}catch{}
 async function evidenceRecord(){const k=(S.cmp&&S.cmp.key)||{},res=(window.CP.lastBlind||[]),djt=S.dj||null,mats=[];
