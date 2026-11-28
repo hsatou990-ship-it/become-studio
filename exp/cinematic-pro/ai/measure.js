@@ -1,9 +1,9 @@
 import './intent.js';
 const B=window.BSIntent,$=id=>document.getElementById(id),Q=new URLSearchParams(location.search);
-const ADAPTERS={transformers:'./adapter-transformers.js',stub:'./adapter-stub.js'};   // 許可リスト以外は読まない
+const ADAPTERS={transformers:'./adapter-sandbox.js',stub:'./adapter-stub.js'};   // 許可リスト以外は読まない
 const S={abort:false,clips:[],plan:null,report:null};
 /* 同一オリジン以外への通信を、念のためコード側でも拒否（CSPに加える二重の防止） */
-const _f=window.fetch;window.fetch=(u,o)=>{const x=new URL(typeof u==='string'?u:u.url,location.href);if(x.origin!==location.origin&&x.protocol!=='blob:'&&x.protocol!=='data:')return Promise.reject(new Error('外部通信は許可されていません: '+x.origin));return _f(u,o)};
+const _f=window.fetch;window.fetch=(u,o)=>{const x=new URL(typeof u==='string'?u:u.url,location.href);if(!window.__bsNet&&x.origin!==location.origin&&x.protocol!=='blob:'&&x.protocol!=='data:')return Promise.reject(new Error('外部通信は許可されていません: '+x.origin));return _f(u,o)};
 const mem=()=>performance&&performance.memory?performance.memory.usedJSHeapSize:null;
 const mb=v=>v==null?'未測定':(v/1048576).toFixed(1)+' MB';
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -20,13 +20,13 @@ async function frames(file,n,cache,model){      // 動画から等間隔でフ�
   const d=v.duration||1,out=[];for(let i=0;i<n;i++){if(S.abort)throw new Error('中止');const t=d*(.1+.8*(n===1?.5:i/(n-1)));
    await new Promise(r=>{v.onseeked=r;v.currentTime=t});const c=document.createElement('canvas');c.width=c.height=224;const g=c.getContext('2d'),s=Math.min(v.videoWidth,v.videoHeight);g.drawImage(v,(v.videoWidth-s)/2,(v.videoHeight-s)/2,s,s,0,0,224,224);out.push({t:+t.toFixed(2),c,key:file.name+':'+file.size+':'+file.lastModified+':'+t.toFixed(2)+':'+model})}
   return out}finally{v.removeAttribute('src');v.load();URL.revokeObjectURL(url)}}
-function resBytes(){return performance.getEntriesByType('resource').filter(e=>/\/(models|vendor)\//.test(e.name)).reduce((a,e)=>({transfer:a.transfer+(e.transferSize||0),body:a.body+(e.encodedBodySize||0),files:a.files+1}),{transfer:0,body:0,files:0})}
+function resBytes(t0){const E=performance.getEntriesByType('resource').filter(e=>e.startTime>=t0&&new URL(e.name).origin!==location.origin&&!/^(blob|data):/.test(e.name));return{transfer:E.reduce((a,e)=>a+(e.transferSize||0),0),files:E.length,note:'分析中の外部通信（0であるべき）。取得時の容量は取得画面に表示'}}
 const EC=new Map();let ecHit=0,ecMiss=0;
 async function run(device,cards,labels,n0,nmax){
  const R={device,stages:{},errors:[]};let mod,A;const t0=performance.now();
  try{const name=Q.get('adapter')||'transformers';if(!ADAPTERS[name])throw new Error('不明なアダプタ: '+name);
   const m0=mem();log(device+': モデルを読み込み中…');A=await import(ADAPTERS[name]);mod=await A.load({device,failAt:Q.get('failAt')});
-  R.stages.loadMs=Math.round(performance.now()-t0);R.model=mod.id;R.realModel=!!mod.real;R.stages.memAfterLoad=mem();R.stages.memBefore=m0;R.download=resBytes();
+  R.stages.loadMs=Math.round(performance.now()-t0);R.model=mod.id;R.realModel=!!mod.real;R.stages.memAfterLoad=mem();R.stages.memBefore=m0;R.download=resBytes(t0);
   const t1=performance.now(),tv=[];cards.forEach(c=>{c.posIdx=[];c.avoidIdx=[]});const texts=[];cards.forEach(c=>{c.prompts.pos.forEach(p=>{c.posIdx.push(texts.length);texts.push(p)});c.prompts.avoid.forEach(p=>{c.avoidIdx.push(texts.length);texts.push(p)})});
   const tvec=(await mod.embedTexts(texts)).map(B.l2);cards.forEach(c=>{c.posVec=c.posIdx.map(i=>tvec[i]);c.avoidVec=c.avoidIdx.map(i=>tvec[i])});R.stages.textMs=Math.round(performance.now()-t1);
   const per=[];let tImg=0,nFr=0;
@@ -54,7 +54,7 @@ $('run').onclick=async()=>{S.abort=false;$('run').disabled=true;$('dl').disabled
   S.report={at:new Date().toISOString(),page:'AI分析測定（段階B-0）',adapter:Q.get('adapter')||'transformers',cards:cards.map(c=>({i:c.i,ja:c.ja,pos:c.prompts.pos,avoid:c.prompts.avoid,unset:c.unset,needsReview:c.needsReview})),runs,
    unmeasured:['端末温度','端末全体のメモリ使用量','消費電力'],note:'疑似モデル（stub）の結果は精度・速度の測定値として使えません。閾値は未較正。CLIP類似度は品質を保証しません。'};
   $('out').textContent=JSON.stringify(S.report,(k,v)=>k==='pairs'?v.map(p=>p.clip+'→場面'+p.scene+(p.label?'(正)':'(誤)')+' '+p.score.toFixed(3)+' '+p.verdict):v,1);
-  $('res').innerHTML=runs.map(r=>'<p class="'+(r.errors.length?'ng':'ok')+'">'+r.device+(r.warmRerun?'（2回目・キャッシュ再利用）':'')+'｜モデル: '+(r.model||'未読込')+(r.realModel===false?' ※疑似':'')+'｜読込 '+(r.stages.loadMs??'-')+' ms｜テキスト '+(r.stages.textMs??'-')+' ms｜画像 '+(r.stages.imageMs??'-')+' ms（新規'+(r.stages.framesEmbedded??0)+'枚）｜JSヒープ '+mb(r.stages.memBefore)+'→'+mb(r.stages.memPeak)+'→解放後 '+mb(r.stages.memAfterRelease)+'｜取得 '+(r.download?mb(r.download.transfer)+'（'+r.download.files+'ファイル）':'未測定')+(r.eval?'｜AUC '+(r.eval.auc==null?'-':r.eval.auc.toFixed(3))+'・誤採用 '+r.falseAccept.length+'・見逃し '+r.missed.length:'')+(r.errors.length?'｜停止: '+r.errors.join(' / '):'')+'</p>').join('');
+  $('res').innerHTML=runs.map(r=>'<p class="'+(r.errors.length?'ng':'ok')+'">'+r.device+(r.warmRerun?'（2回目・キャッシュ再利用）':'')+'｜モデル: '+(r.model||'未読込')+(r.realModel===false?' ※疑似':'')+'｜読込 '+(r.stages.loadMs??'-')+' ms｜テキスト '+(r.stages.textMs??'-')+' ms｜画像 '+(r.stages.imageMs??'-')+' ms（新規'+(r.stages.framesEmbedded??0)+'枚）｜JSヒープ '+mb(r.stages.memBefore)+'→'+mb(r.stages.memPeak)+'→解放後 '+mb(r.stages.memAfterRelease)+'｜分析中の外部通信 '+(r.download?mb(r.download.transfer)+'（'+r.download.files+'件）':'未測定')+(r.eval?'｜AUC '+(r.eval.auc==null?'-':r.eval.auc.toFixed(3))+'・誤採用 '+r.falseAccept.length+'・見逃し '+r.missed.length:'')+(r.errors.length?'｜停止: '+r.errors.join(' / '):'')+'</p>').join('');
   $('dl').disabled=false;log('完了（結果は上のとおり。端末温度・端末全体メモリは未測定）')}
  catch(e){log('停止: '+e.message)}finally{$('run').disabled=false}};
 $('dl').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S.report,null,1)],{type:'application/json'}));a.download='ai-measure-'+Date.now()+'.json';a.click()};

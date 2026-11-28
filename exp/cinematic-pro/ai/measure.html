@@ -1,5 +1,5 @@
 <!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; style-src 'unsafe-inline'; img-src 'self' blob: data:; media-src blob:; connect-src 'self' blob:; worker-src 'self' blob:; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'unsafe-inline'; img-src 'self' blob: data:; media-src blob:; connect-src 'self' blob: https://huggingface.co https://cdn.jsdelivr.net https://data.jsdelivr.com; frame-src 'self'; worker-src 'self' blob:; base-uri 'none'; form-action 'none'">
 <title>BECOME. AI分析 測定ページ（段階B-0・試験用）</title>
 <style>body{font:14px/1.5 system-ui,sans-serif;background:#10141d;color:#e8eaf0;margin:0;padding:12px;max-width:760px}h1{font-size:17px}h2{font-size:15px;margin:14px 0 6px}
 button,select,input,textarea{font:inherit;background:#1b2130;color:#e8eaf0;border:1px solid #39435a;border-radius:8px;padding:8px}button{background:#2a6df4;border:0;margin:4px 4px 4px 0}button.g{background:#39435a}
@@ -7,6 +7,14 @@ button,select,input,textarea{font:inherit;background:#1b2130;color:#e8eaf0;borde
 <h1>AI分析 測定ページ（段階B-0）</h1>
 <p class="note">編集画面とは分離した試験用ページです。通信は同一オリジンのみ（CSPで制限、外部への送信なし）。モデルとライブラリが配置されていない場合は、通信せずに安全に停止します。結果は「CLIPの類似度」であり、素材の品質・権利・見た目の良さを保証しません。</p>
 <div id="env" class="note"></div>
+<h2>0. モデルとライブラリの取得（端末内に保存・測定ページ限定）</h2>
+<p class="note">ボタンを押したときだけ通信します。接続先: huggingface.co（モデル）／cdn.jsdelivr.net・data.jsdelivr.com（ライブラリとメタデータ）。取得後は通信なしで分析します。台本・音声・映像・分析結果は送信しません。</p>
+<div id="aSto" class="note"></div>
+<button id="aRes">取得対象を確認（メタデータのみ）</button><div id="aList"></div><div id="aPlan" class="note"></div>
+<input id="aCode" placeholder="承認コード（8桁）" style="width:130px"> <button id="aGo" disabled>取得する</button><button id="aStop" class="g" disabled>中断</button>
+<div id="aSt" class="note"></div><div id="aTab"></div><div id="aRdy" class="note"></div>
+<button id="aChk" class="g">保存状態を確認</button><button id="aDeep" class="g">保存内容を再検証</button>
+<label class="note"><input type="checkbox" id="aDelOk"> 削除を確認</label><button id="aDel" class="g">AIデータを削除</button>
 <h2>1. 台本の設計JSON</h2><textarea id="dj" rows="5" style="width:100%;box-sizing:border-box" placeholder="become.design/1 のJSONを貼り付け"></textarea><input type="file" id="djf" accept=".json,application/json">
 <h2>2. 素材（取得済みの動画ファイル。複数可）</h2><input type="file" id="vf" accept="video/*" multiple><div id="lab"></div>
 <p class="note">正解の場面番号を選ぶと、他の場面は誤例として扱います。「該当なし」は全場面で誤例。素材が少ないときは、同じ素材を別の場面の誤例にも使います。</p>
@@ -16,4 +24,4 @@ button,select,input,textarea{font:inherit;background:#1b2130;color:#e8eaf0;borde
 <label>最大フレーム数 <input id="nmax" type="number" value="6" min="2" max="12" style="width:60px"></label>
 <div><button id="run">測定を開始</button><button id="stop" class="g">中止</button><button id="dl" class="g" disabled>結果を保存（JSON）</button></div>
 <div id="st" class="note"></div><h2>結果</h2><div id="res"></div><pre id="out">未測定</pre>
-<script type="module" src="measure.js"></script></body></html>
+<script type="module" src="acq-ui.js"></script><script type="module" src="measure.js"></script></body></html>
