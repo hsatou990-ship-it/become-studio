@@ -144,4 +144,21 @@ with sync_playwright() as p:
     ck('Q33 追加許可は cas-bridge.xethub.hf.co の1ホストだけ（同系列の他ホスト・別ホストは停止）',pr==['通った','CSP停止','CSP停止','CSP停止'],pr)
     ck('Q34 署名付きURLの認証情報を、画面と取得記録に残さない','SECRETSIG' not in pg.inner_text('body') and not any('SECRETSIG' in u for u in net.log))
     b.close()
+    # 代替方式: 端末にダウンロードした公式ファイルを、照合して取り込む（通信なし）
+    net=Net(redir='evil');b,pg=newpage(p,net);resolve(pg);cd=code(pg);pg.fill('#aCode',cd);pg.click('#aGo');settle(pg,40000);pg.wait_for_timeout(400)
+    ck('Q35 代替方式: 公式リンク（リビジョン固定）と取り込み欄を表示',('resolve/'+REV+'/onnx/vision_model_uint8.onnx') in pg.inner_html('#aLn') and 'ファイルを選ぶ' in pg.inner_text('#aLn'),pg.inner_html('#aLn')[:300])
+    vf=D+'/vision_model_uint8 (1).onnx';tf=D+'/text_model_uint8.onnx';bf=D+'/bad_vision.onnx';open(vf,'wb').write(FILES['onnx/vision_model_uint8.onnx']);open(tf,'wb').write(FILES['onnx/text_model_uint8.onnx'])
+    bad=bytearray(FILES['onnx/text_model_uint8.onnx']);bad[100]^=1;open(D+'/bad/',  'wb') if False else None
+    import os as _o;_o.makedirs(D+'/bad',exist_ok=True);open(D+'/bad/text_model_uint8.onnx','wb').write(bytes(bad));open(D+'/other.bin','wb').write(b'xx')
+    n0=len(net.log);pg.set_input_files('#aFile',[D+'/bad/text_model_uint8.onnx',D+'/other.bin']);pg.click('#aImp');pg.wait_for_timeout(2500)
+    s1=pg.inner_text('#aSt')
+    ck('Q36 内容が違う（1バイト改変）ファイルは、ハッシュ不一致で破棄。計画外のファイルは保存しない','ハッシュ不一致' in s1 and '取得対象にない' in s1,s1)
+    pg.set_input_files('#aFile',[vf,tf]);pg.click('#aImp');pg.wait_for_timeout(3000)
+    ck('Q37 正しいファイル（「 (1)」付きの名前も可）は照合して保存。通信は発生しない','照合済み' in pg.inner_text('#aSt') and len(net.log)==n0 and pg.inner_text('#aTab').count('照合済み')==9,(pg.inner_text('#aSt'),len(net.log)-n0))
+    net.redir=False;m1=len(net.log);pg.fill('#aCode',cd);pg.click('#aGo');settle(pg)
+    ck('Q38 残りは3件（ライブラリとwasm）だけ取得し、ONNXは再取得しない・分析の準備が完了',[u for u in net.log[m1:] if '/resolve/' in u]==[] and '分析の準備: 完了' in pg.inner_text('#aRdy'),(net.log[m1:],pg.inner_text('#aRdy')))
+    o=run_analysis(pg);r0=o['runs'][0]
+    ck('Q39 取り込んだファイルで、隔離フレームの分析が通信なしで完了',not r0['errors'] and r0['download']['files']==0 and r0['eval']['auc']==1,(r0['errors'],r0.get('download')))
+    ck('Q40 画面の版と有効な接続許可（connect-src）を表示','r17-b0' in pg.inner_text('#aBuild') and 'cas-bridge.xethub.hf.co' in pg.inner_text('#aBuild') and 'huggingface.co' in pg.inner_text('#aBuild'),pg.inner_text('#aBuild'))
+    ck('Q41 ページエラーなし',pg.errs==[],pg.errs);b.close()
 print('TOTAL',sum(R),'/',len(R))

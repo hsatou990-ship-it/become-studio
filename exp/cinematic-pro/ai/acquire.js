@@ -62,6 +62,21 @@ export async function download(plan,code,{onProgress,signal,persist}={}){
    catch(e){if(e.name==='AbortError')throw new Error('中断しました');lastErr=e;if(/CSP|Content Security|Failed to fetch|NetworkError/i.test(String(e.message))&&t>=1&&!/HTTP/.test(e.message)){lastErr=new Error('接続できません（通信失敗、または未承認ホストへのリダイレクトをCSPが停止）: '+f.name+'。再試行は'+MAXTRY+'回までです');}}}
   if(!ok){const err=lastErr||new Error('取得失敗');err.file=f.name;err.partial=res;throw err}}
  return res}
+/* ローカルファイルの取り込み（ブラウザの制約で転送先を特定できない場合の代替）。端末にダウンロードした公式ファイルを、同じ照合で検証して保存する。通信しない。
+   名前（「 (1)」付きも可）が取得対象と一致し、容量と公開ハッシュが一致したファイルだけを保存する。 */
+const norm=n=>String(n).replace(/\s*\(\d+\)(?=\.[^.]+$)/,'');
+export async function importLocal(plan,files,{onProgress}={}){
+ if(!plan||!plan.files)throw new Error('取得対象がありません。先に「取得対象を確認」または「保存済みの取得対象で再開」を押してください');
+ const m=await mget(),c=await caches.open(CACHE),res=[];m.expect=plan.files.map(f=>f.name);m.plan=plan;
+ for(const file of files){const base=norm(file.name),f=plan.files.find(x=>x.name.split('/').pop()===base);
+  if(!f){res.push({file:file.name,ok:false,state:'取得対象にないファイルです（保存しません）'});continue}
+  if(m.files.find(x=>x.name===f.name&&x.verified)&&await c.match('https://bs.local/f/'+f.name)){res.push({file:file.name,ok:true,state:'既に保存済み（取り込みなし）'});continue}
+  if(file.size!==f.size){res.push({file:file.name,ok:false,state:'容量が違います（'+file.size+' / '+f.size+'）。保存しません'});continue}
+  onProgress&&onProgress({name:f.name});const buf=await file.arrayBuffer(),h=await hashOf(buf,f.hash.alg);
+  if((f.hash.hex&&h.hex!==f.hash.hex)||(f.hash.b64&&h.b64!==f.hash.b64)){res.push({file:file.name,ok:false,state:'ハッシュ不一致。未検証として破棄しました'});continue}
+  await c.put('https://bs.local/f/'+f.name,new Response(buf,{headers:{'content-type':f.exec?'text/javascript':'application/octet-stream'}}));
+  const e={name:f.name,kind:f.kind,url:f.url,size:f.size,hash:f.hash,exec:f.exec,verified:true,at:new Date().toISOString(),via:'local-import'},i=m.files.findIndex(x=>x.name===f.name);if(i>=0)m.files[i]=e;else m.files.push(e);res.push({file:file.name,ok:true,state:'照合済み・保存（'+f.name+'）'})}
+ await mput(m);return res}
 /* 推論用: 照合済みファイルのバイト列だけを返す。欠損・破損・未検証なら通信せずに停止（無断で再取得しない） */
 export async function loadVerified(){const s=await status(false);if(!s.ready)throw new Error('モデルが利用できません（'+(s.rows.length?s.rows.filter(r=>!r.verified||r.state!=='ok').map(r=>r.name+':'+(r.verified?r.state:'未検証')).join(', '):'未取得')+'）。自動では再取得しません。取得ボタンから手動で取得してください');
  const c=await caches.open(CACHE),m=await mget(),files={};for(const f of m.files)files[f.name]=await (await c.match('https://bs.local/f/'+f.name)).arrayBuffer();return{files,meta:m}}
